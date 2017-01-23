@@ -1,0 +1,47 @@
+.element-invisible {
+    position: absolute !important;
+    height: 1px; width: 1px; 
+    overflow: hidden;
+    clip: rect(1px 1px 1px 1px); /* IE6, IE7 */
+    clip: rect(1px, 1px, 1px, 1px);
+}
+
+body, h1, h2, h3, h4, h5, h6,  p, span, a {
+    font-family: 'Cambo', serif;
+}
+
+body{
+    background-color: #1E2019;
+    color: #D3D0CB;
+    padding: 0 $size1 $size2 $size0;
+}
+
+h1{
+    font-size: $size4;            
+}
+
+header {
+    padding-bottom: $size2; 
+    
+    h1{
+        text-align: center;
+        padding-top: $size2;
+    }
+
+    p{
+        text-align: center;
+    }
+
+    nav {
+        margin-top: $size2;
+        text-align: center;
+
+        a{
+            font-size: $size1;
+            padding-bottom: $size1;
+            display: block;
+            color: $white;
+            text-transform: uppercase;
+        }
+    }
+}

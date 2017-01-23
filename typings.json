@@ -1,0 +1,13 @@
+{
+  "dependencies": {
+    "express-graphql": "registry:dt/express-graphql#0.0.0+20160727004517",
+    "flux": "registry:npm/flux#2.1.1+20160601175240",
+    "graphql": "registry:npm/graphql#0.5.0+20160602041655",
+    "graphql-relay": "registry:dt/graphql-relay#0.4.0+20161127092905",
+    "mongodb": "registry:npm/mongodb#2.1.0+20170107184700",
+    "react": "registry:npm/react#15.0.1+20170104200836"
+  },
+  "globalDependencies": {
+    "jquery": "registry:dt/jquery#1.10.0+20170104155652"
+  }
+}
