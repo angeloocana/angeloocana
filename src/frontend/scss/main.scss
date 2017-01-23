@@ -14,34 +14,98 @@ body{
     background-color: #1E2019;
     color: #D3D0CB;
     padding: 0 $size1 $size2 $size0;
+    margin: 0 auto;
+    max-width: 60rem;
 }
 
 h1{
     font-size: $size4;            
 }
 
+p{
+    font-size: $size1;
+    line-height: $size2;
+}
+
+mark{
+    color: $yellow;
+    background-color: transparent; 
+}
+
 header {
-    padding-bottom: $size2; 
+    padding-bottom: $size3; 
     
     h1{
         text-align: center;
-        padding-top: $size2;
+        padding-top: $size4;
     }
 
     p{
         text-align: center;
+        font-size: $size0;
     }
 
     nav {
-        margin-top: $size2;
         text-align: center;
+        position: fixed;
+        top: 0;
+        right: 0;
+        background-color: $black;
+        padding: $size1;
+
+        label{
+            background-image: url('../../../src/frontend/imgs/menu.svg');
+            background-repeat: no-repeat;
+            width: $size2;
+            height: $size2;
+            color: transparent;
+            background-size: 100%; 
+            position: relative;
+            float: left;
+        }
+
+        ul{
+            display: none;
+            margin-top: $size3;
+        }
+
+        #cb-menu{
+            width: 0px;
+            height: 0px;
+        }
+
+        #cb-menu:checked + ul{
+            display: block;
+        }
 
         a{
             font-size: $size1;
             padding-bottom: $size1;
             display: block;
             color: $white;
-            text-transform: uppercase;
+            text-align: left;
+            text-decoration: none;
         }
+
+        a.active, a:hover{
+            color: $yellow;
+        }
+
+        a:hover{
+            text-decoration: underline;       
+        }
+    }
+}
+
+main{
+    p{
+        max-width: 30rem;
+    }
+
+    p:first-of-type::first-letter{
+        font-size: ($size2 * 2) + $size-3;
+        color: $yellow;
+        float: left;
+        line-height: 0.9;
     }
 }
