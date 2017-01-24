@@ -8,6 +8,13 @@
 
 body, h1, h2, h3, h4, h5, h6,  p, span, a {
     font-family: 'Cambo', serif;
+    
+    -moz-font-feature-settings: "calt=1", "clig=1", "dlig=1", "kern=1", "liga=1", "salt=1";
+    -moz-font-feature-settings: "calt" 1, "clig" 1, "dlig" 1, "kern" 1, "liga" 1, "salt" 1;
+    -webkit-font-feature-settings: "calt" 1, "clig" 1, "dlig" 1, "kern" 1, "liga" 1, "salt" 1;
+    -ms-font-feature-settings: "calt=1", "clig=1", "dlig=1", "kern=1", "liga=1", "salt=1";
+    -o-font-feature-settings: "calt" 1, "clig" 1, "dlig" 1, "kern" 1, "liga" 1, "salt" 1;
+    font-feature-settings: "calt" 1, "clig" 1, "dlig" 1, "kern" 1, "liga" 1, "salt" 1;
 }
 
 body{
@@ -62,6 +69,7 @@ header {
             background-size: 100%; 
             position: relative;
             float: left;
+            cursor: pointer;
         }
 
         ul{
@@ -89,10 +97,13 @@ header {
 
         a.active, a:hover{
             color: $yellow;
+            transition: 2s color;
         }
 
         a:hover{
-            text-decoration: underline;       
+
+            //text-decoration: underline;       
+            //transition: 2s text-decoration;
         }
     }
 }
