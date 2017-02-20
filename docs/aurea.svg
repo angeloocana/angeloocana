@@ -1,0 +1,24 @@
+<?xml version="1.0" ?>
+<svg stroke="#000" fill="none" height="578.5" width="914.5" xmlns="http://www.w3.org/2000/svg">
+<g stroke-width="2.5">
+<rect height="16" width="16" y="402.5" x="639.88" />
+<rect height="16" width="16" y="418.5" x="639.88" />
+<rect ry="0" height="31.876" width="32" y="402.62" x="655.88" />
+<rect height="48" width="48" y="354.5" x="639.88" />
+<rect height="80" width="80" y="354.5" x="559.88" />
+<rect height="128.41" width="128" y="434.09" x="559.88" />
+<rect height="207.78" width="208.15" y="354.61" x="687.85" />
+<rect height="336" width="336" y="18.5" x="560" />
+<rect height="544" width="544" y="18.5" x="16" />
+</g>
+<g stroke-width="5">
+<path d="m400-213.81a16 16 0 0 1 -16 -16" transform="translate(255.88 648.31)" />
+<path d="m432-245.81a32 32 0 0 1 -32 32" transform="translate(255.88 648.31)" />
+<path d="m384-293.81a48 48 0 0 1 48 48" transform="translate(255.88 648.31)" />
+<path d="m304-213.81a80 80 0 0 1 80 -80" transform="translate(255.88 648.31)" />
+<path d="m432-85.812a128 128 0 0 1 -128 -128" transform="translate(255.88 648.31)" />
+<path d="m640-293.81a208 208 0 0 1 -208 208" transform="translate(255.88 648.31)" />
+<path d="m16 562.5a544 544 0 0 1 544 -544" />
+<path d="m560 18.5a336 336 0 0 1 336 336" />
+</g>
+</svg>
