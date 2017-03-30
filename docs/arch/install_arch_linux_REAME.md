@@ -2,8 +2,13 @@
 
 
 #Change keyboard to abnt2
+```
 loadkeys br-abnt2
 
-#Show particions
-fdisk -l
+setxkbmap -model abnt2 -layout br -variant abnt2
+```
 
+#Show particions
+```
+fdisk -l
+```
