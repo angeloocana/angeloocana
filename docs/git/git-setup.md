@@ -81,3 +81,8 @@ histogram
 ```
     chmod a+x .git/hooks/commit-msg
 ```
+
+## Edit commit not pushed
+```
+    git commit --amend
+```
