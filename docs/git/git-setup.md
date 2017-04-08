@@ -31,6 +31,20 @@ Make it your default shell: (You must logout to see the changes)
     echo -e "\nsource ~/git-completion.bash" >> ~/.bash_profile
 ```
 
+## Commit with title and full description
+Set vim as default editor:
+```
+    export EDITOR='vim'
+```
+
+Open vim to edit commit message:
+```
+    git commit -a
+```
+first line is the title
+third line is the full description
+
+
 ## Git Alias
 to use 'git st'
 ```
