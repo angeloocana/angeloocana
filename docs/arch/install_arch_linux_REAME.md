@@ -148,6 +148,26 @@ Add the line below to this file **~/.xinitrc** in order to change keyboard layou
     setxkbmap -model abnt2 -layout br -variant abnt2
 ```
 
+# Programs
+## Vim
+```bash
+    sudo pacman -S vim
+```
+
+## Yaourt
+```bash
+    sudo vim /etc/pacman.conf
+```
+Add to the botton:
+```conf
+    [archlinuxfr]
+    SigLevel = Never
+    Server = http://repo.archlinux.fr/$arch
+```
+
+```bash
+    sudo pacman -Sy yaourt
+```
 # Troubleshooting
 
 ## Fix audio
