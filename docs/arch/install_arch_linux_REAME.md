@@ -1,32 +1,24 @@
 # Install Arch Linux
 
-# Links
+## Links
  - https://www.ostechnix.com/install-arch-linux-latest-version/
 
-# Change keyboard to abnt2
-
-Add the line below to this file **~/.xinitrc** in order to change keyboard layout permanently.
-```bash
-    setxkbmap -model abnt2 -layout br -variant abnt2
-```
-
-or
-
+## Change keyboard to abnt2
 ```bash
     loadkeys br-abnt2
 ```
 
-# Show particions
+## Show particions
 ```
 fdisk -l
 ```
 
-# Create Partitions
+## Create Partitions
 ```bash
     cfdisk
 ```
 
-# Format Partitions
+## Format Partitions
 ```bash
     mkfs.ext4 /dev/sda1
 ```
@@ -43,7 +35,7 @@ fdisk -l
     swapon /dev/sda2
 ```
 
-# Install Arch
+## Install Arch
 
 ```bash
     mount /dev/sda1 /mnt
@@ -54,7 +46,7 @@ fdisk -l
 ```
 
 ```bash
-   mount /dev/sda5 /mnt/home
+    mount /dev/sda5 /mnt/home
 ```
 
 ```bash
@@ -66,89 +58,99 @@ fdisk -l
 ```
 
 ```bash
-   cat /mnt/etc/fstab
+    cat /mnt/etc/fstab
 ```
 
 ```bash
-   arch-chroot /mnt /bin/bash
+    arch-chroot /mnt /bin/bash
 ```
 
-# Set password
+## Set password
 ```bash
-   passwd
+    passwd
 ```
-# Enable internet
+## Enable internet
 ```bash
-   hostnamectl set-hostname ocana-note
+    hostnamectl set-hostname ocana-note
 ```
 ```bash
-   systemctl enable dhcpcd@eth0.service
+    systemctl enable dhcpcd@eth0.service
 ```
 
-# Enable 32bit packages
+## Enable 32bit packages
 uncomment multilib line from:
 ```bash
     nano /etc/pacman.conf
 ```
-# Fix audio
-```
-    alsactl restore
+
+## Sincronize  Repos
+```bash
+    pacman -Sy
 ```
 
-# Sincronize  Repos
+## Create User
 ```bash
-   pacman -Sy
-```
-
-# Create User
-```bash
-   useradd -m -g users -G wheel,storage,power -s /bin/bash angeloocana
+    useradd -m -g users -G wheel,storage,power -s /bin/bash angeloocana
 ```
 ```bash
-   passwd angeloocana
+    passwd angeloocana
 ```
 
 # Install sudo
 ```bash
-   pacman -S sudo
+    pacman -S sudo
 ```
 enable sudo for users, uncomment %wheel ALL=(ALL) ALL
 ```bash
-   EDITOR=nano visudo
+    EDITOR=nano visudo
 ```
 
-# Grub installation
+## Grub installation
 ```bash
-   pacman -S grub os-prober
+    pacman -S grub os-prober
 ```
 ```bash
-   grub-install /dev/sda
+    grub-install /dev/sda
 ```
 ```bash
-   grub-mkconfig -o /boot/grub/grub.cfg
-```
-
-# Exit
-```bash
-   exit
-```
-```bash
-   umount  /mnt/home
-```
-```bash
-   umount /mnt
-```
-```bash
-   poweroff
+    grub-mkconfig -o /boot/grub/grub.cfg
 ```
 
-# Install xfce4
+## Exit
 ```bash
-   sudo pacman -Syu
+    exit
 ```
 ```bash
-   sudo pacman -S xorg xorg-server
+     umount /mnt/home
 ```
 ```bash
-   sudo pacman -S xfce4 xfce4-goodies
+    umount /mnt
+```
+```bash
+    poweroff
+```
+
+## Install xfce4
+```bash
+    sudo pacman -Syu
+```
+```bash
+    sudo pacman -S xorg xorg-server
+```
+```bash
+    sudo pacman -S xfce4 xfce4-goodies
+```
+
+## Change keyboard to abnt2
+
+Add the line below to this file **~/.xinitrc** in order to change keyboard layout permanently.
+```bash
+    setxkbmap -model abnt2 -layout br -variant abnt2
+```
+
+# Troubleshooting
+
+## Fix audio
+```
+    alsactl restore
 ```
