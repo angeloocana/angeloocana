@@ -148,6 +148,11 @@ Add the line below to this file **~/.xinitrc** in order to change keyboard layou
     setxkbmap -model abnt2 -layout br -variant abnt2
 ```
 
+## Audio
+```bash
+    sudo pacman -S alsa-utils pulseaudio
+```
+
 # Programs
 ## Vim
 ```bash
