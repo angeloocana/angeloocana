@@ -145,6 +145,27 @@ Go to 'Applications' -> 'Settings' -> 'Settings Manager' -> 'Session and Startup
     setxkbmap -model abnt2 -layout br -variant abnt2
 ```
 
+## Datetime
+To check the current zone defined for the system:
+```bash
+    timedatectl
+```
+
+To list available zones:
+```bash
+    timedatectl list-timezones
+```
+
+To change your time zone:
+```bash
+    timedatectl set-timezone Zone/SubZone   
+```
+
+Synchronize date time, maybe you have to restart to see the changes:
+```bash
+    hwclock --systohc --utc
+```    
+
 ## Audio
 ```bash
     sudo pacman -S alsa-utils pulseaudio
