@@ -138,9 +138,9 @@ enable sudo for users, uncomment %wheel ALL=(ALL) ALL
     sudo pacman -S xfce4 xfce4-goodies
 ```
 
-## Change keyboard to abnt2
+## Change keyboard to abnt2 permanently
 
-Add the line below to this file **~/.xinitrc** in order to change keyboard layout permanently.
+Go to 'Applications' -> 'Settings' -> 'Settings Manager' -> 'Session and Startup' -> 'Application Autostart' then click 'Add' button and just paste the command in the "Command" field, give a name and here you go.
 ```bash
     setxkbmap -model abnt2 -layout br -variant abnt2
 ```
