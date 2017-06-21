@@ -73,9 +73,6 @@ fdisk -l
 ```bash
     hostnamectl set-hostname ocana-note
 ```
-```bash
-    systemctl enable dhcpcd@eth0.service
-```
 
 ## Enable 32bit packages
 uncomment multilib line from:
