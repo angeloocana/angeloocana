@@ -15,13 +15,14 @@ export default function (locale) {
   const url = locale === 'en' ? defaultUrl : `${defaultUrl}/${locale}`;
   class Main extends React.Component {
     render() {
+      const { routes } = this.props;
       return (
         <IntlProvider
           locale={locale}
           messages={messages}
         >
           <App
-            url={url}
+            url={url} routes={routes}
           />
         </IntlProvider>
       );

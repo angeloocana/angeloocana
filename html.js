@@ -1,22 +1,22 @@
-import React from 'react'
-import Helmet from 'react-helmet'
-import ga from './src/htmlScripts/ga'
-import loadCSS from './src/htmlScripts/loadCSS'
+import React from 'react';
+import Helmet from 'react-helmet';
+import ga from './src/htmlScripts/ga';
+import loadCSS from './src/htmlScripts/loadCSS';
 
-import { prefixLink } from 'gatsby-helpers' // eslint-disable-line import/no-unresolved
+import { prefixLink } from 'gatsby-helpers'; // eslint-disable-line import/no-unresolved
 
-const BUILD_TIME = new Date().getTime()
+const BUILD_TIME = new Date().getTime();
 
 module.exports = React.createClass({
-  propTypes () {
+  propTypes() {
     return {
       body: React.PropTypes.string
-    }
+    };
   },
-  render () {
-    const head = Helmet.rewind()
-    const isProduction = process.env.NODE_ENV === 'production'
-    
+  render() {
+    const head = Helmet.rewind();
+    const isProduction = process.env.NODE_ENV === 'production';
+
     return (
       <html {...head.htmlAttributes.toComponent()}>
         <head>
@@ -35,10 +35,10 @@ module.exports = React.createClass({
         <body>
           <div id="react-mount" dangerouslySetInnerHTML={{ __html: this.props.body }} />
           {!isProduction && <script src={prefixLink(`/bundle.js?t=${BUILD_TIME}`)} />}
-          {isProduction && <script dangerouslySetInnerHTML={{__html: ga}} />}
-          <script dangerouslySetInnerHTML={{__html: loadCSS}} />
+          {isProduction && <script dangerouslySetInnerHTML={{ __html: ga }} />}
+          <script dangerouslySetInnerHTML={{ __html: loadCSS }} />
         </body>
       </html>
-    )
+    );
   }
-})
+});
