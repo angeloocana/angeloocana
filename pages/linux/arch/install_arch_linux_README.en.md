@@ -1,3 +1,10 @@
+---
+title: How to install Arch linux
+date: '2017-06-23'
+layout: post
+path: "en/linux/arch/how-to-install-arch-linux/"
+---
+
 # Install Arch Linux
 
 ## Links

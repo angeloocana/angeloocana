@@ -1,5 +1,11 @@
-# Setup Git
+---
+title: Git help commands
+date: '2017-06-23'
+layout: post
+path: "en/git/help-commands/"
+---
 
+# Setup Git
 
 ## Install ZSH
 https://github.com/robbyrussell/oh-my-zsh/wiki/Installing-ZSH

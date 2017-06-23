@@ -1,3 +1,10 @@
+---
+title: Spred Operator Examples
+date: '2017-06-23'
+layout: post
+path: "en/js/spred-operator-examples/"
+---
+
 # Javascript Spread Operator Examples
 
 ```javascript
