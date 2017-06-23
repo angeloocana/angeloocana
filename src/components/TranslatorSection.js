@@ -1,5 +1,5 @@
-import React from 'react'
-import team from '../utils/teamMembers'
+import React from 'react';
+import team from '../utils/teamMembers';
 
 const Section = ({ language }) => (
   <section className="TranslatorSection">
@@ -7,7 +7,7 @@ const Section = ({ language }) => (
       {language === 'en' ? <OtherLanguages /> : <TeamMemberList language={language} />}
     </div>
   </section>
-)
+);
 
 const OtherLanguages = () => (
   <div style={{ textAlign: 'center' }}>
@@ -21,13 +21,13 @@ const OtherLanguages = () => (
       <a href="/zh/"> 简体中文版</a>
     </p>
   </div>
-)
+);
 
 const TeamMemberList = ({ language }) => {
   const translators = team.filter(
     member => member.role === 'translation' && member.language === language
-  )
-  const author = team.find(member => member.role === 'author')
+  );
+  const author = team.find(member => member.role === 'author');
   return (
     <div>
       {language === 'ja' && <div style={{ textAlign: 'center', paddingBottom: '2rem' }}>
@@ -36,8 +36,8 @@ const TeamMemberList = ({ language }) => {
       <TranslatorBlock translators={translators} language={language} />
       <AuthorBlock author={author} />
     </div>
-  )
-}
+  );
+};
 
 const AuthorBlock = ({ author }) => (
   <div style={{ marginTop: '2rem' }}>
@@ -48,12 +48,12 @@ const AuthorBlock = ({ author }) => (
       <TeamMember member={author} key={author.name} />
     </div>
   </div>
-)
+);
 
 const translations = {
   'ja': 'Japanese translation',
   'zh': 'Chinese (simplified) translation'
-}
+};
 
 const TranslatorBlock = ({ translators, language }) => (
   <div>
@@ -66,7 +66,7 @@ const TranslatorBlock = ({ translators, language }) => (
       ))}
     </div>
   </div>
-)
+);
 
 const TeamMember = ({ member }) => (
   <div className="translator-list-item">
@@ -83,6 +83,6 @@ const TeamMember = ({ member }) => (
       </div>
     </div>
   </div>
-)
+);
 
-export default Section
+export default Section;

@@ -7,6 +7,6 @@ const ga = `
 })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
 ga('create', 'UA-44563970-3', 'auto');
 ga('send', 'pageview');
-`
+`;
 
-export default ga
+export default ga;

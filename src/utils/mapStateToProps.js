@@ -1,23 +1,23 @@
 function getProjectsByTag (githubProjects, projects, tag) {
-  const sortFilter = 'yearly'
+  const sortFilter = 'yearly';
   const tagProjects = githubProjects[sortFilter]
     .map(id => projects[id])
     .filter(project => project.tags.indexOf(tag) > -1)
-    .slice(0, 20)
-  return tagProjects
+    .slice(0, 20);
+  return tagProjects;
 }
 
 function mapStateToProps (state, props) {
   const {
     entities: { projects },
     githubProjects
-  } = state
+  } = state;
 
-  const allProjects = githubProjects['yearly']
+  const allProjects = githubProjects['yearly'];
 
   const all = allProjects
     .map(id => projects[id])
-    .slice(0, 50)
+    .slice(0, 50);
 
   const tags = [
     'framework',
@@ -34,7 +34,7 @@ function mapStateToProps (state, props) {
     'ide',
     'ssg',
     'mobile'
-  ]
+  ];
 
   const filteredProjects = tags
     .reduce(
@@ -42,12 +42,12 @@ function mapStateToProps (state, props) {
         [tag]: getProjectsByTag(githubProjects, projects, tag)
       }),
       {}
-    )
-  const trendingProjects = Object.assign({}, { all }, filteredProjects)
+    );
+  const trendingProjects = Object.assign({}, { all }, filteredProjects);
 
   return {
     projects: trendingProjects
-  }
+  };
 }
 
-export default mapStateToProps
+export default mapStateToProps;

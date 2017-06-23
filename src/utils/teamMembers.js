@@ -1,4 +1,4 @@
-import React from 'react'
+import React from 'react';
 
 const team = [
   {
@@ -41,6 +41,6 @@ const team = [
     bio1: <span>Creator of <a href="http://bestof.js.org">bestof.js.org</a></span>,
     role: 'author'
   }
-]
+];
 
-export default team
+export default team;
