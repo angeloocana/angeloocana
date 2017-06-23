@@ -1,4 +1,4 @@
-import createPage from '../src/utils/createPage'
+import createPage from '../src/utils/createPage';
 
-const Main = createPage('en')
-export default Main
+const Main = createPage('en');
+export default Main;

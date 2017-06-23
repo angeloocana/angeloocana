@@ -1,11 +1,9 @@
 import React from 'react';
 import Page from '../Page';
-import mapStateToProps from '../utils/mapStateToProps';
 
 const Container = ({ state }) => {
-  const props = mapStateToProps(state);
   return (
-    <Page projects={props.projects} entities={state.entities.projects} />
+    <Page />
   );
 };
 

@@ -1,9 +1,7 @@
-import en from './en.yaml'
-import zh from './zh.yaml'
-import ja from './ja.yaml'
+import en from './en.yaml';
+import pt from './pt.yaml';
 
 export default {
   en,
-  zh,
-  ja
-}
+  pt
+};

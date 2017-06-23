@@ -1,9 +1,7 @@
-import en from './en.md'
-import zh from './zh.md'
-import ja from './ja.md'
+import en from './en.md';
+import pt from './pt.md';
 
 export default {
-  ja,
-  zh,
+  pt,
   en
-}
+};

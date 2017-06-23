@@ -4,15 +4,14 @@ import { prefixLink } from 'gatsby-helpers';
 
 const items = [
   { code: 'en', text: 'English' },
-  { code: 'zh', text: '中文' },
-  { code: 'ja', text: '日本語' }
+  { code: 'pt', text: 'Português' }
 ];
 
 const Header = ({ language }) => (
   <div id="header">
     <div className="container small-container">
       <div className="header-layout">
-        <a id="logo" href="http://bestof.js.org">Logo</a>
+        <a id="logo" href="http://angeloocana.com">Ângelo Ocanã</a>
         <div className="language-menu">
           {items.map(item => (
             <LanguageLink

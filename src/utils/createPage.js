@@ -1,38 +1,26 @@
 import React from 'react';
 import { IntlProvider, addLocaleData } from 'react-intl';
 import __intlEN from 'react-intl/locale-data/en';
-import __intlZH from 'react-intl/locale-data/zh';
-import __intlJA from 'react-intl/locale-data/ja';
+import __intlPT from 'react-intl/locale-data/pt';
 import App from '../App';
 import getMessages from './getMessages';
-import projects from './projects.json';
-import getInitialState from './getInitialState';
-import mapStateToProps from './mapStateToProps';
 import packageJson from '../../package.json';
 
-// TODO: Fix me
-// const url = packageJson.homepage;
-
 addLocaleData(__intlEN);
-addLocaleData(__intlZH);
-addLocaleData(__intlJA);
+addLocaleData(__intlPT);
 
 export default function (locale) {
   const messages = getMessages(locale);
-  const state = getInitialState(projects);
-  const props = mapStateToProps(state);
   const defaultUrl = packageJson.homepage;
   const url = locale === 'en' ? defaultUrl : `${defaultUrl}/${locale}`;
   class Main extends React.Component {
-    render () {
+    render() {
       return (
         <IntlProvider
           locale={locale}
           messages={messages}
         >
           <App
-            projects={props.projects}
-            entities={state.entities.projects}
             url={url}
           />
         </IntlProvider>
