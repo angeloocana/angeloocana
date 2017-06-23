@@ -5,7 +5,8 @@ import { injectIntl } from 'react-intl';
 import Page from './Page';
 
 class App extends React.Component {
-  render () {
+  render() {
+    console.log('props', this.props);
     const { intl } = this.props;
     const title = intl.formatMessage({ id: 'page.title' });
     const description = intl.formatMessage({ id: 'page.description' });
