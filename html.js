@@ -17,6 +17,8 @@ module.exports = React.createClass({
     const head = Helmet.rewind();
     const isProduction = process.env.NODE_ENV === 'production';
 
+    console.log('html props', this.props);
+
     return (
       <html {...head.htmlAttributes.toComponent()}>
         <head>

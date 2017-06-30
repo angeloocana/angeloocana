@@ -18,24 +18,24 @@ const defaultState = {
   }
 };
 // Get a random color for projecs whose color is not specified
-function getRandomColor () {
+function getRandomColor() {
   return randomColor({
     luminosity: 'dark'
   });
 }
 
 // Round the average number of stars used in "trending this year" graphs
-function roundAverage (number, decimals = 0) {
+function roundAverage(number, decimals = 0) {
   const i = Math.pow(10, decimals);
   return Math.round(number * i) / i;
 }
 
-function nthElement (arr, i) {
+function nthElement(arr, i) {
   if (arr.length === 0) return 0;
   return arr[Math.min(i, arr.length - 1)];
 }
 
-function processProject (item) {
+function processProject(item) {
   // const days = [1, 7, 30, 90]
   // const trends = days.map(
   //   (t, i) => item.trends.length > i ? Math.round(item.trends[i] / t) : null
@@ -85,7 +85,7 @@ function processProject (item) {
   return result;
 }
 
-export default function getInitialState (data, profile) {
+export default function getInitialState(data, profile) {
   const state = defaultState;
 
   // Format id and repository fields
@@ -135,6 +135,7 @@ export default function getInitialState (data, profile) {
     sortNpmProjects(project => 0 || project.score),
     sortAllProjects(project => project.stats.yearly)
   ];
+
   const sortedProjectIds = sortedProjects.map(
     projects => projects.map(item => item.slug)
   );
@@ -168,7 +169,7 @@ export default function getInitialState (data, profile) {
 // return a hash object
 // key: tag code
 // value: number of project for the tag
-function getTagCounters (projects) {
+function getTagCounters(projects) {
   const counters = {};
   projects.forEach(function (project) {
     project.tags.forEach(function (id) {
@@ -184,7 +185,7 @@ function getTagCounters (projects) {
 
 const removeSpaces = (value, replaced = '') => replace(value, '\\s+', replaced);
 
-function replace (value) {
+function replace(value) {
   const search = arguments.length <= 1 || arguments[1] === undefined ? '' : arguments[1];
   const newvalue = arguments.length <= 2 || arguments[2] === undefined ? '' : arguments[2];
   const caseSensitive = arguments.length <= 3 || arguments[3] === undefined ? true : arguments[3];
@@ -192,7 +193,7 @@ function replace (value) {
   return value.replace(new RegExp(search, flags), newvalue);
 }
 
-function slugify (value) {
+function slugify(value) {
   let result = value;
   result = result.trim().toLowerCase();
   result = removeSpaces(result, '-');
@@ -202,7 +203,7 @@ function slugify (value) {
   return result;
 }
 
-function sortBy (projects, get, direction = 'DESC') {
+function sortBy(projects, get, direction = 'DESC') {
   return projects.sort(function (a, b) {
     let diff = get(a) - get(b);
     if (diff === 0) {
