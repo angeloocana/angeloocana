@@ -2,9 +2,9 @@
   "name": "gatsby-starter-blog",
   "description": "Starter Gatsby Blog",
   "version": "1.0.0",
-  "author": "Kyle Mathews <mathews.kyle@gmail.com>",
+  "author": "Angelo Ocana <angeloocana@gmail.com>",
   "bugs": {
-    "url": "https://github.com/gatsbyjs/gatsby-starter-blog/issues"
+    "url": "https://github.com/angeloocana/angeloocana/issues"
   },
   "dependencies": {
     "cheerio": "^0.22.0",
@@ -31,7 +31,7 @@
     "underscore.string": "^3.2.3"
   },
   "devDependencies": {},
-  "homepage": "https://github.com/gatsbyjs/gatsby-starter-blog#readme",
+  "homepage": "https://github.com/angeloocana/angeloocana#readme",
   "keywords": [
     "gatsby"
   ],
@@ -39,7 +39,7 @@
   "main": "n/a",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/gatsbyjs/gatsby-starter-blog.git"
+    "url": "git+https://github.com/angeloocana/angeloocana.git"
   },
   "scripts": {
     "start": "gatsby develop",
