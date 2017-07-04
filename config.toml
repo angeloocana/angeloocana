@@ -1,3 +1,4 @@
-siteTitle="Ângelo Ocanã Software development and training"
-linkPrefix = "/"
-noProductionJavascript = true
+blogTitle = "Pixarea"
+authorName = "Daniel Reszka"
+linkPrefix = "/gatsby-starter-blog"
+GA = "UA-18262331-1"

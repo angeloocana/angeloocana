@@ -1,39 +1,53 @@
 {
-  "name": "angeloocana",
-  "homepage": "http://angeloocana.com",
+  "name": "gatsby-starter-blog",
+  "description": "Starter Gatsby Blog",
   "version": "1.0.0",
-  "private": false,
+  "author": "Kyle Mathews <mathews.kyle@gmail.com>",
+  "bugs": {
+    "url": "https://github.com/gatsbyjs/gatsby-starter-blog/issues"
+  },
   "dependencies": {
-    "flat": "^2.0.1",
-    "gatsby": "^0.12.28",
-    "numeral": "^2.0.4",
-    "randomcolor": "^0.4.4",
-    "react": "^15.4.1",
-    "react-dom": "^15.4.1",
-    "react-helmet": "^4.0.0",
-    "react-intl": "^2.2.3",
-    "react-markdown": "^2.4.4",
-    "victory": "^0.15.0"
+    "cheerio": "^0.22.0",
+    "gatsby": "^0.12.6",
+    "image-size": "^0.5.0",
+    "lodash": "^4.15.0",
+    "mkdirp": "^0.5.1",
+    "moment": "^2.14.1",
+    "node-sass": "^3.11.1",
+    "react-disqus-thread": "^0.4.0",
+    "react-ga": "^2.1.2",
+    "react-helmet": "^3.1.0",
+    "react-icons": "^2.2.3",
+    "react-images": "^0.5.2",
+    "react-responsive-grid": "^0.3.3",
+    "react-typography": "^0.14.0",
+    "recursive-readdir": "^2.1.0",
+    "rimraf": "^2.5.4",
+    "safe-access": "^0.1.0",
+    "styled-components": "^1.4.2",
+    "sync-request": "^3.0.1",
+    "typography": "^0.14.0",
+    "typography-theme-wordpress-2016": "^0.14.0",
+    "underscore.string": "^3.2.3"
+  },
+  "devDependencies": {},
+  "homepage": "https://github.com/gatsbyjs/gatsby-starter-blog#readme",
+  "keywords": [
+    "gatsby"
+  ],
+  "license": "MIT",
+  "main": "n/a",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/gatsbyjs/gatsby-starter-blog.git"
   },
   "scripts": {
-    "start": "gatsby develop",
-    "build": "gatsby build",
-    "serve": "gatsby serve-build",
-    "clean": "bash scripts/clean-html.sh",
-    "deploy": "node scripts/deploy-ghpages/index.js",
-    "lint": "eslint src/**/*.js"
-  },
-  "devDependencies": {
-    "babel-eslint": "^7.2.3",
-    "eslint": "^4.0.0",
-    "eslint-config-google": "^0.8.0",
-    "eslint-config-standard": "^10.2.1",
-    "eslint-config-standard-react": "^5.0.0",
-    "eslint-plugin-babel": "^4.1.1",
-    "eslint-plugin-import": "^2.5.0",
-    "eslint-plugin-node": "^5.0.0",
-    "eslint-plugin-promise": "^3.5.0",
-    "eslint-plugin-react": "^7.1.0",
-    "eslint-plugin-standard": "^3.0.1"
+    "dev": "gatsby develop",
+    "lint": "./node_modules/.bin/eslint --ext .js,.jsx --ignore-pattern public .",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "develop": "gatsby develop",
+    "build": "gatsby build && node ampify.js",
+    "serve-build": "gatsby serve-build",
+    "deploy": "gatsby build --prefix-links && gh-pages -d public"
   }
 }

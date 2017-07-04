@@ -1,47 +1,16 @@
-![image](https://cloud.githubusercontent.com/assets/5546996/21958450/fceccf32-daf1-11e6-8913-a0fce9c4e7bf.png)
+# gatsby-amp-starter-blog
 
-# 2016 JavaScript Rising Stars
+A gatsby starter for creating an AMP compliant blog.
 
-A complete overview of the JavaScript landscape in 2016: trends about front-end and node.js frameworks, tooling, IDE, Static site generators...
+Not sure what Amp is? Learn about [Project AMP](https://www.ampproject.org).
 
-Mentioned in [JavaScript Weekly](http://javascriptweekly.com/issues/318) newsletter
+## Running in development
+`npm run develop`
 
-> Some interesting analysis of the JavaScript ecosystem based on GitHub star count growth in the past year for areas like frameworks, build tools, and testing frameworks.
+## Building for production
 
-[![image](https://cloud.githubusercontent.com/assets/5546996/22129924/4f5876ce-deec-11e6-810a-a0b012fe465c.png)](http://javascriptweekly.com/issues/318)
+To create a production build, run `npm run build`
 
-## Technical overview
+The build will output to the `public` directory and that directory will contain an `amp` directory which has the amp version of your site.
 
-This is an application created using:
-
-* [Gatsby](https://github.com/gatsbyjs/gatsby)
-* [Victory](http://formidable.com/open-source/victory/): a library to create SVG charts with React
-* [React Intl](https://github.com/yahoo/react-intl)
-
-It's hosted on Github Pages using the [js.org](https://js.org/) domain.
-
-File system:
-
-* `src`: the application source code (React components)
-* `build`: default production build created by `npm run build` (not committed to Git)
-* `docs`: custom production build, created by `deploy` script, the final assets served by Github Pages
-
-## Commands
-
-Start the development server:
-
-```
-npm start
-```
-
-Create the build (`/public` folder)
-
-```
-npm run build
-```
-
-Deploy to Github pages (generate the `/docs` folder)
-
-```
-npm run deploy
-```
+You can then spin up a web server using MAMP or your tool of choice locally that points to your public directory. And test that your site is AMP compliant using this [Chrome Extension](https://chrome.google.com/webstore/detail/amp-validator/nmoffdblmcmgeicmolmhobpoocbbmknc?hl=en)

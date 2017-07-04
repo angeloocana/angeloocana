@@ -1,4 +1,5 @@
-import createPage from '../src/utils/createPage';
+import React from 'react'
+import BlogIndex from 'blog'
 
-const Main = createPage('en');
-export default Main;
+export default (props) =>
+  <BlogIndex {...props} />
