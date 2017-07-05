@@ -7,26 +7,6 @@ path: "en/blog/git/help-commands/"
 
 # Setup Git
 
-## Install ZSH
-https://github.com/robbyrussell/oh-my-zsh/wiki/Installing-ZSH
-
-## oh-my-zsh
-Download
-```
-    wget https://raw.github.com/robbyrussell/oh-my-zsh/master/tools/install.sh --quiet --show-progress -O ~/install.sh
-```
-
-Install
-```
-    sh ~/install.sh
-```
-
-Make it your default shell: (You must logout to see the changes)
-```
-    sudo chsh -s $(which zsh)
-```
-
-
 ## Auto Completion
 
 ```
