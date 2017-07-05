@@ -7,7 +7,7 @@ path: "en/blog/js/spred-operator-examples/"
 
 # Javascript Spread Operator Examples
 
-```javascript
+```js
     const a = [1, 2, 3];
     const b = [a, 4, 5, 6];
     const c = [...a, 4, 5, 6];

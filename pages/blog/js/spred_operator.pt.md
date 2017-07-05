@@ -1,13 +1,13 @@
 ---
-title: Spred Operator Examples
+title: Exemplos Spred Operator
 date: '2017-06-23'
 layout: post
 path: "pt/blog/js/spred-operator-examples/"
 ---
 
-# Javascript Spread Operator Examples
+# Exemplos Javascript Spread Operator
 
-```javascript
+```js
     const a = [1, 2, 3];
     const b = [a, 4, 5, 6];
     const c = [...a, 4, 5, 6];
