@@ -2,8 +2,7 @@ import React from 'react';
 import { Link } from 'react-router';
 import { config } from 'config';
 import { rhythm } from 'utils/typography';
-import { prefixLink } from 'gatsby-helpers';
-import IHeart from 'react-icons/lib/ti/heart';
+import Gravatar from 'react-gravatar';
 
 class Bio extends React.Component {
   render() {
@@ -13,9 +12,9 @@ class Bio extends React.Component {
           marginBottom: rhythm(2.5),
         }}
       >
-        <img
-          src={prefixLink('/static/img/profile-pic-60x60.jpg')}
-          alt={`author ${config.authorName}`}
+        <Gravatar
+          email={config.authorEmail}
+          alt={config.authorName}
           width={60}
           height={60}
           style={{
@@ -26,14 +25,13 @@ class Bio extends React.Component {
             borderRadius: '100%',
             border: '4px solid #f6f6f6',
             boxSizing: 'content-box',
-          }}
-        />
+          }} />
         <div
           style={{ marginLeft: 80 }}
         >
-          Crafted with <IHeart style={{ position: 'relative', top: -2, color: 'gray' }} />  by <strong>{config.authorName}</strong> who lives and works in Berlin building useful things.
+          Created by <strong>{config.authorName}</strong>.
           {' '}
-          <Link className='text-link' to='/about/'>You should follow him on social media</Link>.
+          <Link className='text-link' to='/about/'>Follow me on social media</Link>.
         </div>
       </div>
     );
