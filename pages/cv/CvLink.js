@@ -1,6 +1,6 @@
-import React from 'react'
-import styled from 'styled-components'
-import IPdf from 'react-icons/lib/fa/file-pdf-o'
+import React from 'react';
+import styled from 'styled-components';
+import IPdf from 'react-icons/lib/fa/file-pdf-o';
 
 const S = styled.span`
   display: inline-block;
@@ -30,7 +30,7 @@ const S = styled.span`
     top: -5px;
     box-shadow: -0px 10px 10px rgba(0,0,0,0.2);
   }
-`
+`;
 
 const CvLink = () =>
   <div>
@@ -40,7 +40,7 @@ const CvLink = () =>
       </a>
     </S>
 
-  </div>
+  </div>;
 
 
-export default CvLink
+export default CvLink;

@@ -1,24 +1,17 @@
-import React from 'react'
-import { Link } from 'react-router'
-import { prefixLink } from 'gatsby-helpers'
-import styled from 'styled-components'
-import Footer from 'components/Footer'
-import _Envelope from 'react-icons/lib/fa/envelope'
-import _Check from 'react-icons/lib/fa/check'
-import PageTitle from 'components/PageTitle'
-import SocialLinks from './SocialLinks'
-
-
-const I = styled.span`
-  color: #666;
-  font-size: 24px;
-`
+import React from 'react';
+import { Link } from 'react-router';
+import { prefixLink } from 'gatsby-helpers';
+import styled from 'styled-components';
+import _Envelope from 'react-icons/lib/fa/envelope';
+import _Check from 'react-icons/lib/fa/check';
+import PageTitle from 'components/PageTitle';
+import SocialLinks from './SocialLinks';
 
 const C = styled(_Check)`
   color: #595;
   font-size: 15px;
   margin-left: -20px;
-`
+`;
 
 const Envelope = styled(_Envelope)`
   margin-left: -29px;
@@ -27,7 +20,7 @@ const Envelope = styled(_Envelope)`
   font-size: 60px;
   padding: 10px;
   border-radius: 20%;
-`
+`;
 
 const Portrait = styled((p) => <div className={p.className}><img width={150} height={150} {...p} src='portrait.jpg' /></div>)`
   text-align: center;
@@ -46,13 +39,13 @@ const Portrait = styled((p) => <div className={p.className}><img width={150} hei
     background: #6DB4F5;
     transform: rotate(9deg);
   }
-`
+`;
 
 const BorderLeft = styled.div`
     border-left: 3px solid #ddd;
     padding-left: 20px;
     margin-bottom:20px;
-`
+`;
 
 const ContactLink = styled(
   (p) =>
@@ -66,7 +59,7 @@ const ContactLink = styled(
         <span>Ask me anything</span>
       </p>
     </a>
-  )`
+)`
     .icon {
       transition-duration: 0.4s;
     }
@@ -80,10 +73,10 @@ const ContactLink = styled(
     &:hover span {
       border-bottom: 1px solid #007acc;
     }
-  `
+  `;
 
 class Page extends React.Component {
-  render () {
+  render() {
     return (
       <div>
         <PageTitle>About</PageTitle>
@@ -93,9 +86,9 @@ class Page extends React.Component {
         <BorderLeft>
           Daniel Reszka is a:<br />
           <div
-            style={{ paddingLeft: 40, margin: '10px 0'}}
+            style={{ paddingLeft: 40, margin: '10px 0' }}
           >
-            <C /> <Link className='text-link' to={prefixLink('/dev/')}>Full-stack developer</Link> <small style={{color: 'gray'}}> (React / NodeJS / RoR)</small><br />
+            <C /> <Link className='text-link' to={prefixLink('/dev/')}>Full-stack developer</Link> <small style={{ color: 'gray' }}> (React / NodeJS / RoR)</small><br />
             <C /> <Link className='text-link' to={prefixLink('/gallery/')}>Digital artist</Link> <br />
             <C /> Freelancer<br />
             <C /> Minimalist<br />
@@ -116,8 +109,8 @@ class Page extends React.Component {
 
         <SocialLinks />
       </div>
-    )
+    );
   }
 }
 
-export default Page
+export default Page;

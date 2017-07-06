@@ -1,35 +1,37 @@
-import React from 'react'
-import access from 'safe-access'
-import include from 'underscore.string/include'
-import { Link as _Link } from 'react-router'
-import { prefixLink } from 'gatsby-helpers'
-import { rhythm, scale } from 'utils/typography'
-import { config } from 'config'
-import styled from 'styled-components'
-import _Ribbon from '../components/Ribbon'
-import IHome from 'react-icons/lib/ti/home'
-import _ICode from 'react-icons/lib/io/code'
-import IPicture from 'react-icons/lib/io/android-color-palette'
-import _IAbout from './AboutIcon'
-import './styles.scss'
+import React from 'react';
+import access from 'safe-access';
+import include from 'underscore.string/include';
+import { Link as _Link } from 'react-router';
+import { prefixLink } from 'gatsby-helpers';
+import { rhythm } from 'utils/typography';
+import styled from 'styled-components';
+import _Ribbon from '../components/Ribbon';
+import IHome from 'react-icons/lib/ti/home';
+import _ICode from 'react-icons/lib/io/code';
+import IPicture from 'react-icons/lib/io/android-color-palette';
+import _IAbout from './AboutIcon';
+import './styles.scss';
 
 const Container = (props) =>
   <div style={{
-      maxWidth: rhythm(28),
-      padding: `${rhythm(1.5)} ${rhythm(3/4)}`,
-      margin: 'auto',
-    }}
+    maxWidth: rhythm(28),
+    padding: `${rhythm(1.5)} ${rhythm(3 / 4)}`,
+    margin: 'auto',
+  }}
   >
     {props.children}
-  </div>
+  </div>;
 
+Container.propTypes = {
+  children: React.PropTypes.any,
+};
 
 const Ribbon = styled(
   (p) =>
     <div {...p}>
       <_Ribbon href='/cv/' />
     </div>
-  )`
+)`
     position: fixed;
     z-index: 100;
     top: 20px;
@@ -38,16 +40,16 @@ const Ribbon = styled(
     transform: rotate(40deg);
     -webkit-backface-visibility: hidden;
 
-  `
+  `;
 
 const ICode = () =>
-  <_ICode style={{position: 'relative', left: 1.5}} />
+  <_ICode style={{ position: 'relative', left: 1.5 }} />;
 
 const IAbout = () =>
-  <_IAbout style={{position: 'relative', left: 3, top: -4}} />
+  <_IAbout style={{ position: 'relative', left: 3, top: -4 }} />;
 
 const Link = (props) =>
-  <_Link {...props} activeClassName='active' onlyActiveOnIndex={true}/>
+  <_Link {...props} activeClassName='active' onlyActiveOnIndex />;
 
 const I = styled.span`
   font-size: 30px;
@@ -67,14 +69,14 @@ const I = styled.span`
       background: white;
     }
   }
-`
+`;
 
 class Template extends React.Component {
-  render () {
-    const { location, children } = this.props
+  render() {
+    const { children } = this.props;
     const header =
       <div>
-        <div style={{textAlign: 'center'}}>
+        <div style={{ textAlign: 'center' }}>
           <I>
             <Link
               title="Articles"
@@ -111,26 +113,26 @@ class Template extends React.Component {
             </Link>
           </I>
         </div>
-      </div>
+      </div>;
 
     return (
       include(access(this, 'props.location.pathname'), '/cv/')
-      ? <div>{children}</div>
-      : <Container>
+        ? <div>{children}</div>
+        : <Container>
           <Ribbon />
           {header}
           <div className='main'>
             {children}
           </div>
         </Container>
-    )
+    );
   }
 }
 
 Template.propTypes = {
   children: React.PropTypes.any,
-  location: React.PropTypes.object,
-  route: React.PropTypes.object,
-}
+  // location: React.PropTypes.object,
+  // route: React.PropTypes.object,
+};
 
-export default Template
+export default Template;

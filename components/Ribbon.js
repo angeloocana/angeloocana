@@ -1,20 +1,20 @@
-import React from 'react'
-import styled from 'styled-components'
-import {Link} from 'react-router'
+import React from 'react';
+import styled from 'styled-components';
+import { Link } from 'react-router';
 
 // generated with http://livetools.uiparade.com/ribbon-builder.html
 const Ribbon = styled(
   (p) =>
     <div className={p.className}>
       <div className="ribbon">
-        <div className="ribbon-stitches-top"></div>
+        <div className="ribbon-stitches-top" />
         <strong className="ribbon-content">
           <Link to={p.href}>Hire me</Link>
         </strong>
-        <div className="ribbon-stitches-bottom"></div>
+        <div className="ribbon-stitches-bottom" />
       </div>
     </div>
-  )`
+)`
     .ribbon {
       font-size: 8px;
       display: inline-block;
@@ -64,12 +64,12 @@ const Ribbon = styled(
       -webkit-box-shadow: 0px 0px 2px rgba(0, 0, 0, 0.3);
       box-shadow: 0px 0px 2px rgba(255, 255, 255, 0.2);
      }
-  `
+  `;
 
 export default class extends React.Component {
-  render () {
+  render() {
     return (
       <Ribbon {...this.props} />
-    )
+    );
   }
 }

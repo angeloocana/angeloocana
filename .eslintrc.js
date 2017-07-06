@@ -4,7 +4,10 @@ module.exports = {
         "commonjs": true,
         "es6": true
     },
-    "extends": "eslint:recommended",
+    "extends": [
+        "standard",
+        "standard-react"
+    ],
     "parserOptions": {
         "ecmaFeatures": {
             "experimentalObjectRestSpread": true,
@@ -248,7 +251,10 @@ module.exports = {
             "error",
             "never"
         ],
-        "semi": "off",
+        "semi": [
+            "error",
+            "always"
+        ],
         "semi-spacing": "off",
         "semi-style": [
             "error",

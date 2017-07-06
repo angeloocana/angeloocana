@@ -43,7 +43,7 @@ const addAmpVersionLink = function(html, filePath) {
   const urlPath = filePath.replace(inputDir, '');
 
   // Create the URL for the amp version
-  let ampVersionUrl = `/${outputDir}${urlPath}` 
+  let ampVersionUrl = `/${outputDir}${urlPath}`;
 
   // Remove the index.html portion as it's uneeded
   ampVersionUrl = ampVersionUrl.substring(0, ampVersionUrl.lastIndexOf("/")) + '/';
@@ -54,7 +54,7 @@ const addAmpVersionLink = function(html, filePath) {
   }
 
   return $.html();
-}
+};
 
 const ampify = function(html, filePath) {
   var $;
@@ -74,7 +74,7 @@ const ampify = function(html, filePath) {
     round: true,
   });
 
-  round = function(numb) { return Math.round(numb / 5) * 5; }
+  round = function(numb) { return Math.round(numb / 5) * 5; };
   
   /**************************************************************************************
    * GROUNDWORK
@@ -263,7 +263,7 @@ const ampify = function(html, filePath) {
    * DONE
    *************************************************************************************/
   return $.html();
-}
+};
 
 // Get a list of all the files in the public directory. But ignore the amp dir
 recursive(inputDir, ['amp'], function (err, files) {

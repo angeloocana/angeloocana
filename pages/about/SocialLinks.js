@@ -1,11 +1,11 @@
-import React from 'react'
-import styled from 'styled-components'
-import FaGithub from 'react-icons/lib/fa/github'
-import FaFacebook from 'react-icons/lib/fa/facebook'
-import FaTwitter from 'react-icons/lib/fa/twitter'
-import FaLinkedin from 'react-icons/lib/fa/linkedin'
-import FaFlickr from 'react-icons/lib/fa/flickr'
-import MdInfo from 'react-icons/lib/md/info'
+import React from 'react';
+import styled from 'styled-components';
+import FaGithub from 'react-icons/lib/fa/github';
+import FaFacebook from 'react-icons/lib/fa/facebook';
+import FaTwitter from 'react-icons/lib/fa/twitter';
+import FaLinkedin from 'react-icons/lib/fa/linkedin';
+import FaFlickr from 'react-icons/lib/fa/flickr';
+import MdInfo from 'react-icons/lib/md/info';
 
 const S = styled.span`
   @media screen and (min-width: 480px) {
@@ -39,7 +39,7 @@ const S = styled.span`
     top: -5px;
     box-shadow: -0px 10px 10px rgba(0,0,0,0.2);
   }
-`
+`;
 
 const SocialLinks = () =>
   <div>
@@ -80,7 +80,7 @@ const SocialLinks = () =>
         </a>
       </S>
     }
-  </div>
+  </div>;
 
 
-export default SocialLinks
+export default SocialLinks;

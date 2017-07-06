@@ -1,15 +1,15 @@
-import React from 'react'
-import moment from 'moment'
-import Helmet from "react-helmet"
-import styled from 'styled-components'
-import ReadNext from '../components/ReadNext'
-import { rhythm } from 'utils/typography'
-import { config } from 'config'
-import Footer from 'components/Footer'
-import PageTitle from 'components/PageTitle'
-import ReactDisqusThread from 'react-disqus-thread'
+import React from 'react';
+import moment from 'moment';
+import Helmet from "react-helmet";
+import styled from 'styled-components';
+import ReadNext from '../components/ReadNext';
+import { rhythm } from 'utils/typography';
+import { config } from 'config';
+import Footer from 'components/Footer';
+import PageTitle from 'components/PageTitle';
+import ReactDisqusThread from 'react-disqus-thread';
 
-import '../css/zenburn.css'
+import '../css/zenburn.css';
 
 const Content = styled(
   (props) =>
@@ -39,7 +39,7 @@ const Content = styled(
         margin: 0;
       }
     }
-  `
+  `;
 
 const PostTitle = styled(
   (props) =>
@@ -55,11 +55,11 @@ const PostTitle = styled(
     font-weight: 100;
     margin: 40px 0;
     text-align: center;
-  `
+  `;
 class MarkdownWrapper extends React.Component {
   render () {
-    const { route } = this.props
-    const post = route.page.data
+    const { route } = this.props;
+    const post = route.page.data;
 
     return (
       <div className="markdown">
@@ -91,12 +91,12 @@ class MarkdownWrapper extends React.Component {
 
         <Footer />
       </div>
-    )
+    );
   }
 }
 
 MarkdownWrapper.propTypes = {
   route: React.PropTypes.object,
-}
+};
 
-export default MarkdownWrapper
+export default MarkdownWrapper;

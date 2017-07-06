@@ -1,21 +1,27 @@
-import React from 'react'
-import moment from 'moment'
-import { Link } from 'react-router'
-import sortBy from 'lodash/sortBy'
-import { prefixLink } from 'gatsby-helpers'
-import { rhythm } from 'utils/typography'
-import Helmet from "react-helmet"
-import access from 'safe-access'
-import styled from 'styled-components'
-import { config } from 'config'
-import include from 'underscore.string/include'
-import Footer from 'components/Footer'
-import PageTitle from 'components/PageTitle'
+import React from 'react';
+import moment from 'moment';
+import { Link } from 'react-router';
+import sortBy from 'lodash/sortBy';
+import { prefixLink } from 'gatsby-helpers';
+import Helmet from "react-helmet";
+import access from 'safe-access';
+import styled from 'styled-components';
+import { config } from 'config';
+import include from 'underscore.string/include';
+import Footer from 'components/Footer';
+import PageTitle from 'components/PageTitle';
+import PropTypes from 'proptypes';
 
 const LinkIf = (props) =>
   props.if
   ? <Link to={props.to}>{props.children}</Link>
-  : <span>{props.children}</span>
+  : <span>{props.children}</span>;
+
+LinkIf.propTypes = {
+  if: PropTypes.bool,
+  to: PropTypes.string,
+  children: PropTypes.any
+};
 
 const _Entry = (props) => {
   return <div className={props.className}>
@@ -45,8 +51,16 @@ const _Entry = (props) => {
       }
       {props.page.data.noLink && <div dangerouslySetInnerHTML={{ __html: props.page.data.body }} />}
     </LinkIf>
-  </div>
-}
+  </div>;
+};
+
+_Entry.propTypes = {
+  className: PropTypes.string,
+  title: PropTypes.string,
+  sub: PropTypes.string,
+  preview: PropTypes.string,
+  page: PropTypes.any
+};
 
 const Entry = styled(_Entry)`
   margin: 0 0 3px;
@@ -79,21 +93,21 @@ const Entry = styled(_Entry)`
   .sub {
     color: gray
   }
-`
+`;
 
 class BlogIndex extends React.Component {
   render () {
     // Sort pages.
     const sortedPages = sortBy(this.props.route.pages, (page) =>
       access(page, 'data.date')
-    ).reverse()
-    const posts = sortedPages.filter((page) => access(page, 'file.ext') === 'md' && !include(page.path, '/404') && !include(page.path, '_drafts'))
+    ).reverse();
+    const posts = sortedPages.filter((page) => access(page, 'file.ext') === 'md' && !include(page.path, '/404') && !include(page.path, '_drafts'));
     const entries = posts.map((page, idx) => {
-      const title = access(page, 'data.title') || page.path
-      const sub = access(page, 'data.sub') || ''
-      const preview = access(page, 'data.preview')
-      const isFirst = idx === 0 ? true : false
-      const isLast = idx === posts.length - 1 ? true : false
+      const title = access(page, 'data.title') || page.path;
+      const sub = access(page, 'data.sub') || '';
+      const preview = access(page, 'data.preview');
+      const isFirst = idx === 0 ? true : false;
+      const isLast = idx === posts.length - 1 ? true : false;
       return <Entry
         key={title}
         title={title}
@@ -102,8 +116,8 @@ class BlogIndex extends React.Component {
         isFirst={isFirst}
         isLast={isLast}
         preview={preview}
-      />
-    })
+      />;
+    });
     return (
       <div>
         <Helmet
@@ -123,12 +137,12 @@ class BlogIndex extends React.Component {
 
         <Footer />
       </div>
-    )
+    );
   }
 }
 
 BlogIndex.propTypes = {
   route: React.PropTypes.object,
-}
+};
 
-export default BlogIndex
+export default BlogIndex;

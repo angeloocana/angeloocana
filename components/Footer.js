@@ -1,6 +1,6 @@
-import React from 'react'
-import { rhythm } from 'utils/typography'
-import Bio from './Bio'
+import React from 'react';
+import { rhythm } from 'utils/typography';
+import Bio from './Bio';
 
 export default (props) =>
   <div
@@ -11,6 +11,4 @@ export default (props) =>
     }}
   >
     <Bio />
-  </div>
-
-
+  </div>;
