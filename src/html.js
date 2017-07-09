@@ -11,7 +11,7 @@ module.exports = React.createClass({
   propTypes: {
     body: React.PropTypes.string,
   },
-  render () {
+  render() {
     const { body } = this.props;
     const head = Helmet.rewind();
 
@@ -34,10 +34,11 @@ module.exports = React.createClass({
           <TypographyStyle typography={typography} />
           <GoogleFont typography={typography} />
           {css}
+          {this.props.headComponents}
         </head>
-        <body className="landing-page">
-          <div id="react-mount" dangerouslySetInnerHTML={{ __html: body }} />
-          <script src={prefixLink(`/bundle.js?t=${BUILD_TIME}`)} />
+        <body>
+          <div id="___gatsby" dangerouslySetInnerHTML={{ __html: body }} />
+          {this.props.postBodyComponents}
         </body>
       </html>
     );
