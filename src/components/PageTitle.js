@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link } from 'react-router';
+import Link from 'gatsby-link';
 import styled from 'styled-components';
 import _O from './Ornament';
 import IBack from 'react-icons/lib/fa/hand-o-left';

@@ -2,7 +2,6 @@ import React from 'react';
 import access from 'safe-access';
 import include from 'underscore.string/include';
 import { Link as _Link } from 'react-router';
-import { prefixLink } from 'gatsby-helpers';
 import { rhythm } from 'utils/typography';
 import styled from 'styled-components';
 import _Ribbon from '../components/Ribbon';
@@ -80,7 +79,7 @@ class Template extends React.Component {
           <I>
             <Link
               title="Articles"
-              to={prefixLink('/')}
+              to={'/'}
             >
               <IHome />
             </Link>
@@ -89,7 +88,7 @@ class Template extends React.Component {
           <I>
             <Link
               title="Programming"
-              to={prefixLink('/dev/')}
+              to={'/dev/'}
             >
               <ICode />
             </Link>
@@ -98,7 +97,7 @@ class Template extends React.Component {
           <I>
             <Link
               title="Creations"
-              to={prefixLink('/gallery/')}
+              to={'/gallery/'}
             >
               <IPicture />
             </Link>
@@ -107,7 +106,7 @@ class Template extends React.Component {
           <I>
             <Link
               title="About"
-              to={prefixLink('/about/')}
+              to={'/about/'}
             >
               <IAbout />
             </Link>

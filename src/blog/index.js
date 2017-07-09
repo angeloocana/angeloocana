@@ -1,8 +1,7 @@
 import React from 'react';
 import moment from 'moment';
-import { Link } from 'react-router';
+import Link from 'gatsby-link';
 import sortBy from 'lodash/sortBy';
-import { prefixLink } from 'gatsby-helpers';
 import Helmet from "react-helmet";
 import access from 'safe-access';
 import styled from 'styled-components';
@@ -27,7 +26,7 @@ const _Entry = (props) => {
   return <div className={props.className}>
     <LinkIf
       if={!props.page.data.noLink}
-      to={prefixLink(props.page.path)}
+      to={props.page.path}
     >
       <div>
         <small className='mute'>
@@ -44,7 +43,7 @@ const _Entry = (props) => {
           <img
             width={props.preview.match(/-(\d+)x(\d+)\./)[1]}
             style={{borderRadius: 7, border: '2px solid #ddd', margin: '10px 0 0'}}
-            src={prefixLink(props.page.path) + props.preview}
+            src={props.page.path + props.preview}
             alt='Article preview'
           />
         </div>

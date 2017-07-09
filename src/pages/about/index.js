@@ -1,6 +1,6 @@
 import React from 'react';
-import { Link } from 'react-router';
-import { prefixLink } from 'gatsby-helpers';
+import Link from 'gatsby-link';
+
 import styled from 'styled-components';
 import _Envelope from 'react-icons/lib/fa/envelope';
 import _Check from 'react-icons/lib/fa/check';
@@ -88,8 +88,8 @@ class Page extends React.Component {
           <div
             style={{ paddingLeft: 40, margin: '10px 0' }}
           >
-            <C /> <Link className='text-link' to={prefixLink('/dev/')}>Full-stack developer</Link> <small style={{ color: 'gray' }}> (React / NodeJS / RoR)</small><br />
-            <C /> <Link className='text-link' to={prefixLink('/gallery/')}>Digital artist</Link> <br />
+            <C /> <Link className='text-link' to={'/dev/'}>Full-stack developer</Link> <small style={{ color: 'gray' }}> (React / NodeJS / RoR)</small><br />
+            <C /> <Link className='text-link' to={'/gallery/'}>Digital artist</Link> <br />
             <C /> Freelancer<br />
             <C /> Minimalist<br />
             <C /> NLP master practitioner<br />

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link } from 'react-router';
+import Link from 'gatsby-link';
 import moment from 'moment';
 import styled from 'styled-components';
 import CvLink from './CvLink';

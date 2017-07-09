@@ -9,6 +9,7 @@
   "dependencies": {
     "cheerio": "^0.22.0",
     "gatsby": "^0.12.6",
+    "gatsby-link": "^1.0.8",
     "image-size": "^0.5.0",
     "lodash": "^4.15.0",
     "mkdirp": "^0.5.1",

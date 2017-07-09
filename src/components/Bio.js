@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link } from 'react-router';
+import Link from 'gatsby-link';
 import { config } from 'config';
 import { rhythm } from 'utils/typography';
 import Gravatar from 'react-gravatar';
