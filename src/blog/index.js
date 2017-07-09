@@ -6,8 +6,8 @@ import Helmet from "react-helmet";
 import access from 'safe-access';
 import styled from 'styled-components';
 import include from 'underscore.string/include';
-import Footer from 'components/Footer';
-import PageTitle from 'components/PageTitle';
+import Footer from '../components/Footer';
+import PageTitle from '../components/PageTitle';
 import PropTypes from 'proptypes';
 import graphql from 'graphql';
 

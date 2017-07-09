@@ -1,10 +1,9 @@
 import React from 'react';
 import Link from 'gatsby-link';
-
 import styled from 'styled-components';
 import _Envelope from 'react-icons/lib/fa/envelope';
 import _Check from 'react-icons/lib/fa/check';
-import PageTitle from 'components/PageTitle';
+import PageTitle from '../../components/PageTitle';
 import SocialLinks from './SocialLinks';
 
 const C = styled(_Check)`

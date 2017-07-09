@@ -1,10 +1,7 @@
 import React from 'react';
 import Helmet from "react-helmet";
-import { prefixLink } from 'gatsby-helpers';
 import { GoogleFont, TypographyStyle } from 'react-typography';
 import typography from './utils/typography';
-
-const BUILD_TIME = new Date().getTime();
 
 module.exports = React.createClass({
   displayName: 'HTML',

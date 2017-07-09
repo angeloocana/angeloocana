@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'proptypes';
 import Link from 'gatsby-link';
-import { rhythm } from 'utils/typography';
+import { rhythm } from '../utils/typography';
 import Gravatar from 'react-gravatar';
 import graphql from 'graphql';
 
