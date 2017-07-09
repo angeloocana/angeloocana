@@ -5,16 +5,16 @@ import sortBy from 'lodash/sortBy';
 import Helmet from "react-helmet";
 import access from 'safe-access';
 import styled from 'styled-components';
-import { config } from 'config';
 import include from 'underscore.string/include';
 import Footer from 'components/Footer';
 import PageTitle from 'components/PageTitle';
 import PropTypes from 'proptypes';
+import graphql from 'graphql';
 
 const LinkIf = (props) =>
   props.if
-  ? <Link to={props.to}>{props.children}</Link>
-  : <span>{props.children}</span>;
+    ? <Link to={props.to}>{props.children}</Link>
+    : <span>{props.children}</span>;
 
 LinkIf.propTypes = {
   if: PropTypes.bool,
@@ -42,7 +42,7 @@ const _Entry = (props) => {
         >
           <img
             width={props.preview.match(/-(\d+)x(\d+)\./)[1]}
-            style={{borderRadius: 7, border: '2px solid #ddd', margin: '10px 0 0'}}
+            style={{ borderRadius: 7, border: '2px solid #ddd', margin: '10px 0 0' }}
             src={props.page.path + props.preview}
             alt='Article preview'
           />
@@ -64,8 +64,8 @@ _Entry.propTypes = {
 const Entry = styled(_Entry)`
   margin: 0 0 3px;
   padding: 30px;
-  ${props => props.isFirst && 'border-radius: 10px 10px 0 0;' }
-  ${props => props.isLast  && 'border-radius: 0 0  10px 10px;' }
+  ${props => props.isFirst && 'border-radius: 10px 10px 0 0;'}
+  ${props => props.isLast && 'border-radius: 0 0  10px 10px;'}
   text-align: center;
   background: #f8f8f8;
   transition-duration: 0.4s;
@@ -94,54 +94,64 @@ const Entry = styled(_Entry)`
   }
 `;
 
-class BlogIndex extends React.Component {
-  render () {
-    // Sort pages.
-    const sortedPages = sortBy(this.props.route.pages, (page) =>
-      access(page, 'data.date')
-    ).reverse();
-    const posts = sortedPages.filter((page) => access(page, 'file.ext') === 'md' && !include(page.path, '/404') && !include(page.path, '_drafts'));
-    const entries = posts.map((page, idx) => {
-      const title = access(page, 'data.title') || page.path;
-      const sub = access(page, 'data.sub') || '';
-      const preview = access(page, 'data.preview');
-      const isFirst = idx === 0 ? true : false;
-      const isLast = idx === posts.length - 1 ? true : false;
-      return <Entry
-        key={title}
-        title={title}
-        sub={sub}
-        page={page}
-        isFirst={isFirst}
-        isLast={isLast}
-        preview={preview}
-      />;
-    });
-    return (
-      <div>
-        <Helmet
-          title={config.blogTitle}
-          meta={[
-            {"name": "description", "content": "A blog about programming for the web, and various interesting things."},
-            {"name": "keywords", "content": "blog, articles, programming, drawing, frontend, backend"},
-          ]}
-        />
+const BlogIndex = (props) => {
+  // Sort pages.
+  const sortedPages = sortBy(props.route.pages, (page) =>
+    access(page, 'data.date')
+  ).reverse();
+  const posts = sortedPages.filter((page) => access(page, 'file.ext') === 'md' && !include(page.path, '/404') && !include(page.path, '_drafts'));
+  const entries = posts.map((page, idx) => {
+    const title = access(page, 'data.title') || page.path;
+    const sub = access(page, 'data.sub') || '';
+    const preview = access(page, 'data.preview');
+    const isFirst = idx === 0 ? true : false;
+    const isLast = idx === posts.length - 1 ? true : false;
+    return <Entry
+      key={title}
+      title={title}
+      sub={sub}
+      page={page}
+      isFirst={isFirst}
+      isLast={isLast}
+      preview={preview}
+    />;
+  });
+  return (
+    <div>
+      <Helmet
+        title={props.data.site.siteMetadata.title}
+        meta={props.data.site.siteMetadata.meta}
+      />
 
-        <PageTitle>Articles</PageTitle>
+      <PageTitle>Articles</PageTitle>
 
-        <div style={{marginBottom: 40}}>
-          {entries}
-        </div>
-
-
-        <Footer />
+      <div style={{ marginBottom: 40 }}>
+        {entries}
       </div>
-    );
-  }
-}
+
+
+      <Footer />
+    </div>
+  );
+};
 
 BlogIndex.propTypes = {
-  route: React.PropTypes.object,
+  route: PropTypes.objects,
+  data: PropTypes.any
 };
 
 export default BlogIndex;
+
+export const pageQuery = graphql`
+  query SiteMetadataLookup($slug: String!) {
+    site {
+      siteMetadata {
+        title,
+        meta {
+          name,
+          content
+        }
+      }
+    }
+}
+`;
