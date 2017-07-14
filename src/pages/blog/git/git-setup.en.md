@@ -86,3 +86,31 @@ histogram
 ```bash
     git commit --amend
 ```
+
+## Sync Forked repository
+
+Add the remote, call it "upstream":
+```bash
+    git remote add upstream https://github.com/whoever/whatever.git
+```
+
+Fetch all the branches of that remote into remote-tracking branches,
+such as upstream/master:
+
+```bash
+    git fetch upstream
+```
+
+Make sure that you're on your master branch:
+
+```bash
+    git checkout master
+```
+
+Rewrite your master branch so that any commits of yours that
+aren't already in upstream/master are replayed on top of that
+other branch:
+
+```bash
+    git rebase upstream/master
+```
