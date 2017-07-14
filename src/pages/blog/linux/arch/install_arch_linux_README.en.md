@@ -196,6 +196,8 @@ Synchronize date time, maybe you have to restart to see the changes:
 ## Yaourt
 Yaourt contains the community packages.
 
+For pacman always use sudo, for yaourt never!!!
+
 Open the file below for editing:
 ```bash
     sudo vim /etc/pacman.conf
@@ -211,6 +213,27 @@ Install yaourt
 ```bash
     sudo pacman -Sy yaourt
 ```
+
+# Wifi
+
+Install NetworkManager
+https://wiki.archlinux.org/index.php/NetworkManager#Installation
+
+```bash
+    sudo pacman -S networkmanager network-manager-applet xfce4-notifyd gnome-keyring
+```
+Maybe you need to restart to work properly.
+
+Enable Network Manager:
+```bash
+    systemctl enable NetworkManager.service
+```
+
+Start Network Manager:
+```bash
+    systemctl start NetworkManager.service
+```
+
 # Troubleshooting
 
 ## Fix audio
