@@ -76,10 +76,6 @@ fdisk -l
 ```bash
     passwd
 ```
-## Enable internet
-```bash
-    hostnamectl set-hostname ocana-note
-```
 
 ## Enable 32bit packages
 uncomment multilib line from:
@@ -132,6 +128,14 @@ enable sudo for users, uncomment %wheel ALL=(ALL) ALL
 ```
 ```bash
     poweroff
+```
+
+## Enable internet
+```bash
+    hostnamectl set-hostname ocana-note
+```
+```bash
+    sudo dhcpcd
 ```
 
 ## Install xfce4
