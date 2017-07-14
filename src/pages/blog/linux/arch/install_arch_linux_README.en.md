@@ -149,6 +149,11 @@ enable sudo for users, uncomment %wheel ALL=(ALL) ALL
     sudo pacman -S xfce4 xfce4-goodies
 ```
 
+Run xfce!
+```bash
+    startxfce4
+```
+
 ## Change keyboard to abnt2 permanently
 
 Go to 'Applications' -> 'Settings' -> 'Settings Manager' -> 'Session and Startup' -> 'Application Autostart' then click 'Add' button and just paste the command in the "Command" field, give a name and here you go.
