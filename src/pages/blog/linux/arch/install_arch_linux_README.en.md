@@ -194,16 +194,20 @@ Synchronize date time, maybe you have to restart to see the changes:
 ```
 
 ## Yaourt
+Yaourt contains the community packages.
+
+Open the file below for editing:
 ```bash
     sudo vim /etc/pacman.conf
 ```
-Add to the botton:
+Add to the bottom:
 ```conf
     [archlinuxfr]
     SigLevel = Never
     Server = http://repo.archlinux.fr/$arch
 ```
 
+Install yaourt
 ```bash
     sudo pacman -Sy yaourt
 ```
