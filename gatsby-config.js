@@ -7,5 +7,15 @@ module.exports = {
     },
     GA: "UA-61019439-1",
   },
-  plugins: [`gatsby-plugin-react-helmet`],
+  plugins: [
+        {
+            resolve: `gatsby-source-filesystem`,
+            options: {
+                name: `pages`,
+                path: `${__dirname}/src/pages/`,
+            },
+        },
+        'gatsby-transformer-remark',
+        `gatsby-plugin-sharp`,
+    ]
 }

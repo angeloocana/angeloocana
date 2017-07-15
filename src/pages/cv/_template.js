@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'proptypes';
 import { rhythm } from 'utils/typography';
 
 const Container = (props) =>
@@ -12,7 +13,7 @@ const Container = (props) =>
   </div>;
 
 Container.propTypes = {
-  children: React.PropTypes.any,
+  children: PropTypes.any,
 };
 
 class Template extends React.Component {
@@ -31,7 +32,7 @@ class Template extends React.Component {
 }
 
 Template.propTypes = {
-  children: React.PropTypes.any,
+  children: PropTypes.any,
 };
 
 export default Template;

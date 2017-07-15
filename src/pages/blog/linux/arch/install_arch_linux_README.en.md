@@ -1,6 +1,6 @@
 ---
 title: How to install Arch linux
-date: '2017-06-23'
+date: '2017-07-15'
 layout: post
 path: "en/blog/linux/arch/how-to-install-arch-linux/"
 ---
@@ -237,6 +237,22 @@ Start Network Manager:
 # Troubleshooting
 
 ## Fix audio
-```
+```bash
     alsactl restore
+```
+
+## ENOSPC error
+
+https://stackoverflow.com/questions/22475849/node-js-error-enospc/32600959#32600959
+
+For Arch Linux add this line to /etc/sysctl.d/99-sysctl.conf:
+
+```bash
+    sudo fs.inotify.max_user_watches=524288
+```
+
+Then execute:
+
+```bash
+    sudo sysctl --system
 ```

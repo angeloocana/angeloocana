@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'proptypes';
 import Link from 'gatsby-link';
 import { prune, include as includes } from 'underscore.string';
 import find from 'lodash/find';
@@ -61,8 +62,8 @@ class ReadNext extends React.Component {
 }
 
 ReadNext.propTypes = {
-  post: React.PropTypes.object.isRequired,
-  pages: React.PropTypes.array,
+  post: PropTypes.object.isRequired,
+  pages: PropTypes.array,
 };
 
 export default ReadNext;
