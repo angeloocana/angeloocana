@@ -1,6 +1,5 @@
 import React from "react";
 import Link from "gatsby-link";
-import Helmet from "react-helmet";
 import graphql from 'graphql';
 
 export default class Index extends React.Component {
@@ -13,7 +12,7 @@ export default class Index extends React.Component {
         <p>Now go build something great.</p>
         <Link to="/page-2/">Go to page 2</Link>
       </div>
-    )
+    );
   }
 }
 
@@ -33,4 +32,4 @@ export const pageQuery = graphql`
     }
   }
 }
-`
+`;

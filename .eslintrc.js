@@ -15,6 +15,7 @@ module.exports = {
         },
         "sourceType": "module"
     },
+    "parser": "babel-eslint",
     "plugins": [
         "react"
     ],
