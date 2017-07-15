@@ -1,20 +1,23 @@
-import React from 'react';
-import Helmet from "react-helmet";
-import { GoogleFont, TypographyStyle } from 'react-typography';
-import typography from './utils/typography';
+import React from "react"
+import PropTypes from "prop-types"
 
-module.exports = React.createClass({
-  displayName: 'HTML',
-  propTypes: {
-    body: React.PropTypes.string,
-  },
+const BUILD_TIME = new Date().getTime()
+
+export default class HTML extends React.Component {
+  static propTypes = {
+    body: PropTypes.string,
+  }
+
   render() {
-    const { body } = this.props;
-    const head = Helmet.rewind();
-
-    let css;
-    if (process.env.NODE_ENV === 'production') {
-      css = <style dangerouslySetInnerHTML={{ __html: require('./public/styles.css') }} />;
+    let css
+    if (process.env.NODE_ENV === "production") {
+      css = (
+        <style
+          dangerouslySetInnerHTML={{
+            __html: require("!raw!../public/styles.css"),
+          }}
+        />
+      )
     }
 
     return (
@@ -26,18 +29,17 @@ module.exports = React.createClass({
             name="viewport"
             content="width=device-width, initial-scale=1.0"
           />
-          {head.title.toComponent()}
-          {head.meta.toComponent()}
-          <TypographyStyle typography={typography} />
-          <GoogleFont typography={typography} />
-          {css}
           {this.props.headComponents}
+          {css}
         </head>
         <body>
-          <div id="___gatsby" dangerouslySetInnerHTML={{ __html: body }} />
+          <div
+            id="___gatsby"
+            dangerouslySetInnerHTML={{ __html: this.props.body }}
+          />
           {this.props.postBodyComponents}
         </body>
       </html>
-    );
-  },
-});
+    )
+  }
+}

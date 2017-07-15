@@ -1,75 +1,27 @@
 {
-  "name": "gatsby-starter-blog",
-  "description": "Starter Gatsby Blog",
+  "name": "gatsby-starter-default",
+  "description": "Gatsby default starter",
   "version": "1.0.0",
-  "author": "Angelo Ocana <angeloocana@gmail.com>",
-  "bugs": {
-    "url": "https://github.com/angeloocana/angeloocana/issues"
-  },
+  "author": "Kyle Mathews <mathews.kyle@gmail.com>",
   "dependencies": {
-    "cheerio": "^0.22.0",
-    "gatsby": "^1.0.7",
-    "gatsby-link": "^1.0.8",
-    "gatsby-plugin-sharp": "^1.0.0-beta.7",
-    "gatsby-remark-copy-linked-files": "^1.0.0-beta.6",
-    "gatsby-remark-images": "^1.0.0-beta.6",
-    "gatsby-remark-prismjs": "^1.0.0-beta.6",
-    "gatsby-remark-responsive-iframe": "^1.0.0-beta.6",
-    "gatsby-remark-smartypants": "^1.0.0-beta.6",
-    "gatsby-source-filesystem": "^1.0.0-beta.6",
-    "gatsby-transformer-remark": "^1.0.0-beta.6",
-    "graphql": "^0.10.3",
-    "image-size": "^0.5.0",
-    "lodash": "^4.15.0",
-    "mkdirp": "^0.5.1",
-    "moment": "^2.14.1",
-    "node-sass": "^3.11.1",
-    "proptypes": "^1.1.0",
-    "react-disqus-thread": "^0.4.0",
-    "react-ga": "^2.1.2",
-    "react-gravatar": "^2.6.3",
-    "react-helmet": "^3.1.0",
-    "react-icons": "^2.2.3",
-    "react-images": "^0.5.2",
-    "react-responsive-grid": "^0.3.3",
-    "react-typography": "^0.14.0",
-    "recursive-readdir": "^2.1.0",
-    "rimraf": "^2.5.4",
-    "safe-access": "^0.1.0",
-    "styled-components": "^1.4.2",
-    "sync-request": "^3.0.1",
-    "typography": "^0.14.0",
-    "typography-theme-wordpress-2016": "^0.14.0",
-    "underscore.string": "^3.2.3"
+    "gatsby": "^1.0.1",
+    "gatsby-link": "^1.0.1",
+    "gatsby-plugin-react-helmet": "^1.0.1"
   },
   "devDependencies": {
-    "eslint": "^4.1.1",
-    "eslint-config-standard": "^10.2.1",
-    "eslint-config-standard-react": "^5.0.0",
-    "eslint-plugin-import": "^2.7.0",
-    "eslint-plugin-node": "^5.1.0",
-    "eslint-plugin-promise": "^3.5.0",
-    "eslint-plugin-react": "^7.1.0",
-    "eslint-plugin-standard": "^3.0.1"
+    "gh-pages": "^0.12.0"
   },
-  "homepage": "https://github.com/angeloocana/angeloocana#readme",
   "keywords": [
     "gatsby"
   ],
   "license": "MIT",
   "main": "n/a",
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/angeloocana/angeloocana.git"
-  },
   "scripts": {
-    "prestart": "npm run lint",
-    "start": "gatsby develop",
-    "lint": "./node_modules/.bin/eslint --ext .js,.jsx --ignore-pattern public .",
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "npm run develop",
+    "build": "gatsby build",
+    "deploy": "gatsby build --prefix-paths && gh-pages -d public",
     "develop": "gatsby develop",
-    "build": "gatsby build && node ampify.js",
-    "serve-build": "gatsby serve-build",
-    "deploy": "gatsby build --prefix-links && gh-pages -d public"
+    "format": "prettier --trailing-comma es5 --no-semi --single-quote --write \"pages/*.js\" \"utils/*.js\" \"wrappers/*.js\" \"html.js\"",
+    "test": "echo \"Error: no test specified\" && exit 1"
   }
 }
