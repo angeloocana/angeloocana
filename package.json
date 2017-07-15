@@ -6,7 +6,10 @@
   "dependencies": {
     "gatsby": "^1.0.1",
     "gatsby-link": "^1.0.1",
-    "gatsby-plugin-react-helmet": "^1.0.1"
+    "gatsby-plugin-react-helmet": "^1.0.1",
+    "proptypes": "^1.1.0",
+    "react-icons": "^2.2.5",
+    "styled-components": "^2.1.1"
   },
   "devDependencies": {
     "gh-pages": "^0.12.0"

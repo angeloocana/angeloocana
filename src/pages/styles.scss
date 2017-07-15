@@ -1,0 +1,25 @@
+body {
+  background: #eee
+}
+
+a {
+  box-shadow: none;
+}
+
+.textual-content a,
+a.text-link {
+  border-bottom: 1px dotted #ABDDFE;
+  transition-duration: 0.2s;
+  &:hover {
+    border-bottom: 1px solid ;
+  }
+}
+
+.text-center {
+  text-align: center;
+}
+
+.mute {
+  color: gray;
+  line-height: 1;
+}
