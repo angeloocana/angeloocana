@@ -3,7 +3,6 @@ import graphql from 'graphql';
 import PropTypes from 'proptypes';
 import Helmet from 'react-helmet';
 import Link from 'gatsby-link';
-
 import typography from '../utils/typography';
 const rhythm = typography.rhythm;
 const profilePic = require('../images/kyle-round-small-pantheon.jpg');

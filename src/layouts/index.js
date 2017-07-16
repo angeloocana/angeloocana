@@ -22,7 +22,7 @@ class Wrapper extends React.Component {
           margin: '0 auto',
         }}
       >
-        <Header />
+        <Header from="layouts/index" />
         {this.props.children()}
       </div>
     );

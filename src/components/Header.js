@@ -19,7 +19,8 @@ class Header extends React.Component {
 
         const siteMetadata = {
             header: {
-
+                title: 'Angelo Ocana',
+                subTitle: 'Software Development and Training'
             }
         };
 
@@ -41,7 +42,7 @@ class Header extends React.Component {
                             marginTop: 0,
                         }}
                     >
-                        TESTe - {siteMetadata.header.title}
+                {siteMetadata.header.title}
               </h1>
               <p>{siteMetadata.header.subTitle}</p>
             </Link>
