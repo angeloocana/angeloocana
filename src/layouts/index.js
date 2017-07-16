@@ -1,5 +1,6 @@
 import React from 'react';
 import PropTypes from 'proptypes';
+import graphql from 'graphql';
 import Link from 'gatsby-link';
 import Helmet from 'react-helmet';
 import 'typeface-alegreya';
@@ -12,11 +13,22 @@ const scale = typography.scale;
 
 class Wrapper extends React.Component {
   static propTypes = {
+    // data: PropTypes.object,
     location: PropTypes.object,
     children: PropTypes.func
   }
 
   render() {
+    console.log('props', this.props);
+
+    // const { siteMetadata } = this.props.data.site;
+
+    const siteMetadata = {
+      header: {
+
+      }
+    };
+
     let header;
     // Check if the location is either the front page or a tags page.
     // If so, use a big header, otherwise use a smaller one.
@@ -59,8 +71,9 @@ class Wrapper extends React.Component {
               marginTop: 0,
             }}
           >
-            Bricolage
+            {siteMetadata.header.title}
           </h3>
+          <span>{siteMetadata.header.subTitle}</span>
         </Link>
       );
     }
@@ -72,7 +85,7 @@ class Wrapper extends React.Component {
           margin: '0 auto',
         }}
       >
-        <Helmet defaultTitle="Bricolage" titleTemplate="Bricolage | %s" />
+        <Helmet defaultTitle={siteMetadata.title} titleTemplate={`${siteMetadata.header.title} | %s`} />
         <div>
           {header}
         </div>
@@ -83,3 +96,16 @@ class Wrapper extends React.Component {
 }
 
 export default Wrapper;
+
+export const pageQuery = graphql`
+  query LayoutsQuery {
+    site {
+      siteMetadata {
+        header{
+          title,
+          subTitle
+        }
+      }
+    }
+  }
+`;

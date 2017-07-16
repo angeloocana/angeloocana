@@ -15,6 +15,7 @@ class BlogPostRoute extends React.Component {
   }
 
   render() {
+    const { siteMetadata } = this.props.data.site;
     const post = this.props.data.markdownRemark;
 
     let tags;
@@ -91,10 +92,10 @@ class BlogPostRoute extends React.Component {
               height: rhythm(2),
             }}
           />
-          <strong>{this.props.data.site.siteMetadata.author}</strong> lives and
-          works in {this.props.data.site.siteMetadata.homeCity} building useful
+          <strong>{siteMetadata.author.name}</strong> lives and
+          works in {siteMetadata.author.homeCity} building useful
           things.{' '}
-          <a href="https://twitter.com/kylemathews">
+          <a href="https://twitter.com/ocanaangelo">
             You should follow him on Twitter
           </a>
         </p>
@@ -109,8 +110,10 @@ export const pageQuery = graphql`
   query BlogPostBySlug($slug: String!) {
     site {
       siteMetadata {
-        author
-        homeCity
+        author{
+          name,
+          homeCity
+        }        
       }
     }
     markdownRemark(fields: { slug: { eq: $slug } }) {

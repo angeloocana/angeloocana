@@ -2,7 +2,7 @@
   "name": "blog",
   "description": "'My blog'",
   "version": "0.0.1",
-  "author": "Kyle Mathews <mathews.kyle@gmail.com>",
+  "author": "Angelo Ocana <angeloocana@gmail.com>",
   "scripts": {
     "prestart": "npm run lint",
     "start": "npm run develop",

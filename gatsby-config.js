@@ -1,8 +1,15 @@
 module.exports = {
   siteMetadata: {
-    title: 'Bricolage',
-    author: 'Kyle Mathews',
-    homeCity: 'San Francisco',
+    title: 'Angelo Ocana Software Development and Training',
+    author: {
+      name: 'Angelo Ocana',
+      homeCity: 'Ottawa',
+      email: 'angeloocana@gmail.com'
+    },    
+    header: {
+      title: 'Angelo Ocana',
+      subTitle: 'Software Development and Training'
+    }
   },
   plugins: [
     {
@@ -45,8 +52,8 @@ module.exports = {
     {
       resolve: 'gatsby-plugin-manifest',
       options: {
-        name: 'Bricolage',
-        short_name: 'Bricolage',
+        name: 'Angelo Ocana Software Development and Training',
+        short_name: 'Angelo Ocana',
         icons: [
           {
             src: '/logo.png',

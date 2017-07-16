@@ -15,11 +15,11 @@ class BlogIndexRoute extends React.Component {
 
   render() {
     const posts = this.props.data.allMarkdownRemark.edges;
-    const siteTitle = this.props.data.site.siteMetadata.title;
+    const { siteMetadata } = this.props.data.site;
 
     return (
       <div>
-        <Helmet title={siteTitle} />
+        <Helmet title={siteMetadata.title} />
         <p
           style={{
             marginBottom: rhythm(1.5),
@@ -37,11 +37,11 @@ class BlogIndexRoute extends React.Component {
             }}
           />
           Written by <strong>
-            {this.props.data.site.siteMetadata.author}
+            {siteMetadata.author.name}
           </strong>{' '}
-          who lives and works in San Francisco building really useful things.
+          who lives and works in {siteMetadata.author.homeCity} building really useful things.
           You should{' '}
-          <a href="https://twitter.com/kylemathews">follow him on Twitter</a>
+          <a href="https://twitter.com/ocanaangelo">follow him on Twitter</a>
         </p>
         <ul
           style={{
@@ -73,8 +73,10 @@ export const pageQuery = graphql`
     site {
       siteMetadata {
         title
-        author
-        homeCity
+        author {
+          homeCity,
+          name
+        }        
       }
     }
     allMarkdownRemark(
