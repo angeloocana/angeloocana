@@ -7,7 +7,6 @@ import typography from '../utils/typography';
 import ReadNext from '../components/ReadNext';
 
 const { rhythm, scale } = typography;
-const profilePic = require('../images/kyle-round-small-pantheon.jpg');
 
 class BlogPostRoute extends React.Component {
   static propTypes = {
@@ -76,29 +75,6 @@ class BlogPostRoute extends React.Component {
           }}
         />
         <ReadNext nextPost={post.frontmatter.readNext} />
-        <p
-          style={{
-            marginBottom: 0,
-          }}
-        >
-          <img
-            src={profilePic}
-            style={{
-              borderRadius: '100%',
-              float: 'left',
-              marginRight: rhythm(1 / 4),
-              marginBottom: 0,
-              width: rhythm(2),
-              height: rhythm(2),
-            }}
-          />
-          <strong>{siteMetadata.author.name}</strong> lives and
-          works in {siteMetadata.author.homeCity} building useful
-          things.{' '}
-          <a href="https://twitter.com/ocanaangelo">
-            You should follow him on Twitter
-          </a>
-        </p>
       </div>
     );
   }

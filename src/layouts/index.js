@@ -1,6 +1,8 @@
 import React from 'react';
 import PropTypes from 'proptypes';
 import Header from '../components/Header';
+import Footer from '../components/Footer';
+import {siteMetadata} from '../../gatsby-config';
 import 'typeface-alegreya';
 import 'typeface-alegreya-sans';
 
@@ -22,8 +24,9 @@ class Wrapper extends React.Component {
           margin: '0 auto',
         }}
       >
-        <Header from="layouts/index" />
+        <Header siteMetadata={siteMetadata} />
         {this.props.children()}
+        <Footer author={siteMetadata.author} />
       </div>
     );
   }

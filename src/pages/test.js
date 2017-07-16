@@ -2,14 +2,14 @@ import React from 'react';
 import graphql from 'graphql';
 
 class Test extends React.Component {
-    render() {
-        console.log('test props', this.props);
-        return (
-          <div>
-            A--B
-        </div>
-        );
-    }
+  render() {
+    console.log('test props', this.props);
+    return (
+      <div>
+        A--B
+      </div>
+    );
+  }
 };
 
 export default Test;

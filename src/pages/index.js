@@ -3,9 +3,6 @@ import graphql from 'graphql';
 import PropTypes from 'proptypes';
 import Helmet from 'react-helmet';
 import Link from 'gatsby-link';
-import typography from '../utils/typography';
-const rhythm = typography.rhythm;
-const profilePic = require('../images/kyle-round-small-pantheon.jpg');
 
 class BlogIndexRoute extends React.Component {
   static propTypes = {
@@ -19,29 +16,7 @@ class BlogIndexRoute extends React.Component {
     return (
       <div>
         <Helmet title={siteMetadata.title} />
-        <p
-          style={{
-            marginBottom: rhythm(1.5),
-          }}
-        >
-          <img
-            src={profilePic}
-            style={{
-              borderRadius: '100%',
-              float: 'left',
-              marginRight: rhythm(1 / 4),
-              marginBottom: 0,
-              width: rhythm(2),
-              height: rhythm(2),
-            }}
-          />
-          Written by <strong>
-            {siteMetadata.author.name}
-          </strong>{' '}
-          who lives and works in {siteMetadata.author.homeCity} building really useful things.
-          You should{' '}
-          <a href="https://twitter.com/ocanaangelo">follow him on Twitter</a>
-        </p>
+
         <ul
           style={{
             marginBottom: 0,
