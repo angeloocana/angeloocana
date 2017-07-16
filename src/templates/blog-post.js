@@ -3,10 +3,7 @@ import PropTypes from 'proptypes';
 import graphql from 'graphql';
 import Helmet from 'react-helmet';
 import Link from 'gatsby-link';
-import typography from '../utils/typography';
 import ReadNext from '../components/ReadNext';
-
-const { rhythm, scale } = typography;
 
 class BlogPostRoute extends React.Component {
   static propTypes = {
@@ -15,7 +12,7 @@ class BlogPostRoute extends React.Component {
 
   render() {
     console.log('blog-post props', this.props);
-    
+
     const { markdownRemark } = this.props.data;
     console.log('markdownRemark', markdownRemark);
     const { post } = markdownRemark;
@@ -40,43 +37,25 @@ class BlogPostRoute extends React.Component {
         );
       });
       tagsSection = (
-        <em
-          style={{
-            ...scale(-1 / 5),
-            display: 'block',
-            marginBottom: rhythm(1),
-          }}
-        >
-          Tagged with {tags}
-        </em>
+        <em>Tagged with {tags}</em>
       );
     }
 
     return (
       <div>
         <Helmet
-          title={`${post.frontmatter.title}`}
+          title={`${markdownRemark.frontmatter.title}`}
           meta={[{ name: 'description', content: post.excerpt }]}
         />
         <h1>
-          {post.frontmatter.title}
+          {markdownRemark.frontmatter.title}
         </h1>
         <div dangerouslySetInnerHTML={{ __html: post.html }} />
         {tagsSection}
-        <p
-          style={{
-            ...scale(-1 / 5),
-            display: 'block',
-            marginBottom: rhythm(1),
-          }}
-        >
+        <p>
           Posted {post.frontmatter.date}
         </p>
-        <hr
-          style={{
-            marginBottom: rhythm(1),
-          }}
-        />
+        <hr />
         <ReadNext nextPost={post.frontmatter.readNext} />
       </div>
     );

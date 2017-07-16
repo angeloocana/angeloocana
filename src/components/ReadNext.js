@@ -2,8 +2,6 @@ import React from 'react';
 import graphql from 'graphql';
 import Link from 'gatsby-link';
 
-import { scale } from '../utils/typography';
-
 const Component = React.createClass({
   render() {
     //console.log(this.props)
@@ -17,20 +15,10 @@ const Component = React.createClass({
     } else {
       return (
         <div>
-          <h6
-            style={{
-              ...scale(-0.5),
-              margin: 0,
-              letterSpacing: -0.25,
-            }}
-          >
+          <h6>
             READ THIS NEXT:
           </h6>
-          <h3
-            style={{
-              margin: 0,
-            }}
-          >
+          <h3>
             <Link to={nextPost.fields.slug}>
               {nextPost.frontmatter.title}
             </Link>

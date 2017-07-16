@@ -29,7 +29,7 @@ PostListItem.propTypes = {
 
 export default PostListItem;
 
-export const pageQuery = graphql`
+export const pageQueryTest = graphql`
   fragment postListItem on MarkdownRemark {
     frontmatter{
       title,

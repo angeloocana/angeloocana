@@ -1,8 +1,5 @@
 import React from 'react';
-import { TypographyStyle } from 'react-typography';
 import logo from './images/logo.png';
-
-import typography from './utils/typography';
 
 let stylesStr;
 if (process.env.NODE_ENV === 'production') {
@@ -38,7 +35,7 @@ module.exports = React.createClass({
           />
           {this.props.headComponents}
           <link rel="icon" type="image/png" sizes="1024x1024" href={logo} />
-          <TypographyStyle typography={typography} />
+          <link href="https://fonts.googleapis.com/css?family=Cambo" rel="stylesheet" />
           {css}
         </head>
         <body>

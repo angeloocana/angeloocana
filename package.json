@@ -37,12 +37,8 @@
     "prettier": "^1.5.2",
     "proptypes": "^1.1.0",
     "react-gravatar": "^2.6.3",
-    "react-typography": "^0.15.0",
     "typeface-alegreya": "^0.0.29",
-    "typeface-alegreya-sans": "^0.0.29",
-    "typography": "^0.15.10",
-    "typography-plugin-code": "^0.15.10",
-    "typography-theme-de-young": "^0.15.10"
+    "typeface-alegreya-sans": "^0.0.29"
   },
   "devDependencies": {
     "babel-eslint": "^7.2.3",
