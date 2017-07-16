@@ -4,7 +4,14 @@
   "version": "0.0.1",
   "author": "Kyle Mathews <mathews.kyle@gmail.com>",
   "scripts": {
-    "format": "prettier --no-semi --trailing-comma es5 --write 'src/**/*.js'"
+    "prestart": "npm run lint",
+    "start": "npm run develop",
+    "lint": "./node_modules/.bin/eslint --ext .js,.jsx --ignore-pattern public .",
+    "build": "gatsby build",
+    "deploy": "gatsby build --prefix-paths && gh-pages -d public",
+    "develop": "gatsby develop",
+    "format": "prettier --trailing-comma es5 --no-semi --single-quote --write \"pages/*.js\" \"utils/*.js\" \"wrappers/*.js\" \"html.js\"",
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
     "babel-plugin-lodash": "^3.2.11",
@@ -35,5 +42,16 @@
     "typography": "^0.15.10",
     "typography-plugin-code": "^0.15.10",
     "typography-theme-de-young": "^0.15.10"
+  },
+  "devDependencies": {
+    "babel-eslint": "^7.2.3",
+    "eslint": "^4.2.0",
+    "eslint-config-standard": "^10.2.1",
+    "eslint-config-standard-react": "^5.0.0",
+    "eslint-plugin-import": "^2.7.0",
+    "eslint-plugin-node": "^5.1.0",
+    "eslint-plugin-promise": "^3.5.0",
+    "eslint-plugin-react": "^7.1.0",
+    "eslint-plugin-standard": "^3.0.1"
   }
 }
