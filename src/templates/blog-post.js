@@ -14,13 +14,16 @@ class BlogPostRoute extends React.Component {
   }
 
   render() {
-    const { siteMetadata } = this.props.data.site;
-    const post = this.props.data.markdownRemark;
+    console.log('blog-post props', this.props);
+    
+    const { markdownRemark } = this.props.data;
+    console.log('markdownRemark', markdownRemark);
+    const { post } = markdownRemark;
 
     let tags;
     let tagsSection;
-    if (this.props.data.markdownRemark.fields.tagSlugs) {
-      const tagsArray = this.props.data.markdownRemark.fields.tagSlugs;
+    if (markdownRemark.fields.tagSlugs) {
+      const tagsArray = markdownRemark.fields.tagSlugs;
       tags = tagsArray.map((tag, i) => {
         const divider =
           i < tagsArray.length - 1 &&
@@ -30,7 +33,7 @@ class BlogPostRoute extends React.Component {
         return (
           <span key={tag}>
             <Link to={tag}>
-              {this.props.data.markdownRemark.frontmatter.tags[i]}
+              {markdownRemark.frontmatter.tags[i]}
             </Link>
             {divider}
           </span>
@@ -84,14 +87,6 @@ export default BlogPostRoute;
 
 export const pageQuery = graphql`
   query BlogPostBySlug($slug: String!) {
-    site {
-      siteMetadata {
-        author{
-          name,
-          homeCity
-        }        
-      }
-    }
     markdownRemark(fields: { slug: { eq: $slug } }) {
       html
       excerpt

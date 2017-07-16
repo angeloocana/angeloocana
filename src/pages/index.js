@@ -2,7 +2,7 @@ import React from 'react';
 import graphql from 'graphql';
 import PropTypes from 'proptypes';
 import Helmet from 'react-helmet';
-import Link from 'gatsby-link';
+import PostListItem from '../components/PostListItem';
 
 class BlogIndexRoute extends React.Component {
   static propTypes = {
@@ -11,6 +11,7 @@ class BlogIndexRoute extends React.Component {
 
   render() {
     const posts = this.props.data.allMarkdownRemark.edges;
+    console.log('posts', posts);
     const { siteMetadata } = this.props.data.site;
 
     return (
@@ -23,16 +24,7 @@ class BlogIndexRoute extends React.Component {
           }}
         >
           {posts.map(post =>
-            <li key={post.node.fields.slug}>
-              <Link
-                style={{
-                  textDecoration: 'none',
-                }}
-                to={post.node.fields.slug}
-              >
-                {post.node.frontmatter.title}
-              </Link>
-            </li>
+            <PostListItem post={post} />
           )}
         </ul>
       </div>
@@ -59,13 +51,18 @@ export const pageQuery = graphql`
       filter: { frontmatter: { draft: { ne: true } } }
     ) {
       edges {
-        node {
-          fields {
-            slug
-          }
-          frontmatter {
-            title
-          }
+        node{
+          frontmatter{
+            title,
+            tags,
+            date,
+            path
+          },
+          fields{
+            slug,
+            tagSlugs
+          },
+          excerpt 
         }
       }
     }
