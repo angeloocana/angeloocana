@@ -1,7 +1,8 @@
 import React from "react";
 import Link from "gatsby-link";
+import graphql from 'graphql';
 
-export default class Index extends React.Component {
+class Index extends React.Component {
   render() {
     console.log('index props', this.props);
     return (
@@ -15,18 +16,30 @@ export default class Index extends React.Component {
   }
 }
 
-export const pageQuery = `
-  query SiteMetadataLookup($slug: String!) {
-    allMarkdownRemark{
-      edges{
-        node{
-          frontmatter{
-            title,
-            date,
-            layout,
-            path
-          },
-          excerpt
+export default Index;
+
+export const pageQuery = graphql`
+  query IndexQuery {
+    site {
+      siteMetadata {
+        title
+        author
+        homeCity
+      }
+    }
+    allMarkdownRemark(
+      limit: 2000
+      sort: { fields: [frontmatter___date], order: DESC }
+      filter: { frontmatter: { draft: { ne: true } } }
+    ) {
+      edges {
+        node {
+          fields {
+            slug
+          }
+          frontmatter {
+            title
+          }
         }
       }
     }
