@@ -1,12 +1,12 @@
-import React from "react";
+import React from 'react';
 import PropTypes from 'proptypes';
-import Link from "gatsby-link";
-import Helmet from "react-helmet";
-import "typeface-alegreya";
-import "typeface-alegreya-sans";
+import Link from 'gatsby-link';
+import Helmet from 'react-helmet';
+import 'typeface-alegreya';
+import 'typeface-alegreya-sans';
 
-import "../css/prism-coy.css";
-import typography from "../utils/typography";
+import '../css/prism-coy.css';
+import typography from '../utils/typography';
 const rhythm = typography.rhythm;
 const scale = typography.scale;
 
@@ -21,15 +21,15 @@ class Wrapper extends React.Component {
     // Check if the location is either the front page or a tags page.
     // If so, use a big header, otherwise use a smaller one.
     if (
-      ["/", "/tags/"].indexOf(this.props.location.pathname) !== -1 ||
-      this.props.location.pathname.indexOf("/tags/") !== -1
+      ['/', '/tags/'].indexOf(this.props.location.pathname) !== -1 ||
+      this.props.location.pathname.indexOf('/tags/') !== -1
     ) {
       header = (
         <Link
           style={{
-            textDecoration: "none",
-            boxShadow: "none",
-            color: "inherit",
+            textDecoration: 'none',
+            boxShadow: 'none',
+            color: 'inherit',
           }}
           to="/"
         >
@@ -48,9 +48,9 @@ class Wrapper extends React.Component {
       header = (
         <Link
           style={{
-            textDecoration: "none",
-            boxShadow: "none",
-            color: "inherit",
+            textDecoration: 'none',
+            boxShadow: 'none',
+            color: 'inherit',
           }}
           to="/"
         >
@@ -69,7 +69,7 @@ class Wrapper extends React.Component {
         style={{
           padding: `${rhythm(1.5)} ${rhythm(3 / 4)}`,
           maxWidth: rhythm(22),
-          margin: `0 auto`,
+          margin: '0 auto',
         }}
       >
         <Helmet defaultTitle="Bricolage" titleTemplate="Bricolage | %s" />

@@ -1,8 +1,8 @@
-import React from "react";
+import React from 'react';
 import graphql from 'graphql';
-import Link from "gatsby-link";
+import Link from 'gatsby-link';
 
-import { scale } from "../utils/typography";
+import { scale } from '../utils/typography';
 
 const Component = React.createClass({
   render() {

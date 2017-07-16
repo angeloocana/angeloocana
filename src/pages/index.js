@@ -1,12 +1,12 @@
-import React from "react";
+import React from 'react';
 import graphql from 'graphql';
 import PropTypes from 'proptypes';
-import Helmet from "react-helmet";
-import Link from "gatsby-link";
+import Helmet from 'react-helmet';
+import Link from 'gatsby-link';
 
-import typography from "../utils/typography";
+import typography from '../utils/typography';
 const rhythm = typography.rhythm;
-const profilePic = require("../images/kyle-round-small-pantheon.jpg");
+const profilePic = require('../images/kyle-round-small-pantheon.jpg');
 
 class BlogIndexRoute extends React.Component {
   static propTypes = {
@@ -28,8 +28,8 @@ class BlogIndexRoute extends React.Component {
           <img
             src={profilePic}
             style={{
-              borderRadius: `100%`,
-              float: "left",
+              borderRadius: '100%',
+              float: 'left',
               marginRight: rhythm(1 / 4),
               marginBottom: 0,
               width: rhythm(2),
@@ -38,9 +38,9 @@ class BlogIndexRoute extends React.Component {
           />
           Written by <strong>
             {this.props.data.site.siteMetadata.author}
-          </strong>{" "}
+          </strong>{' '}
           who lives and works in San Francisco building really useful things.
-          You should{" "}
+          You should{' '}
           <a href="https://twitter.com/kylemathews">follow him on Twitter</a>
         </p>
         <ul
@@ -52,7 +52,7 @@ class BlogIndexRoute extends React.Component {
             <li key={post.node.fields.slug}>
               <Link
                 style={{
-                  textDecoration: "none",
+                  textDecoration: 'none',
                 }}
                 to={post.node.fields.slug}
               >

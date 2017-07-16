@@ -1,8 +1,8 @@
-import React from "react";
+import React from 'react';
 import PropTypes from 'proptypes';
 import graphql from 'graphql';
-import Link from "gatsby-link";
-import Helmet from "react-helmet";
+import Link from 'gatsby-link';
+import Helmet from 'react-helmet';
 
 class TagRoute extends React.Component {
   static propTypes = {

@@ -1,13 +1,15 @@
-import React from "react";
-import { TypographyStyle } from "react-typography";
-import logo from "./images/logo.png";
+import React from 'react';
+import { TypographyStyle } from 'react-typography';
+import logo from './images/logo.png';
 
-import typography from "./utils/typography";
+import typography from './utils/typography';
 
 let stylesStr;
-if (process.env.NODE_ENV === `production`) {
+if (process.env.NODE_ENV === 'production') {
   try {
-    stylesStr = require(`!raw-loader!../public/styles.css`);
+    // Remove because pf eslint rule
+    // stylesStr = require('!raw-loader!../public/styles.css');
+    stylesStr = require('../public/styles.css');
   } catch (e) {
     console.log(e);
   }
@@ -16,7 +18,7 @@ if (process.env.NODE_ENV === `production`) {
 module.exports = React.createClass({
   render() {
     let css;
-    if (process.env.NODE_ENV === `production`) {
+    if (process.env.NODE_ENV === 'production') {
       css = (
         <style
           id="gatsby-inlined-css"

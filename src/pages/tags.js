@@ -1,9 +1,9 @@
-import React from "react";
+import React from 'react';
 import PropTypes from 'proptypes';
 import graphql from 'graphql';
-import Helmet from "react-helmet";
-import Link from "gatsby-link";
-import kebabCase from "lodash/kebabCase";
+import Helmet from 'react-helmet';
+import Link from 'gatsby-link';
+import kebabCase from 'lodash/kebabCase';
 
 class TagsPageRoute extends React.Component {
   static propTypes = {
@@ -24,7 +24,7 @@ class TagsPageRoute extends React.Component {
               <li key={tag.fieldValue}>
                 <Link
                   style={{
-                    textDecoration: "none",
+                    textDecoration: 'none',
                   }}
                   to={`/tags/${kebabCase(tag.fieldValue)}/`}
                 >
