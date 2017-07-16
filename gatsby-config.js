@@ -3,19 +3,67 @@ module.exports = {
     title: `Angelo Ocana Software Development and Training`,
     author: {
       name: `Angelo Ocana`,
-      email: `angeloocana@gmail.com`
-    },
-    GA: "UA-61019439-1",
+      email: `angeloocana@gmail.com`,
+      homeCity: "Ottawa"
+    }
   },
   plugins: [
-        {
-            resolve: `gatsby-source-filesystem`,
+    {
+      resolve: `gatsby-source-filesystem`,
+      options: {
+        path: `${__dirname}/src/pages`,
+        name: "pages",
+      },
+    },
+    `gatsby-transformer-sharp`,
+    {
+      resolve: `gatsby-transformer-remark`,
+      options: {
+        plugins: [
+          {
+            resolve: `gatsby-remark-responsive-image`,
             options: {
-                name: `pages`,
-                path: `${__dirname}/src/pages/`,
+              maxWidth: 590,
             },
-        },
-        'gatsby-transformer-remark',
-        `gatsby-plugin-sharp`,
-    ]
+          },
+          {
+            resolve: `gatsby-remark-responsive-iframe`,
+            options: {
+              wrapperStyle: `margin-bottom: 1.0725rem`,
+            },
+          },
+          "gatsby-remark-prismjs",
+          "gatsby-remark-copy-linked-files",
+          "gatsby-remark-smartypants",
+        ],
+      },
+    },
+    `gatsby-plugin-sharp`,
+    {
+      resolve: `gatsby-plugin-google-analytics`,
+      options: {
+        trackingId: `UA-61019439-1`,
+      },
+    },
+    {
+      resolve: `gatsby-plugin-manifest`,
+      options: {
+        name: "Bricolage",
+        short_name: "Bricolage",
+        icons: [
+          {
+            src: "/logo.png",
+            sizes: "1024x1024",
+            type: "image/png",
+          },
+        ],
+        start_url: "/",
+        background_color: "white",
+        theme_color: "white",
+        display: "minimal-ui",
+      },
+    },
+    `gatsby-plugin-offline`,
+    `gatsby-plugin-react-helmet`,
+  ],
 };

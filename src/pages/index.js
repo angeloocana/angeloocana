@@ -1,6 +1,5 @@
 import React from "react";
 import Link from "gatsby-link";
-import graphql from 'graphql';
 
 export default class Index extends React.Component {
   render() {
@@ -16,20 +15,20 @@ export default class Index extends React.Component {
   }
 }
 
-export const pageQuery = graphql`
+export const pageQuery = `
   query SiteMetadataLookup($slug: String!) {
     allMarkdownRemark{
-    edges{
-      node{
-        frontmatter{
-          title,
-          date,
-          layout,
-          path
-        },
-        excerpt
+      edges{
+        node{
+          frontmatter{
+            title,
+            date,
+            layout,
+            path
+          },
+          excerpt
+        }
       }
     }
   }
-}
 `;
