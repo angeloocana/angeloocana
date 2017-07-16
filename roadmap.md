@@ -14,6 +14,7 @@
 - Fix post pages.
 - Hire me.
 - Menu.
+- Test google analytics.
 
 ## Working
 - SASS.

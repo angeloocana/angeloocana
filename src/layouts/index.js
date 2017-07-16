@@ -3,8 +3,6 @@ import PropTypes from 'proptypes';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import { siteMetadata } from '../../gatsby-config';
-import 'typeface-alegreya';
-import 'typeface-alegreya-sans';
 
 import '../css/prism-coy.css';
 

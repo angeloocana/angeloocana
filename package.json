@@ -4,13 +4,14 @@
   "version": "0.0.1",
   "author": "Angelo Ocana <angeloocana@gmail.com>",
   "scripts": {
-    "prestart": "npm run lint",
+    "prestart": "npm-run-all lint css",
     "start": "npm run develop",
     "lint": "./node_modules/.bin/eslint --ext .js,.jsx --ignore-pattern public .",
     "build": "gatsby build",
     "deploy": "gatsby build --prefix-paths && gh-pages -d public",
     "develop": "gatsby develop",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "css": "gulp css"
   },
   "dependencies": {
     "babel-plugin-lodash": "^3.2.11",
@@ -32,13 +33,16 @@
     "gatsby-source-filesystem": "^1.0.1",
     "gatsby-transformer-remark": "^1.0.1",
     "gatsby-transformer-sharp": "^1.0.1",
+    "gulp": "^3.9.1",
+    "gulp-concat": "^2.6.1",
+    "gulp-cssnano": "^2.1.2",
+    "gulp-sass": "^3.1.0",
     "lodash": "^4.17.4",
     "lodash-webpack-plugin": "^0.11.2",
+    "npm-run-all": "^4.0.2",
     "prettier": "^1.5.2",
     "proptypes": "^1.1.0",
-    "react-gravatar": "^2.6.3",
-    "typeface-alegreya": "^0.0.29",
-    "typeface-alegreya-sans": "^0.0.29"
+    "react-gravatar": "^2.6.3"
   },
   "devDependencies": {
     "babel-eslint": "^7.2.3",

@@ -1,13 +1,13 @@
 module.exports = {
   siteMetadata: {
-    title: 'Angelo Ocana Software Development and Training',
+    title: 'Ângelo Ocanã Software Development and Training',
     author: {
-      name: 'Angelo Ocana',
+      name: 'Ângelo Ocanã',
       homeCity: 'Ottawa',
       email: 'angeloocana@gmail.com'
-    },    
+    },
     header: {
-      title: 'Angelo Ocana',
+      title: 'Ângelo Ocanã',
       subTitle: 'Software Development and Training'
     }
   },
@@ -52,8 +52,8 @@ module.exports = {
     {
       resolve: 'gatsby-plugin-manifest',
       options: {
-        name: 'Angelo Ocana Software Development and Training',
-        short_name: 'Angelo Ocana',
+        name: 'Ângelo Ocanã Software Development and Training',
+        short_name: 'Ângelo Ocanã',
         icons: [
           {
             src: '/logo.png',
@@ -69,6 +69,6 @@ module.exports = {
     },
     'gatsby-plugin-offline',
     'gatsby-plugin-preact',
-    'gatsby-plugin-react-helmet',
+    'gatsby-plugin-react-helmet'
   ],
 };

@@ -36,6 +36,9 @@ module.exports = React.createClass({
           {this.props.headComponents}
           <link rel="icon" type="image/png" sizes="1024x1024" href={logo} />
           <link href="https://fonts.googleapis.com/css?family=Cambo" rel="stylesheet" />
+          <link href="css/mobile.css" rel="stylesheet" />
+          <link href="css/tablet.css" media="(min-width: 60em)" rel="stylesheet" />
+          <link href="css/pc.css" media="(min-width: 150em)" rel="stylesheet" />
           {css}
         </head>
         <body>

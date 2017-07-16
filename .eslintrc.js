@@ -84,10 +84,7 @@ module.exports = {
             "error",
             "never"
         ],
-        "func-style": [
-            "error",
-            "expression"
-        ],
+        "func-style": "off",
         "generator-star-spacing": "error",
         "global-require": "off",
         "guard-for-in": "error",
