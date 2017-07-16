@@ -1,12 +1,18 @@
-import React from "react"
-import Link from "gatsby-link"
-import Helmet from "react-helmet"
+import React from "react";
+import PropTypes from 'proptypes';
+import graphql from 'graphql';
+import Link from "gatsby-link";
+import Helmet from "react-helmet";
 
 class TagRoute extends React.Component {
+  static propTypes = {
+    data: PropTypes.object,
+    pathContext: PropTypes.object
+  }
+
   render() {
-    //console.log(this.props)
-    const posts = this.props.data.allMarkdownRemark.edges
-    const title = this.props.data.site.siteMetadata.title
+    const posts = this.props.data.allMarkdownRemark.edges;
+    const title = this.props.data.site.siteMetadata.title;
     const postLinks = posts.map(post => {
       return (
         <li key={post.node.fields.slug}>
@@ -14,8 +20,8 @@ class TagRoute extends React.Component {
             {post.node.frontmatter.title}
           </Link>
         </li>
-      )
-    })
+      );
+    });
 
     return (
       <div>
@@ -30,11 +36,11 @@ class TagRoute extends React.Component {
           <Link to="/tags/">Browse all tags</Link>
         </p>
       </div>
-    )
+    );
   }
 }
 
-export default TagRoute
+export default TagRoute;
 
 export const pageQuery = graphql`
   query TagPage($tag: String) {
@@ -61,4 +67,4 @@ export const pageQuery = graphql`
       }
     }
   }
-`
+`;

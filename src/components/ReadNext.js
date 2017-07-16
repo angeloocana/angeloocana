@@ -1,18 +1,19 @@
-const React = require("react")
-const Link = require("gatsby-link")
+import React from "react";
+import graphql from 'graphql';
+import Link from "gatsby-link";
 
-const { rhythm, scale } = require("../utils/typography")
+import { scale } from "../utils/typography";
 
 const Component = React.createClass({
   render() {
     //console.log(this.props)
-    let { nextPost } = this.props
+    let { nextPost } = this.props;
     if (nextPost && nextPost.children && nextPost.children[0]) {
-      nextPost = nextPost.children[0]
+      nextPost = nextPost.children[0];
     }
 
     if (!nextPost) {
-      return null
+      return null;
     } else {
       return (
         <div>
@@ -39,12 +40,12 @@ const Component = React.createClass({
           </p>
           <hr />
         </div>
-      )
+      );
     }
   },
-})
+});
 
-export default Component
+export default Component;
 
 export const query = graphql`
   fragment ReadNext on MarkdownRemark {
@@ -56,4 +57,4 @@ export const query = graphql`
       title
     }
   }
-`
+`;

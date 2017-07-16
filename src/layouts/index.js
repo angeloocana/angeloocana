@@ -1,17 +1,23 @@
-import React from "react"
-import Link from "gatsby-link"
-import Helmet from "react-helmet"
-import "typeface-alegreya"
-import "typeface-alegreya-sans"
+import React from "react";
+import PropTypes from 'proptypes';
+import Link from "gatsby-link";
+import Helmet from "react-helmet";
+import "typeface-alegreya";
+import "typeface-alegreya-sans";
 
-import "../css/prism-coy.css"
-import typography from "../utils/typography"
-const rhythm = typography.rhythm
-const scale = typography.scale
+import "../css/prism-coy.css";
+import typography from "../utils/typography";
+const rhythm = typography.rhythm;
+const scale = typography.scale;
 
 class Wrapper extends React.Component {
+  static propTypes = {
+    location: PropTypes.object,
+    children: PropTypes.func
+  }
+
   render() {
-    let header
+    let header;
     // Check if the location is either the front page or a tags page.
     // If so, use a big header, otherwise use a smaller one.
     if (
@@ -37,7 +43,7 @@ class Wrapper extends React.Component {
             Bricolage
           </h1>
         </Link>
-      )
+      );
     } else {
       header = (
         <Link
@@ -56,7 +62,7 @@ class Wrapper extends React.Component {
             Bricolage
           </h3>
         </Link>
-      )
+      );
     }
     return (
       <div
@@ -72,8 +78,8 @@ class Wrapper extends React.Component {
         </div>
         {this.props.children()}
       </div>
-    )
+    );
   }
 }
 
-export default Wrapper
+export default Wrapper;

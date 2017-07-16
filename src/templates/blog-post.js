@@ -1,40 +1,32 @@
-import React from "react"
-import Helmet from "react-helmet"
-import Link from "gatsby-link"
-import typography from "../utils/typography"
-const { rhythm, scale } = typography
-const profilePic = require("../images/kyle-round-small-pantheon.jpg")
-import ReadNext from "../components/ReadNext"
-//import { query } from '../components/ReadNext'
-const query = `
-readNext___file {
-  children {
-    ... on MarkdownRemark {
-      fields { slug }
-      excerpt(pruneLength: 200)
-      frontmatter {
-        title
-      }
-    }
-  }
-}
-`
+import React from "react";
+import PropTypes from 'proptypes';
+import graphql from 'graphql';
+import Helmet from "react-helmet";
+import Link from "gatsby-link";
+import typography from "../utils/typography";
+import ReadNext from "../components/ReadNext";
+
+const { rhythm, scale } = typography;
+const profilePic = require("../images/kyle-round-small-pantheon.jpg");
 
 class BlogPostRoute extends React.Component {
-  render() {
-    const post = this.props.data.markdownRemark
-    //console.log(post)
+  static propTypes = {
+    data: PropTypes.object
+  }
 
-    let tags
-    let tagsSection
+  render() {
+    const post = this.props.data.markdownRemark;
+
+    let tags;
+    let tagsSection;
     if (this.props.data.markdownRemark.fields.tagSlugs) {
-      const tagsArray = this.props.data.markdownRemark.fields.tagSlugs
+      const tagsArray = this.props.data.markdownRemark.fields.tagSlugs;
       tags = tagsArray.map((tag, i) => {
         const divider =
           i < tagsArray.length - 1 &&
           <span>
             {" | "}
-          </span>
+          </span>;
         return (
           <span key={tag}>
             <Link to={tag}>
@@ -42,8 +34,8 @@ class BlogPostRoute extends React.Component {
             </Link>
             {divider}
           </span>
-        )
-      })
+        );
+      });
       tagsSection = (
         <em
           style={{
@@ -54,7 +46,7 @@ class BlogPostRoute extends React.Component {
         >
           Tagged with {tags}
         </em>
-      )
+      );
     }
 
     return (
@@ -107,11 +99,11 @@ class BlogPostRoute extends React.Component {
           </a>
         </p>
       </div>
-    )
+    );
   }
 }
 
-export default BlogPostRoute
+export default BlogPostRoute;
 
 export const pageQuery = graphql`
   query BlogPostBySlug($slug: String!) {
@@ -134,4 +126,4 @@ export const pageQuery = graphql`
       }
     }
   }
-`
+`;

@@ -64,4 +64,4 @@ module.exports = {
     `gatsby-plugin-preact`,
     `gatsby-plugin-react-helmet`,
   ],
-}
+};

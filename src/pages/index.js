@@ -1,16 +1,21 @@
-import React from "react"
-import Helmet from "react-helmet"
-import Link from "gatsby-link"
+import React from "react";
+import graphql from 'graphql';
+import PropTypes from 'proptypes';
+import Helmet from "react-helmet";
+import Link from "gatsby-link";
 
-import typography from "../utils/typography"
-const rhythm = typography.rhythm
-const profilePic = require("../images/kyle-round-small-pantheon.jpg")
+import typography from "../utils/typography";
+const rhythm = typography.rhythm;
+const profilePic = require("../images/kyle-round-small-pantheon.jpg");
 
 class BlogIndexRoute extends React.Component {
+  static propTypes = {
+    data: PropTypes.object
+  }
+
   render() {
-    // console.log(this.props)
-    const posts = this.props.data.allMarkdownRemark.edges
-    const siteTitle = this.props.data.site.siteMetadata.title
+    const posts = this.props.data.allMarkdownRemark.edges;
+    const siteTitle = this.props.data.site.siteMetadata.title;
 
     return (
       <div>
@@ -57,11 +62,11 @@ class BlogIndexRoute extends React.Component {
           )}
         </ul>
       </div>
-    )
+    );
   }
 }
 
-export default BlogIndexRoute
+export default BlogIndexRoute;
 
 export const pageQuery = graphql`
   query IndexQuery {
@@ -89,4 +94,4 @@ export const pageQuery = graphql`
       }
     }
   }
-`
+`;

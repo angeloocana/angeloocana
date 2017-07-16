@@ -1,28 +1,28 @@
-import React from "react"
-import { TypographyStyle } from "react-typography"
-import logo from "./images/logo.png"
+import React from "react";
+import { TypographyStyle } from "react-typography";
+import logo from "./images/logo.png";
 
-import typography from "./utils/typography"
+import typography from "./utils/typography";
 
-let stylesStr
+let stylesStr;
 if (process.env.NODE_ENV === `production`) {
   try {
-    stylesStr = require(`!raw-loader!../public/styles.css`)
+    stylesStr = require(`!raw-loader!../public/styles.css`);
   } catch (e) {
-    console.log(e)
+    console.log(e);
   }
 }
 
 module.exports = React.createClass({
   render() {
-    let css
+    let css;
     if (process.env.NODE_ENV === `production`) {
       css = (
         <style
           id="gatsby-inlined-css"
           dangerouslySetInnerHTML={{ __html: stylesStr }}
         />
-      )
+      );
     }
 
     return (
@@ -47,6 +47,6 @@ module.exports = React.createClass({
           {this.props.postBodyComponents}
         </body>
       </html>
-    )
+    );
   },
-})
+});
