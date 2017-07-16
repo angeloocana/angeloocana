@@ -1,62 +1,79 @@
-import React from "react";
-import PropTypes from "prop-types";
-import Link from "gatsby-link";
-import Helmet from "react-helmet";
+import React from "react"
+import Link from "gatsby-link"
+import Helmet from "react-helmet"
+import "typeface-alegreya"
+import "typeface-alegreya-sans"
 
-import "../css/typography.css";
+import "../css/prism-coy.css"
+import typography from "../utils/typography"
+const rhythm = typography.rhythm
+const scale = typography.scale
 
-export default class Template extends React.Component {
-  static propTypes = {
-    children: PropTypes.func,
-  }
-
+class Wrapper extends React.Component {
   render() {
-    return (
-      <div>
-        <Helmet
-          title="Gatsby Default Starter"
-          meta={[
-            { name: "description", content: "Sample" },
-            { name: "keywords", content: "sample, something" },
-          ]}
-        />
-        <div
+    let header
+    // Check if the location is either the front page or a tags page.
+    // If so, use a big header, otherwise use a smaller one.
+    if (
+      ["/", "/tags/"].indexOf(this.props.location.pathname) !== -1 ||
+      this.props.location.pathname.indexOf("/tags/") !== -1
+    ) {
+      header = (
+        <Link
           style={{
-            background: `rebeccapurple`,
-            marginBottom: `1.45rem`,
+            textDecoration: "none",
+            boxShadow: "none",
+            color: "inherit",
           }}
+          to="/"
         >
-          <div
+          <h1
             style={{
-              margin: `0 auto`,
-              maxWidth: 960,
-              padding: `1.45rem 1.0875rem`,
+              ...scale(1.5),
+              marginBottom: rhythm(1),
+              marginTop: 0,
             }}
           >
-            <h1 style={{ margin: 0 }}>
-              <Link
-                to="/"
-                style={{
-                  color: "white",
-                  textDecoration: "none",
-                }}
-              >
-                Gatsby
-              </Link>
-            </h1>
-          </div>
-        </div>
-        <div
+            Bricolage
+          </h1>
+        </Link>
+      )
+    } else {
+      header = (
+        <Link
           style={{
-            margin: `0 auto`,
-            maxWidth: 960,
-            padding: `0px 1.0875rem 1.45rem`,
-            paddingTop: 0,
+            textDecoration: "none",
+            boxShadow: "none",
+            color: "inherit",
           }}
+          to="/"
         >
-          {this.props.children()}
+          <h3
+            style={{
+              marginTop: 0,
+            }}
+          >
+            Bricolage
+          </h3>
+        </Link>
+      )
+    }
+    return (
+      <div
+        style={{
+          padding: `${rhythm(1.5)} ${rhythm(3 / 4)}`,
+          maxWidth: rhythm(22),
+          margin: `0 auto`,
+        }}
+      >
+        <Helmet defaultTitle="Bricolage" titleTemplate="Bricolage | %s" />
+        <div>
+          {header}
         </div>
+        {this.props.children()}
       </div>
-    );
+    )
   }
 }
+
+export default Wrapper

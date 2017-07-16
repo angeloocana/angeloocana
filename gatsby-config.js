@@ -1,11 +1,8 @@
 module.exports = {
   siteMetadata: {
-    title: `Angelo Ocana Software Development and Training`,
-    author: {
-      name: `Angelo Ocana`,
-      email: `angeloocana@gmail.com`,
-      homeCity: "Ottawa"
-    }
+    title: "Bricolage",
+    author: "Kyle Mathews",
+    homeCity: "San Francisco",
   },
   plugins: [
     {
@@ -42,7 +39,7 @@ module.exports = {
     {
       resolve: `gatsby-plugin-google-analytics`,
       options: {
-        trackingId: `UA-61019439-1`,
+        trackingId: `UA-774017-3`,
       },
     },
     {
@@ -64,6 +61,7 @@ module.exports = {
       },
     },
     `gatsby-plugin-offline`,
+    `gatsby-plugin-preact`,
     `gatsby-plugin-react-helmet`,
   ],
-};
+}

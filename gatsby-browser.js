@@ -1,3 +1,3 @@
 exports.clientEntry = function () {
-  require('es6-object-assign').polyfill();
-};
+  require('es6-object-assign').polyfill()
+}

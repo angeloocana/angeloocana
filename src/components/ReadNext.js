@@ -1,30 +1,19 @@
-import React from 'react';
-import PropTypes from 'proptypes';
-import Link from 'gatsby-link';
-import { prune, include as includes } from 'underscore.string';
-import find from 'lodash/find';
-import { rhythm, scale } from 'utils/typography';
+const React = require("react")
+const Link = require("gatsby-link")
 
-class ReadNext extends React.Component {
-  render () {
-    const { pages, post } = this.props;
-    const { readNext } = post;
-    let nextPost;
-    if (readNext) {
-      nextPost = find(pages, (page) =>
-        includes(page.path, readNext)
-      );
+const { rhythm, scale } = require("../utils/typography")
+
+const Component = React.createClass({
+  render() {
+    //console.log(this.props)
+    let { nextPost } = this.props
+    if (nextPost && nextPost.children && nextPost.children[0]) {
+      nextPost = nextPost.children[0]
     }
-    if (!nextPost) {
-      return React.createElement('noscript', null);
-    } else {
-      nextPost = find(pages, (page) =>
-        includes(page.path, readNext.slice(1, -1))
-      );
-      // Create pruned version of the body.
-      const html = nextPost.data.body;
-      const body = prune(html.replace(/<[^>]*>/g, ''), 200);
 
+    if (!nextPost) {
+      return null
+    } else {
       return (
         <div>
           <h6
@@ -38,32 +27,33 @@ class ReadNext extends React.Component {
           </h6>
           <h3
             style={{
-              marginTop: 0,
-              marginBottom: rhythm(1/4),
+              margin: 0,
             }}
           >
-            <Link
-              to={{
-                pathname: nextPost.path,
-                query: {
-                  readNext: true,
-                },
-              }}
-            >
-              {nextPost.data.title}
+            <Link to={nextPost.fields.slug}>
+              {nextPost.frontmatter.title}
             </Link>
           </h3>
-          <p>{body}</p>
+          <p>
+            {nextPost.excerpt}
+          </p>
           <hr />
         </div>
-      );
+      )
+    }
+  },
+})
+
+export default Component
+
+export const query = graphql`
+  fragment ReadNext on MarkdownRemark {
+    fields {
+      slug
+    }
+    excerpt(pruneLength: 200)
+    frontmatter {
+      title
     }
   }
-}
-
-ReadNext.propTypes = {
-  post: PropTypes.object.isRequired,
-  pages: PropTypes.array,
-};
-
-export default ReadNext;
+`

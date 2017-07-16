@@ -1,22 +1,67 @@
-import React from "react";
-import Link from "gatsby-link";
-import graphql from 'graphql';
+import React from "react"
+import Helmet from "react-helmet"
+import Link from "gatsby-link"
 
-class Index extends React.Component {
+import typography from "../utils/typography"
+const rhythm = typography.rhythm
+const profilePic = require("../images/kyle-round-small-pantheon.jpg")
+
+class BlogIndexRoute extends React.Component {
   render() {
-    console.log('index props', this.props);
+    // console.log(this.props)
+    const posts = this.props.data.allMarkdownRemark.edges
+    const siteTitle = this.props.data.site.siteMetadata.title
+
     return (
       <div>
-        <h1>Hi people</h1>
-        <p>Welcome to your new Gatsby site.</p>
-        <p>Now go build something great.</p>
-        <Link to="/page-2/">Go to page 2</Link>
+        <Helmet title={siteTitle} />
+        <p
+          style={{
+            marginBottom: rhythm(1.5),
+          }}
+        >
+          <img
+            src={profilePic}
+            style={{
+              borderRadius: `100%`,
+              float: "left",
+              marginRight: rhythm(1 / 4),
+              marginBottom: 0,
+              width: rhythm(2),
+              height: rhythm(2),
+            }}
+          />
+          Written by <strong>
+            {this.props.data.site.siteMetadata.author}
+          </strong>{" "}
+          who lives and works in San Francisco building really useful things.
+          You should{" "}
+          <a href="https://twitter.com/kylemathews">follow him on Twitter</a>
+        </p>
+        <ul
+          style={{
+            marginBottom: 0,
+          }}
+        >
+          {posts.map(post =>
+            <li key={post.node.fields.slug}>
+              <Link
+                style={{
+                  textDecoration: "none",
+                }}
+                to={post.node.fields.slug}
+              >
+                {post.node.frontmatter.title}
+              </Link>
+            </li>
+          )}
+        </ul>
       </div>
-    );
+    )
   }
 }
 
-export default Index;
+export default BlogIndexRoute
 
 export const pageQuery = graphql`
   query IndexQuery {
@@ -44,4 +89,4 @@ export const pageQuery = graphql`
       }
     }
   }
-`;
+`
