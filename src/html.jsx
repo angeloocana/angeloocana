@@ -1,5 +1,5 @@
 import React from 'react';
-import logo from './img/logo.png';
+import logo from './imgs/logo.png';
 
 let stylesStr;
 if (process.env.NODE_ENV === 'production') {

@@ -51,15 +51,26 @@ header {
         }
     }
     .menu-closed {
-        transition: transform 3s, background-color 6s;
+        transition: transform 1s, background-color 0.5s;
         background-color: transparent;
+
+        ul {
+          transition: 1s;
+          opacity: 0;
+        }
     }
     .menu-opened {
-        transition: transform 3s, background-color 1s;
+        transition: transform 1s, background-color 0.5s;
         transform: translateX(-60%);
         background-color: lighten($black, 2%);
         width: 100%;
         height: 100%;
+
+        ul {
+          transition: opacity 1s, transform 1.5s;
+          transform: translateX(-4rem);
+          opacity: 1;
+        }
     }
 }
 

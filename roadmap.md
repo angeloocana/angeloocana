@@ -13,12 +13,13 @@
 - CV.
 - Fix post pages.
 - Hire me.
-- Menu.
 - Test google analytics.
 - Sitemap.
 - Favicon.
 
 ## Working
+- Menu.
+- Click outside menu to close.
 - Header.
 - Footer.
 
