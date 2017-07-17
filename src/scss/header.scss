@@ -22,19 +22,17 @@ header {
         text-align: center;
         position: fixed;
         top: 0;
-        right: 0; //calc((60rem - 100%)/2);
-        background-color: $black;
+        right: calc(2rem - 100%);
+        height: 100%;
+        width: 100%;
         padding: $size1;
         label {
-            background-image: url('../../../src/frontend/imgs/menu.svg');
-            background-repeat: no-repeat;
             width: $size2;
             height: $size2;
-            color: transparent;
-            background-size: 100%;
             position: relative;
             float: left;
             cursor: pointer;
+            font-size: $size2;
         }
         a {
             font-size: $size1;
@@ -43,15 +41,32 @@ header {
             text-align: left;
         }
         ul {
-            display: none;
+            display: block;
             margin-top: $size3;
+            margin-left: $size4;
         }
         #cb-menu {
             width: 0px;
             height: 0px;
         }
-        #cb-menu:checked+ul {
-            display: block;
+    }
+    .menu-closed {
+        transition: transform 3s, background-color 6s;
+        background-color: transparent;
+    }
+    .menu-opened {
+        transition: transform 3s, background-color 1s;
+        transform: translateX(-60%);
+        background-color: lighten($black, 2%);
+        width: 100%;
+        height: 100%;
+    }
+}
+
+@media (min-width: 60rem) {
+    header {
+        nav {
+          right: calc(-50% + -28rem);
         }
     }
 }

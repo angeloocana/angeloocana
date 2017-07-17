@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'proptypes';
 import Link from 'gatsby-link';
 import Helmet from 'react-helmet';
+import Menu from './Menu';
 
 class Header extends React.Component {
   static propTypes = {
@@ -19,6 +20,7 @@ class Header extends React.Component {
           {siteMetadata.header.title}
           <p>{siteMetadata.header.subTitle}</p>
         </Link>
+        <Menu />
       </header>
     );
   }

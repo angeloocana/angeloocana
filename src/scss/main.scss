@@ -51,7 +51,7 @@ mark {
 
 main {
     p {
-        max-width: 30rem;
+        max-width: $pageMaxWidth;
     }
 }
 

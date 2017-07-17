@@ -42,7 +42,8 @@
     "npm-run-all": "^4.0.2",
     "prettier": "^1.5.2",
     "proptypes": "^1.1.0",
-    "react-gravatar": "^2.6.3"
+    "react-gravatar": "^2.6.3",
+    "react-icons": "^2.2.5"
   },
   "devDependencies": {
     "babel-eslint": "^7.2.3",
