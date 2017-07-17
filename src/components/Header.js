@@ -15,8 +15,8 @@ class Header extends React.Component {
     return (
       <header>
         <Helmet defaultTitle={siteMetadata.title} titleTemplate={`${siteMetadata.header.title} | %s`} />
-        <Link to="/">
-          <h1>{siteMetadata.header.title}</h1>
+        <Link className="page-title" to="/">
+          {siteMetadata.header.title}
           <p>{siteMetadata.header.subTitle}</p>
         </Link>
       </header>

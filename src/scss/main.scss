@@ -49,64 +49,6 @@ mark {
     background-color: transparent;
 }
 
-header {
-    padding-bottom: $size3;
-    h1 {
-        text-align: center;
-        padding-top: $size4;
-        padding-bottom: $size1;
-    }
-    p {
-        text-align: center;
-        font-size: $size0;
-    }
-    a {
-        color: $white;
-        text-decoration: none;
-    }
-    a.active,
-    a:hover {
-        color: $yellow;
-        transition: 1s color;
-    }
-    nav {
-        text-align: center;
-        position: fixed;
-        top: 0;
-        right: 0; //calc((60rem - 100%)/2);
-        background-color: $black;
-        padding: $size1;
-        label {
-            background-image: url('../../../src/frontend/imgs/menu.svg');
-            background-repeat: no-repeat;
-            width: $size2;
-            height: $size2;
-            color: transparent;
-            background-size: 100%;
-            position: relative;
-            float: left;
-            cursor: pointer;
-        }
-        a {
-            font-size: $size1;
-            padding-bottom: $size1;
-            display: block;
-            text-align: left;
-        }
-        ul {
-            display: none;
-            margin-top: $size3;
-        }
-        #cb-menu {
-            width: 0px;
-            height: 0px;
-        }
-        #cb-menu:checked+ul {
-            display: block;
-        }
-    }
-}
-
 main {
     p {
         max-width: 30rem;
