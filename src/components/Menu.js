@@ -20,14 +20,14 @@ class Menu extends React.Component {
   render() {
     return (
       <nav className={this.state.isOpen ? 'menu-opened' : 'menu-closed'}>
-        <label htmlFor="cb-menu">
+        <label className="menu-icon" htmlFor="cb-menu">
           <MenuIcon />
           <span className="element-invisible">Menu</span>
+          <input type="checkbox" name="cb-menu" id="cb-menu"
+            checked={this.state.isOpen}
+            onChange={this.handleInputChange}
+          />
         </label>
-        <input type="checkbox" name="cb-menu" id="cb-menu"
-          checked={this.state.isOpen}
-          onChange={this.handleInputChange}
-        />
         <ul>
           <li><a href="" className="active">Home</a></li>
           <li><a href="">Services</a></li>
