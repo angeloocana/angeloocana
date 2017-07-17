@@ -1,14 +1,24 @@
 .element-invisible {
     position: absolute !important;
-    height: 1px; width: 1px; 
+    height: 1px;
+    width: 1px;
     overflow: hidden;
-    clip: rect(1px 1px 1px 1px); /* IE6, IE7 */
+    clip: rect(1px 1px 1px 1px);
+    /* IE6, IE7 */
     clip: rect(1px, 1px, 1px, 1px);
 }
 
-body, h1, h2, h3, h4, h5, h6,  p, span, a {
+body,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p,
+span,
+a {
     font-family: 'Cambo', serif;
-    
     -moz-font-feature-settings: "calt=1", "clig=1", "dlig=1", "kern=1", "liga=1", "salt=1";
     -moz-font-feature-settings: "calt" 1, "clig" 1, "dlig" 1, "kern" 1, "liga" 1, "salt" 1;
     -webkit-font-feature-settings: "calt" 1, "clig" 1, "dlig" 1, "kern" 1, "liga" 1, "salt" 1;
@@ -17,7 +27,7 @@ body, h1, h2, h3, h4, h5, h6,  p, span, a {
     font-feature-settings: "calt" 1, "clig" 1, "dlig" 1, "kern" 1, "liga" 1, "salt" 1;
 }
 
-body{
+body {
     background-color: #1E2019;
     color: #D3D0CB;
     padding: 0 $size1 $size2 $size0;
@@ -25,102 +35,90 @@ body{
     max-width: 60rem;
 }
 
-h1{
-    font-size: $size4;            
+h1 {
+    font-size: $size3;
 }
 
-p{
+p {
     font-size: $size1;
     line-height: $size2;
 }
 
-mark{
+mark {
     color: $yellow;
-    background-color: transparent; 
+    background-color: transparent;
 }
 
 header {
-    padding-bottom: $size3; 
-    
-    h1{
+    padding-bottom: $size3;
+    h1 {
         text-align: center;
         padding-top: $size4;
+        padding-bottom: $size1;
     }
-
-    p{
+    p {
         text-align: center;
         font-size: $size0;
     }
-
-    a{
+    a {
         color: $white;
         text-decoration: none;
     }
-
-    a.active, a:hover{
+    a.active,
+    a:hover {
         color: $yellow;
         transition: 1s color;
     }
-
-    a:hover{
-
-        //text-decoration: underline;       
-        //transition: 2s text-decoration;
-    }
-
     nav {
         text-align: center;
         position: fixed;
         top: 0;
-        right: 0;//calc((60rem - 100%)/2);
+        right: 0; //calc((60rem - 100%)/2);
         background-color: $black;
         padding: $size1;
-
-        label{
+        label {
             background-image: url('../../../src/frontend/imgs/menu.svg');
             background-repeat: no-repeat;
             width: $size2;
             height: $size2;
             color: transparent;
-            background-size: 100%; 
+            background-size: 100%;
             position: relative;
             float: left;
             cursor: pointer;
         }
-    
-        a{
+        a {
             font-size: $size1;
             padding-bottom: $size1;
             display: block;
             text-align: left;
         }
-
-        ul{
+        ul {
             display: none;
             margin-top: $size3;
         }
-
-        #cb-menu{
+        #cb-menu {
             width: 0px;
             height: 0px;
         }
-
-        #cb-menu:checked + ul{
+        #cb-menu:checked+ul {
             display: block;
         }
     }
 }
 
-main{
-    p{
+main {
+    p {
         max-width: 30rem;
     }
+}
 
-    p:first-of-type::first-letter{
+.post {
+    p:first-of-type::first-letter {
         font-size: ($size2 * 2) + $size-3;
         color: $yellow;
         float: left;
         line-height: 0.8;
-        padding-top: 0.3rem; 
+        padding-top: 0.3rem;
     }
 }

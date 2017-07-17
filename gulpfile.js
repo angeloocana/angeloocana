@@ -26,7 +26,9 @@ function css() {
   const folder = dist.css.folder;
   const file = dist.css.mobileFile;
 
-  gulp.src(['./src/**/*.scss'])
+  gulp.src([
+    './src/**/*.scss'
+  ])
     .pipe(concat(file))
     .pipe(sass().on('error', sass.logError))
     .pipe(cssnano())

@@ -9,16 +9,13 @@ const getToLink = (post) =>
 const PostListItem = ({ post }) => {
   return (
     <li key={post.node.fields.slug}>
-      <time pubdate>{post.node.frontmatter.date}</time>
-      <Link
-        style={{
-          textDecoration: 'none',
-        }}
-        to={getToLink(post)}
-      >
-        {post.node.frontmatter.title}
+      <Link to={getToLink(post)}>
+        <header>
+          <time pubdate>{post.node.frontmatter.date}</time>
+          {post.node.frontmatter.title}
+        </header>
+        <p>{post.node.excerpt}</p>
       </Link>
-      <p>{post.node.excerpt}</p>
     </li>
   );
 };

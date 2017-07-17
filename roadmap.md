@@ -15,14 +15,15 @@
 - Hire me.
 - Menu.
 - Test google analytics.
+- Sitemap.
+- Favicon.
 
 ## Working
-- SASS.
 - Header.
 - Footer.
 
 ## Done
-
+- Add SASS.
 - Remover Typography.
 - Gravatar.
 - Copy blog posts.

@@ -2,7 +2,7 @@ import React from 'react';
 import graphql from 'graphql';
 import PropTypes from 'proptypes';
 import Helmet from 'react-helmet';
-import PostListItem from '../components/PostListItem';
+import PostList from '../components/PostList';
 
 class BlogIndexRoute extends React.Component {
   static propTypes = {
@@ -23,9 +23,7 @@ class BlogIndexRoute extends React.Component {
             marginBottom: 0,
           }}
         >
-          {posts.map(post =>
-            <PostListItem post={post} />
-          )}
+          <PostList posts={posts} />
         </ul>
       </div>
     );
