@@ -8,11 +8,7 @@ header {
     p {
         text-align: center;
         font-size: $size0;
-    }
-    a {
-        color: $white;
-        text-decoration: none;
-    }
+    }    
     nav {
         text-align: center;
         position: fixed;
@@ -35,10 +31,6 @@ header {
             display: block;
             text-align: left;
         }
-        a:hover {
-            color: $yellow;
-            transition: 0.5s color;
-        }
         ul {
             display: block;
             margin-top: $size3;
@@ -49,12 +41,12 @@ header {
             height: 0px;
         }
         .menu-icon {
-            transition: transform 0.5s, rotate 0.8s;
+            transition: transform 0.6s, rotate 0.4s;
             transition-timing-function: ease-in, step-start, cubic-bezier(0.1, 0.7, 1.0, 0.1);
         }
         .menu-icon:hover {
             transform: scale(1.1) rotate(180deg);
-            transition: transform 0.5s, rotate 0.8s;
+            transition: transform 0.6s, rotate 0.4s;
             transition-timing-function: ease-in, step-start, cubic-bezier(0.1, 0.7, 1.0, 0.1);
         }
     }

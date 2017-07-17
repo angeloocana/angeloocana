@@ -25,6 +25,13 @@ a {
     -ms-font-feature-settings: "calt=1", "clig=1", "dlig=1", "kern=1", "liga=1", "salt=1";
     -o-font-feature-settings: "calt" 1, "clig" 1, "dlig" 1, "kern" 1, "liga" 1, "salt" 1;
     font-feature-settings: "calt" 1, "clig" 1, "dlig" 1, "kern" 1, "liga" 1, "salt" 1;
+    color: $white;
+    text-decoration: none;
+}
+
+a:hover {
+    color: $yellow;
+    transition: 0.5s color;
 }
 
 body {
