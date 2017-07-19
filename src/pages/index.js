@@ -18,7 +18,14 @@ class BlogIndexRoute extends React.Component {
     return (
       <div>
         <Helmet title={siteMetadata.title} />
-        <SocialLinks />        
+        <SocialLinks />
+        <section className="welcome">
+          <p>
+            Good morning! Welcome to my site, where you can learn about quality software development and hire my services.
+                I wish you accept my challenge: <mark>Study every day</mark>, at least 10 minutes.
+                Are you ready to learn and change your life?
+          </p>
+        </section>
         <PostList posts={posts} />
       </div>
     );
