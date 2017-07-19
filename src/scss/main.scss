@@ -62,7 +62,7 @@ main {
     }
 }
 
-.post {
+.post, .welcome {
     p:first-of-type::first-letter {
         font-size: ($size2 * 2) + $size-3;
         color: $yellow;

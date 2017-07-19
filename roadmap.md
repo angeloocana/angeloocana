@@ -3,7 +3,6 @@
 ## To do
 - Multi language.
 - Old pages.
-- Test travis.
 - Publish to purge.
 - Index blog links.
 - Index blog tags.
@@ -16,8 +15,10 @@
 - Test google analytics.
 - Sitemap.
 - Favicon.
+- Clean dependencies.
 
 ## Working
+- Test travis.
 - Menu.
 - Click outside menu to close.
 - Header.

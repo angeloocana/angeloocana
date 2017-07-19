@@ -3,6 +3,7 @@ import graphql from 'graphql';
 import PropTypes from 'proptypes';
 import Helmet from 'react-helmet';
 import PostList from '../components/PostList';
+import SocialLinks from '../components/SocialLinks';
 
 class BlogIndexRoute extends React.Component {
   static propTypes = {
@@ -17,14 +18,8 @@ class BlogIndexRoute extends React.Component {
     return (
       <div>
         <Helmet title={siteMetadata.title} />
-
-        <ul
-          style={{
-            marginBottom: 0,
-          }}
-        >
-          <PostList posts={posts} />
-        </ul>
+        <SocialLinks />        
+        <PostList posts={posts} />
       </div>
     );
   }
