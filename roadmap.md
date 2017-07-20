@@ -19,7 +19,7 @@
 - Search for cambo in npm, if not available add it.
 
 ## Working
-- Add styled components.
+- Migrate Old Style to styled components.
 - Test travis.
 - Menu.
 - Click outside menu to close.
@@ -27,6 +27,8 @@
 - Footer.
 
 ## Done
+- Remove SASS.
+- Add styled components.
 - Add SASS.
 - Remover Typography.
 - Gravatar.
