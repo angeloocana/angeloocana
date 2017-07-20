@@ -5,8 +5,6 @@ import Helmet from 'react-helmet';
 import PostList from '../components/PostList';
 import SocialLinks from '../components/SocialLinks';
 import Welcome from '../components/Welcome';
-import { ThemeProvider } from 'styled-components';
-import theme from '../themes/theme';
 
 class BlogIndexRoute extends React.Component {
   static propTypes = {
@@ -19,14 +17,12 @@ class BlogIndexRoute extends React.Component {
     const { siteMetadata } = this.props.data.site;
 
     return (
-      <ThemeProvider theme={theme}>
-        <div>
-          <Helmet title={siteMetadata.title} />
-          <SocialLinks />
-          <Welcome />
-          <PostList posts={posts} />
-        </div>
-      </ThemeProvider>
+      <div>
+        <Helmet title={siteMetadata.title} />
+        <SocialLinks />
+        <Welcome />
+        <PostList posts={posts} />
+      </div>
     );
   }
 }
