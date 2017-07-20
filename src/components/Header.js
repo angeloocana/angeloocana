@@ -1,8 +1,21 @@
 import React from 'react';
 import PropTypes from 'proptypes';
-import Link from 'gatsby-link';
+import Link from './Link';
 import Helmet from 'react-helmet';
 import Menu from './Menu';
+import styled from 'styled-components';
+
+const Title = styled(Link)`
+  display: block;
+  font-size: ${props => props.theme.header.title.fontSize};
+  text-align: ${props => props.theme.header.title.textAlign};
+  padding-top: ${props => props.theme.header.title.paddingTop};
+  padding-bottom: ${props => props.theme.header.title.paddingBottom};
+`;
+
+const SubTitle = styled.p`
+  font-size: ${props => props.theme.header.subTitle.fontSize};
+`;
 
 class Header extends React.Component {
   static propTypes = {
@@ -16,10 +29,10 @@ class Header extends React.Component {
     return (
       <header>
         <Helmet defaultTitle={siteMetadata.title} titleTemplate={`${siteMetadata.header.title} | %s`} />
-        <Link className="page-title" to="/">
+        <Title to="/">
           {siteMetadata.header.title}
-          <p>{siteMetadata.header.subTitle}</p>
-        </Link>
+          <SubTitle>{siteMetadata.header.subTitle}</SubTitle>
+        </Title>
         <Menu />
       </header>
     );

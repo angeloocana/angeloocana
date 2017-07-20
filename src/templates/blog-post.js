@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'proptypes';
 import graphql from 'graphql';
 import Helmet from 'react-helmet';
-import Link from 'gatsby-link';
+import Link from '../components/Link';
 import ReadNext from '../components/ReadNext';
 
 class BlogPostRoute extends React.Component {

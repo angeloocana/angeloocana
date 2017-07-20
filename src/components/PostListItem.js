@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'proptypes';
-import Link from 'gatsby-link';
+import Link from './Link';
 import graphql from 'graphql';
 
 const getToLink = (post) =>
