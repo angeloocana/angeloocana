@@ -4,6 +4,9 @@ import PropTypes from 'proptypes';
 import Helmet from 'react-helmet';
 import PostList from '../components/PostList';
 import SocialLinks from '../components/SocialLinks';
+import Welcome from '../components/Welcome';
+import { ThemeProvider } from 'styled-components';
+import theme from '../themes/theme';
 
 class BlogIndexRoute extends React.Component {
   static propTypes = {
@@ -16,18 +19,14 @@ class BlogIndexRoute extends React.Component {
     const { siteMetadata } = this.props.data.site;
 
     return (
-      <div>
-        <Helmet title={siteMetadata.title} />
-        <SocialLinks />
-        <section className="welcome">
-          <p>
-            Good morning! Welcome to my site, where you can learn about quality software development and hire my services.
-                I wish you accept my challenge: <mark>Study every day</mark>, at least 10 minutes.
-                Are you ready to learn and change your life?
-          </p>
-        </section>
-        <PostList posts={posts} />
-      </div>
+      <ThemeProvider theme={theme}>
+        <div>
+          <Helmet title={siteMetadata.title} />
+          <SocialLinks />
+          <Welcome />
+          <PostList posts={posts} />
+        </div>
+      </ThemeProvider>
     );
   }
 }

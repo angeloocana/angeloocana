@@ -16,8 +16,10 @@
 - Sitemap.
 - Favicon.
 - Clean dependencies.
+- Search for cambo in npm, if not available add it.
 
 ## Working
+- Add styled components.
 - Test travis.
 - Menu.
 - Click outside menu to close.

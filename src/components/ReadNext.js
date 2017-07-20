@@ -1,10 +1,14 @@
 import React from 'react';
+import PropTypes from 'proptypes';
 import graphql from 'graphql';
 import Link from 'gatsby-link';
 
-const Component = React.createClass({
+class Component extends React.Component {
+  static propTypes = {
+    nextPost: PropTypes.object
+  };
+
   render() {
-    //console.log(this.props)
     let { nextPost } = this.props;
     if (nextPost && nextPost.children && nextPost.children[0]) {
       nextPost = nextPost.children[0];
@@ -30,8 +34,8 @@ const Component = React.createClass({
         </div>
       );
     }
-  },
-});
+  }
+};
 
 export default Component;
 
