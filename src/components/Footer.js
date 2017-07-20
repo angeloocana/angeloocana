@@ -1,30 +1,63 @@
 import React from 'react';
+import PropTypes from 'proptypes';
 import Gravatar from 'react-gravatar';
 import HeartIcon from 'react-icons/lib/fa/heart';
-import GithubIcon from 'react-icons/lib/fa/github';
-import Link from './Link';
+import FaGithub from 'react-icons/lib/fa/github';
+import A from './A';
+import styled from 'styled-components';
 
-const Footer = () => {
-  const author = {
-    name: 'Angelo Ocana',
-    homeCity: 'Ottawa',
-    email: 'angeloocana@gmail.com'
-  };
+const FooterSection = styled.section`
+  text-align: center;
+  padding-top: ${props => props.theme.footer.marginTop};
+  padding-bottom: ${props => props.theme.footer.marginBottom};
+  line-height: 1.5;
 
-  const blogGithubLink = 'https://github.com/angeloocana/angeloocana';
+  &:hover {
+    background-color: ${props => props.theme.footer.hover.backgroundColor};
+  }
+`;
 
-  return (<footer>
-    <Gravatar
-      email={author.email}
-      alt={author.name}
-      width={60}
-      height={60} />
-    Built with <HeartIcon /> by <Link to={author.defaultLink}>{author.name}</Link>
-    <p>
-      <Link to={blogGithubLink}><GithubIcon /> Do you want to see the source code? It's opensource, It's free, check it out!!!</Link>
-    </p>
-  </footer>
+const ProfilePicture = styled(Gravatar)`
+  display: block;
+  margin: auto;
+  border-radius: 50%;
+  margin-bottom: 1rem;
+`;
+
+const GithubIcon = styled(FaGithub)`
+  font-size: 2em;
+  display: block;
+  margin: auto;
+`;
+
+const Footer = ({ siteMetadata }) => {
+  const { author, sourceCodeLink } = siteMetadata;
+  return (
+    <footer>
+      <A href={author.defaultLink} target="_blank">
+        <FooterSection>
+          <ProfilePicture email={author.email} alt={author.name} width={60} height={60} />
+          Built with <HeartIcon />
+          {` by ${author.name} who lives in ${author.homeCity}`}.
+        </FooterSection>
+      </A>
+      <A href={sourceCodeLink} target="_blank">
+        <FooterSection>
+          <p>
+            <GithubIcon />
+            Do you want to see the source code? <br />
+            It's <mark>FREE</mark>!  <br />
+            It's <mark>OPEN SOURCE</mark>! <br />
+            Click <mark>HERE</mark> to check it out!!!
+          </p>
+        </FooterSection>
+      </A>
+    </footer>
   );
+};
+
+Footer.propTypes = {
+  siteMetadata: PropTypes.object
 };
 
 export default Footer;

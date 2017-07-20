@@ -46,7 +46,7 @@ class Wrapper extends React.Component {
             <main>
               {this.props.children()}
             </main>
-            <Footer author={siteMetadata.author} />
+            <Footer siteMetadata={siteMetadata} />
           </BodyContainer>
         </Background>
       </ThemeProvider>

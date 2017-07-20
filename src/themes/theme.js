@@ -7,6 +7,10 @@ const yellow = '#E2C044';
 // const blue = '#587B7F';
 // const gray = '#393E41';
 
+const blackShades = [
+  '#32342D'
+];
+
 const fontFamily = '"Cambo", serif';
 
 const theme = {
@@ -38,6 +42,13 @@ const theme = {
     },
     subTitle: {
       fontSize: `${scale(0)}rem`
+    }
+  },
+  footer: {
+    marginTop: `${scale(2)}rem`,
+    marginBottom: `${scale(2)}rem`,
+    hover: {
+      backgroundColor: blackShades[0]
     }
   }
 };

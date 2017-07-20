@@ -1,0 +1,14 @@
+import styled from 'styled-components';
+
+const A = styled.a`
+    font-family: ${props => props.theme.a.fontFamily};
+    color: ${props => props.theme.a.color};
+    text-decoration: ${props => props.theme.a.textDecoration};
+
+    &:hover {
+        color: $yellow;
+        transition: 0.5s color;
+    }
+`;
+
+export default A;

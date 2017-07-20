@@ -4,8 +4,10 @@ module.exports = {
     author: {
       name: 'Ângelo Ocanã',
       homeCity: 'Ottawa',
-      email: 'angeloocana@gmail.com'
+      email: 'angeloocana@gmail.com',
+      defaultLink: 'https://github.com/angeloocana'
     },
+    sourceCodeLink: 'https://github.com/angeloocana/angeloocana',
     header: {
       title: 'Ângelo Ocanã',
       subTitle: 'Software Development and Training'
