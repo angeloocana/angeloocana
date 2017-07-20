@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'proptypes';
 import Gravatar from 'react-gravatar';
-import HeartIcon from 'react-icons/lib/fa/heart';
+import HeartIcon from './HeartIcon';
 import FaGithub from 'react-icons/lib/fa/github';
 import A from './A';
 import styled from 'styled-components';
@@ -14,6 +14,10 @@ const FooterSection = styled.section`
 
   &:hover {
     background-color: ${props => props.theme.footer.hover.backgroundColor};
+  }
+
+  span {
+    font-weight: bold;
   }
 `;
 
@@ -46,9 +50,9 @@ const Footer = ({ siteMetadata }) => {
           <p>
             <GithubIcon />
             Do you want to see the source code? <br />
-            It's <mark>FREE</mark>!  <br />
-            It's <mark>OPEN SOURCE</mark>! <br />
-            Click <mark>HERE</mark> to check it out!!!
+            It's <span>FREE</span>!  <br />
+            It's <span>OPEN SOURCE</span>! <br />
+            Click <span>HERE</span> to check it out!!!
           </p>
         </FooterSection>
       </A>
