@@ -8,6 +8,14 @@ import theme from '../themes/theme';
 import '../css/reset.css';
 import '../css/prism-coy.css';
 
+const Background = styled.div`
+  background-color: ${props => props.theme.bg};
+  top: 0;
+  right: 0;
+  left: 0;
+  bottom: 0;
+`;
+
 const BodyContainer = styled.div`
     font-family: ${props => props.theme.fontFamily};
     color: ${props => props.theme.color};
@@ -32,13 +40,15 @@ class Wrapper extends React.Component {
   render() {
     return (
       <ThemeProvider theme={theme}>
-        <BodyContainer>
-          <Header siteMetadata={siteMetadata} />
-          <main>
-            {this.props.children()}
-          </main>
-          <Footer author={siteMetadata.author} />
-        </BodyContainer>
+        <Background>
+          <BodyContainer>
+            <Header siteMetadata={siteMetadata} />
+            <main>
+              {this.props.children()}
+            </main>
+            <Footer author={siteMetadata.author} />
+          </BodyContainer>
+        </Background>
       </ThemeProvider>
     );
   }
