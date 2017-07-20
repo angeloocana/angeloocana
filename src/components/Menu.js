@@ -1,5 +1,6 @@
 import React from 'react';
 import MenuIcon from 'react-icons/lib/fa/bars';
+import { InvisibleSpan } from './Invisible';
 
 class Menu extends React.Component {
   constructor(props) {
@@ -22,7 +23,7 @@ class Menu extends React.Component {
       <nav className={this.state.isOpen ? 'menu-opened' : 'menu-closed'}>
         <label className="menu-icon" htmlFor="cb-menu">
           <MenuIcon />
-          <span className="element-invisible">Menu</span>
+          <InvisibleSpan>Menu</InvisibleSpan>
           <input type="checkbox" name="cb-menu" id="cb-menu"
             checked={this.state.isOpen}
             onChange={this.handleInputChange}
