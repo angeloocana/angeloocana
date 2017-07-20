@@ -27,6 +27,7 @@
 - Footer.
 
 ## Done
+- Add resetCss.
 - Remove SASS.
 - Add styled components.
 - Add SASS.

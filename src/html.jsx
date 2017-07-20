@@ -1,7 +1,6 @@
 import React from 'react';
 import PropTypes from 'proptypes';
 import logo from './imgs/logo.png';
-import resetCss from './css/reset.css';
 
 let stylesStr;
 if (process.env.NODE_ENV === 'production') {
@@ -44,7 +43,6 @@ class Html extends React.Component {
           {this.props.headComponents}
           <link rel="icon" type="image/png" sizes="1024x1024" href={logo} />
           <link href="https://fonts.googleapis.com/css?family=Cambo" rel="stylesheet" />
-          <link href={resetCss} rel="stylesheet" />
           {css}
         </head>
         <body>
