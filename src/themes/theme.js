@@ -1,4 +1,13 @@
-const scale = (n) => Math.pow(1.414, n);
+/**
+ * Round x with n decimal.
+ * @param {Number} x Number to be rounded.
+ * @param {Number} n Number of digits after semi column.
+ * @returns {Number} Number rounded.
+ */
+const round = (x, n) => Math.round(x * (n * 10)) / (n * 10);
+
+
+const scale = (n) => round(Math.pow(1.414, n), 3);
 
 const colors = {
   white: '#D3D0CB',
@@ -23,6 +32,11 @@ const theme = {
   padding: `0 ${scale(1)}rem ${scale(2)}rem ${scale(0)}rem`,
   margin: '0 auto',
   maxWidth: '60rem',
+  borderRadius: '0.3rem',
+  lineHeight: 1.5,
+  focus: {
+    border: '0.4rem red solid'
+  },
   p: {
     firstLetter: {
       fontSize: `${(scale(2) * 2) + scale(-3)}rem`,
@@ -45,6 +59,29 @@ const theme = {
     },
     subTitle: {
       fontSize: `${scale(0)}rem`
+    }
+  },
+  menu: {
+    padding: `${scale(1)}rem`,
+    opened: {
+      bg: colors.blackShades[0]
+    },
+    closed: {
+      bg: 'transparent'
+    },
+    label: {
+      width: `${scale(2)}rem`,
+      height: `${scale(2)}rem`,
+      fontSize: `${scale(2)}rem`
+    },
+    a: {
+      fontSize: `${scale(1)}rem`,
+      paddingBottom: `${scale(1)}rem`,
+      textAlign: 'left'
+    },
+    ul: {
+      marginTop: `${scale(3)}rem`,
+      marginLeft: `${scale(4)}rem`
     }
   },
   footer: {

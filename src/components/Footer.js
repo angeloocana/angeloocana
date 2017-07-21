@@ -11,6 +11,7 @@ const FooterSection = styled.section`
   padding-top: ${props => props.theme.footer.marginTop};
   padding-bottom: ${props => props.theme.footer.marginBottom};
   line-height: 1.5;
+  border-radius: ${props => props.theme.borderRadius};
 
   &:hover {
     background-color: ${props => props.theme.footer.hover.backgroundColor};
@@ -41,8 +42,9 @@ const Footer = ({ siteMetadata }) => {
       <A href={author.defaultLink} target="_blank">
         <FooterSection>
           <ProfilePicture email={author.email} alt={author.name} width={60} height={60} />
-          Built with <HeartIcon />
-          {` by ${author.name} who lives in ${author.homeCity}`}.
+          {'Built with '} <HeartIcon />
+          {' by '} <span>{author.name}</span>
+          {' who lives in '} <span>{author.homeCity}</span>.
         </FooterSection>
       </A>
       <A href={sourceCodeLink} target="_blank">

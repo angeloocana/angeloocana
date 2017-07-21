@@ -24,9 +24,9 @@
 - Menu.
 - Click outside menu to close.
 - Header.
-- Footer.
 
 ## Done
+- Footer.
 - Add resetCss.
 - Remove SASS.
 - Add styled components.

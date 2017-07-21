@@ -23,7 +23,6 @@ class Header extends React.Component {
   }
 
   render() {
-    console.log('Header props', this.props);
     const { siteMetadata } = this.props;
 
     return (

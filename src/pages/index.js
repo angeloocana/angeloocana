@@ -12,8 +12,7 @@ class BlogIndexRoute extends React.Component {
   }
 
   render() {
-    const posts = this.props.data.allMarkdownRemark.edges;
-    console.log('posts', posts);
+    const posts = this.props.data.allMarkdownRemark.edges;    
     const { siteMetadata } = this.props.data.site;
 
     return (

@@ -10,44 +10,44 @@ header {
         font-size: $size0;
     }    
     nav {
-        text-align: center;
-        position: fixed;
-        top: 0;
-        right: calc(2rem - 100%);
-        height: 100%;
-        width: 100%;
-        padding: $size1;
+        text-align: center; // ok
+        position: fixed; // ok
+        top: 0; // ok
+        right: calc(2rem - 100%); // ok
+        height: 100%; // ok
+        width: 100%; // ok
+        padding: $size1; // ok
         label {
-            width: $size2;
-            height: $size2;
-            position: relative;
-            float: left;
-            cursor: pointer;
-            font-size: $size2;
+            width: $size2; // ok
+            height: $size2; // ok
+            position: relative; // ok
+            float: left; // ok
+            cursor: pointer; // ok
+            font-size: $size2; // ok
         }
         a {
-            font-size: $size1;
-            padding-bottom: $size1;
-            display: block;
-            text-align: left;
+            font-size: $size1; // ok
+            padding-bottom: $size1; // ok
+            display: block; // ok
+            text-align: left; // ok
         }
         ul {
-            display: block;
-            margin-top: $size3;
-            margin-left: $size4;
+            display: block; // ok
+            margin-top: $size3; // ok
+            margin-left: $size4; // ok
         }
         #cb-menu {
             width: 0px;
             height: 0px;
         }
         .menu-icon {
-            transition: transform 0.6s, rotate 0.4s;
-            transition-timing-function: ease-in, step-start, cubic-bezier(0.1, 0.7, 1.0, 0.1);
+            transition: transform 0.6s, rotate 0.4s; // ok
+            transition-timing-function: ease-in, step-start, cubic-bezier(0.1, 0.7, 1.0, 0.1); // ok
         }
         .menu-icon:hover {
-            transform: scale(1.1) rotate(180deg);
-            transition: transform 0.6s, rotate 0.4s;
-            transition-timing-function: ease-in, step-start, cubic-bezier(0.1, 0.7, 1.0, 0.1);
+            transform: scale(1.1) rotate(180deg); // ok
+            transition: transform 0.6s, rotate 0.4s; // ok
+            transition-timing-function: ease-in, step-start, cubic-bezier(0.1, 0.7, 1.0, 0.1); // ok
         }
     }
     .menu-closed {
@@ -55,21 +55,21 @@ header {
         transition-timing-function: ease-in, step-start, cubic-bezier(0.1, 0.7, 1.0, 0.1);
         background-color: transparent;
         ul {
-            transition: 1s;
-            opacity: 0;
+            transition: 1s; // OK
+            opacity: 0; // OK
         }
     }
     .menu-opened {
-        transition: transform 1s, background-color 0.5s;
-        transition-timing-function: ease-in, step-start, cubic-bezier(0.1, 0.7, 1.0, 0.1);
-        transform: translateX(-60%);
-        background-color: lighten($black, 2%);
-        width: 100%;
-        height: 100%;
+        transition: transform 1s, background-color 0.5s; // OK
+        transition-timing-function: ease-in, step-start, cubic-bezier(0.1, 0.7, 1.0, 0.1); // OK
+        transform: translateX(-60%); // OK
+        background-color: lighten($black, 2%); // OK
+        width: 100%; // OK
+        height: 100%; // OK
         ul {
-            transition: opacity 1s, transform 0.5s;
-            transform: translateX(-4rem);
-            opacity: 1;
+            transition: opacity 1s, transform 0.5s; // OK
+            transform: translateX(-4rem); // OK
+            opacity: 1; // OK
         }
         a.active {
             color: $yellow;
