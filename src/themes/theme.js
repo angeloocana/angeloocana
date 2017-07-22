@@ -58,10 +58,10 @@ const theme = {
   },
   header: {
     title: {
-      fontSize: `${scale(4)}rem`,
+      fontSize: scaleRem(6),
       textAlign: 'center',
-      paddingTop: `${scale(4)}rem`,
-      paddingBottom: scaleRem(1)
+      paddingTop: scaleRem(8),
+      paddingBottom: scaleRem(0)
     },
     subTitle: {
       fontSize: `${scale(0)}rem`,
@@ -69,7 +69,7 @@ const theme = {
     }
   },
   menu: {
-    padding: scaleRem(1),
+    padding: scaleRem(2),
     opened: {
       bg: colors.blackShades[0]
     },
@@ -77,9 +77,9 @@ const theme = {
       bg: 'transparent'
     },
     label: {
-      width: scaleRem(2),
-      height: scaleRem(2),
-      fontSize: scaleRem(2)
+      width: scaleRem(3),
+      height: scaleRem(3),
+      fontSize: scaleRem(3)
     },
     a: {
       fontSize: scaleRem(1),
@@ -91,8 +91,8 @@ const theme = {
       }
     },
     ul: {
-      marginTop: `${scale(3)}rem`,
-      marginLeft: `${scale(4)}rem`
+      marginTop: scaleRem(6),
+      marginLeft: scaleRem(7.8)
     }
   },
   footer: {
@@ -110,7 +110,7 @@ const theme = {
       fontSize: scaleRem(0),
       margin: `${scaleRem(0)} ${scaleRem(-1)} 0 ${scaleRem(-1)}`,
       svg: {
-        fontSize: scaleRem(3),
+        fontSize: scaleRem(5),
         margin: `0 auto ${scaleRem(-1)} auto`
       },
       hover: {
