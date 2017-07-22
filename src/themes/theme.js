@@ -6,9 +6,9 @@
  */
 const round = (x, n) => Math.round(x * (n * 10)) / (n * 10);
 
-const scale = (n) => round(Math.pow(1.2, n), 3);
+const scaleN = (n) => round(Math.pow(1.2, n), 3);
 
-const scaleRem = n => `${scale(n)}rem`;
+const scale = n => `${scaleN(n)}rem`;
 
 const colors = {
   white: '#D3D0CB',
@@ -30,7 +30,7 @@ const theme = {
   fontFamily,
   color: colors.white,
   bg: colors.black,
-  padding: `0 ${scale(1)}rem ${scale(2)}rem ${scale(0)}rem`,
+  padding: `0 ${scaleN(1)}rem ${scaleN(2)}rem ${scaleN(0)}rem`,
   margin: '0 auto',
   maxWidth: '60rem',
   borderRadius: '0.3rem',
@@ -39,10 +39,10 @@ const theme = {
     border: '0.4rem red solid'
   },
   p: {
-    fontSize: scaleRem(1),
-    lineHeight: scaleRem(2),
+    fontSize: scale(1),
+    lineHeight: scale(2),
     firstLetter: {
-      fontSize: `${(scale(1) * 3) + scale(3)}rem`,
+      fontSize: `${(scaleN(1) * 3) + scaleN(3)}rem`,
       color: colors.yellow,
       lineHeight: 0.7,
       paddingTop: '0.3rem'
@@ -58,18 +58,18 @@ const theme = {
   },
   header: {
     title: {
-      fontSize: scaleRem(6),
+      fontSize: scale(6),
       textAlign: 'center',
-      paddingTop: scaleRem(8),
-      paddingBottom: scaleRem(0)
+      paddingTop: scale(8),
+      paddingBottom: scale(0)
     },
     subTitle: {
-      fontSize: `${scale(0)}rem`,
-      paddingTop: `${scale(-2)}rem`,
+      fontSize: `${scaleN(0)}rem`,
+      paddingTop: `${scaleN(-2)}rem`,
     }
   },
   menu: {
-    padding: scaleRem(2),
+    padding: scale(2),
     opened: {
       bg: colors.blackShades[0]
     },
@@ -77,13 +77,13 @@ const theme = {
       bg: 'transparent'
     },
     label: {
-      width: scaleRem(3),
-      height: scaleRem(3),
-      fontSize: scaleRem(3)
+      width: scale(3),
+      height: scale(3),
+      fontSize: scale(3)
     },
     a: {
-      fontSize: scaleRem(1),
-      paddingBottom: scaleRem(1),
+      fontSize: scale(1),
+      paddingBottom: scale(1),
       textAlign: 'left',
       color: colors.white,
       active: {
@@ -91,27 +91,27 @@ const theme = {
       }
     },
     ul: {
-      marginTop: scaleRem(6),
-      marginLeft: scaleRem(7.8)
+      marginTop: scale(6),
+      marginLeft: scale(7.8)
     }
   },
   footer: {
-    marginTop: scaleRem(2),
-    marginBottom: scaleRem(2),
+    marginTop: scale(2),
+    marginBottom: scale(2),
     hover: {
       backgroundColor: colors.blackShades[0]
     }
   },
   socialLinks: {
-    marginTop: scaleRem(0),
-    marginBottom: scaleRem(3),
+    marginTop: scale(0),
+    marginBottom: scale(3),
     a: {
       color: colors.white,
-      fontSize: scaleRem(0),
-      margin: `${scaleRem(0)} ${scaleRem(-1)} 0 ${scaleRem(-1)}`,
+      fontSize: scale(0),
+      margin: `${scale(0)} ${scale(-1)} 0 ${scale(-1)}`,
       svg: {
-        fontSize: scaleRem(5),
-        margin: `0 auto ${scaleRem(-1)} auto`
+        fontSize: scale(5),
+        margin: `0 auto ${scale(-1)} auto`
       },
       hover: {
         color: colors.yellow
@@ -119,8 +119,32 @@ const theme = {
     }
   },
   welcome: {
-    marginTop: scaleRem(2),
-    marginBottom: scaleRem(2),
+    marginTop: scale(6),
+    marginBottom: scale(2),
+  },
+  blog: {
+    list: {
+      header: {
+        fontSize: scale(6),
+        marginTop: scale(6),
+      },
+      item: {
+        padding: scale(2),
+        hover: {
+          backgroundColor: colors.blackShades[0]
+        },
+        header: {
+          fontSize: scale(4),
+          time: {
+            fontSize: scale(0),
+            color: colors.blue
+          }
+        },
+        p: {
+          fontSize: scale(1)
+        }
+      }
+    }
   }
 };
 
