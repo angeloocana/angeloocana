@@ -6,8 +6,7 @@
  */
 const round = (x, n) => Math.round(x * (n * 10)) / (n * 10);
 
-
-const scale = (n) => round(Math.pow(1.414, n), 3);
+const scale = (n) => round(Math.pow(1.2, n), 3);
 
 const scaleRem = n => `${scale(n)}rem`;
 
@@ -40,10 +39,12 @@ const theme = {
     border: '0.4rem red solid'
   },
   p: {
+    fontSize: scaleRem(1),
+    lineHeight: scaleRem(2),
     firstLetter: {
-      fontSize: `${(scale(2) * 2) + scale(-3)}rem`,
+      fontSize: `${(scale(1) * 3) + scale(3)}rem`,
       color: colors.yellow,
-      lineHeight: 0.8,
+      lineHeight: 0.7,
       paddingTop: '0.3rem'
     }
   },
@@ -116,6 +117,10 @@ const theme = {
         color: colors.yellow
       }
     }
+  },
+  welcome: {
+    marginTop: scaleRem(2),
+    marginBottom: scaleRem(2),
   }
 };
 
