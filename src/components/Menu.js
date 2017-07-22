@@ -59,6 +59,17 @@ const A = styled.a`
     padding-bottom: ${props => props.theme.menu.a.paddingBottom};
     display: block;
     text-align: ${props => props.theme.menu.a.textAlign};
+    text-decoration: none;
+    transition: 0.5s;
+
+    color: ${props => props.isActive
+    ? props.theme.menu.a.active.color
+    : props.theme.menu.a.color};
+
+    &:hover {
+      color: ${props => props.theme.menu.a.active.color};
+      transition: 0.5s;
+    }
 `;
 
 const Ul = styled.ul`
@@ -99,7 +110,7 @@ class Menu extends React.Component {
           />
         </MenuLabel>
         <Ul isOpen={isOpen}>
-          <li><A href="" className="active">Home</A></li>
+          <li><A isActive href="" className="active">Home</A></li>
           <li><A href="">Services</A></li>
           <li><A href="">Tips and Training</A></li>
           <li><A href="">About me</A></li>

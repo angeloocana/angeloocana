@@ -77,7 +77,11 @@ const theme = {
     a: {
       fontSize: `${scale(1)}rem`,
       paddingBottom: `${scale(1)}rem`,
-      textAlign: 'left'
+      textAlign: 'left',
+      color: colors.white,
+      active: {
+        color: colors.yellow
+      }
     },
     ul: {
       marginTop: `${scale(3)}rem`,

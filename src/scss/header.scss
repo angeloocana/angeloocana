@@ -53,7 +53,7 @@ header {
     .menu-closed {
         transition: transform 0.5s, background-color 1s;
         transition-timing-function: ease-in, step-start, cubic-bezier(0.1, 0.7, 1.0, 0.1);
-        background-color: transparent;
+        background-color: transparent; // OK
         ul {
             transition: 1s; // OK
             opacity: 0; // OK
