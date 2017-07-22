@@ -15,6 +15,7 @@ const Title = styled(Link)`
 
 const SubTitle = styled.p`
   font-size: ${props => props.theme.header.subTitle.fontSize};
+  padding-top: ${props => props.theme.header.subTitle.paddingTop};
 `;
 
 class Header extends React.Component {

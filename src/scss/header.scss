@@ -1,13 +1,13 @@
 header {
     padding-bottom: $size3;
     h1 {
-        text-align: center;
-        padding-top: $size4;
-        padding-bottom: $size1;
+        text-align: center; // ok
+        padding-top: $size4; // ok
+        padding-bottom: $size1; // ok
     }
     p {
-        text-align: center;
-        font-size: $size0;
+        text-align: center; // ok
+        font-size: $size0; // ok
     }    
     nav {
         text-align: center; // ok
@@ -72,16 +72,9 @@ header {
             opacity: 1; // OK
         }
         a.active {
-            color: $yellow;
-            transition: 4s color;
+            color: $yellow; // OK
+            transition: 4s color; // OK
         }
     }
 }
 
-@media (min-width: 60rem) {
-    header {
-        nav {
-            right: calc(-50% + -28rem);
-        }
-    }
-}

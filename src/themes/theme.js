@@ -61,7 +61,8 @@ const theme = {
       paddingBottom: `${scale(1)}rem`
     },
     subTitle: {
-      fontSize: `${scale(0)}rem`
+      fontSize: `${scale(0)}rem`,
+      paddingTop: `${scale(-2)}rem`,
     }
   },
   menu: {
