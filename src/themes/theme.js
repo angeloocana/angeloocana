@@ -9,6 +9,8 @@ const round = (x, n) => Math.round(x * (n * 10)) / (n * 10);
 
 const scale = (n) => round(Math.pow(1.414, n), 3);
 
+const scaleRem = n => `${scale(n)}rem`;
+
 const colors = {
   white: '#D3D0CB',
   black: '#1E2019', // #393E41
@@ -58,7 +60,7 @@ const theme = {
       fontSize: `${scale(4)}rem`,
       textAlign: 'center',
       paddingTop: `${scale(4)}rem`,
-      paddingBottom: `${scale(1)}rem`
+      paddingBottom: scaleRem(1)
     },
     subTitle: {
       fontSize: `${scale(0)}rem`,
@@ -66,7 +68,7 @@ const theme = {
     }
   },
   menu: {
-    padding: `${scale(1)}rem`,
+    padding: scaleRem(1),
     opened: {
       bg: colors.blackShades[0]
     },
@@ -74,13 +76,13 @@ const theme = {
       bg: 'transparent'
     },
     label: {
-      width: `${scale(2)}rem`,
-      height: `${scale(2)}rem`,
-      fontSize: `${scale(2)}rem`
+      width: scaleRem(2),
+      height: scaleRem(2),
+      fontSize: scaleRem(2)
     },
     a: {
-      fontSize: `${scale(1)}rem`,
-      paddingBottom: `${scale(1)}rem`,
+      fontSize: scaleRem(1),
+      paddingBottom: scaleRem(1),
       textAlign: 'left',
       color: colors.white,
       active: {
@@ -93,10 +95,26 @@ const theme = {
     }
   },
   footer: {
-    marginTop: `${scale(2)}rem`,
-    marginBottom: `${scale(2)}rem`,
+    marginTop: scaleRem(2),
+    marginBottom: scaleRem(2),
     hover: {
       backgroundColor: colors.blackShades[0]
+    }
+  },
+  socialLinks: {
+    marginTop: scaleRem(0),
+    marginBottom: scaleRem(3),
+    a: {
+      color: colors.white,
+      fontSize: scaleRem(0),
+      margin: `${scaleRem(0)} ${scaleRem(-1)} 0 ${scaleRem(-1)}`,
+      svg: {
+        fontSize: scaleRem(3),
+        margin: `0 auto ${scaleRem(-1)} auto`
+      },
+      hover: {
+        color: colors.yellow
+      }
     }
   }
 };
