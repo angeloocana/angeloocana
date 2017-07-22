@@ -6,7 +6,7 @@ const A = styled.a`
     text-decoration: ${props => props.theme.a.textDecoration};
 
     &:hover {
-        color: $yellow;
+        color: ${props => props.theme.a.hover.color};
         transition: 0.5s color;
     }
 `;

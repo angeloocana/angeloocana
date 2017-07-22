@@ -48,7 +48,10 @@ const theme = {
   a: {
     fontFamily,
     color: colors.white,
-    textDecoration: 'none'
+    textDecoration: 'none',
+    hover: {
+      color: colors.yellow
+    }
   },
   header: {
     title: {

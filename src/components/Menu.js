@@ -10,6 +10,7 @@ const Nav = styled.nav`
   right: calc(2rem - 100%);
   height: 100%;
   width: 100%;
+  z-index: 1;
   padding: ${props => props.theme.menu.padding};
   transition-timing-function: ease-in, step-start, cubic-bezier(0.1, 0.7, 1.0, 0.1);
 
@@ -21,9 +22,13 @@ const Nav = styled.nav`
     ? props.theme.menu.opened.bg
     : props.theme.menu.closed.bg};
 
-  transform: ${props => props.isOpen
-    ? 'translateX(-60%)'
+  ${props => props.isOpen
+    ? 'transform: translateX(-60%)'
     : ''};
+
+  @media (min-width: ${props => props.theme.maxWidth}) {
+    right: calc(-50% + -28rem);
+  }
 `;
 
 const MenuLabel = styled.label`
