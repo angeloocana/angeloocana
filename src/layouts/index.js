@@ -14,6 +14,7 @@ const Background = styled.div`
   right: 0;
   left: 0;
   bottom: 0;
+  overflow: hidden;
 `;
 
 const BodyContainer = styled.div`

@@ -6,9 +6,11 @@ import styled from 'styled-components';
 
 const Li = styled.li`
   padding: ${props => props.theme.blog.list.item.padding};
+  margin: ${props => props.theme.blog.list.item.margin};  
 
   &:hover {
-    background-color: ${props => props.theme.blog.list.item.hover.backgroundColor};    
+    background-color: ${props => props.theme.blog.list.item.hover.backgroundColor};
+    border-radius: ${props => props.theme.borderRadius};
   }
 `;
 

@@ -8,8 +8,8 @@ import styled from 'styled-components';
 
 const FooterSection = styled.section`
   text-align: center;
-  padding-top: ${props => props.theme.footer.marginTop};
-  padding-bottom: ${props => props.theme.footer.marginBottom};
+  padding: ${props => props.theme.footer.padding};
+  margin: ${props => props.theme.footer.margin};
   line-height: 1.5;
   border-radius: ${props => props.theme.borderRadius};
 

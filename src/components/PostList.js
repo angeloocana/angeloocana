@@ -7,6 +7,7 @@ const H1 = styled.h1`
   font-size: ${props => props.theme.blog.list.header.fontSize};
   margin-top: ${props => props.theme.blog.list.header.marginTop};
   text-align: center;
+  overflow: hidden;
 `;
 
 const PostList = ({ posts }) => {

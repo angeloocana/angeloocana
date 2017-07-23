@@ -1,12 +1,10 @@
 # Roadmap
 
 ## To do
-- Multi language.
 - Old pages.
 - Publish to purge.
 - Index blog links.
 - Index blog tags.
-- Social network.
 - Test offline.
 - Test speed.
 - CV.
@@ -19,13 +17,15 @@
 - Search for cambo in npm, if not available add it.
 
 ## Working
+- Multi language.
 - Migrate Old Style to styled components.
 - Test travis.
 - Menu.
 - Click outside menu to close.
-- Header.
 
 ## Done
+- Social network.
+- Header.
 - Footer.
 - Add resetCss.
 - Remove SASS.

@@ -33,7 +33,7 @@ const theme = {
   padding: `0 ${scaleN(1)}rem ${scaleN(2)}rem ${scaleN(0)}rem`,
   margin: '0 auto',
   maxWidth: '60rem',
-  borderRadius: '0.3rem',
+  borderRadius: '0.2rem',
   lineHeight: 1.5,
   focus: {
     border: '0.4rem red solid'
@@ -58,7 +58,7 @@ const theme = {
   },
   header: {
     title: {
-      fontSize: scale(6),
+      fontSize: scale(8),
       textAlign: 'center',
       paddingTop: scale(8),
       paddingBottom: scale(0)
@@ -96,8 +96,8 @@ const theme = {
     }
   },
   footer: {
-    marginTop: scale(2),
-    marginBottom: scale(2),
+    padding: scale(2),
+    margin: `0 -${scaleN(2)}rem`,
     hover: {
       backgroundColor: colors.blackShades[0]
     }
@@ -130,6 +130,7 @@ const theme = {
       },
       item: {
         padding: scale(2),
+        margin: `0 -${scaleN(2)}rem`,
         hover: {
           backgroundColor: colors.blackShades[0]
         },
