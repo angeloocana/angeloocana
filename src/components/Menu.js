@@ -3,6 +3,16 @@ import MenuIcon from 'react-icons/lib/fa/bars';
 import { InvisibleSpan } from './Invisible';
 import styled from 'styled-components';
 
+const CloseNav = styled.section`
+  ${props => props.isOpen
+    ? ` top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        position: fixed;`
+    : ''};
+`;
+
 const Nav = styled.nav`
   text-align: center;
   position: fixed;
@@ -23,7 +33,7 @@ const Nav = styled.nav`
     : props.theme.menu.closed.bg};
 
   ${props => props.isOpen
-    ? 'transform: translateX(-60%)'
+    ? 'transform: translateX(-60%);'
     : ''};
 
   @media (min-width: ${props => props.theme.maxWidth}) {
@@ -96,7 +106,7 @@ class Menu extends React.Component {
     };
   }
 
-  handleInputChange = (event) => {
+  open = (event) => {
     this.setState({
       isOpen: !this.state.isOpen
     });
@@ -105,23 +115,27 @@ class Menu extends React.Component {
   render() {
     const isOpen = this.state.isOpen;
     return (
-      <Nav isOpen={isOpen}>
-        <MenuLabel htmlFor="cb-menu">
-          <MenuIcon />
-          <InvisibleSpan>Menu</InvisibleSpan>
-          <Checkbox type="checkbox" name="cb-menu" id="cb-menu"
-            checked={this.state.isOpen}
-            onChange={this.handleInputChange}
-          />
-        </MenuLabel>
-        <Ul isOpen={isOpen}>
-          <li><A isActive href="" className="active">Home</A></li>
-          <li><A href="">Services</A></li>
-          <li><A href="">Tips and Training</A></li>
-          <li><A href="">About me</A></li>
-          <li><A href="">Contact</A></li>
-        </Ul>
-      </Nav>
+      <section>
+        <CloseNav isOpen={isOpen} onClick={this.open}>
+        </CloseNav>
+        <Nav isOpen={isOpen}>
+          <MenuLabel htmlFor="cb-menu">
+            <MenuIcon />
+            <InvisibleSpan>Menu</InvisibleSpan>
+            <Checkbox type="checkbox" name="cb-menu" id="cb-menu"
+              checked={this.state.isOpen}
+              onChange={this.open}
+            />
+          </MenuLabel>
+          <Ul isOpen={isOpen}>
+            <li><A isActive href="" className="active">Home</A></li>
+            <li><A href="">Services</A></li>
+            <li><A href="">Tips and Training</A></li>
+            <li><A href="">About me</A></li>
+            <li><A href="">Contact</A></li>
+          </Ul>
+        </Nav>
+      </section>
     );
   }
 };

@@ -21,9 +21,9 @@
 - Migrate Old Style to styled components.
 - Test travis.
 - Menu.
-- Click outside menu to close.
 
 ## Done
+- Click outside menu to close.
 - Social network.
 - Header.
 - Footer.
