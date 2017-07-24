@@ -2,7 +2,7 @@
 title: Manjaro Linux help commands
 date: '2017-06-23'
 layout: post
-path: "en/blog/linux/manjaro/help-commands"
+path: "/en/blog/linux/manjaro/help-commands"
 ---
 
 # Manjaro Install

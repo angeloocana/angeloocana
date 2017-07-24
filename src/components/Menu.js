@@ -116,8 +116,7 @@ class Menu extends React.Component {
     const isOpen = this.state.isOpen;
     return (
       <section>
-        <CloseNav isOpen={isOpen} onClick={this.open}>
-        </CloseNav>
+        <CloseNav isOpen={isOpen} onClick={this.open} />
         <Nav isOpen={isOpen}>
           <MenuLabel htmlFor="cb-menu">
             <MenuIcon />

@@ -2,7 +2,7 @@
 title: Install ZSH and oh-my-zsh
 date: '2017-06-23'
 layout: post
-path: "en/blog/terminal/install-zsh/"
+path: "/en/blog/terminal/install-zsh/"
 ---
 
 # Install ZSH and oh-my-zsh

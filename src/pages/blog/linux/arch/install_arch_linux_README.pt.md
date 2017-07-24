@@ -2,7 +2,7 @@
 title: Como instalar o Arch linux
 date: '2017-06-23'
 layout: post
-path: "pt/blog/linux/arch/how-to-install-arch-linux/"
+path: "/pt/blog/linux/arch/how-to-install-arch-linux/"
 ---
 
 # Como instalar o Arch Linux

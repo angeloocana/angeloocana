@@ -3,7 +3,6 @@ import graphql from 'graphql';
 
 class Test extends React.Component {
   render() {
-    console.log('test props', this.props);
     return (
       <div>
         A--B

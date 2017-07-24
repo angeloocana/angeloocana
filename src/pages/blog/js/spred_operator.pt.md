@@ -2,7 +2,7 @@
 title: Exemplos Spred Operator
 date: '2017-06-23'
 layout: post
-path: "pt/blog/js/spred-operator-examples/"
+path: "/pt/blog/js/spred-operator-examples/"
 ---
 
 # Exemplos Javascript Spread Operator

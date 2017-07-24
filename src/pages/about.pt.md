@@ -5,6 +5,7 @@ tags:
   - gatsby
 date: "2016-08-12T17:52:44.000Z"
 draft: false
+path: "/pt/about/"
 ---
 
 About Me!

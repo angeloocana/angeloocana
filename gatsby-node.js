@@ -24,7 +24,8 @@ exports.createPages = ({ graphql, boundActionCreators }) => {
                   slug
                 }
                 frontmatter {
-                  tags
+                  tags,
+                  path
                 }
               }
             }
@@ -38,13 +39,22 @@ exports.createPages = ({ graphql, boundActionCreators }) => {
         // reject(result.errors);
       }
 
+      console.log('************ result.data.allMarkdownRemark.edges', result.data.allMarkdownRemark.edges);
+
       // Create blog posts pages.
       _.each(result.data.allMarkdownRemark.edges, edge => {
+
+        console.log('///////////////////////////////////');
+        console.log('edge.node', edge.node);
+        console.log('edge.node.fields.slug', edge.node.fields.slug);
+        console.log('edge.node.frontmatter.path', edge.node.frontmatter.path);
+
         createPage({
-          path: edge.node.fields.slug, // required
+          path: edge.node.frontmatter.path || edge.node.fields.slug, // required
           component: blogPost,
           context: {
-            slug: edge.node.fields.slug,
+            slug: edge.node.frontmatter.path || edge.node.fields.slug,
+            path: edge.node.frontmatter.path
           },
         });
       });
