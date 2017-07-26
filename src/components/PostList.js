@@ -3,6 +3,10 @@ import PropTypes from 'proptypes';
 import PostListItem from './PostListItem';
 import styled from 'styled-components';
 
+const Ul = styled.ul`
+  list-style: none;
+`;
+
 const H1 = styled.h1`
   font-size: ${props => props.theme.blog.list.header.fontSize};
   margin-top: ${props => props.theme.blog.list.header.marginTop};
@@ -17,11 +21,11 @@ const PostList = ({ posts }) => {
         <H1>Posts</H1>
       </header>
       <nav>
-        <ul>
+        <Ul>
           {posts.map(post =>
             <PostListItem post={post} />
           )}
-        </ul>
+        </Ul>
       </nav>
     </section>
   );

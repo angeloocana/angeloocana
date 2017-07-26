@@ -13,6 +13,7 @@ const Ul = styled.ul`
   justify-content: center;
   margin-bottom: ${props => props.theme.socialLinks.marginBottom};
   margin-top: ${props => props.theme.socialLinks.marginTop};
+  list-style: none;
 `;
 
 const A = styled.a`

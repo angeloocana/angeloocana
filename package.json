@@ -8,11 +8,10 @@
     "start": "npm run develop",
     "lint": "./node_modules/.bin/eslint --ext .js,.jsx --ignore-pattern public .",
     "build": "gatsby build",
-    "predeploy": "npm run lint",
-    "deploy": "gatsby build --prefix-paths && gh-pages -d public",
+    "predeploy": "rm -rf public/*.html && gatsby build && surge public/",
+    "deploy": "gatsby build --prefix-paths && surge",
     "develop": "gatsby develop",
-    "test": "npm run deploy",
-    "build:clean": "rm -rf public/*.html && gatsby build && surge public/"
+    "test": "npm run deploy"
   },
   "dependencies": {
     "babel-plugin-lodash": "^3.2.11",

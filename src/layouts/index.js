@@ -5,7 +5,6 @@ import Footer from '../components/Footer';
 import { siteMetadata } from '../../gatsby-config';
 import styled, { ThemeProvider } from 'styled-components';
 import theme from '../themes/theme';
-import '../css/reset.css';
 import '../css/prism-coy.css';
 
 const Background = styled.div`

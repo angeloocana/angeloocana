@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'proptypes';
 import logo from './imgs/logo.png';
+import theme from './themes/theme.js';
 
 let stylesStr;
 if (process.env.NODE_ENV === 'production') {
@@ -45,7 +46,7 @@ class Html extends React.Component {
           <link href="https://fonts.googleapis.com/css?family=Cambo" rel="stylesheet" />
           {css}
         </head>
-        <body>
+        <body style={{ margin: 0, padding: 0, backgroundColor: theme.bg }}>
           <div
             id="___gatsby"
             dangerouslySetInnerHTML={{ __html: this.props.body }}

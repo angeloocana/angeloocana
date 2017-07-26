@@ -91,6 +91,7 @@ const Ul = styled.ul`
     display: block;
     margin-top: ${props => props.theme.menu.ul.marginTop};
     margin-left: ${props => props.theme.menu.ul.marginLeft};
+    list-style: none;
 
     transition: opacity 1s, transform 0.5s;
     transform: ${props => props.isOpen ? 'translateX(-4rem)' : ''};
