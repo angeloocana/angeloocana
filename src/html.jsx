@@ -46,7 +46,7 @@ class Html extends React.Component {
           <link href="https://fonts.googleapis.com/css?family=Cambo" rel="stylesheet" />
           {css}
         </head>
-        <body style={{ margin: 0, padding: 0, backgroundColor: theme.bg }}>
+        <body style={{ margin: 0, padding: 0, backgroundColor: theme.bg, color: theme.bg }}>
           <div
             id="___gatsby"
             dangerouslySetInnerHTML={{ __html: this.props.body }}
