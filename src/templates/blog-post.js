@@ -13,7 +13,6 @@ class BlogPostRoute extends React.Component {
   render() {
     console.log('props', this.props);
     const { markdownRemark } = this.props.data;
-    const { post } = markdownRemark;
 
     let tags;
     let tagsSection;
