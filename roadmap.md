@@ -18,6 +18,7 @@
 
 ## Working
 - Multi language.
+- Remove path from .md files then add lang and path to graphql.
 - Migrate Old Style to styled components.
 - Test travis.
 - Menu.

@@ -1,6 +1,9 @@
 const _ = require('lodash');
 const Promise = require('bluebird');
 const path = require('path');
+const {
+  GraphQLString
+} = require('graphql');
 // const select = require(`unist-util-select`);
 // const precache = require(`sw-precache`);
 const webpackLodashPlugin = require('lodash-webpack-plugin');
@@ -116,5 +119,28 @@ exports.onCreateNode = ({ node, boundActionCreators, getNode }) => {
 exports.modifyWebpackConfig = ({ config, stage }) => {
   if (stage === 'build-javascript') {
     config.plugin('Lodash', webpackLodashPlugin, null);
-  }  
+  }
+};
+
+exports.setFieldsOnGraphQLNodeType = (
+  { type, store, pathPrefix, getNode, cache },
+  pluginOptions
+) => {
+  if (type.name !== 'MarkdownRemark') {
+    return {};
+  }
+
+  return new Promise((resolve, reject) => {
+
+    console.log('%%%%%%%%%%%%%%%%%%%%%%%%%%%55 here');
+
+    return resolve({
+      lang: {
+        type: GraphQLString,
+        resolve(markdownNode) {
+          return markdownNode.frontmatter.path;
+        }
+      },
+    });
+  });
 };

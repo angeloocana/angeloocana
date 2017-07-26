@@ -43,24 +43,36 @@ class BlogPostRoute extends React.Component {
       <div>
         <Helmet
           title={`${markdownRemark.frontmatter.title}`}
-          meta={[{ name: 'description', content: post.excerpt }]}
+          meta={[{ name: 'description', content: markdownRemark.excerpt }]}
         />
         <h1>
           {markdownRemark.frontmatter.title}
         </h1>
-        <div dangerouslySetInnerHTML={{ __html: post.html }} />
+        <div dangerouslySetInnerHTML={{ __html: markdownRemark.html }} />
         {tagsSection}
         <p>
-          Posted {post.frontmatter.date}
+          Posted {markdownRemark.frontmatter.date}
         </p>
         <hr />
-        <ReadNext nextPost={post.frontmatter.readNext} />
+        <ReadNext nextPost={markdownRemark.frontmatter.readNext} />
       </div>
     );
   }
 }
 
 export default BlogPostRoute;
+
+// export const pageQuery = graphql`
+//   query TestBlogPost {
+//     allMarkdownRemark{
+//       edges{
+//         node{
+//           fileAbsolutePath
+//         }
+//       }
+//     }
+//   }
+// `;
 
 export const pageQuery = graphql`
   query BlogPostByPath($path: String!) {
