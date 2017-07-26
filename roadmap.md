@@ -2,21 +2,21 @@
 
 ## To do
 - Old pages.
-- Publish to purge.
-- Index blog links.
 - Index blog tags.
 - Test offline.
-- Test speed.
+- Test speed (2017-07-25 B B).
 - CV.
-- Fix post pages.
 - Hire me.
 - Test google analytics.
 - Sitemap.
 - Favicon.
 - Clean dependencies.
 - Search for cambo in npm, if not available add it.
+- Fix start page rendering without styles.
 
 ## Working
+- Setup Tests with Jest.
+- Index blog links.
 - Multi language.
 - Remove path from .md files then add lang and path to graphql.
 - Migrate Old Style to styled components.
@@ -24,6 +24,8 @@
 - Menu.
 
 ## Done
+- Publish to purge.
+- Fix post pages.
 - Click outside menu to close.
 - Social network.
 - Header.
