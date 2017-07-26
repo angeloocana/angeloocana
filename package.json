@@ -8,8 +8,7 @@
     "start": "npm run develop",
     "lint": "./node_modules/.bin/eslint --ext .js,.jsx --ignore-pattern public .",
     "build": "gatsby build",
-    "predeploy": "rm -rf public/*.html && gatsby build && surge public/",
-    "deploy": "gatsby build --prefix-paths && surge",
+    "deploy": "rm -rf public/*.html && gatsby build && surge public/",
     "develop": "gatsby develop",
     "test": "npm run deploy"
   },
