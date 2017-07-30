@@ -1,6 +1,6 @@
 ---
 title: How to install Arch linux
-date: '2017-07-15'
+date: '2017-07-30'
 layout: post
 path: "/en/blog/linux/arch/how-to-install-arch-linux/"
 ---
@@ -72,6 +72,16 @@ fdisk -l
     arch-chroot /mnt /bin/bash
 ```
 
+## Enable internet
+Enable dhcpcd for system start up.
+```bash
+    systemctl enable dhcpcd
+```
+Set your hostname, replace **YOUR_HOSTNAME_HERE** with your new machine name, in my case **ocana-note**
+```bash
+    echo YOUR_HOSTNAME_HERE > /etc/hostname
+```
+
 ## Set password
 ```bash
     passwd
@@ -129,14 +139,7 @@ enable sudo for users, uncomment %wheel ALL=(ALL) ALL
 ```bash
     poweroff
 ```
-
-## Enable internet
-```bash
-    hostnamectl set-hostname ocana-note
-```
-```bash
-    sudo dhcpcd
-```
+Remove the pendrive running the arch image and start your machine to continue the process.
 
 ## Install xfce4
 ```bash
