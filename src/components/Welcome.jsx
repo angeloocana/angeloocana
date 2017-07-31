@@ -24,7 +24,7 @@ const Welcome = () => {
     <Wrapper>
       <p>
         Hi!!! Welcome to my site, where you can learn about quality software development and hire my services.
-        I wish you accept my challenge: <mark>Study every day</mark>, at least 10 minutes. <br />
+        I welcome you to accept my challenge: <mark>Study every day</mark>, at least 10 minutes. <br />
         Are you ready to learn and change your life?
       </p>
     </Wrapper>

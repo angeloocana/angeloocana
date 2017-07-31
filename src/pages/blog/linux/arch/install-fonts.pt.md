@@ -2,7 +2,7 @@
 title: Instalar fonts no Arch linux
 date: '2017-07-31'
 layout: post
-path: "/en/blog/linux/arch/install-fonts/"
+path: "/pt/blog/linux/arch/install-fonts/"
 ---
 
 # Instalar fonts no Arch linux
