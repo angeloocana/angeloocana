@@ -135,7 +135,7 @@ const theme = {
         margin: `0 -${scaleN(2)}rem`,
       },
       ul: {
-        padding: 0,
+        padding: `0`,
         margin: `0`,
       },
       item: {
@@ -152,7 +152,9 @@ const theme = {
           }
         },
         p: {
-          fontSize: scale(1)
+          fontSize: scale(1),
+          padding: `0`,
+          margin: `0`,
         }
       }
     }

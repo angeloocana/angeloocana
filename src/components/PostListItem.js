@@ -28,7 +28,9 @@ const Time = styled.time`
 `;
 
 const P = styled.p`
-  font-size: ${props => props.theme.blog.list.item.p.fontSize};  
+  font-size: ${props => props.theme.blog.list.item.p.fontSize};
+  margin: ${props => props.theme.blog.list.item.p.margin};
+  padding: ${props => props.theme.blog.list.item.p.padding};
 `;
 
 const getToLink = (post) =>
