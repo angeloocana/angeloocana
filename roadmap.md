@@ -15,15 +15,15 @@
 - Fix start page rendering without styles.
 
 ## Working
-- Setup Tests with Jest.
-- Index blog links.
-- Multi language.
-- Remove path from .md files then add lang and path to graphql.
 - Migrate Old Style to styled components.
-- Test travis.
+- Multi language.
 - Menu.
+- Setup Tests with Jest.
+- Remove path from .md files then add lang and path to graphql.
+- Test travis.
 
 ## Done
+- Index blog links.
 - Publish to purge.
 - Fix post pages.
 - Click outside menu to close.

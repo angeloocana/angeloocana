@@ -11,8 +11,8 @@ const Ul = styled.ul`
   flex-wrap: wrap;
   align-items: center;
   justify-content: center;
-  margin-bottom: ${props => props.theme.socialLinks.marginBottom};
-  margin-top: ${props => props.theme.socialLinks.marginTop};
+  margin: ${props => props.theme.socialLinks.margin};
+  padding: ${props => props.theme.socialLinks.padding};
   list-style: none;
 `;
 
@@ -22,11 +22,13 @@ const A = styled.a`
   font-size: ${props => props.theme.socialLinks.a.fontSize};
   display: inline-block;
   margin: ${props => props.theme.socialLinks.a.margin};
+  padding: ${props => props.theme.socialLinks.a.padding};
 
   svg {
     font-size: ${props => props.theme.socialLinks.a.svg.fontSize};
     display: block;
     margin: ${props => props.theme.socialLinks.a.svg.margin};
+    padding: ${props => props.theme.socialLinks.a.svg.padding};
   }
 
   &:hover {

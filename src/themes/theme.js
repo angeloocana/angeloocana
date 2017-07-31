@@ -60,12 +60,15 @@ const theme = {
     title: {
       fontSize: scale(8),
       textAlign: 'center',
-      paddingTop: scale(8),
-      paddingBottom: scale(0)
+      padding: `${scale(6)} 0 0 0`,
+      margin: `${scale(0)} 0 ${scale(4)} 0`,
+      lineHeight: scaleN(0)
     },
     subTitle: {
-      fontSize: `${scaleN(0)}rem`,
-      paddingTop: `${scaleN(-2)}rem`,
+      fontSize: `${scale(0)}`,
+      padding: `${scale(0)} 0 0 0`,
+      margin: `${scale(-20)} 0 0 0`,
+      lineHeight: scaleN(-1)
     }
   },
   menu: {
@@ -103,15 +106,17 @@ const theme = {
     }
   },
   socialLinks: {
-    marginTop: scale(0),
-    marginBottom: scale(3),
+    margin: `${scale(0)} 0 ${scale(3)} 0`,
+    padding: 0,
     a: {
       color: colors.white,
       fontSize: scale(0),
       margin: `${scale(0)} ${scale(-1)} 0 ${scale(-1)}`,
+      padding: 0,
       svg: {
         fontSize: scale(5),
-        margin: `0 auto ${scale(-1)} auto`
+        margin: `0 auto ${scale(-1)} auto`,
+        padding: 0,
       },
       hover: {
         color: colors.yellow
