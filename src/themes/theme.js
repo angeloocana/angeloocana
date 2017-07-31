@@ -131,7 +131,12 @@ const theme = {
     list: {
       header: {
         fontSize: scale(6),
-        marginTop: scale(6),
+        padding: scale(2),
+        margin: `0 -${scaleN(2)}rem`,
+      },
+      ul: {
+        padding: 0,
+        margin: `0`,
       },
       item: {
         padding: scale(2),

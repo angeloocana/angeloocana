@@ -5,7 +5,7 @@ import Helmet from 'react-helmet';
 import Menu from './Menu';
 import styled from 'styled-components';
 
-const Title = styled(Link) `
+const Title = styled(Link)`
   display: block;
   font-size: ${props => props.theme.header.title.fontSize};
   text-align: ${props => props.theme.header.title.textAlign};
