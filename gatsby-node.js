@@ -42,15 +42,8 @@ exports.createPages = ({ graphql, boundActionCreators }) => {
         // reject(result.errors);
       }
 
-      console.log('************ result.data.allMarkdownRemark.edges', result.data.allMarkdownRemark.edges);
-
       // Create blog posts pages.
       _.each(result.data.allMarkdownRemark.edges, edge => {
-
-        console.log('///////////////////////////////////');
-        console.log('edge.node', edge.node);
-        console.log('edge.node.fields.slug', edge.node.fields.slug);
-        console.log('edge.node.frontmatter.path', edge.node.frontmatter.path);
 
         createPage({
           path: edge.node.frontmatter.path || edge.node.fields.slug, // required
@@ -131,9 +124,6 @@ exports.setFieldsOnGraphQLNodeType = (
   }
 
   return new Promise((resolve, reject) => {
-
-    console.log('%%%%%%%%%%%%%%%%%%%%%%%%%%%55 here');
-
     return resolve({
       lang: {
         type: GraphQLString,
