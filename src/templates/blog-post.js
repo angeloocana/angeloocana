@@ -4,6 +4,35 @@ import graphql from 'graphql';
 import Helmet from 'react-helmet';
 import Link from '../components/Link';
 import ReadNext from '../components/ReadNext';
+import styled from 'styled-components';
+
+const Post = styled.article`
+  margin: ${props => props.theme.blog.post.margin};
+  padding: ${props => props.theme.blog.post.padding};
+`;
+
+const H1 = styled.h1`
+  padding-bottom: 0;
+  text-align: center;
+  font-size: ${props => props.theme.blog.post.header.fontSize};
+`;
+
+const Time = styled.time`
+  font-size: ${props => props.theme.blog.post.header.time.fontSize};
+  font-style: italic;
+  color: ${props => props.theme.blog.post.header.time.color};
+  width: 100%;
+  display: block;
+`;
+
+const Content = styled.section`
+  .gatsby-highlight{
+    background-color: ${props => props.theme.blog.post.content.highlight.backgroundColor};
+    display: flex;
+    border-radius: ${props => props.theme.blog.post.content.highlight.borderRadius};
+    overflow: auto;
+  }
+`;
 
 class BlogPostRoute extends React.Component {
   static propTypes = {
@@ -38,22 +67,21 @@ class BlogPostRoute extends React.Component {
     }
 
     return (
-      <div>
+      <Post>
         <Helmet
           title={`${markdownRemark.frontmatter.title}`}
           meta={[{ name: 'description', content: markdownRemark.excerpt }]}
         />
-        <h1>
-          {markdownRemark.frontmatter.title}
-        </h1>
-        <div dangerouslySetInnerHTML={{ __html: markdownRemark.html }} />
+        <header>
+          <H1>
+            {markdownRemark.frontmatter.title}
+          </H1>
+          <Time pubdate>{markdownRemark.frontmatter.date}</Time>
+        </header>
+        <Content dangerouslySetInnerHTML={{ __html: markdownRemark.html }} />
         {tagsSection}
-        <p>
-          Posted {markdownRemark.frontmatter.date}
-        </p>
-        <hr />
         <ReadNext nextPost={markdownRemark.frontmatter.readNext} />
-      </div>
+      </Post>
     );
   }
 }

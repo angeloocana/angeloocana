@@ -14,7 +14,6 @@
 - Fix start page rendering without styles.
 
 ## Working
-- Migrate Old Style to styled components.
 - Multi language.
 - Menu.
 - Setup Tests with Jest.
@@ -22,6 +21,7 @@
 - Test travis.
 
 ## Done
+- Migrate Old Style to styled components.
 - Favicon.
 - Index blog links.
 - Publish to purge.

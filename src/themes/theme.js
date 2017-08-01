@@ -157,6 +157,23 @@ const theme = {
           margin: `0`,
         }
       }
+    },
+    post: {
+      padding: 0,
+      margin: `0 0 ${scale(4)} 0`,
+      header: {
+        fontSize: scale(4),
+        time: {
+          fontSize: scale(0),
+          color: colors.blue
+        }
+      },
+      content: {
+        highlight: {
+          backgroundColor: colors.gray,
+          borderRadius: '0.2rem',
+        }
+      }
     }
   }
 };
