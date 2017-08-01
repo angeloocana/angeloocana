@@ -21,8 +21,6 @@
 - Test travis.
 
 ## Done
-- Big title for home and small title other pages.
-- Add reset css.
 - Migrate Old Style to styled components.
 - Favicon.
 - Index blog links.

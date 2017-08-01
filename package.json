@@ -10,7 +10,7 @@
     "build": "rm -rf public/*.html && gatsby build",
     "deploy": "npm run build && surge public/ --domain angeloocana.surge.sh",
     "develop": "gatsby develop",
-    "test": "npm run build"
+    "test": "gatsby build"
   },
   "dependencies": {
     "babel-plugin-lodash": "^3.2.11",
@@ -42,8 +42,6 @@
   },
   "devDependencies": {
     "babel-eslint": "^7.2.3",
-    "babel-jest": "^20.0.3",
-    "babel-preset-env": "^1.6.0",
     "eslint": "^4.3.0",
     "eslint-config-standard": "^10.2.1",
     "eslint-config-standard-react": "^5.0.0",
@@ -52,8 +50,6 @@
     "eslint-plugin-promise": "^3.5.0",
     "eslint-plugin-react": "^7.1.0",
     "eslint-plugin-standard": "^3.0.1",
-    "jest": "^20.0.4",
-    "ptz-assert": "^1.6.8",
     "surge": "^0.19.0"
   }
 }

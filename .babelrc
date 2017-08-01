@@ -1,9 +1,3 @@
 {
-  "plugins": [
-    "lodash"
-  ],
-  "presets": [
-    "env",
-    "react"
-  ]
+  plugins: ['lodash'],
 }

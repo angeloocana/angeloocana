@@ -58,32 +58,17 @@ const theme = {
   },
   header: {
     title: {
-      fontSize: scale(4),
-      textAlign: 'left',
-      padding: `${scale(3)} 0 0 0`,
-      margin: `0 0 ${scale(6)} 0`,
+      fontSize: scale(8),
+      textAlign: 'center',
+      padding: `${scale(6)} 0 0 0`,
+      margin: `${scale(0)} 0 ${scale(4)} 0`,
       lineHeight: scaleN(0)
     },
     subTitle: {
       fontSize: `${scale(0)}`,
-      padding: `${scale(-4)} 0 0 0`,
+      padding: `${scale(0)} 0 0 0`,
       margin: `${scale(-20)} 0 0 0`,
       lineHeight: scaleN(-1)
-    },
-    isHome: {
-      title: {
-        fontSize: scale(7),
-        textAlign: 'center',
-        padding: `${scale(6)} 0 0 0`,
-        margin: `${scale(0)} 0 ${scale(4)} 0`,
-        lineHeight: scaleN(0)
-      },
-      subTitle: {
-        fontSize: `${scale(0)}`,
-        padding: `${scale(0)} 0 0 0`,
-        margin: `${scale(-20)} 0 0 0`,
-        lineHeight: scaleN(-1)
-      }
     }
   },
   menu: {
