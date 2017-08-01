@@ -9,7 +9,6 @@
 - Hire me.
 - Test google analytics.
 - Sitemap.
-- Favicon.
 - Clean dependencies.
 - Search for cambo in npm, if not available add it.
 - Fix start page rendering without styles.
@@ -23,6 +22,7 @@
 - Test travis.
 
 ## Done
+- Favicon.
 - Index blog links.
 - Publish to purge.
 - Fix post pages.

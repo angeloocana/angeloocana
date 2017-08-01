@@ -58,9 +58,9 @@ module.exports = {
         short_name: 'Ângelo Ocanã',
         icons: [
           {
-            src: '/logo.png',
-            sizes: '1024x1024',
-            type: 'image/png',
+            src: '/logo.svg',
+            sizes: 'any',
+            type: 'image/svg+xml',
           },
         ],
         start_url: '/',

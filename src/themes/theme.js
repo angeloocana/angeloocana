@@ -106,7 +106,7 @@ const theme = {
     }
   },
   socialLinks: {
-    margin: `${scale(0)} 0 ${scale(3)} 0`,
+    margin: `${scale(0)} 0 ${scale(6)} 0`,
     padding: 0,
     a: {
       color: colors.white,
@@ -131,8 +131,8 @@ const theme = {
     list: {
       header: {
         fontSize: scale(6),
-        padding: scale(2),
-        margin: `0 -${scaleN(2)}rem`,
+        padding: scale(1),
+        margin: `${scale(4)} 0 0 0`,
       },
       ul: {
         padding: `0`,

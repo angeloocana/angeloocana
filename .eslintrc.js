@@ -243,7 +243,7 @@ module.exports = {
         "prefer-spread": "error",
         "prefer-template": "off",
         "quote-props": "off",
-        "quotes": ["error", "single"],
+        "quotes": ["error", "single", { "allowTemplateLiterals": true }],
         "radix": "error",
         "require-await": "error",
         "require-jsdoc": "error",
