@@ -60,7 +60,7 @@ const theme = {
     title: {
       fontSize: scale(4),
       textAlign: 'left',
-      padding: `${scale(3)} 0 0 0`,
+      padding: `${scale(0)} 0 0 0`,
       margin: `0 0 ${scale(6)} 0`,
       lineHeight: scaleN(0)
     },
@@ -74,7 +74,7 @@ const theme = {
       title: {
         fontSize: scale(7),
         textAlign: 'center',
-        padding: `${scale(6)} 0 0 0`,
+        padding: `${scale(3)} 0 0 0`,
         margin: `${scale(0)} 0 ${scale(4)} 0`,
         lineHeight: scaleN(0)
       },
@@ -187,6 +187,19 @@ const theme = {
         highlight: {
           backgroundColor: colors.gray,
           borderRadius: '0.2rem',
+        }
+      }
+    }
+  },
+  i18n: {
+    selectLanguage: {
+      li: {
+        margin: `-${scale(0)} 0 0 0`,
+        padding: `${scale(5)} ${scale(-2)} ${scale(-5)} ${scale(-2)}`,
+        fontSize: scale(3),
+        borderRadius: '0.2rem',
+        selected: {
+          backgroundColor: colors.gray
         }
       }
     }

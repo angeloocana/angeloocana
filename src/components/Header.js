@@ -4,6 +4,7 @@ import Link from './Link';
 import Helmet from 'react-helmet';
 import Menu from './Menu';
 import styled from 'styled-components';
+import SelectLanguage from '../i18n/components/SelectLanguage';
 
 const headerTheme = (props) =>
   props.isHome
@@ -37,6 +38,7 @@ class Header extends React.Component {
     return (
       <header>
         <Helmet defaultTitle={siteMetadata.title} titleTemplate={`${siteMetadata.header.title} | %s`} />
+        <SelectLanguage />
         <Title to="/" isHome={isHome}>
           {siteMetadata.header.title}
           <SubTitle isHome={isHome}>{siteMetadata.header.subTitle}</SubTitle>
