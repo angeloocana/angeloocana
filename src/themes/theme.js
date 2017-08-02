@@ -74,14 +74,14 @@ const theme = {
       title: {
         fontSize: scale(7),
         textAlign: 'center',
-        padding: `${scale(3)} 0 0 0`,
+        padding: `${scale(2)} 0 0 0`,
         margin: `${scale(0)} 0 ${scale(4)} 0`,
         lineHeight: scaleN(0)
       },
       subTitle: {
         fontSize: `${scale(0)}`,
-        padding: `${scale(0)} 0 0 0`,
-        margin: `${scale(-20)} 0 0 0`,
+        padding: `${scale(-4)} 0 0 0`,
+        margin: `0`,
         lineHeight: scaleN(-1)
       }
     }
@@ -121,16 +121,16 @@ const theme = {
     }
   },
   socialLinks: {
-    margin: `${scale(0)} 0 ${scale(6)} 0`,
+    margin: `0 ${scale(0)}`,
     padding: 0,
     a: {
       color: colors.white,
-      fontSize: scale(0),
-      margin: `${scale(0)} ${scale(-1)} 0 ${scale(-1)}`,
-      padding: 0,
+      fontSize: scale(-1),
+      margin: 0,
+      padding: `${scale(0)} ${scale(0)} 0 ${scale(0)}`,
       svg: {
         fontSize: scale(5),
-        margin: `0 auto ${scale(-1)} auto`,
+        margin: `0 auto ${scale(-4)} auto`,
         padding: 0,
       },
       hover: {
