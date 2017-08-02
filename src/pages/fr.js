@@ -1,9 +1,39 @@
-import React from 'react';
+import graphql from 'graphql';
+import Index from './index';
 
-const Fr = () => {
-  return (
-    <div>fr</div>
-  );
-};
+export default Index;
 
-export default Fr;
+export const pageQuery = graphql`
+  query FrIndexQuery {
+    site {
+      siteMetadata {
+        title
+        author {
+          homeCity,
+          name
+        }        
+      }
+    }
+    allMarkdownRemark(
+      limit: 2000
+      sort: { fields: [frontmatter___date], order: DESC }
+      filter: { frontmatter: { draft: { ne: true } } }
+    ) {
+      edges {
+        node{
+          frontmatter{
+            title,
+            tags,
+            date,
+            path
+          },
+          fields{
+            slug,
+            tagSlugs
+          },
+          excerpt 
+        }
+      }
+    }
+  }
+`;

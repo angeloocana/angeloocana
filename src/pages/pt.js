@@ -1,13 +1,6 @@
 import graphql from 'graphql';
 import Index from './index';
 
-// const Pt = (props) => {
-//   console.log('props', props);
-//   return (
-//     <div>pt</div>
-//   );
-// };
-
 export default Index;
 
 export const pageQuery = graphql`
