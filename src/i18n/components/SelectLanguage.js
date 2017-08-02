@@ -34,10 +34,10 @@ const Li = styled.li`
 
 const getIcon = langKey => {
   switch (langKey) {
-    case 'en': return <Us />;
-    case 'fr': return <Fr />;
-    case 'pt': return <Br />;
-    default: return null;
+  case 'en': return <Us />;
+  case 'fr': return <Fr />;
+  case 'pt': return <Br />;
+  default: return null;
   }
 };
 
