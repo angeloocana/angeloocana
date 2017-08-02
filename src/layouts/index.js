@@ -5,7 +5,12 @@ import Footer from '../components/Footer';
 import { siteMetadata } from '../../gatsby-config';
 import styled, { ThemeProvider } from 'styled-components';
 import theme from '../themes/theme';
-import { getLangs, getHomeLink } from '../i18n/domain/langs';
+import {
+  getLangs,
+  getUrlForLang,
+  getCurrentLangKey,
+  isHomePage
+} from '../i18n/domain/langs';
 
 const Background = styled.div`
   background-color: ${props => props.theme.bg};
@@ -27,20 +32,6 @@ const BodyContainer = styled.div`
   font-feature-settings: "calt" 1, "clig" 1, "dlig" 1, "kern" 1, "liga" 1, "salt" 1;
 `;
 
-/**
- * Gets the number of paths in a url
- * @param {*} url pathName
- * @returns {Number} number of paths
- */
-const nPaths = (url) => (url.match(/\//g) || []).length - 1;
-
-/**
- * Checks if the url is /, /en/ or /pt/
- * @param {*} url this.props.location
- * @returns {Boolean} is home or not
- */
-const isHomePage = (url) => nPaths(url) <= 1;
-
 class Wrapper extends React.Component {
   static propTypes = {
     children: PropTypes.func,
@@ -49,16 +40,18 @@ class Wrapper extends React.Component {
 
   render() {
     const browserLang = 'en';
-    const isHome = isHomePage(this.props.location.pathname);
-    const langs = getLangs(browserLang, this.props.location.pathname);
-    const homeLink = getHomeLink(browserLang, this.props.location.pathname);
+    const url = this.props.location.pathname;
+    const currentLangKey = getCurrentLangKey(browserLang, url);
+    const isHome = isHomePage(url);
+    const homeLink = `/${currentLangKey}/`;
+    const langs = getLangs(currentLangKey, getUrlForLang(homeLink, url));
 
     return (
       <ThemeProvider theme={theme}>
         <Background>
           <BodyContainer>
             <Header
-              siteMetadata={siteMetadata}
+              siteMetadata={siteMetadata[currentLangKey]}
               isHome={isHome}
               langs={langs}
               homeLink={homeLink}
@@ -66,7 +59,7 @@ class Wrapper extends React.Component {
             <main>
               {this.props.children()}
             </main>
-            <Footer siteMetadata={siteMetadata} />
+            <Footer siteMetadata={siteMetadata[currentLangKey]} />
           </BodyContainer>
         </Background>
       </ThemeProvider>

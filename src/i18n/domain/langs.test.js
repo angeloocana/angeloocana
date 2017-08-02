@@ -1,8 +1,7 @@
 import {
   getCurrentLangKey,
   getLangs,
-  getLangUrl,
-  getHomeLink
+  getUrlForLang
 } from './langs';
 import * as assert from 'ptz-assert';
 
@@ -24,41 +23,47 @@ describe('langs', () => {
       assert.equal(getCurrentLangKey(browserLang, url), 'en');
     });
   });
-  describe('getLangUrl', () => {
+  describe('getUrlForLang', () => {
     it('/ & en => /en/', () => {
       const url = '/';
       const lang = 'en';
-      assert.equal(getLangUrl(lang, url), '/en/');
+      const home = `/${lang}/`;
+      assert.equal(getUrlForLang(home, url, lang), '/en/');
     });
     it('/ & pt => /pt/', () => {
       const url = '/';
       const lang = 'pt';
-      assert.equal(getLangUrl(lang, url), '/pt/');
+      const home = `/${lang}/`;
+      assert.equal(getUrlForLang(home, url, lang), '/pt/');
     });
     it('/en/ & en => /en/', () => {
       const url = '/en/';
       const lang = 'en';
-      assert.equal(getLangUrl(lang, url), '/en/');
+      const home = `/${lang}/`;
+      assert.equal(getUrlForLang(home, url, lang), '/en/');
     });
     it('/pt/ & en => /en/', () => {
       const url = '/pt/';
       const lang = 'en';
-      assert.equal(getLangUrl(lang, url), '/en/');
+      const home = url;
+      assert.equal(getUrlForLang(home, url, lang), '/en/');
     });
     it('/en/about/ & en => /en/about/', () => {
       const url = '/en/about/';
       const lang = 'en';
-      assert.equal(getLangUrl(lang, url), '/en/about/');
+      const home = `/${lang}/`;
+      assert.equal(getUrlForLang(home, url, lang), '/en/about/');
     });
     it('/pt/about/ & en => /en/about/', () => {
       const url = '/pt/about/';
       const lang = 'en';
-      assert.equal(getLangUrl(lang, url), '/en/about/');
+      const home = `/pt/`;
+      assert.equal(getUrlForLang(home, url, lang), '/en/about/');
     });
   });
   describe('getLangs', () => {
     it('/ & en', () => {
-      const langs = getLangs('en', '/');
+      const langs = getLangs('en', getUrlForLang('/en/', '/'));
       const expected = [
         {
           'langKey': 'en',
@@ -74,38 +79,6 @@ describe('langs', () => {
           'selected': false
         }];
       assert.deepEqual(langs, expected);
-    });
-  });
-  describe('getHomeLink', () => {
-    it('/ & en => /en/', () => {
-      const url = '/';
-      const lang = 'en';
-      assert.equal(getHomeLink(lang, url), '/en/');
-    });
-    it('/ & pt => /pt/', () => {
-      const url = '/';
-      const lang = 'pt';
-      assert.equal(getHomeLink(lang, url), '/pt/');
-    });
-    it('/en/ & en => /en/', () => {
-      const url = '/en/';
-      const lang = 'en';
-      assert.equal(getHomeLink(lang, url), '/en/');
-    });
-    it('/pt/ & en => /pt/', () => {
-      const url = '/pt/';
-      const lang = 'en';
-      assert.equal(getHomeLink(lang, url), '/pt/');
-    });
-    it('/en/about/ & en => /en/', () => {
-      const url = '/en/about/';
-      const lang = 'en';
-      assert.equal(getHomeLink(lang, url), '/en/');
-    });
-    it('/pt/about/ & en => /pt/', () => {
-      const url = '/pt/about/';
-      const lang = 'en';
-      assert.equal(getHomeLink(lang, url), '/pt/');
     });
   });
 });

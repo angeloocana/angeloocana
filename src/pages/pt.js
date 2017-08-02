@@ -5,15 +5,6 @@ export default Index;
 
 export const pageQuery = graphql`
   query PtIndexQuery {
-    site {
-      siteMetadata {
-        title
-        author {
-          homeCity,
-          name
-        }        
-      }
-    }
     allMarkdownRemark(
       limit: 2000
       sort: { fields: [frontmatter___date], order: DESC }

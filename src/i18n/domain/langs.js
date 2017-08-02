@@ -1,3 +1,19 @@
+import { curry } from 'ramda';
+
+/**
+ * Gets the number of paths in a url
+ * @param {*} url pathName
+ * @returns {Number} number of paths
+ */
+const nPaths = (url) => (url.match(/\//g) || []).length - 1;
+
+/**
+ * Checks if the url is /, /en/ or /pt/
+ * @param {*} url this.props.location
+ * @returns {Boolean} is home or not
+ */
+const isHomePage = (url) => nPaths(url) <= 1;
+
 /**
  * Get current language key.
  * @param {String} browserLang default browser language key
@@ -6,54 +22,48 @@
  */
 const getCurrentLangKey = (browserLang, url) => {
   const langKey = (url || `/${browserLang}/`).split('/')[1];
-  return langKey === '' ? browserLang : langKey;
+  switch (langKey === '' ? browserLang : langKey) {
+  case 'en': return 'en';
+  case 'fr': return 'fr';
+  case 'pt': return 'pt';
+  default: return 'en';
+  }
 };
 
 /**
- * Get language home link.
- * @param {*} browserLang default browser language key.
- * @param {*} url browser url.
- * @returns {String} home url.
- */
-const getHomeLink = (browserLang, url) => {
-  return `/${getCurrentLangKey(browserLang, url)}/`;
-};
-
-/**
- * Get url to the language.
- * @param {String} langKey default browser language key.
+ * Get url to the language
+ * @param {String} homeLink  link for the home page
  * @param {String} url  browser url
+ * @param {String} langKey default browser language key
  * @returns {String} new url
  */
-const getLangUrl = (langKey, url) => {
-  const homeLink = getHomeLink(langKey, url);
-  return url === '/'
-    ? homeLink
-    : url.replace(homeLink, `/${langKey}/`);
-};
+const getUrlForLang = curry((homeLink, url, langKey) =>
+  url === '/'
+    ? `/${langKey}/`
+    : url.replace(homeLink, `/${langKey}/`));
 
 /**
- * Get langs to create Menu.
- * @param {String} browserLang default browser language key.
- * @param {String} url  browser url.
- * @returns {Array} langs menu data.
+ * Get langs to create Menu
+ * @param {String} currentLangKey current Lang Key
+ * @param {func} getUrlForLang getUrlForLang curried, waiting for langKey
+ * @returns {Array} langs menu data
  */
-const getLangs = (browserLang, url) => {
+const getLangs = (currentLangKey, getUrlForLang) => {
   const langs = ['en', 'fr', 'pt'];
-  const currentLangKey = getCurrentLangKey(browserLang, url);
 
   return langs.map(langKey => {
     return {
       langKey,
       selected: currentLangKey === langKey,
-      link: getLangUrl(langKey, url)
+      link: getUrlForLang(langKey)
     };
   });
 };
 
 export {
   getCurrentLangKey,
-  getHomeLink,
   getLangs,
-  getLangUrl
+  getUrlForLang,
+  nPaths,
+  isHomePage
 };

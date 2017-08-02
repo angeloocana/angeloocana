@@ -1,7 +1,6 @@
 import React from 'react';
 import graphql from 'graphql';
 import PropTypes from 'proptypes';
-import Helmet from 'react-helmet';
 import PostList from '../components/PostList';
 import SocialLinks from '../components/SocialLinks';
 import Welcome from '../components/Welcome';
@@ -12,12 +11,10 @@ class BlogIndexRoute extends React.Component {
   }
 
   render() {
-    const posts = this.props.data.allMarkdownRemark.edges;    
-    const { siteMetadata } = this.props.data.site;
+    const posts = this.props.data.allMarkdownRemark.edges;
 
     return (
       <div>
-        <Helmet title={siteMetadata.title} />
         <SocialLinks />
         <Welcome />
         <PostList posts={posts} />
@@ -30,15 +27,6 @@ export default BlogIndexRoute;
 
 export const pageQuery = graphql`
   query IndexQuery {
-    site {
-      siteMetadata {
-        title
-        author {
-          homeCity,
-          name
-        }        
-      }
-    }
     allMarkdownRemark(
       limit: 2000
       sort: { fields: [frontmatter___date], order: DESC }
