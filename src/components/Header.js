@@ -30,17 +30,18 @@ class Header extends React.Component {
   static propTypes = {
     siteMetadata: PropTypes.object,
     isHome: PropTypes.bool,
-    langs: PropTypes.array
+    langs: PropTypes.array,
+    homeLink: PropTypes.string
   }
 
   render() {
-    const { siteMetadata, isHome, langs } = this.props;
+    const { siteMetadata, isHome, langs, homeLink } = this.props;
 
     return (
       <header>
         <Helmet defaultTitle={siteMetadata.title} titleTemplate={`${siteMetadata.header.title} | %s`} />
         <SelectLanguage langs={langs} />
-        <Title to="/" isHome={isHome}>
+        <Title to={homeLink} isHome={isHome}>
           {siteMetadata.header.title}
           <SubTitle isHome={isHome}>{siteMetadata.header.subTitle}</SubTitle>
         </Title>

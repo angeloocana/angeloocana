@@ -1,7 +1,8 @@
 import {
   getCurrentLangKey,
   getLangs,
-  getLangUrl
+  getLangUrl,
+  getHomeLink
 } from './langs';
 import * as assert from 'ptz-assert';
 
@@ -73,6 +74,38 @@ describe('langs', () => {
           'selected': false
         }];
       assert.deepEqual(langs, expected);
+    });
+  });
+  describe('getHomeLink', () => {
+    it('/ & en => /en/', () => {
+      const url = '/';
+      const lang = 'en';
+      assert.equal(getHomeLink(lang, url), '/en/');
+    });
+    it('/ & pt => /pt/', () => {
+      const url = '/';
+      const lang = 'pt';
+      assert.equal(getHomeLink(lang, url), '/pt/');
+    });
+    it('/en/ & en => /en/', () => {
+      const url = '/en/';
+      const lang = 'en';
+      assert.equal(getHomeLink(lang, url), '/en/');
+    });
+    it('/pt/ & en => /pt/', () => {
+      const url = '/pt/';
+      const lang = 'en';
+      assert.equal(getHomeLink(lang, url), '/pt/');
+    });
+    it('/en/about/ & en => /en/', () => {
+      const url = '/en/about/';
+      const lang = 'en';
+      assert.equal(getHomeLink(lang, url), '/en/');
+    });
+    it('/pt/about/ & en => /pt/', () => {
+      const url = '/pt/about/';
+      const lang = 'en';
+      assert.equal(getHomeLink(lang, url), '/pt/');
     });
   });
 });

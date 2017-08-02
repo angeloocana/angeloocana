@@ -5,7 +5,7 @@ import Footer from '../components/Footer';
 import { siteMetadata } from '../../gatsby-config';
 import styled, { ThemeProvider } from 'styled-components';
 import theme from '../themes/theme';
-import { getLangs } from '../i18n/domain/langs';
+import { getLangs, getHomeLink } from '../i18n/domain/langs';
 
 const Background = styled.div`
   background-color: ${props => props.theme.bg};
@@ -48,8 +48,10 @@ class Wrapper extends React.Component {
   }
 
   render() {
+    const browserLang = 'en';
     const isHome = isHomePage(this.props.location.pathname);
-    const langs = getLangs('en', this.props.location.pathname);
+    const langs = getLangs(browserLang, this.props.location.pathname);
+    const homeLink = getHomeLink(browserLang, this.props.location.pathname);
 
     return (
       <ThemeProvider theme={theme}>
@@ -59,6 +61,7 @@ class Wrapper extends React.Component {
               siteMetadata={siteMetadata}
               isHome={isHome}
               langs={langs}
+              homeLink={homeLink}
             />
             <main>
               {this.props.children()}
