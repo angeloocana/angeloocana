@@ -29,16 +29,17 @@ const SubTitle = styled.p`
 class Header extends React.Component {
   static propTypes = {
     siteMetadata: PropTypes.object,
-    isHome: PropTypes.bool
+    isHome: PropTypes.bool,
+    langs: PropTypes.array
   }
 
   render() {
-    const { siteMetadata, isHome } = this.props;
+    const { siteMetadata, isHome, langs } = this.props;
 
     return (
       <header>
         <Helmet defaultTitle={siteMetadata.title} titleTemplate={`${siteMetadata.header.title} | %s`} />
-        <SelectLanguage />
+        <SelectLanguage langs={langs} />
         <Title to="/" isHome={isHome}>
           {siteMetadata.header.title}
           <SubTitle isHome={isHome}>{siteMetadata.header.subTitle}</SubTitle>

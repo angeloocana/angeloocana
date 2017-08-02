@@ -5,6 +5,7 @@ import Footer from '../components/Footer';
 import { siteMetadata } from '../../gatsby-config';
 import styled, { ThemeProvider } from 'styled-components';
 import theme from '../themes/theme';
+import { getLangs } from '../i18n/domain/langs';
 
 const Background = styled.div`
   background-color: ${props => props.theme.bg};
@@ -35,10 +36,10 @@ const nPaths = (url) => (url.match(/\//g) || []).length - 1;
 
 /**
  * Checks if the url is /, /en/ or /pt/
- * @param {*} location this.props.location
+ * @param {*} url this.props.location
  * @returns {Boolean} is home or not
  */
-const isHomePage = ({pathname}) => nPaths(pathname) <= 1;
+const isHomePage = (url) => nPaths(url) <= 1;
 
 class Wrapper extends React.Component {
   static propTypes = {
@@ -47,13 +48,18 @@ class Wrapper extends React.Component {
   }
 
   render() {
-    const isHome = isHomePage(this.props.location);
+    const isHome = isHomePage(this.props.location.pathname);
+    const langs = getLangs('en', this.props.location.pathname);
 
     return (
       <ThemeProvider theme={theme}>
         <Background>
           <BodyContainer>
-            <Header siteMetadata={siteMetadata} isHome={isHome} />
+            <Header
+              siteMetadata={siteMetadata}
+              isHome={isHome}
+              langs={langs}
+            />
             <main>
               {this.props.children()}
             </main>

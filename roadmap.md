@@ -14,13 +14,15 @@
 - Fix start page rendering without styles.
 
 ## WorkingWorking
-- Multi language.
+- filter posts by language.
+- translate header, footer, welcome ...
 - Menu.
-- Setup Tests with Jest.
 - Remove path from .md files then add lang and path to graphql.
-- Test travis.
 
 ## Done
+- Test travis.
+- Setup Tests with Jest.
+- Multi language Menu.
 - Big title for home and small title other pages.
 - Add reset css.
 - Migrate Old Style to styled components.
