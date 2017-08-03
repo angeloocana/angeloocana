@@ -9,18 +9,17 @@ describe('langs', () => {
   describe('getCurrentLangKey', () => {
     it('/ & en => en', () => {
       const url = '/';
-      const browserLang = 'en';
-      assert.equal(getCurrentLangKey(browserLang, url), 'en');
+      assert.equal(getCurrentLangKey(url), 'en');
     });
     it('/ & pt => pt', () => {
       const url = '/';
       const browserLang = 'pt';
-      assert.equal(getCurrentLangKey(browserLang, url), 'pt');
+      assert.equal(getCurrentLangKey(url, browserLang), 'pt');
     });
     it('/en/about/ & en => en', () => {
       const url = '/en/about/';
       const browserLang = 'en';
-      assert.equal(getCurrentLangKey(browserLang, url), 'en');
+      assert.equal(getCurrentLangKey(url, browserLang), 'en');
     });
   });
   describe('getUrlForLang', () => {

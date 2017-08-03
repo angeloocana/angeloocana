@@ -16,9 +16,10 @@
 ## Working
 - translate welcome ...
 - Menu.
-- Remove path from .md files then add lang and path to graphql.
+- Style post page.
 
 ## Done
+- Remove path from .md files then add lang and path to graphql.
 - filter posts by language.
 - translate header, footer ...
 - Test travis.

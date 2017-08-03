@@ -4,6 +4,7 @@ import PropTypes from 'proptypes';
 import PostList from '../blog/components/PostList';
 import SocialLinks from '../core/components/SocialLinks';
 import Welcome from '../core/components/Welcome';
+import { getCurrentLangKey } from '../i18n/domain/langs';
 
 class En extends React.Component {
   static propTypes = {
@@ -11,11 +12,15 @@ class En extends React.Component {
   }
 
   render() {
+    const url = this.props.location.pathname;
+    const currentLangKey = getCurrentLangKey(url);
+
     const posts = this.props.data.allMarkdownRemark.edges;
+
     return (
       <div>
         <SocialLinks />
-        <Welcome />
+        <Welcome currentLangKey={currentLangKey} />
         <PostList posts={posts} />
       </div>
     );

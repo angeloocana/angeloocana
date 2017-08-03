@@ -46,8 +46,6 @@ exports.createPages = ({ graphql, boundActionCreators }) => {
       _.each(result.data.allMarkdownRemark.edges, edge => {
 
         const path = edge.node.fields.path || edge.node.fields.slug;
-        console.log('1- createPage:', path);
-        console.log('edge:', edge);
         createPage({
           path, // required
           component: blogPost,
@@ -67,7 +65,6 @@ exports.createPages = ({ graphql, boundActionCreators }) => {
       tags = _.uniq(tags);
       tags.forEach(tag => {
         const tagPath = `/tags/${_.kebabCase(tag)}/`;
-        console.log('2- createPage:', tagPath);
         createPage({
           path: tagPath,
           component: tagPages,

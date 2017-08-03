@@ -39,9 +39,8 @@ class Wrapper extends React.Component {
   }
 
   render() {
-    const browserLang = 'en';
     const url = this.props.location.pathname;
-    const currentLangKey = getCurrentLangKey(browserLang, url);
+    const currentLangKey = getCurrentLangKey(url);
     const isHome = isHomePage(url);
     const homeLink = `/${currentLangKey}/`;
     const langs = getLangs(currentLangKey, getUrlForLang(homeLink, url));

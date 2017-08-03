@@ -14,19 +14,21 @@ const nPaths = (url) => (url.match(/\//g) || []).length - 1;
  */
 const isHomePage = (url) => nPaths(url) <= 1;
 
+const defaultLangKey = 'en';
+
 /**
  * Get current language key.
  * @param {String} browserLang default browser language key
  * @param {String} url browser url
  * @returns {String} current langKey
  */
-const getCurrentLangKey = (browserLang, url) => {
+const getCurrentLangKey = (url, browserLang = defaultLangKey) => {
   const langKey = (url || `/${browserLang}/`).split('/')[1];
   switch (langKey === '' ? browserLang : langKey) {
-  case 'en': return 'en';
-  case 'fr': return 'fr';
-  case 'pt': return 'pt';
-  default: return 'en';
+    case 'en': return 'en';
+    case 'fr': return 'fr';
+    case 'pt': return 'pt';
+    default: return 'en';
   }
 };
 
