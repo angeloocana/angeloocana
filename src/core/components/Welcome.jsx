@@ -18,7 +18,7 @@ const Wrapper = styled.section`
       line-height: ${props => props.theme.p.firstLetter.lineHeight};
       padding-top: ${props => props.theme.p.firstLetter.paddingTop};
   }
-`;diferent
+`;
 
 const getWelcomeMsg = () => {
   return {
