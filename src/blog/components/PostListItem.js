@@ -34,7 +34,7 @@ const P = styled.p`
 `;
 
 const getToLink = (post) =>
-  post.node.frontmatter.path || post.node.fields.slug;
+  post.node.fields.path || post.node.fields.slug;
 
 const PostListItem = ({ post }) => {
   return (

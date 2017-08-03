@@ -2,7 +2,6 @@
 title: How to install Arch linux
 date: '2017-07-30'
 layout: post
-path: "/en/blog/linux/arch/how-to-install-arch-linux/"
 ---
 
 # Install Arch Linux

@@ -88,31 +88,19 @@ class BlogPostRoute extends React.Component {
 
 export default BlogPostRoute;
 
-// export const pageQuery = graphql`
-//   query TestBlogPost {
-//     allMarkdownRemark{
-//       edges{
-//         node{
-//           fileAbsolutePath
-//         }
-//       }
-//     }
-//   }
-// `;
-
 export const pageQuery = graphql`
   query BlogPostByPath($path: String!) {
-    markdownRemark(frontmatter: { path: { eq: $path } }) {
+    markdownRemark(fields: { path: { eq: $path } }) {
       html
       excerpt
       fields {
-        tagSlugs
+        tagSlugs,
+        path
       }
       frontmatter {
         title
         tags
         date(formatString: "MMMM DD, YYYY")
-        path
       }
     }
   }

@@ -2,7 +2,6 @@
 title: Manjaro Linux ajuda com comandos
 date: '2017-06-23'
 layout: post
-path: "/pt/blog/linux/manjaro/help-commands"
 ---
 
 # Instalar Manjaro

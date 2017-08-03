@@ -2,7 +2,6 @@
 title: Functional Programming Examples
 date: '2017-06-23'
 layout: post
-path: "/en/blog/functional-programming/examples"
 ---
 
 ```js

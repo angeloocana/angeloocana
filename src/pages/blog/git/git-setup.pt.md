@@ -2,7 +2,6 @@
 title: Ajuda com comandos Git
 date: '2017-06-23'
 layout: post
-path: "/pt/blog/git/help-commands/"
 ---
 
 # Ajuda com comandos Git

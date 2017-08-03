@@ -8,19 +8,22 @@ export const pageQuery = graphql`
     allMarkdownRemark(
       limit: 2000
       sort: { fields: [frontmatter___date], order: DESC }
-      filter: { frontmatter: { draft: { ne: true } } }
+      filter: { 
+        frontmatter: { draft: { ne: true } }, 
+        fields: { langKey: { eq: "fr" } } 
+      },
     ) {
       edges {
         node{
           frontmatter{
             title,
             tags,
-            date,
-            path
+            date
           },
           fields{
             slug,
-            tagSlugs
+            tagSlugs,
+            path
           },
           excerpt 
         }

@@ -13,13 +13,14 @@
 - Search for cambo in npm, if not available add it.
 - Fix start page rendering without styles.
 
-## WorkingWorking
-- filter posts by language.
-- translate header, footer, welcome ...
+## Working
+- translate welcome ...
 - Menu.
 - Remove path from .md files then add lang and path to graphql.
 
 ## Done
+- filter posts by language.
+- translate header, footer ...
 - Test travis.
 - Setup Tests with Jest.
 - Multi language Menu.

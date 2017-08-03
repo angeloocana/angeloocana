@@ -2,7 +2,6 @@
 title: Git help commands
 date: '2017-06-23'
 layout: post
-path: "/en/blog/git/help-commands/"
 ---
 
 # Setup Git

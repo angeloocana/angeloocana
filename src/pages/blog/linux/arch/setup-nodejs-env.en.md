@@ -2,7 +2,6 @@
 title: Setup dev env Arch linux
 date: '2017-07-30'
 layout: post
-path: "/en/blog/linux/arch/setup-nodejs-env/"
 ---
 
 # Setup Nodejs envirioment

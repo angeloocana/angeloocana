@@ -12,7 +12,7 @@ class BlogIndexRoute extends React.Component {
 
   render() {
     const posts = this.props.data.allMarkdownRemark.edges;
-
+    
     return (
       <div>
         <SocialLinks />
@@ -30,19 +30,22 @@ export const pageQuery = graphql`
     allMarkdownRemark(
       limit: 2000
       sort: { fields: [frontmatter___date], order: DESC }
-      filter: { frontmatter: { draft: { ne: true } } }
+      filter: { 
+        frontmatter: { draft: { ne: true } }, 
+        fields: { langKey: { eq: "en" } } 
+      },
     ) {
       edges {
         node{
           frontmatter{
             title,
             tags,
-            date,
-            path
+            date
           },
           fields{
             slug,
-            tagSlugs
+            tagSlugs,
+            path
           },
           excerpt 
         }

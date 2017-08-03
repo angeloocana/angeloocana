@@ -24,11 +24,11 @@ exports.createPages = ({ graphql, boundActionCreators }) => {
             edges {
               node {
                 fields {
-                  slug
+                  slug,
+                  path
                 }
                 frontmatter {
-                  tags,
-                  path
+                  tags
                 }
               }
             }
@@ -45,12 +45,14 @@ exports.createPages = ({ graphql, boundActionCreators }) => {
       // Create blog posts pages.
       _.each(result.data.allMarkdownRemark.edges, edge => {
 
+        const path = edge.node.fields.path || edge.node.fields.slug;
+        console.log('1- createPage:', path);
+        console.log('edge:', edge);
         createPage({
-          path: edge.node.frontmatter.path || edge.node.fields.slug, // required
+          path, // required
           component: blogPost,
           context: {
-            slug: edge.node.frontmatter.path || edge.node.fields.slug,
-            path: edge.node.frontmatter.path
+            slug: edge.node.path || edge.node.fields.slug
           },
         });
       });
@@ -65,6 +67,7 @@ exports.createPages = ({ graphql, boundActionCreators }) => {
       tags = _.uniq(tags);
       tags.forEach(tag => {
         const tagPath = `/tags/${_.kebabCase(tag)}/`;
+        console.log('2- createPage:', tagPath);
         createPage({
           path: tagPath,
           component: tagPages,
@@ -81,6 +84,21 @@ exports.createPages = ({ graphql, boundActionCreators }) => {
 
 //exports.postBuild = require('./post-build')
 
+const getPathAndLang = (fileAbsolutePath) => {
+  try {
+    const filePath = fileAbsolutePath.split('/pages')[1];
+    const fileName = filePath.split('.');
+    const langKey = fileName[1];
+    return {
+      path: `/${langKey}${fileName[0]}/`,
+      langKey
+    };
+  } catch (e) {
+    console.log('fileAbsolutePath', fileAbsolutePath);
+    throw e;
+  }
+};
+
 // Add custom url pathname for blog posts.
 exports.onCreateNode = ({ node, boundActionCreators, getNode }) => {
   const { createNodeField } = boundActionCreators;
@@ -94,11 +112,27 @@ exports.onCreateNode = ({ node, boundActionCreators, getNode }) => {
     typeof node.slug === 'undefined'
   ) {
     const fileNode = getNode(node.parent);
+
+    const pathAndLang = getPathAndLang(node.fileAbsolutePath);
+
+    createNodeField({
+      node,
+      name: 'langKey',
+      value: pathAndLang.langKey
+    });
+
+    createNodeField({
+      node,
+      name: 'path',
+      value: pathAndLang.path
+    });
+
     createNodeField({
       node,
       name: 'slug',
       value: fileNode.fields.slug,
     });
+
     if (node.frontmatter.tags) {
       const tagSlugs = node.frontmatter.tags.map(
         tag => `/tags/${_.kebabCase(tag)}/`
@@ -128,7 +162,7 @@ exports.setFieldsOnGraphQLNodeType = (
       lang: {
         type: GraphQLString,
         resolve(markdownNode) {
-          return markdownNode.frontmatter.path;
+          return markdownNode.path;
         }
       },
     });
