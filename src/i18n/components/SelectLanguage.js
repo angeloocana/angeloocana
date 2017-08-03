@@ -3,7 +3,7 @@ import PropTypes from 'proptypes';
 import Br from './flags/Br';
 import Us from './flags/Us';
 import Fr from './flags/Fr';
-import { InvisibleSpan } from '../../components/Invisible';
+import { InvisibleSpan } from '../../core/components/Invisible';
 import styled from 'styled-components';
 import Link from 'gatsby-link';
 

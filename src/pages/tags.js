@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'proptypes';
 import graphql from 'graphql';
-import Link from '../components/Link';
+import Link from '../core/components/Link';
 import kebabCase from 'lodash/kebabCase';
 
 class TagsPageRoute extends React.Component {

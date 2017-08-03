@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'proptypes';
-import Header from '../components/Header';
-import Footer from '../components/Footer';
+import Header from '../core/components/Header';
+import Footer from '../core/components/Footer';
 import { siteMetadata } from '../../gatsby-config';
 import styled, { ThemeProvider } from 'styled-components';
 import theme from '../themes/theme';
@@ -59,7 +59,10 @@ class Wrapper extends React.Component {
             <main>
               {this.props.children()}
             </main>
-            <Footer siteMetadata={siteMetadata[currentLangKey]} />
+            <Footer
+              currentLangKey={currentLangKey}
+              siteMetadata={siteMetadata[currentLangKey]}
+            />
           </BodyContainer>
         </Background>
       </ThemeProvider>

@@ -3,7 +3,7 @@ import GithubIcon from 'react-icons/lib/fa/github';
 import YoutubeIcon from 'react-icons/lib/fa/youtube';
 import FacebookIcon from 'react-icons/lib/fa/facebook-square';
 import TwitterIcon from 'react-icons/lib/fa/twitter';
-import PluralsightIcon from '../imgs/pluralsightIcon';
+import PluralsightIcon from '../../imgs/pluralsightIcon';
 import styled from 'styled-components';
 
 const Ul = styled.ul`

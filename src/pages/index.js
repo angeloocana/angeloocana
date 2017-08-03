@@ -1,9 +1,9 @@
 import React from 'react';
 import graphql from 'graphql';
 import PropTypes from 'proptypes';
-import PostList from '../components/PostList';
-import SocialLinks from '../components/SocialLinks';
-import Welcome from '../components/Welcome';
+import PostList from '../blog/components/PostList';
+import SocialLinks from '../core/components/SocialLinks';
+import Welcome from '../core/components/Welcome';
 
 class BlogIndexRoute extends React.Component {
   static propTypes = {
