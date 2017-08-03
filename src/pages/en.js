@@ -1,6 +1,6 @@
 import React from 'react';
-import graphql from 'graphql';
 import PropTypes from 'proptypes';
+import graphql from 'graphql';
 import PostList from '../blog/components/PostList';
 import SocialLinks from '../core/components/SocialLinks';
 import Welcome from '../core/components/Welcome';
@@ -8,7 +8,8 @@ import { getCurrentLangKey } from '../i18n/domain/langs';
 
 class En extends React.Component {
   static propTypes = {
-    data: PropTypes.object
+    data: PropTypes.object,
+    location: PropTypes.object
   }
 
   render() {

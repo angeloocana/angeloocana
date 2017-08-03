@@ -8,7 +8,8 @@ import { getCurrentLangKey } from '../i18n/domain/langs';
 
 class BlogIndexRoute extends React.Component {
   static propTypes = {
-    data: PropTypes.object
+    data: PropTypes.object,
+    location: PropTypes.object
   }
 
   render() {

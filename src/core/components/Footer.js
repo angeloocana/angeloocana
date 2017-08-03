@@ -60,8 +60,8 @@ const getGitHubMsg = () => {
         <GithubIcon />
         Voulez-vous voir le code source de ce site? <br />
         c'est <span>GRATUIT</span>!  <br />
-        C'est une <span>source ouverte</span>! <br />
-        Cliquez <span>ici</span> pour vérifier!!!
+        C'est une <span>SOURCE OUVERTE</span>! <br />
+        Cliquez <span>ICI</span> pour vérifier!!!
       </p>
     )
   };
