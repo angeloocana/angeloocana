@@ -24,10 +24,10 @@ const getWelcomeMsg = () => {
   return {
     en: (
       <p>
-        Hi! Welcome to my site, where you can learn about Web, Apps and software development.
+        Hi! Welcome to my site, where you can learn about Web, App and software development.
         I welcome you to accept my challenge: <mark>Study every day</mark>, at least 10 minutes. <br />
         Do NOT stop learning about tecnology, life, arts, languages, anything that you like.
-        Face your fears! Learning keep us young, it makes us see the universe in a new perspective and fall in love.
+        Face your fears! Learning keeps us young, it makes us see the universe in a new perspective and fall in love.
         Are you ready to learn and change your life?
       </p>
     ),
