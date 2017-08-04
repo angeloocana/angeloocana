@@ -21,7 +21,7 @@ const Header = styled.header`
 
 const Time = styled.time`
   font-size: ${props => props.theme.blog.list.item.header.time.fontSize};
-  font-style: italic;
+  font-weight: bold;
   color: ${props => props.theme.blog.list.item.header.time.color};
   width: 100%;
   display: block;
