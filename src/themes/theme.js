@@ -187,6 +187,46 @@ const theme = {
         highlight: {
           backgroundColor: colors.gray,
           borderRadius: '0.2rem',
+          margin: `${scale(0)} 0`,
+          padding: `${scale(0)}`
+        },
+        a: {
+          color: colors.yellow
+        },
+        h1: {
+          fontSize: scale(4),
+          margin: 0,
+          padding: `${scale(4)} 0 0 0`
+        },
+        h2: {
+          fontSize: scale(3),
+          margin: 0,
+          padding: `${scale(3)} 0 0 0`
+        },
+        h3: {
+          fontSize: scale(2),
+          margin: 0,
+          padding: `${scale(2)} 0 0 0`
+        },
+        h4: {
+          fontSize: scale(1),
+          margin: 0,
+          padding: `${scale(1)} 0 0 0`
+        },
+        h5: {
+          fontSize: scale(0),
+          margin: 0,
+          padding: `${scale(0)} 0 0 0`
+        },
+        h6: {
+          fontSize: scale(-1),
+          margin: 0,
+          padding: `${scale(0)} 0 0 0`
+        },
+        p: {
+          fontSize: scale(0),
+          margin: 0,
+          padding: `${scale(0)} 0 0 0`
         }
       }
     }

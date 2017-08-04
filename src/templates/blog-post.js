@@ -27,10 +27,58 @@ const Time = styled.time`
 
 const Content = styled.section`
   .gatsby-highlight{
+    margin:${props => props.theme.blog.post.content.highlight.margin};
+    padding:${props => props.theme.blog.post.content.highlight.padding};
     background-color: ${props => props.theme.blog.post.content.highlight.backgroundColor};
     display: flex;
     border-radius: ${props => props.theme.blog.post.content.highlight.borderRadius};
     overflow: auto;
+  }
+
+  a{
+    color: ${props => props.theme.blog.post.content.a.color};
+  }
+
+  h1{
+    margin:${props => props.theme.blog.post.content.h1.margin};
+    padding:${props => props.theme.blog.post.content.h1.padding};
+    font-size:${props => props.theme.blog.post.content.h1.fontSize};
+  }
+
+  h2{
+    margin:${props => props.theme.blog.post.content.h2.margin};
+    padding:${props => props.theme.blog.post.content.h2.padding};
+    font-size:${props => props.theme.blog.post.content.h2.fontSize};
+  }
+
+  h3{
+    margin:${props => props.theme.blog.post.content.h3.margin};
+    padding:${props => props.theme.blog.post.content.h3.padding};
+    font-size:${props => props.theme.blog.post.content.h3.fontSize};
+  }
+
+  h4{
+    margin:${props => props.theme.blog.post.content.h4.margin};
+    padding:${props => props.theme.blog.post.content.h4.padding};
+    font-size:${props => props.theme.blog.post.content.h4.fontSize};
+  }
+
+  h5{
+    margin:${props => props.theme.blog.post.content.h5.margin};
+    padding:${props => props.theme.blog.post.content.h5.padding};
+    font-size:${props => props.theme.blog.post.content.h5.fontSize};
+  }
+
+  h6{
+    margin:${props => props.theme.blog.post.content.h6.margin};
+    padding:${props => props.theme.blog.post.content.h6.padding};
+    font-size:${props => props.theme.blog.post.content.h6.fontSize};
+  }
+
+  p{
+    margin:${props => props.theme.blog.post.content.p.margin};
+    padding:${props => props.theme.blog.post.content.p.padding};
+    font-size:${props => props.theme.blog.post.content.p.fontSize};
   }
 `;
 

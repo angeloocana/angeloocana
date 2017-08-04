@@ -14,14 +14,14 @@
 - Fix start page rendering without styles.
 
 ## Working
-- translate welcome ...
 - Menu.
 - Style post page.
 
 ## Done
 - Remove path from .md files then add lang and path to graphql.
+- translate welcome.
 - filter posts by language.
-- translate header, footer ...
+- translate header and footer...
 - Test travis.
 - Setup Tests with Jest.
 - Multi language Menu.
