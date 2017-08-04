@@ -24,7 +24,7 @@ const getWelcomeMsg = () => {
   return {
     en: (
       <p>
-        Hi!!! Welcome to my site, where you can learn about Web, Apps and software development.
+        Hi! Welcome to my site, where you can learn about Web, Apps and software development.
         I welcome you to accept my challenge: <mark>Study every day</mark>, at least 10 minutes. <br />
         Do NOT stop learning about tecnology, life, arts, languages, anything that you like.
         Face your fears! Learning keep us young, it makes us see the universe in a new perspective and fall in love.
@@ -33,7 +33,7 @@ const getWelcomeMsg = () => {
     ),
     pt: (
       <p>
-        Oi!!! Bem-vindo ao meu site, aqui você pode aprender sobre desenvolvimento de aplicações Web, Sites e Apps.
+        Oi! Bem-vindo ao meu site, aqui você pode aprender sobre desenvolvimento de aplicações Web, Sites e Apps.
         Convido você a aceitar o meu desafio: <mark> Estude todos os dias </mark>, pelo menos 10 minutos. <br />
         NÃO pare de estudar sobre tecnologia, vida, artes, idiomas, qualquer coisa que você goste.
         Enfrente seus medos! Aprender nos mantém jovens, faz-nos ver o universo em nova perspectiva e se apaixonar.
@@ -42,7 +42,7 @@ const getWelcomeMsg = () => {
     ),
     fr: (
       <p>
-        Salut !!! Bienvenue sur mon site, ici vous pouvez en apprendre davantage sur le développement d'applications Web.
+        Salut! Bienvenue sur mon site, ici vous pouvez en apprendre davantage sur le développement d'applications Web.
         Je vous invite à accepter mon défi: <mark> Étudie chaque jour </mark> au moins 10 minutes. <br />
         Ne cessez pas d'étudier la technologie, la vie, les arts, les langues, tout ce que vous aimez.
         Faites face à vos peurs! L'apprentissage nous garde jeune, nous fait voir l'univers d' une nouvelle perspective et nous fait tomber amoureux.
