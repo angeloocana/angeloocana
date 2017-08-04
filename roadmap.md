@@ -1,23 +1,24 @@
 # Roadmap
 
 ## To do
-- Old pages.
+- Add comments.
 - Index blog tags.
 - Test offline.
 - Test speed (2017-07-25 B B).
 - CV.
 - Hire me.
-- Test google analytics.
 - Sitemap.
 - Clean dependencies.
 - Search for cambo in npm, if not available add it.
 - Fix start page rendering without styles.
 
 ## Working
+- Old pages.
 - Menu.
-- Style post page.
+- Test google analytics.
 
 ## Done
+- Style post page.
 - Remove path from .md files then add lang and path to graphql.
 - translate welcome.
 - filter posts by language.

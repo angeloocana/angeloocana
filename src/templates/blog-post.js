@@ -18,6 +18,7 @@ const H1 = styled.h1`
 `;
 
 const Time = styled.time`
+  text-align: center;
   font-size: ${props => props.theme.blog.post.header.time.fontSize};
   font-style: italic;
   color: ${props => props.theme.blog.post.header.time.color};

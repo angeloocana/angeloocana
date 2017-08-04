@@ -58,7 +58,7 @@ const theme = {
   },
   header: {
     title: {
-      fontSize: scale(4),
+      fontSize: scale(3),
       textAlign: 'left',
       padding: `${scale(0)} 0 0 0`,
       margin: `0 0 ${scale(6)} 0`,
@@ -177,7 +177,7 @@ const theme = {
       padding: 0,
       margin: `0 0 ${scale(4)} 0`,
       header: {
-        fontSize: scale(4),
+        fontSize: scale(5),
         time: {
           fontSize: scale(0),
           color: colors.blue
