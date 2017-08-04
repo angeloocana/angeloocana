@@ -17,11 +17,19 @@ const H1 = styled.h1`
   overflow: hidden;
 `;
 
-const PostList = ({ posts }) => {
+const getPostTitle = () => {
+  return {
+    en: 'Posts',
+    pt: 'Posts',
+    fr: 'Articles'
+  };
+};
+
+const PostList = ({ posts, currentLangKey }) => {
   return (
     <section className="post-list">
       <header>
-        <H1>Posts</H1>
+        <H1>{getPostTitle()[currentLangKey]}</H1>
       </header>
       <nav>
         <Ul>
@@ -35,7 +43,8 @@ const PostList = ({ posts }) => {
 };
 
 PostList.propTypes = {
-  posts: PropTypes.array
+  posts: PropTypes.array,
+  currentLangKey: PropTypes.string
 };
 
 export default PostList;

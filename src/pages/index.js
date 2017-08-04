@@ -22,7 +22,7 @@ class BlogIndexRoute extends React.Component {
       <div>
         <SocialLinks />
         <Welcome currentLangKey={currentLangKey} />
-        <PostList posts={posts} />
+        <PostList posts={posts} currentLangKey={currentLangKey} />
       </div>
     );
   }

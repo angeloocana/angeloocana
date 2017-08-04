@@ -1,11 +1,6 @@
 ---
-title: About Me!
-tags:
-  - open source
-  - gatsby
-date: "2016-08-12T17:52:44.000Z"
-draft: false
-path: "/pt/about/"
+title: Sobre mim
+date: "2016-08-12"
 ---
 
-About Me!
+...
