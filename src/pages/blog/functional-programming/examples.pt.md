@@ -2,6 +2,7 @@
 title: Exemplos Programação Funcional
 date: '2017-06-23'
 layout: post
+draft: false
 ---
 
 ```js

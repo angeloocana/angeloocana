@@ -2,6 +2,7 @@
 title: Extrair Arquivos no Arch linux
 date: '2017-07-31'
 layout: post
+draft: false
 ---
 
 ## Extrair .rar

@@ -2,6 +2,7 @@
 title: Js Exemplos Spred Operator
 date: '2017-06-23'
 layout: post
+draft: false
 ---
 
 # Exemplos Javascript Spread Operator

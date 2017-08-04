@@ -2,6 +2,7 @@
 title: Install ZSH and oh-my-zsh
 date: '2017-06-23'
 layout: post
+draft: false
 ---
 
 ## Install ZSH

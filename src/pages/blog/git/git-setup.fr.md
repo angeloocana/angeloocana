@@ -2,6 +2,7 @@
 title: Git help commands
 date: '2017-06-23'
 layout: post
+draft: false
 ---
 
 ## Enable Auto Complete while typing git commands on terminal

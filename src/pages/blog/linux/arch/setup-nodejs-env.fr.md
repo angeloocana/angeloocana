@@ -2,6 +2,7 @@
 title: Setup dev env Arch linux
 date: '2017-07-30'
 layout: post
+draft: false
 ---
 
 ## Install git
