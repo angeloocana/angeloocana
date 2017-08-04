@@ -3,6 +3,11 @@ title: JS Spred Operator Examples
 date: '2017-06-23'
 layout: post
 draft: false
+tags:
+  - js
+  - javascript
+  - ES6
+  - ES2015
 ---
 
 ```js

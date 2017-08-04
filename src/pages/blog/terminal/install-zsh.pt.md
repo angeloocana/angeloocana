@@ -3,6 +3,10 @@ title: Instalar ZSH e oh-my-zsh
 date: '2017-06-23'
 layout: post
 draft: false
+tags:
+  - Terminal
+  - ZSH
+  - Linha de commando
 ---
 
 ## Instalar ZSH

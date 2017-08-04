@@ -3,6 +3,9 @@ title: How to install Arch linux
 date: '2017-07-30'
 layout: post
 draft: false
+tags:
+  - Linux
+  - Arch
 ---
 
 ## Links

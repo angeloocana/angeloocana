@@ -61,8 +61,7 @@ export const pageQueryTest = graphql`
     frontmatter{
       title,
       tags,
-      date,
-      path
+      date
     },
     fields{
       slug,

@@ -3,6 +3,9 @@ title: Ajuda com comandos Git
 date: '2017-06-23'
 layout: post
 draft: false
+tags:
+  - git
+  - controle de versões
 ---
 
 ## Habilitar auto complete ao digitar commandos git no terminal

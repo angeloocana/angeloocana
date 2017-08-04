@@ -3,6 +3,14 @@ title: Setup dev env Arch linux
 date: '2017-07-30'
 layout: post
 draft: false
+tags:
+  - Linux
+  - Arch
+  - NodeJs
+  - Dev env
+  - Npm
+  - Git
+  - Vs code
 ---
 
 ## Install git
