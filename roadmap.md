@@ -11,6 +11,7 @@
 - Clean dependencies.
 - Search for cambo in npm, if not available add it.
 - Fix start page rendering without styles.
+- Find new theme for code examples.
 
 ## Working
 - Old pages.
