@@ -1,6 +1,6 @@
 ---
 title: Como instalar o Arch linux
-date: '2017-06-23'
+date: '2017-08-04'
 layout: post
 draft: false
 tags:
@@ -8,8 +8,7 @@ tags:
   - Arch
 ---
 
-## Links
- - https://www.ostechnix.com/install-arch-linux-latest-version/
+Se você quer aprender linux de verdade, Arch é a minha distribuição favorita, esteja preparado pra quebrar muito a cabeça, mas relaxa que você vai aprender!
 
 ## Trocar layout do teclado para abnt2
 ```bash
@@ -205,3 +204,6 @@ Add to the botton:
 ```
     alsactl restore
 ```
+
+## Links
+ - https://www.ostechnix.com/install-arch-linux-latest-version/

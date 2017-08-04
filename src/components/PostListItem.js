@@ -15,7 +15,7 @@ const Li = styled.li`
 `;
 
 const Header = styled.header`
-  padding-bottom: 0;
+  padding: 0;
   font-size: ${props => props.theme.blog.list.item.header.fontSize};
 `;
 
@@ -25,12 +25,14 @@ const Time = styled.time`
   color: ${props => props.theme.blog.list.item.header.time.color};
   width: 100%;
   display: block;
+  line-height: 1.2;
 `;
 
 const P = styled.p`
   font-size: ${props => props.theme.blog.list.item.p.fontSize};
   margin: ${props => props.theme.blog.list.item.p.margin};
   padding: ${props => props.theme.blog.list.item.p.padding};
+  line-height: 1.2;
 `;
 
 const getToLink = (post) =>

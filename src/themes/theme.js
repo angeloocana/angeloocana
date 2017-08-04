@@ -147,7 +147,7 @@ const theme = {
     list: {
       header: {
         fontSize: scale(6),
-        padding: scale(1),
+        padding: `${scale(1)} 0 0 0`,
         margin: `${scale(4)} 0 0 0`,
       },
       ul: {
@@ -161,7 +161,7 @@ const theme = {
           backgroundColor: colors.blackShades[0]
         },
         header: {
-          fontSize: scale(4),
+          fontSize: scale(3),
           time: {
             fontSize: scale(0),
             color: colors.blue
@@ -225,9 +225,14 @@ const theme = {
           padding: `${scale(0)} 0 0 0`
         },
         p: {
-          fontSize: scale(0),
+          fontSize: scale(1),
           margin: 0,
           padding: `${scale(0)} 0 0 0`
+        },
+        ul: {
+          fontSize: scale(1),
+          margin: 0,
+          padding: `${scale(0)}`
         }
       }
     }

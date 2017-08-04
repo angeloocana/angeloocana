@@ -20,7 +20,7 @@ const H1 = styled.h1`
 const Time = styled.time`
   text-align: center;
   font-size: ${props => props.theme.blog.post.header.time.fontSize};
-  font-style: italic;
+  font-weight: bold;
   color: ${props => props.theme.blog.post.header.time.color};
   width: 100%;
   display: block;
@@ -79,7 +79,26 @@ const Content = styled.section`
   p{
     margin:${props => props.theme.blog.post.content.p.margin};
     padding:${props => props.theme.blog.post.content.p.padding};
-    font-size:${props => props.theme.blog.post.content.p.fontSize};
+    font-size: ${props => props.theme.p.fontSize};
+    line-height: ${props => props.theme.p.lineHeight};
+  }
+
+  p:first-of-type::first-letter {
+      font-size: ${props => props.theme.p.firstLetter.fontSize};
+      color: ${props => props.theme.p.firstLetter.color};
+      float: left;
+      line-height: ${props => props.theme.p.firstLetter.lineHeight};
+      padding-top: ${props => props.theme.p.firstLetter.paddingTop};
+  }
+
+  ul, ol {
+    margin:${props => props.theme.blog.post.content.ul.margin};
+    padding:${props => props.theme.blog.post.content.ul.padding};
+    font-size:${props => props.theme.blog.post.content.ul.fontSize};
+  }
+
+  ul {
+    list-style: disc;
   }
 `;
 

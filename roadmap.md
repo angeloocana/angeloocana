@@ -16,6 +16,7 @@
 - Pagination
 
 ## Working
+- Post make first letter book style.
 - Edit btn, send to github
 - Old pages.
 - Menu.
