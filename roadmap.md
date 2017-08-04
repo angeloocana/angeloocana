@@ -13,6 +13,7 @@
 - Fix start page rendering without styles.
 - Find new theme for code examples.
 - Localize dates.
+- Pagination
 
 ## Working
 - Edit btn, send to github
