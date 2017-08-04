@@ -1,5 +1,5 @@
 ---
-title: Exemplos Spred Operator
+title: Js Exemplos Spred Operator
 date: '2017-06-23'
 layout: post
 ---

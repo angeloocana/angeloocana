@@ -4,8 +4,6 @@ date: '2017-06-23'
 layout: post
 ---
 
-# Instalar ZSH e oh-my-zsh
-
 ## Instalar ZSH
 https://github.com/robbyrussell/oh-my-zsh/wiki/Installing-ZSH
 

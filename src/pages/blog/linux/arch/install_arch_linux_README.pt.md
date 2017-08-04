@@ -4,8 +4,6 @@ date: '2017-06-23'
 layout: post
 ---
 
-# Como instalar o Arch Linux
-
 ## Links
  - https://www.ostechnix.com/install-arch-linux-latest-version/
 

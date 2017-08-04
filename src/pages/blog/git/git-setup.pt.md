@@ -4,8 +4,6 @@ date: '2017-06-23'
 layout: post
 ---
 
-# Ajuda com comandos Git
-
 ## Habilitar auto complete ao digitar commandos git no terminal
 
 ```bash
