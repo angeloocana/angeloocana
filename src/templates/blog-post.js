@@ -5,6 +5,8 @@ import Helmet from 'react-helmet';
 import Link from '../components/Link';
 import ReadNext from '../components/ReadNext';
 import styled from 'styled-components';
+import EditBtn from '../components/EditBtn';
+import { getCurrentLangKey } from '../i18n/langs';
 
 const Post = styled.article`
   margin: ${props => props.theme.blog.post.margin};
@@ -104,11 +106,16 @@ const Content = styled.section`
 
 class BlogPostRoute extends React.Component {
   static propTypes = {
-    data: PropTypes.object
+    data: PropTypes.object,
+    location: PropTypes.object
   }
 
   render() {
+    const url = this.props.location.pathname;
+    const currentLangKey = getCurrentLangKey(url);
     const { markdownRemark } = this.props.data;
+
+    console.log('fileAbsolutePath', markdownRemark.fileAbsolutePath);
 
     let tags;
     let tagsSection;
@@ -146,6 +153,10 @@ class BlogPostRoute extends React.Component {
           </H1>
           <Time pubdate>{markdownRemark.frontmatter.date}</Time>
         </header>
+        <EditBtn
+          fileAbsolutePath={markdownRemark.fileAbsolutePath}
+          currentLangKey={currentLangKey}
+        />
         <Content dangerouslySetInnerHTML={{ __html: markdownRemark.html }} />
         {tagsSection}
         <ReadNext nextPost={markdownRemark.frontmatter.readNext} />
@@ -159,10 +170,11 @@ export default BlogPostRoute;
 export const pageQuery = graphql`
   query BlogPostByPath($path: String!) {
     markdownRemark(fields: { path: { eq: $path } }) {
+      fileAbsolutePath,
       html
       excerpt
       fields {
-        tagSlugs,
+        tagSlugs
         path
       }
       frontmatter {

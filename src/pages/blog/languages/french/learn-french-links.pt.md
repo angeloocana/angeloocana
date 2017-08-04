@@ -8,7 +8,7 @@ tags:
   - Francês
 ---
 
-Se você quer aprender essa lingua maravilhosa, aqui você pode encontrar minha coleção de links 
+Francês é maravilhoso, melhores filmes do mundo, pessoas autênticas, engraçadas e encantadoras, eu amo franceses! aqui segue minha coleção de links 
 com material gratuíto para aprender Francês.
 
 ## Links

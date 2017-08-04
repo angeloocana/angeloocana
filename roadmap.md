@@ -16,13 +16,13 @@
 - Pagination
 
 ## Working
-- Post make first letter book style.
 - Edit btn, send to github
 - Old pages.
 - Menu.
 - Test google analytics.
 
 ## Done
+- Post make first letter book style.
 - Style post page.
 - Remove path from .md files then add lang and path to graphql.
 - translate welcome.
