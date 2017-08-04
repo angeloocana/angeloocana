@@ -2,6 +2,7 @@
 
 ## New Posts
 
+- About this site, thechnologies, why
 - Why I left C# for NodeJs?
 - React x Angular
 - Gatsby

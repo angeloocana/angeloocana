@@ -2,8 +2,8 @@ import React from 'react';
 import PropTypes from 'proptypes';
 import graphql from 'graphql';
 import Helmet from 'react-helmet';
-import Link from '../core/components/Link';
-import ReadNext from '../blog/components/ReadNext';
+import Link from '../components/Link';
+import ReadNext from '../components/ReadNext';
 import styled from 'styled-components';
 
 const Post = styled.article`

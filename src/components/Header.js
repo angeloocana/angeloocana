@@ -4,7 +4,7 @@ import Link from './Link';
 import Helmet from 'react-helmet';
 import Menu from './Menu';
 import styled from 'styled-components';
-import SelectLanguage from '../../i18n/components/SelectLanguage';
+import SelectLanguage from './SelectLanguage';
 
 const headerTheme = (props) =>
   props.isHome

@@ -14,6 +14,7 @@
 - Find new theme for code examples.
 
 ## Working
+- Edit btn, send to github
 - Old pages.
 - Menu.
 - Test google analytics.

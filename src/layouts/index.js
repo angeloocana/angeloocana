@@ -1,16 +1,17 @@
 import React from 'react';
 import PropTypes from 'proptypes';
-import Header from '../core/components/Header';
-import Footer from '../core/components/Footer';
+import Header from '../components/Header';
+import Footer from '../components/Footer';
 import { siteMetadata } from '../../gatsby-config';
 import styled, { ThemeProvider } from 'styled-components';
 import theme from '../themes/theme';
+// Broke into files
 import {
   getLangs,
   getUrlForLang,
   getCurrentLangKey,
   isHomePage
-} from '../i18n/domain/langs';
+} from '../i18n/langs';
 
 const Background = styled.div`
   background-color: ${props => props.theme.bg};

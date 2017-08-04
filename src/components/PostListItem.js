@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'proptypes';
-import Link from '../../core/components/Link';
+import Link from '../components/Link';
 import graphql from 'graphql';
 import styled from 'styled-components';
 

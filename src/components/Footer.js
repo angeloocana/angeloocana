@@ -5,6 +5,7 @@ import HeartIcon from './HeartIcon';
 import FaGithub from 'react-icons/lib/fa/github';
 import A from './A';
 import styled from 'styled-components';
+import Ca from './flags/Ca';
 
 const FooterSection = styled.section`
   text-align: center;
@@ -30,9 +31,14 @@ const ProfilePicture = styled(Gravatar)`
 `;
 
 const GithubIcon = styled(FaGithub)`
-  font-size: 2em;
+  font-size: ${({theme}) => theme.scale(4)};
   display: block;
   margin: auto;
+`;
+
+const HomeCountryIcon = styled(Ca)`
+  font-size: ${({theme}) => theme.scale(4)};
+  margin-left: ${({theme}) => theme.scale(-6)};
 `;
 
 const getGitHubMsg = () => {
@@ -75,7 +81,8 @@ const getCreatedBy = (author) => {
         {profilePicture}
         {'Built with '} <HeartIcon />
         {' by '} <span>{author.name}</span>
-        {' who lives in '} <span>{author.homeCity}</span>.
+        {' who lives in '} <span>{author.homeCity}</span>
+        <HomeCountryIcon />
       </FooterSection>
     ),
     pt: (
@@ -83,7 +90,8 @@ const getCreatedBy = (author) => {
         {profilePicture}
         {'Criado com '} <HeartIcon />
         {' por '} <span>{author.name}</span>
-        {' que mora em '} <span>{author.homeCity}</span>.
+        {' que mora em '} <span>{author.homeCity}</span>
+        <HomeCountryIcon />
       </FooterSection>
     ),
     fr: (
@@ -91,7 +99,8 @@ const getCreatedBy = (author) => {
         {profilePicture}
         {'Créé avec '} <HeartIcon />
         {' par '} <span>{author.name}</span>
-        {' qui vit à '} <span>{author.homeCity}</span>.
+        {' qui vit à '} <span>{author.homeCity}</span>
+        <HomeCountryIcon />
       </FooterSection>
     )
   };

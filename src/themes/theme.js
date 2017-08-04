@@ -26,6 +26,7 @@ const colors = {
 const fontFamily = '"Cambo", serif';
 
 const theme = {
+  scale,
   colors,
   fontFamily,
   color: colors.white,

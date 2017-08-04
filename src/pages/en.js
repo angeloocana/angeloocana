@@ -1,10 +1,10 @@
 import React from 'react';
 import PropTypes from 'proptypes';
 import graphql from 'graphql';
-import PostList from '../blog/components/PostList';
-import SocialLinks from '../core/components/SocialLinks';
-import Welcome from '../core/components/Welcome';
-import { getCurrentLangKey } from '../i18n/domain/langs';
+import PostList from '../components/PostList';
+import SocialLinks from '../components/SocialLinks';
+import Welcome from '../components/Welcome';
+import { getCurrentLangKey } from '../i18n/langs';
 
 class En extends React.Component {
   static propTypes = {

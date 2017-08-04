@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'proptypes';
 import graphql from 'graphql';
-import Link from '../core/components/Link';
+import Link from '../components/Link';
 
 class TagRoute extends React.Component {
   static propTypes = {
