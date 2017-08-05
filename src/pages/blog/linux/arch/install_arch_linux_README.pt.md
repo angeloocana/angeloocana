@@ -170,7 +170,7 @@ To change your time zone:
 
 Synchronize date time, maybe you have to restart to see the changes:
 ```bash
-    hwclock --systohc --utc
+    sudo hwclock --systohc --utc
 ```    
 
 ## Audio
