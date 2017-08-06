@@ -12,7 +12,8 @@
     "deploy": "npm run build && surge public/ --domain angeloocana.surge.sh",
     "develop": "gatsby develop",
     "test": "jest",
-    "test:watch": "jest --watch"
+    "test:watch": "jest --watch",
+    "serve": "npm run build && gatsby serve"
   },
   "dependencies": {
     "babel-plugin-lodash": "^3.2.11",

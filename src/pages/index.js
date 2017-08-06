@@ -33,7 +33,7 @@ export default BlogIndexRoute;
 export const pageQuery = graphql`
   query IndexQuery {
     allMarkdownRemark(
-      limit: 3
+      limit: 2000
       sort: { fields: [frontmatter___date], order: DESC }
       filter: { 
         frontmatter: { draft: { ne: true } }, 
