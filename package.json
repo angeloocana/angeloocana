@@ -14,12 +14,6 @@
   "license": "MIT",
   "main": "n/a",
   "scripts": {
-    "build": "gatsby build",
-    "develop": "gatsby develop",
-    "format": "prettier --trailing-comma es5 --no-semi --single-quote --write 'src/**/*.js'",
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "scriptsBK": {
     "prestart": "npm run lint",
     "start": "npm run develop",
     "lint": "./node_modules/.bin/eslint --fix --ext .js,.jsx --ignore-pattern public .",
@@ -32,7 +26,16 @@
     "serve": "npm run build && gatsby serve"
   },
   "devDependencies": {
+    "babel-eslint": "^7.2.3",
     "es6-object-assign": "^1.1.0",
+    "eslint": "^4.4.1",
+    "eslint-config-standard": "^10.2.1",
+    "eslint-config-standard-react": "^5.0.0",
+    "eslint-plugin-import": "^2.7.0",
+    "eslint-plugin-node": "^5.1.1",
+    "eslint-plugin-promise": "^3.5.0",
+    "eslint-plugin-react": "^7.1.0",
+    "eslint-plugin-standard": "^3.0.1",
     "gatsby-plugin-google-analytics": "^1.0.1",
     "gatsby-plugin-manifest": "^1.0.1",
     "gatsby-plugin-offline": "^1.0.1",
@@ -52,6 +55,7 @@
     "ramda": "^0.24.1",
     "react-gravatar": "^2.6.3",
     "react-icons": "^2.2.5",
-    "styled-components": "^2.1.2"
+    "styled-components": "^2.1.2",
+    "surge": "^0.19.0"
   }
 }
