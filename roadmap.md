@@ -5,22 +5,21 @@
 - Index blog tags.
 - Test offline.
 - Test speed (2017-07-25 B B).
-- CV.
 - Hire me.
 - Sitemap.
 - Clean dependencies.
 - Search for cambo in npm, if not available add it.
-- Fix start page rendering without styles.
 - Find new theme for code examples.
 - Localize dates.
-- Pagination
 
 ## Working
+- Resume.
 - Old pages.
-- Menu.
 - Test google analytics.
+- Post Pages & Pagination.
 
 ## Done
+- Menu.
 - Edit btn, send to github
 - Post make first letter book style.
 - Style post page.
