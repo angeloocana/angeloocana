@@ -16,12 +16,12 @@
 - Pagination
 
 ## Working
-- Edit btn, send to github
 - Old pages.
 - Menu.
 - Test google analytics.
 
 ## Done
+- Edit btn, send to github
 - Post make first letter book style.
 - Style post page.
 - Remove path from .md files then add lang and path to graphql.
