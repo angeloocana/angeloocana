@@ -17,7 +17,6 @@ const EditIcon = styled(FaEdit)`
 `;
 
 const getEditLink = (fileAbsolutePath) => {
-  console.log('fileAbsolutePath', fileAbsolutePath);
   const path = fileAbsolutePath.split('/src/')[1];
   return `https://github.com/angeloocana/angeloocana/blob/master/src/${path}`;
 };

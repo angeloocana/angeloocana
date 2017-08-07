@@ -55,6 +55,7 @@ class Wrapper extends React.Component {
               isHome={isHome}
               langs={langs}
               homeLink={homeLink}
+              url={url}
             />
             <main>
               {this.props.children()}

@@ -135,9 +135,6 @@ exports.onCreateNode = ({ node, boundActionCreators, getNode }) => {
         tag => `/tags/${_.kebabCase(tag)}/`
       );
       createNodeField({ node, name: 'tagSlugs', value: tagSlugs });
-    } else {
-      console.log('node.frontmatter', node.frontmatter);
-      console.log('node.fields', node.fields);
     }
   }
 };

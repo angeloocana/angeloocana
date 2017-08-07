@@ -1,7 +1,10 @@
 import React from 'react';
+import PropTypes from 'proptypes';
 import MenuIcon from 'react-icons/lib/fa/bars';
 import { InvisibleSpan } from './Invisible';
 import styled from 'styled-components';
+import Link from 'gatsby-link';
+import { endsWith } from 'ramda';
 
 const CloseNav = styled.section`
   ${props => props.isOpen
@@ -69,7 +72,7 @@ const Checkbox = styled.input`
   height: 100%;
 `;
 
-const A = styled.a`
+const MenuLink = styled(Link)`
     font-size: ${props => props.theme.menu.a.fontSize};
     padding-bottom: ${props => props.theme.menu.a.paddingBottom};
     display: block;
@@ -77,7 +80,7 @@ const A = styled.a`
     text-decoration: none;
     transition: 0.5s;
 
-    color: ${props => props.isActive
+    color: ${props => props.selected
     ? props.theme.menu.a.active.color
     : props.theme.menu.a.color};
 
@@ -98,6 +101,18 @@ const Ul = styled.ul`
     opacity: ${props => props.isOpen ? 1 : 0};
 `;
 
+const getMenuItems = (isSelected, menu) => {
+  return menu.map(item => {
+    return (
+      <li>
+        <MenuLink selected={isSelected(item.link)} to={item.link}>
+          {item.label}
+        </MenuLink>
+      </li>
+    );
+  });
+};
+
 class Menu extends React.Component {
   constructor(props) {
     super(props);
@@ -107,6 +122,11 @@ class Menu extends React.Component {
     };
   }
 
+  static propTypes = {
+    menu: PropTypes.array,
+    url: PropTypes.string
+  }
+
   open = (event) => {
     this.setState({
       isOpen: !this.state.isOpen
@@ -114,7 +134,11 @@ class Menu extends React.Component {
   }
 
   render() {
-    const isOpen = this.state.isOpen;
+    const {isOpen} = this.state;
+
+    const isSelected = endsWith(this.props.url);
+    const menuItems = getMenuItems(isSelected, this.props.menu);
+
     return (
       <section>
         <CloseNav isOpen={isOpen} onClick={this.open} />
@@ -128,11 +152,7 @@ class Menu extends React.Component {
             />
           </MenuLabel>
           <Ul isOpen={isOpen}>
-            <li><A isActive href="" className="active">Home</A></li>
-            <li><A href="">Services</A></li>
-            <li><A href="">Tips and Training</A></li>
-            <li><A href="">About me</A></li>
-            <li><A href="">Contact</A></li>
+            {menuItems}
           </Ul>
         </Nav>
       </section>

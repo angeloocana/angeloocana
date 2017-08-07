@@ -1,47 +1,12 @@
+var pt = require('./data/siteMetadata.pt');
+var fr = require('./data/siteMetadata.fr');
+var en = require('./data/siteMetadata.en');
+
 module.exports = {
   siteMetadata: {
-    pt: {
-      title: 'Ângelo Ocanã Desenvolvimento de Web Apps e Treinamentos',
-      author: {
-        name: 'Ângelo Ocanã',
-        homeCity: 'Ottawa',
-        email: 'angeloocana@gmail.com',
-        defaultLink: 'https://github.com/angeloocana'
-      },
-      sourceCodeLink: 'https://github.com/angeloocana/angeloocana',
-      header: {
-        title: 'Ângelo Ocanã',
-        subTitle: 'Desenvolvimento de Web Apps e Treinamentos'
-      }
-    },
-    en: {
-      title: 'Ângelo Ocanã Web Apps Development and Training',
-      author: {
-        name: 'Ângelo Ocanã',
-        homeCity: 'Ottawa',
-        email: 'angeloocana@gmail.com',
-        defaultLink: 'https://github.com/angeloocana'
-      },
-      sourceCodeLink: 'https://github.com/angeloocana/angeloocana',
-      header: {
-        title: 'Ângelo Ocanã',
-        subTitle: 'Web Apps Development and Training'
-      }
-    },
-    fr: {
-      title: `Ângelo Ocanã Développement et formation d'applications Web`,
-      author: {
-        name: 'Ângelo Ocanã',
-        homeCity: 'Ottawa',
-        email: 'angeloocana@gmail.com',
-        defaultLink: 'https://github.com/angeloocana'
-      },
-      sourceCodeLink: 'https://github.com/angeloocana/angeloocana',
-      header: {
-        title: 'Ângelo Ocanã',
-        subTitle: `Développement et formation d'applications Web`
-      }
-    }
+    pt,
+    en,
+    fr,
   },
   plugins: [
     {

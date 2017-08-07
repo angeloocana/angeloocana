@@ -26,29 +26,26 @@ const SubTitle = styled.p`
   margin: ${props => headerTheme(props).subTitle.margin};
 `;
 
-class Header extends React.Component {
-  static propTypes = {
-    siteMetadata: PropTypes.object,
-    isHome: PropTypes.bool,
-    langs: PropTypes.array,
-    homeLink: PropTypes.string
-  }
+const Header = ({ siteMetadata, isHome, langs, homeLink, url }) => {
+  return (
+    <header>
+      <Helmet defaultTitle={siteMetadata.title} titleTemplate={`${siteMetadata.header.title} | %s`} />
+      <SelectLanguage langs={langs} />
+      <Title to={homeLink} isHome={isHome}>
+        {siteMetadata.header.title}
+        <SubTitle isHome={isHome}>{siteMetadata.header.subTitle}</SubTitle>
+      </Title>
+      <Menu menu={siteMetadata.menu} url={url} />
+    </header>
+  );
+};
 
-  render() {
-    const { siteMetadata, isHome, langs, homeLink } = this.props;
-
-    return (
-      <header>
-        <Helmet defaultTitle={siteMetadata.title} titleTemplate={`${siteMetadata.header.title} | %s`} />
-        <SelectLanguage langs={langs} />
-        <Title to={homeLink} isHome={isHome}>
-          {siteMetadata.header.title}
-          <SubTitle isHome={isHome}>{siteMetadata.header.subTitle}</SubTitle>
-        </Title>
-        <Menu />
-      </header>
-    );
-  }
-}
+Header.propTypes = {
+  siteMetadata: PropTypes.object,
+  isHome: PropTypes.bool,
+  langs: PropTypes.array,
+  homeLink: PropTypes.string,
+  url: PropTypes.string
+};
 
 export default Header;

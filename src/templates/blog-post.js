@@ -115,8 +115,6 @@ class BlogPostRoute extends React.Component {
     const currentLangKey = getCurrentLangKey(url);
     const { markdownRemark } = this.props.data;
 
-    console.log('fileAbsolutePath', markdownRemark.fileAbsolutePath);
-
     let tags;
     let tagsSection;
     if (markdownRemark.fields.tagSlugs) {
