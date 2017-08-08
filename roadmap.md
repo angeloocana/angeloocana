@@ -14,6 +14,7 @@
 - Fix tests and npm start.
 
 ## Working
+- Fix select new lang for pages without lang
 - Fix font Victor's phone.
 - Resume.
 - Old pages.
