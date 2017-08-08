@@ -1,6 +1,6 @@
 ---
 title: Parte 6 App do Projeto Completo C# MVC Migrations StructureMap DDD TDD
-date: '2015-15-08'
+date: '2015-08-15'
 layout: post
 draft: false
 tags:
