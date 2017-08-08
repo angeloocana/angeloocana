@@ -1,12 +1,14 @@
 var pt = require('./data/siteMetadata.pt');
 var fr = require('./data/siteMetadata.fr');
 var en = require('./data/siteMetadata.en');
+var resume = require('./data/resume');
 
 module.exports = {
   siteMetadata: {
     pt,
     en,
     fr,
+    resume
   },
   plugins: [
     {

@@ -11,6 +11,7 @@
 - Search for cambo in npm, if not available add it.
 - Find new theme for code examples.
 - Localize dates.
+- Fix tests and npm start.
 
 ## Working
 - Resume.

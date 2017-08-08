@@ -13,6 +13,7 @@ module.exports = {
   },
   menu: [
     {label: 'Accueil', link: '/fr/'},
-    {label: 'À propos de moi', link: '/fr/about/'}
+    {label: 'À propos de moi', link: '/fr/about/'},
+    {label: 'Résumé', link: '/en/resume/'}
   ]
 };
