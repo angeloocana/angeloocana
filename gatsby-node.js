@@ -86,8 +86,12 @@ const getPathAndLang = (fileAbsolutePath) => {
     const filePath = fileAbsolutePath.split('/pages')[1];
     const fileName = filePath.split('.');
     const langKey = fileName.length === 3 ? fileName[1] : 'any';
+    const path = fileName.length === 3 
+      ? `/${langKey}${fileName[0]}/` 
+      : `${fileName[0]}/`;
+    console.log(path);
     return {
-      path: `/${langKey}${fileName[0]}/`,
+      path,
       langKey
     };
   } catch (e) {
