@@ -21,6 +21,8 @@
 - Post Pages & Pagination.
 
 ## Done
+- Movies.
+- Vim help commands.
 - Menu.
 - Edit btn, send to github
 - Post make first letter book style.

@@ -188,11 +188,17 @@ const theme = {
         }
       },
       content: {
+        code: {
+          color: colors.yellow
+        },
         highlight: {
           backgroundColor: colors.gray,
           borderRadius: '0.2rem',
           margin: `${scale(0)} 0`,
-          padding: `${scale(0)}`
+          padding: `${scale(0)}`,
+          code: {
+            color: colors.white
+          }
         },
         a: {
           color: colors.yellow

@@ -29,6 +29,10 @@ const Time = styled.time`
 `;
 
 const Content = styled.section`
+  code {
+    color: ${props => props.theme.blog.post.content.code.color};
+  }
+
   .gatsby-highlight{
     margin:${props => props.theme.blog.post.content.highlight.margin};
     padding:${props => props.theme.blog.post.content.highlight.padding};
@@ -36,6 +40,10 @@ const Content = styled.section`
     display: flex;
     border-radius: ${props => props.theme.blog.post.content.highlight.borderRadius};
     overflow: auto;
+
+    code {
+      color: ${props => props.theme.blog.post.content.highlight.code.color};
+    }
   }
 
   a{
