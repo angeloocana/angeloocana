@@ -14,6 +14,7 @@
 - Fix tests and npm start.
 
 ## Working
+- Fix font Victor's phone.
 - Resume.
 - Old pages.
 - Test google analytics.

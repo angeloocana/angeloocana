@@ -41,12 +41,13 @@ const theme = {
   },
   p: {
     fontSize: scale(1),
-    lineHeight: scale(2),
+    lineHeight: scaleN(2),
     firstLetter: {
-      fontSize: `${(scaleN(1) * 3) + scaleN(3)}rem`,
+      fontSize: `${(scaleN(1) * 2) + scaleN(2)}rem`,
       color: colors.yellow,
-      lineHeight: 0.7,
-      paddingTop: '0.3rem'
+      lineHeight: 0.2,
+      padding: '1.3rem 0.1rem',
+      margin: 0
     }
   },
   a: {
@@ -162,6 +163,7 @@ const theme = {
         },
         header: {
           fontSize: scale(3),
+          lineHeight: scaleN(1),
           time: {
             fontSize: scale(0),
             color: colors.blue
@@ -169,6 +171,7 @@ const theme = {
         },
         p: {
           fontSize: scale(1),
+          lineHeight: scaleN(2),
           padding: `0`,
           margin: `0`,
         }

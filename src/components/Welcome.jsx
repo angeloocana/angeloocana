@@ -16,7 +16,8 @@ const Wrapper = styled.section`
       color: ${props => props.theme.p.firstLetter.color};
       float: left;
       line-height: ${props => props.theme.p.firstLetter.lineHeight};
-      padding-top: ${props => props.theme.p.firstLetter.paddingTop};
+      padding: ${props => props.theme.p.firstLetter.padding};
+      margin: ${props => props.theme.p.firstLetter.margin};
   }
 `;
 

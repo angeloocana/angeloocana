@@ -17,6 +17,7 @@ const Li = styled.li`
 const Header = styled.header`
   padding: 0;
   font-size: ${props => props.theme.blog.list.item.header.fontSize};
+  line-height: ${props => props.theme.blog.list.item.header.lineHeight};
 `;
 
 const Time = styled.time`
@@ -32,7 +33,7 @@ const P = styled.p`
   font-size: ${props => props.theme.blog.list.item.p.fontSize};
   margin: ${props => props.theme.blog.list.item.p.margin};
   padding: ${props => props.theme.blog.list.item.p.padding};
-  line-height: 1.2;
+  line-height: ${props => props.theme.blog.list.item.p.lineHeight};
 `;
 
 const getToLink = (post) =>
