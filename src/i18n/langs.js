@@ -1,4 +1,4 @@
-import { curry } from 'ramda';
+import { curry, startsWith } from 'ramda';
 
 /**
  * Gets the number of paths in a url
@@ -39,10 +39,11 @@ const getCurrentLangKey = (url, browserLang = defaultLangKey) => {
  * @param {String} langKey default browser language key
  * @returns {String} new url
  */
-const getUrlForLang = curry((homeLink, url, langKey) =>
-  url === '/'
+const getUrlForLang = curry((homeLink, url, langKey) => {
+  return url === '/' || !startsWith(homeLink, url)
     ? `/${langKey}/`
-    : url.replace(homeLink, `/${langKey}/`));
+    : url.replace(homeLink, `/${langKey}/`);
+});
 
 /**
  * Get langs to create Menu
