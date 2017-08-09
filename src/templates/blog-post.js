@@ -113,6 +113,21 @@ const Content = styled.section`
   }
 `;
 
+const getYoutube = (markdownRemark) => {
+  console.log(markdownRemark);
+  const youtubeId = markdownRemark.frontmatter.youtubeId;
+  return youtubeId
+    ? (
+      <iframe 
+        width="560" 
+        height="315" 
+        src={'https://www.youtube.com/embed/' + youtubeId}
+        frameBorder="0" 
+        allowFullScreen />
+    )
+    : null;
+};
+
 class BlogPostRoute extends React.Component {
   static propTypes = {
     data: PropTypes.object,
@@ -123,6 +138,8 @@ class BlogPostRoute extends React.Component {
     const url = this.props.location.pathname;
     const currentLangKey = getCurrentLangKey(url);
     const { markdownRemark } = this.props.data;
+
+    const youtube = getYoutube(markdownRemark);
 
     let tags;
     let tagsSection;
@@ -164,6 +181,7 @@ class BlogPostRoute extends React.Component {
           fileAbsolutePath={markdownRemark.fileAbsolutePath}
           currentLangKey={currentLangKey}
         />
+        {youtube}
         <Content dangerouslySetInnerHTML={{ __html: markdownRemark.html }} />
         {tagsSection}
         <ReadNext nextPost={markdownRemark.frontmatter.readNext} />
@@ -185,10 +203,12 @@ export const pageQuery = graphql`
         path
       }
       frontmatter {
+        youtubeId
         title
         tags
-        date(formatString: "MMMM DD, YYYY")
+        date
       }
     }
   }
 `;
+
