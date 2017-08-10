@@ -113,12 +113,20 @@ const Content = styled.section`
   }
 `;
 
+const Iframe = styled.iframe`
+  width: 100%;
+  max-width: 40rem;
+  height: 20rem;
+  margin: auto;
+  display: block;
+`;
+
 const getYoutube = (markdownRemark) => {
   console.log(markdownRemark);
   const youtubeId = markdownRemark.frontmatter.youtubeId;
   return youtubeId
     ? (
-      <iframe 
+      <Iframe 
         width="560" 
         height="315" 
         src={'https://www.youtube.com/embed/' + youtubeId}
