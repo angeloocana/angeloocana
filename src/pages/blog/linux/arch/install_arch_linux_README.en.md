@@ -1,6 +1,6 @@
 ---
 title: How to install Arch linux
-date: '2017-07-30'
+date: '2017-08-12'
 layout: post
 draft: false
 tags:
@@ -32,10 +32,6 @@ fdisk -l
 ```
 
 ```bash
-    mkfs.ext4 /dev/sda5
-```
-
-```bash
     mkswap /dev/sda2
 ```
 
@@ -47,14 +43,6 @@ fdisk -l
 
 ```bash
     mount /dev/sda1 /mnt
-```
-
-```bash
-    mkdir /mnt/home
-```
-
-```bash
-    mount /dev/sda5 /mnt/home
 ```
 
 ```bash
