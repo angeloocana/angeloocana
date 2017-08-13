@@ -3,35 +3,35 @@ import PropTypes from 'proptypes';
 import Link from './Link';
 
 const Tag = ({tag}) => {
-    return (
-        <li>
-             <Link to={tag}>
-              {tag}
-            </Link>
-        </li>
-    );
+  return (
+    <li>
+      <Link to={tag}>
+        {tag}
+      </Link>
+    </li>
+  );
 };
 
 Tag.propTypes = {
-    tag: PropTypes.Object
+  tag: PropTypes.Object
 };
 
 const Tags = ({tags}) => {
-    return (
-        <section>
-            <header>
+  return (
+    <section>
+      <header>
                 Tagged with
-            </header>
-            { 
-                tags.map((tag, i) => 
-                <Tag tag={tag} key={i} />)
-            }
-        </section> 
-    );
+      </header>
+      { 
+        tags.map((tag, i) => 
+          <Tag tag={tag} key={i} />)
+      }
+    </section> 
+  );
 };
 
 Tags.propTypes = {
-    tags: PropTypes.Array
+  tags: PropTypes.Array
 };
 
 export default Tags;

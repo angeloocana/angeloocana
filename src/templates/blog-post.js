@@ -149,7 +149,7 @@ class BlogPostRoute extends React.Component {
 
     const youtube = getYoutube(markdownRemark);
 
-       return (
+    return (
       <Post>
         <Helmet
           title={`${markdownRemark.frontmatter.title}`}
