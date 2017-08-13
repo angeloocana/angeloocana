@@ -2,11 +2,11 @@ import React from 'react';
 import PropTypes from 'proptypes';
 import graphql from 'graphql';
 import Helmet from 'react-helmet';
-import Link from '../components/Link';
 import ReadNext from '../components/ReadNext';
 import styled from 'styled-components';
 import EditBtn from '../components/EditBtn';
 import { getCurrentLangKey } from '../i18n/langs';
+import Tags from '../components/Tags';
 
 const Post = styled.article`
   margin: ${props => props.theme.blog.post.margin};
@@ -149,31 +149,7 @@ class BlogPostRoute extends React.Component {
 
     const youtube = getYoutube(markdownRemark);
 
-    let tags;
-    let tagsSection;
-    if (markdownRemark.fields.tagSlugs) {
-      const tagsArray = markdownRemark.fields.tagSlugs;
-      tags = tagsArray.map((tag, i) => {
-        const divider =
-          i < tagsArray.length - 1 &&
-          <span>
-            {' | '}
-          </span>;
-        return (
-          <span key={tag}>
-            <Link to={tag}>
-              {markdownRemark.frontmatter.tags[i]}
-            </Link>
-            {divider}
-          </span>
-        );
-      });
-      tagsSection = (
-        <em>Tagged with {tags}</em>
-      );
-    }
-
-    return (
+       return (
       <Post>
         <Helmet
           title={`${markdownRemark.frontmatter.title}`}
@@ -191,7 +167,7 @@ class BlogPostRoute extends React.Component {
         />
         {youtube}
         <Content dangerouslySetInnerHTML={{ __html: markdownRemark.html }} />
-        {tagsSection}
+        <Tags tags={markdownRemark.fields.tagSlugs} />
         <ReadNext nextPost={markdownRemark.frontmatter.readNext} />
       </Post>
     );
