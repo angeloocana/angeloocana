@@ -14,6 +14,12 @@ It's the best option for accessing servers through line command.
 
 `Y` Copy line.
 
+`v` Select lines pressing arrows.
+
+`y` Copy lines.
+
+`d` Cut lines.
+
 `P` Paste before current line.
 
 `p` Paste.
