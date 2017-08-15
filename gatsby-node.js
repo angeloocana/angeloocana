@@ -40,7 +40,7 @@ exports.createPages = ({ graphql, boundActionCreators }) => {
         console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>');
         console.log('gatsby-node error:');
         console.log(result.errors);
-        console.log('<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<';
+        console.log('<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<');
         resolve();
         // reject(result.errors);
       }

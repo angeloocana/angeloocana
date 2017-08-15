@@ -22,11 +22,11 @@ const Tags = ({tags}) => {
       <header>
                 Tagged with
       </header>
-      { 
-        tags.map((tag, i) => 
+      {
+        (tags || []).map((tag, i) =>
           <Tag tag={tag} key={i} />)
       }
-    </section> 
+    </section>
   );
 };
 
@@ -35,4 +35,3 @@ Tags.propTypes = {
 };
 
 export default Tags;
-
