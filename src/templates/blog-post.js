@@ -122,15 +122,14 @@ const Iframe = styled.iframe`
 `;
 
 const getYoutube = (markdownRemark) => {
-  console.log(markdownRemark);
   const youtubeId = markdownRemark.frontmatter.youtubeId;
   return youtubeId
     ? (
-      <Iframe 
-        width="560" 
-        height="315" 
+      <Iframe
+        width="560"
+        height="315"
         src={'https://www.youtube.com/embed/' + youtubeId}
-        frameBorder="0" 
+        frameBorder="0"
         allowFullScreen />
     )
     : null;
@@ -195,4 +194,3 @@ export const pageQuery = graphql`
     }
   }
 `;
-

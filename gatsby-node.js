@@ -37,7 +37,10 @@ exports.createPages = ({ graphql, boundActionCreators }) => {
       `
     ).then(result => {
       if (result.errors) {
+        console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>');
+        console.log('gatsby-node error:');
         console.log(result.errors);
+        console.log('<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<';
         resolve();
         // reject(result.errors);
       }
@@ -86,10 +89,9 @@ const getPathAndLang = (fileAbsolutePath) => {
     const filePath = fileAbsolutePath.split('/pages')[1];
     const fileName = filePath.split('.');
     const langKey = fileName.length === 3 ? fileName[1] : 'any';
-    const path = fileName.length === 3 
-      ? `/${langKey}${fileName[0]}/` 
+    const path = fileName.length === 3
+      ? `/${langKey}${fileName[0]}/`
       : `${fileName[0]}/`;
-    console.log(path);
     return {
       path,
       langKey

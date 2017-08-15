@@ -235,16 +235,8 @@ Start Network Manager:
 
 ## ENOSPC error
 
-https://stackoverflow.com/questions/22475849/node-js-error-enospc/32600959#32600959
-
-For Arch Linux add this line to /etc/sysctl.d/99-sysctl.conf:
 
 ```bash
-    sudo fs.inotify.max_user_watches=524288
+    echo fs.inotify.max_user_watches=524288 | sudo tee -a /etc/sysctl.conf && sudo sysctl -p
 ```
 
-Then execute:
-
-```bash
-    sudo sysctl --system
-```
