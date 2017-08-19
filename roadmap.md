@@ -13,6 +13,8 @@
 - Localize dates.
 
 ## Working
+- Create sitemap.
+- Setup ssl.
 - Test google search.
 - Fix font Victor's phone.
 - Resume.
