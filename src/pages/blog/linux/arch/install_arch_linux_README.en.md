@@ -8,8 +8,24 @@ tags:
   - Arch
 ---
 
-## Links
- - https://www.ostechnix.com/install-arch-linux-latest-version/
+If you want to learn Linux for real, Arch is my favorite distribution, be prepared for lots of commands and research, but keep calm, you are goin to learn!
+
+## Boot Arch Linux from USB pendrive
+
+### Download Arch Linux
+Download the .iso image at:
+https://www.archlinux.org/download/
+
+### Download Rufus
+Rufus is a program to create bootable USB drivers
+https://rufus.akeo.ie/
+
+Open rufus, select your .iso image, select your pendrive and BURN!
+
+Boot your PC using your new pendrive and follow the next steps!
+
+Have fun!
+
 
 ## Change keyboard to abnt2
 ```bash
@@ -239,4 +255,7 @@ Start Network Manager:
 ```bash
     echo fs.inotify.max_user_watches=524288 | sudo tee -a /etc/sysctl.conf && sudo sysctl -p
 ```
+
+## Links
+ - https://www.ostechnix.com/install-arch-linux-latest-version/
 
