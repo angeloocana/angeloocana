@@ -11,17 +11,18 @@
 - Search for cambo in npm, if not available add it.
 - Find new theme for code examples.
 - Localize dates.
-- Fix tests and npm start.
 
 ## Working
-- Fix select new lang for pages without lang
+- Test google search.
 - Fix font Victor's phone.
 - Resume.
-- Old pages.
-- Test google analytics.
 - Post Pages & Pagination.
+- Old pages.
 
 ## Done
+- Test google analytics.
+- Fix select new lang for pages without lang
+- Fix tests and npm start.
 - Movies.
 - Vim help commands.
 - Menu.
