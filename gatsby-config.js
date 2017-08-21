@@ -5,6 +5,7 @@ var resume = require('./data/resume');
 
 module.exports = {
   siteMetadata: {
+    siteUrl: 'https://angeloocana.com',
     pt,
     en,
     fr,
@@ -68,6 +69,9 @@ module.exports = {
     },
     'gatsby-plugin-offline',
     'gatsby-plugin-preact',
-    'gatsby-plugin-react-helmet'
+    'gatsby-plugin-react-helmet',
+    {
+      resolve: 'gatsby-plugin-sitemap'
+    },
   ],
 };
