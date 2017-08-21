@@ -13,7 +13,6 @@
 - Localize dates.
 
 ## Working
-- Create sitemap.
 - Setup ssl.
 - Test google search.
 - Fix font Victor's phone.
@@ -22,6 +21,7 @@
 - Old pages.
 
 ## Done
+- Create sitemap.
 - Test google analytics.
 - Fix select new lang for pages without lang
 - Fix tests and npm start.
