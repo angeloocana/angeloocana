@@ -1,22 +1,23 @@
 # Roadmap
 
 ## To do
+- Search.
 - Add comments.
 - Index blog tags.
 - Test offline.
 - Test speed (2017-07-25 B B).
 - Hire me.
-- Sitemap.
 - Clean dependencies.
 - Search for cambo in npm, if not available add it.
 - Find new theme for code examples.
 - Localize dates.
 
 ## Working
+- Menu.
+- Resume.
 - Setup ssl.
 - Test google search.
 - Fix font Victor's phone.
-- Resume.
 - Post Pages & Pagination.
 - Old pages.
 
