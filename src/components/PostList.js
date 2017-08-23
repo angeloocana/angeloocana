@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'proptypes';
 import PostListItem from './PostListItem';
 import styled from 'styled-components';
+import Link from './Link';
 
 const Ul = styled.ul`
   list-style: none;
@@ -29,7 +30,9 @@ const PostList = ({ posts, currentLangKey }) => {
   return (
     <section className="post-list">
       <header>
-        <H1>{getPostTitle()[currentLangKey]}</H1>
+        <Link to={`/${currentLangKey}/blog/`}>
+          <H1>{getPostTitle()[currentLangKey]}</H1>
+        </Link>
       </header>
       <nav>
         <Ul>

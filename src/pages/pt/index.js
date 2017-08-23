@@ -1,16 +1,17 @@
+import React from 'react';
+import Index from '../_index';
 import graphql from 'graphql';
-import Index from './index';
 
-export default Index;
+export default (props) => <Index {...props} />;
 
 export const pageQuery = graphql`
-  query PtIndexQuery {
+  query IndexPtQuery {
     allMarkdownRemark(
-      limit: 2000
+      limit: 3
       sort: { fields: [frontmatter___date], order: DESC }
-      filter: { 
-        frontmatter: { draft: { ne: true } }, 
-        fields: { langKey: { regex: "/(pt|any)/" } } 
+      filter: {
+        frontmatter: { draft: { ne: true } },
+        fields: { langKey: { regex: "/(pt|any)/" } }
       },
     ) {
       edges {
@@ -25,7 +26,7 @@ export const pageQuery = graphql`
             tagSlugs,
             path
           },
-          excerpt 
+          excerpt
         }
       }
     }

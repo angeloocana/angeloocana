@@ -13,15 +13,17 @@
 - Localize dates.
 
 ## Working
+- Increase code font size.
+- Fix tags text and layout.
 - Menu.
 - Resume.
 - Setup ssl.
 - Test google search.
 - Fix font Victor's phone.
-- Post Pages & Pagination.
 - Old pages.
 
 ## Done
+- Post Pages & Pagination.
 - Create sitemap.
 - Test google analytics.
 - Fix select new lang for pages without lang

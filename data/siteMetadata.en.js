@@ -13,6 +13,7 @@ module.exports = {
   },
   menu: [
     {label: 'Home', link: '/en/'},
+    {label: 'Posts', link: '/en/blog/'},
     {label: 'About me', link: '/en/about/'},
     {label: 'CV', link: '/en/resume/'}
   ]
