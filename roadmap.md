@@ -13,7 +13,6 @@
 - Localize dates.
 
 ## Working
-- Increase code font size.
 - Fix tags text and layout.
 - Menu.
 - Resume.
@@ -23,6 +22,7 @@
 - Old pages.
 
 ## Done
+- Increase code font size.
 - Post Pages & Pagination.
 - Create sitemap.
 - Test google analytics.

@@ -189,7 +189,8 @@ const theme = {
       },
       content: {
         code: {
-          color: colors.yellow
+          color: colors.yellow,
+          fontSize: scale(1)
         },
         highlight: {
           backgroundColor: colors.gray,

@@ -31,6 +31,7 @@ const Time = styled.time`
 const Content = styled.section`
   code {
     color: ${props => props.theme.blog.post.content.code.color};
+    font-size: ${props => props.theme.blog.post.content.code.fontSize};
   }
 
   .gatsby-highlight{
