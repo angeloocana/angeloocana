@@ -165,6 +165,7 @@ class BlogPostRoute extends React.Component {
           fileAbsolutePath={markdownRemark.fileAbsolutePath}
           currentLangKey={currentLangKey}
         />
+        <Tags tags={markdownRemark.fields.tagSlugs} />
         {youtube}
         <Content dangerouslySetInnerHTML={{ __html: markdownRemark.html }} />
         <Tags tags={markdownRemark.fields.tagSlugs} />
