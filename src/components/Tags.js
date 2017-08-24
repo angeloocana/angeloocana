@@ -65,10 +65,13 @@ const Ul = styled.ul`
 `;
 
 const Tags = ({tags}) => {
+  if(!tags || tags.length === 0)
+    return null;
+
   return (
     <section>
       <Header>
-                Tags:
+        Tags:
       </Header>
       <Ul>
         {

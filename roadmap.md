@@ -11,6 +11,7 @@
 - Search for cambo in npm, if not available add it.
 - Find new theme for code examples.
 - Localize dates.
+- Try to get browser lang, when no lang in the url
 
 ## Working
 - Fix tags text and layout.
