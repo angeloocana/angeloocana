@@ -6,7 +6,7 @@ import styled from 'styled-components';
 
 const Li = styled.li`
   padding: ${props => props.theme.blog.list.item.padding};
-  margin: ${props => props.theme.blog.list.item.margin};  
+  margin: ${props => props.theme.blog.list.item.margin};
 
   &:hover {
     background-color: ${props => props.theme.blog.list.item.hover.backgroundColor};
@@ -68,8 +68,11 @@ export const pageQueryTest = graphql`
     },
     fields{
       slug,
-      tagSlugs
+      tagSlugs{
+        tag,
+        link
+      }
     },
-    excerpt 
+    excerpt
   }
 `;

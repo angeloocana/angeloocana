@@ -16,7 +16,7 @@
 - Fix readnext
 
 ## Working
-- Fix tags text and layout.
+- Update tags layout.
 - Menu.
 - Resume.
 - Test google search.
@@ -24,6 +24,7 @@
 - Old pages.
 
 ## Done
+- Fix tags name and link.
 - Setup ssl.
 - Increase code font size.
 - Post Pages & Pagination.

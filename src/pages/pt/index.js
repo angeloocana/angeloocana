@@ -23,7 +23,10 @@ export const pageQuery = graphql`
           },
           fields{
             slug,
-            tagSlugs,
+            tagSlugs{
+              tag,
+              link
+            },
             path
           },
           excerpt

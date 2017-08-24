@@ -138,7 +138,12 @@ exports.onCreateNode = ({ node, boundActionCreators, getNode }) => {
 
     if (node.frontmatter.tags) {
       const tagSlugs = node.frontmatter.tags.map(
-        tag => `/tags/${_.kebabCase(tag)}/`
+        tag => {
+          return {
+            tag,
+            link: `/tags/${_.kebabCase(tag)}/`
+          };
+        }
       );
       createNodeField({ node, name: 'tagSlugs', value: tagSlugs });
     }

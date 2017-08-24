@@ -46,8 +46,8 @@ const A = styled(Link)`
 const Tag = ({tag}) => {
   return (
     <Li>
-      <A to={tag}>
-        {tag}
+      <A to={tag.link}>
+        {tag.tag}
       </A>
     </Li>
   );

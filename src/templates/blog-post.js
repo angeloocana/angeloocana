@@ -184,7 +184,10 @@ export const pageQuery = graphql`
       html
       excerpt
       fields {
-        tagSlugs
+        tagSlugs{
+            tag,
+            link
+        },
         path
       }
       frontmatter {
