@@ -20,7 +20,7 @@
     "build": "rm -rf public/*.html && gatsby build",
     "predeploy": "npm run lint && npm run build",
     "deploy": "surge public/ --domain angeloocana.surge.sh",
-    "deploy:prod": "npm run predeploy && surge public/ angeloocana.com",
+    "deploy:prod": "npm run predeploy && surge public/ https://angeloocana.com",
     "develop": "gatsby develop",
     "test": "jest",
     "test:watch": "jest --watch",
