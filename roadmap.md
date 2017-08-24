@@ -16,12 +16,12 @@
 - Fix tags text and layout.
 - Menu.
 - Resume.
-- Setup ssl.
 - Test google search.
 - Fix font Victor's phone.
 - Old pages.
 
 ## Done
+- Setup ssl.
 - Increase code font size.
 - Post Pages & Pagination.
 - Create sitemap.
