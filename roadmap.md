@@ -12,6 +12,8 @@
 - Find new theme for code examples.
 - Localize dates.
 - Try to get browser lang, when no lang in the url
+- Add post sugestions
+- Fix readnext
 
 ## Working
 - Fix tags text and layout.
