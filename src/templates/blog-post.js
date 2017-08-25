@@ -151,7 +151,7 @@ class BlogPostRoute extends React.Component {
 
     return (
       <Post>
-        <Helmet
+       <Helmet
           title={`${markdownRemark.frontmatter.title}`}
           meta={[{ name: 'description', content: markdownRemark.excerpt }]}
         />

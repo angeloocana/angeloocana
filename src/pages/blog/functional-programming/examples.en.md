@@ -5,6 +5,29 @@ layout: post
 draft: false
 tags:
   - Functional Programming
+structuredData:
+  type: TechArticle
+  dependencies: Javascript basics
+  proficiencyLevel: Beginner
+  articleSection: Functional Programming
+  pageEnd:
+  pageStart:
+  pagination:
+  about:
+    name: Functional Programming
+    alternateName: FP
+    description: Functional Programming is a programming style or pattern
+      which compose pure functions to build a software.
+    identifier: functional-programming
+    image:
+    sameAs: https://en.wikipedia.org/wiki/Functional_programming
+  accessMode: [textual]
+  accessModeSufficient: [textual]
+  accessibilityAPI: [ARIA]
+  accessibilityControl: [fullKeyboardControl, fullTouchControl, fullMouseControl]
+  accessibilitySummary:
+  accountablePerson:
+    additionalName: angeloocana
 ---
 
 ```js
@@ -59,7 +82,7 @@ function curry(f, ...a) {
 
 ///////////////////////////////////////////////////////
 //
-// Without writing any new functions, 
+// Without writing any new functions,
 // show three ways to create the inc function.
 //
 // inc(5) // 6

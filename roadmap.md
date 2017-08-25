@@ -16,6 +16,9 @@
 - Fix readnext
 
 ## Working
+- Add structured data for google, see webmasters
+- Add rich cards for google
+- Add AMP
 - Update tags layout.
 - Menu.
 - Resume.
