@@ -29,7 +29,10 @@ const SubTitle = styled.p`
 const Header = ({ siteMetadata, isHome, langs, homeLink, url }) => {
   return (
     <header>
-      <Helmet defaultTitle={siteMetadata.title} titleTemplate={`${siteMetadata.header.title} | %s`} />
+      <Helmet
+        defaultTitle={siteMetadata.title}
+        titleTemplate={`%s | ${siteMetadata.title}`} 
+      />
       <SelectLanguage langs={langs} />
       <Title to={homeLink} isHome={isHome}>
         {siteMetadata.header.title}
