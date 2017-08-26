@@ -1,6 +1,6 @@
 ---
-title: How to setup https / ssl
-date: '2017-08-25'
+title: How to setup ssl https:// for your site
+date: '2017-08-26'
 layout: post
 draft: false
 tags:
@@ -11,16 +11,16 @@ tags:
   - https
 structuredData:
   type: TechArticle
-  dependencies: How to setup https / ssl
+  dependencies: Hosting at Surge.sh
   proficiencyLevel: Beginner
-  articleSection: How to setup https / ssl
+  articleSection: static-site
   pageEnd:
   pageStart:
   pagination:
   about:
     name: ssl
     alternateName: https
-    description: SSL (Secure Sockets Layer) is the https thing you see in some urls, it adds security technology for establishing an encrypted link between a web server and a browser.
+    description: SSL (Secure Sockets Layer) is the https:// thing you see in some urls, it adds security technology for establishing an encrypted link between a web server and a browser.
     identifier: ssl
     image:
     sameAs: https://en.wikipedia.org/wiki/Transport_Layer_Security
