@@ -25,8 +25,7 @@ exports.createPages = ({ graphql, boundActionCreators }) => {
               node {
                 fields {
                   slug,
-                  langKey,
-                  path
+                  langKey
                 }
                 frontmatter {
                   tags
@@ -48,14 +47,15 @@ exports.createPages = ({ graphql, boundActionCreators }) => {
 
       // Create blog posts pages.
       _.each(result.data.allMarkdownRemark.edges, edge => {
-
-        const path = edge.node.fields.path || edge.node.fields.slug;
+        const path = edge.node.fields.slug;
+        const langKey = edge.node.fields.langKey;
         createPage({
           path, // required
           component: blogPost,
           context: {
-            slug: edge.node.path || edge.node.fields.slug
-          },
+            path,
+            langKey
+          }
         });
       });
 
@@ -66,7 +66,9 @@ exports.createPages = ({ graphql, boundActionCreators }) => {
       }, {});
 
       Object.keys(langTags).forEach(langKey => {
-        const tags = _.uniq(langTags[langKey]);
+        const tags = _.uniq(langTags[langKey])
+          .filter(tag => tag && tag !== '');
+          
         tags.forEach(tag => {
           const tagPath = `/${langKey}/tags/${_.kebabCase(tag)}/`;
           createPage({
@@ -86,16 +88,19 @@ exports.createPages = ({ graphql, boundActionCreators }) => {
 
 //exports.postBuild = require('./post-build')
 
-const getPathAndLang = (fileAbsolutePath) => {
+const getSlugAndLang = (defaultLangKey, fileAbsolutePath) => {
   try {
-    const filePath = fileAbsolutePath.split('/pages')[1];
+    let filePath = fileAbsolutePath.split('/pages')[1];
+    if(!filePath) filePath = fileAbsolutePath.split('/.cache')[1];
+
     const fileName = filePath.split('.');
-    const langKey = fileName.length === 3 ? fileName[1] : 'any';
-    const path = fileName.length === 3
-      ? `/${langKey}${fileName[0]}/`
-      : `${fileName[0]}/`;
+    const langKey = fileName.length === 3 ? fileName[1] : defaultLangKey;
+    const slug = fileName.length === 3
+      ? `/${langKey}${fileName[0].replace('/index', '')}/`
+      : `${fileName[0].replace('/index', '')}/`;
+
     return {
-      path,
+      slug,
       langKey
     };
   } catch (e) {
@@ -116,26 +121,18 @@ exports.onCreateNode = ({ node, boundActionCreators, getNode }) => {
     node.internal.type === 'MarkdownRemark' &&
     typeof node.slug === 'undefined'
   ) {
-    const fileNode = getNode(node.parent);
-
-    const pathAndLang = getPathAndLang(node.fileAbsolutePath);
+    const slugAndLang = getSlugAndLang('any', node.fileAbsolutePath);
 
     createNodeField({
       node,
       name: 'langKey',
-      value: pathAndLang.langKey
-    });
-
-    createNodeField({
-      node,
-      name: 'path',
-      value: pathAndLang.path
+      value: slugAndLang.langKey
     });
 
     createNodeField({
       node,
       name: 'slug',
-      value: fileNode.fields.slug,
+      value: slugAndLang.slug,
     });
 
     if (node.frontmatter.tags) {
@@ -143,7 +140,7 @@ exports.onCreateNode = ({ node, boundActionCreators, getNode }) => {
         tag => {
           return {
             tag,
-            link: `/${pathAndLang.langKey}/tags/${_.kebabCase(tag)}/`
+            link: `/${slugAndLang.langKey}/tags/${_.kebabCase(tag)}/`
           };
         }
       );
@@ -176,5 +173,25 @@ exports.setFieldsOnGraphQLNodeType = (
         }
       },
     });
+  });
+};
+
+// Add context.slug and .langKey for react props
+exports.onCreatePage = ({ page, boundActionCreators }) => {
+  if(page.context.slug) return null;
+
+  const { createPage, deletePage } = boundActionCreators;
+
+  return new Promise((resolve, reject) => {
+    const slugAndLang = getSlugAndLang('en', page.componentPath);
+    const oldPath = page.path;
+    page.path = slugAndLang.slug;
+    page.context.slug = slugAndLang.slug;
+    page.context.langKey = slugAndLang.langKey;
+
+    deletePage({ path: oldPath });
+    createPage(page);
+
+    resolve();
   });
 };

@@ -26,8 +26,7 @@ export const pageQuery = graphql`
             tagSlugs{
               tag,
               link
-            },
-            path
+            }
           },
           excerpt
         }

@@ -36,8 +36,7 @@ const P = styled.p`
   line-height: ${props => props.theme.blog.list.item.p.lineHeight};
 `;
 
-const getToLink = (post) =>
-  post.node.fields.path || post.node.fields.slug;
+const getToLink = (post) => post.node.fields.slug;
 
 const PostListItem = ({ post }) => {
   return (

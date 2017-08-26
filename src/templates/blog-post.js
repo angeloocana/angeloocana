@@ -5,7 +5,6 @@ import Helmet from 'react-helmet';
 import ReadNext from '../components/ReadNext';
 import styled from 'styled-components';
 import EditBtn from '../components/EditBtn';
-import { getCurrentLangKey } from '../i18n/langs';
 import Tags from '../components/Tags';
 import {getStructuredData} from '../structuredData';
 
@@ -141,54 +140,49 @@ const getYoutube = (markdownRemark) => {
     : null;
 };
 
-class BlogPostRoute extends React.Component {
-  static propTypes = {
-    data: PropTypes.object,
-    location: PropTypes.object
-  }
+const BlogPostRoute = ({data, pathContext}) => {
+  const { markdownRemark } = data;
+  const youtube = getYoutube(markdownRemark);
+  const structuredData = getStructuredData(markdownRemark);
 
-  render() {
-    const url = this.props.location.pathname;
-    const currentLangKey = getCurrentLangKey(url);
+  return (
+    <Post>
+      <Helmet
+        title={`${markdownRemark.frontmatter.title}`}
+        meta={[{ name: 'description', content: markdownRemark.excerpt }]}
+      />
+      <script type="application/ld+json">
+        {structuredData}
+      </script>
+      <header>
+        <H1>
+          {markdownRemark.frontmatter.title}
+        </H1>
+        <Time pubdate>{markdownRemark.frontmatter.date}</Time>
+      </header>
+      <EditBtn
+        fileAbsolutePath={markdownRemark.fileAbsolutePath}
+        currentLangKey={pathContext.langKey}
+      />
+      <Tags tags={markdownRemark.fields.tagSlugs} />
+      {youtube}
+      <Content dangerouslySetInnerHTML={{ __html: markdownRemark.html }} />
+      <Tags tags={markdownRemark.fields.tagSlugs} />
+      <ReadNext nextPost={markdownRemark.frontmatter.readNext} />
+    </Post>
+  );
+};
 
-    const { markdownRemark } = this.props.data;
-    const youtube = getYoutube(markdownRemark);
-    const structuredData = getStructuredData(markdownRemark);
-
-    return (
-      <Post>
-        <Helmet
-          title={`${markdownRemark.frontmatter.title}`}
-          meta={[{ name: 'description', content: markdownRemark.excerpt }]}
-        />
-        <script type="application/ld+json">
-          {structuredData}
-        </script>
-        <header>
-          <H1>
-            {markdownRemark.frontmatter.title}
-          </H1>
-          <Time pubdate>{markdownRemark.frontmatter.date}</Time>
-        </header>
-        <EditBtn
-          fileAbsolutePath={markdownRemark.fileAbsolutePath}
-          currentLangKey={currentLangKey}
-        />
-        <Tags tags={markdownRemark.fields.tagSlugs} />
-        {youtube}
-        <Content dangerouslySetInnerHTML={{ __html: markdownRemark.html }} />
-        <Tags tags={markdownRemark.fields.tagSlugs} />
-        <ReadNext nextPost={markdownRemark.frontmatter.readNext} />
-      </Post>
-    );
-  }
-}
+BlogPostRoute.propTypes = {
+  data: PropTypes.object,
+  pathContext: PropTypes.object
+};
 
 export default BlogPostRoute;
 
 export const pageQuery = graphql`
   query BlogPostByPath($path: String!) {
-    markdownRemark(fields: {path: {eq: $path}}) {
+    markdownRemark(fields: {slug: {eq: $path}}) {
       fileAbsolutePath
       html
       excerpt
@@ -197,7 +191,7 @@ export const pageQuery = graphql`
           tag
           link
         }
-        path
+        slug
       }
       frontmatter {
         youtubeId

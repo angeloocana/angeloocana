@@ -1,17 +1,17 @@
 import React from 'react';
-import Blog from '../_blog';
+import Blog from './_blog';
 import graphql from 'graphql';
 
 export default (props) => <Blog {...props} />;
 
 export const pageQuery = graphql`
-  query BlogFrQuery {
+  query BlogEnQuery {
    allMarkdownRemark(
       limit: 2000
       sort: { fields: [frontmatter___date], order: DESC }
       filter: {
         frontmatter: { draft: { ne: true } },
-        fields: { langKey: { regex: "/(fr|any)/" } }
+        fields: { langKey: { regex: "/(en|any)/" } }
       },
     ) {
       edges {
@@ -26,8 +26,7 @@ export const pageQuery = graphql`
             tagSlugs{
               tag,
               link
-            },
-            path
+            }
           },
           excerpt
         }

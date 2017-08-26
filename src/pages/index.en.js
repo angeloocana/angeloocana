@@ -1,13 +1,13 @@
 import React from 'react';
-import Blog from '../_blog';
+import Index from './_index';
 import graphql from 'graphql';
 
-export default (props) => <Blog {...props} />;
+export default (props) => <Index {...props} />;
 
 export const pageQuery = graphql`
-  query BlogEnQuery {
+  query IndexEnQuery {
    allMarkdownRemark(
-      limit: 2000
+      limit: 3
       sort: { fields: [frontmatter___date], order: DESC }
       filter: {
         frontmatter: { draft: { ne: true } },
@@ -26,8 +26,7 @@ export const pageQuery = graphql`
             tagSlugs{
               tag,
               link
-            },
-            path
+            }
           },
           excerpt
         }

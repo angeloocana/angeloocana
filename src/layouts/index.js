@@ -33,46 +33,42 @@ const BodyContainer = styled.div`
   font-feature-settings: "calt" 1, "clig" 1, "dlig" 1, "kern" 1, "liga" 1, "salt" 1;
 `;
 
-class Wrapper extends React.Component {
-  static propTypes = {
-    children: PropTypes.func,
-    location: PropTypes.object
-  }
+const Wrapper = (props) => {
+  const {children, location} = props;
+  if(!location) console.log('wrapper: ', props);
+  const url = location.pathname;
+  const currentLangKey = getCurrentLangKey(url);
+  const isHome = isHomePage(url);
+  const homeLink = `/${currentLangKey}/`;
+  const langs = getLangs(currentLangKey, getUrlForLang(homeLink, url));
 
-  render() {
-    const url = this.props.location.pathname;
-    const currentLangKey = getCurrentLangKey(url);
-    const isHome = isHomePage(url);
-    const homeLink = `/${currentLangKey}/`;
-    const langs = getLangs(currentLangKey, getUrlForLang(homeLink, url));
+  return (
+    <ThemeProvider theme={theme}>
+      <Background>
+        <BodyContainer>
+          <Header
+            siteMetadata={siteMetadata[currentLangKey]}
+            isHome={isHome}
+            langs={langs}
+            homeLink={homeLink}
+            url={url}
+          />
+          <main>
+            {children()}
+          </main>
+          <Footer
+            currentLangKey={currentLangKey}
+            siteMetadata={siteMetadata[currentLangKey]}
+          />
+        </BodyContainer>
+      </Background>
+    </ThemeProvider>
+  );
+};
 
-    const children = this.props.children();
-
-    console.log('layout index', children);
-
-    return (
-      <ThemeProvider theme={theme}>
-        <Background>
-          <BodyContainer>
-            <Header
-              siteMetadata={siteMetadata[currentLangKey]}
-              isHome={isHome}
-              langs={langs}
-              homeLink={homeLink}
-              url={url}
-            />
-            <main>
-              {children}
-            </main>
-            <Footer
-              currentLangKey={currentLangKey}
-              siteMetadata={siteMetadata[currentLangKey]}
-            />
-          </BodyContainer>
-        </Background>
-      </ThemeProvider>
-    );
-  }
-}
+Wrapper.propTypes = {
+  children: PropTypes.func,
+  location: PropTypes.object
+};
 
 export default Wrapper;

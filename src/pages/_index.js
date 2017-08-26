@@ -3,7 +3,6 @@ import PropTypes from 'proptypes';
 import PostList from '../components/PostList';
 import SocialLinks from '../components/SocialLinks';
 import Welcome from '../components/Welcome';
-import { getCurrentLangKey } from '../i18n/langs';
 import Link from 'gatsby-link';
 import styled from 'styled-components';
 
@@ -26,29 +25,25 @@ const getBtnMorePostsText = (currentLangKey) => {
   };
 };
 
-class Index extends React.Component {
-  static propTypes = {
-    data: PropTypes.object,
-    location: PropTypes.object
-  }
+const Index = ({data, pathContext}) => {
+  const posts = data.allMarkdownRemark.edges;
+  const {langKey} = pathContext;
 
-  render() {
-    const url = this.props.location.pathname;
-    const currentLangKey = getCurrentLangKey(url);
+  return (
+    <div>
+      <SocialLinks />
+      <Welcome currentLangKey={langKey} />
+      <PostList posts={posts} currentLangKey={langKey} />
+      <Btn to={`/${langKey}/blog/`}>
+        {getBtnMorePostsText()[langKey]}
+      </Btn>
+    </div>
+  );
+};
 
-    const posts = this.props.data.allMarkdownRemark.edges;
-
-    return (
-      <div>
-        <SocialLinks />
-        <Welcome currentLangKey={currentLangKey} />
-        <PostList posts={posts} currentLangKey={currentLangKey} />
-        <Btn to={`/${currentLangKey}/blog/`}>
-          {getBtnMorePostsText()[currentLangKey]}
-        </Btn>
-      </div>
-    );
-  }
-}
+Index.propTypes = {
+  data: PropTypes.object,
+  pathContext: PropTypes.object
+};
 
 export default Index;
