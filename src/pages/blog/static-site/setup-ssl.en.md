@@ -24,10 +24,10 @@ structuredData:
     identifier: ssl
     image:
     sameAs: https://en.wikipedia.org/wiki/Transport_Layer_Security
-  accessMode: [textual]
-  accessModeSufficient: [textual]
-  accessibilityAPI: [ARIA]
-  accessibilityControl: [fullKeyboardControl, fullTouchControl, fullMouseControl]
+  accessMode: textual
+  accessModeSufficient: textual
+  accessibilityAPI: ARIA
+  accessibilityControl: fullKeyboardControl, fullTouchControl, fullMouseControl
   accessibilitySummary:
   accountablePerson:
     additionalName: angeloocana

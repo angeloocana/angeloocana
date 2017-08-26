@@ -10,22 +10,22 @@ structuredData:
   dependencies: Javascript basics
   proficiencyLevel: Beginner
   articleSection: Functional Programming
-  pageEnd:
-  pageStart:
-  pagination:
+  pageEnd: ...
+  pageStart: ...
+  pagination: ...
   about:
     name: Functional Programming
     alternateName: FP
     description: Functional Programming is a programming style or pattern
       which compose pure functions to build a software.
     identifier: functional-programming
-    image:
+    image: ...
     sameAs: https://en.wikipedia.org/wiki/Functional_programming
-  accessMode: [textual]
-  accessModeSufficient: [textual]
-  accessibilityAPI: [ARIA]
-  accessibilityControl: [fullKeyboardControl, fullTouchControl, fullMouseControl]
-  accessibilitySummary:
+  accessMode: textual
+  accessModeSufficient: textual
+  accessibilityAPI: ARIA
+  accessibilityControl: fullKeyboardControl, fullTouchControl, fullMouseControl
+  accessibilitySummary: ...
   accountablePerson:
     additionalName: angeloocana
 ---

@@ -57,6 +57,7 @@
     "prettier": "^1.5.2",
     "proptypes": "^1.1.0",
     "ptz-assert": "^1.6.8",
+    "ptz-fp": "^1.2.0",
     "ramda": "^0.24.1",
     "react-gravatar": "^2.6.3",
     "react-icons": "^2.2.5",

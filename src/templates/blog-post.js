@@ -7,6 +7,7 @@ import styled from 'styled-components';
 import EditBtn from '../components/EditBtn';
 import { getCurrentLangKey } from '../i18n/langs';
 import Tags from '../components/Tags';
+import {getStructuredData} from '../structuredData';
 
 const Post = styled.article`
   margin: ${props => props.theme.blog.post.margin};
@@ -145,16 +146,20 @@ class BlogPostRoute extends React.Component {
   render() {
     const url = this.props.location.pathname;
     const currentLangKey = getCurrentLangKey(url);
-    const { markdownRemark } = this.props.data;
 
+    const { markdownRemark } = this.props.data;
     const youtube = getYoutube(markdownRemark);
+    const structuredData = getStructuredData(markdownRemark);
 
     return (
       <Post>
-       <Helmet
+        <Helmet
           title={`${markdownRemark.frontmatter.title}`}
           meta={[{ name: 'description', content: markdownRemark.excerpt }]}
         />
+        <script type="application/ld+json">
+          {structuredData}
+        </script>
         <header>
           <H1>
             {markdownRemark.frontmatter.title}
@@ -179,15 +184,15 @@ export default BlogPostRoute;
 
 export const pageQuery = graphql`
   query BlogPostByPath($path: String!) {
-    markdownRemark(fields: { path: { eq: $path } }) {
-      fileAbsolutePath,
+    markdownRemark(fields: {path: {eq: $path}}) {
+      fileAbsolutePath
       html
       excerpt
       fields {
-        tagSlugs{
-            tag,
-            link
-        },
+        tagSlugs {
+          tag
+          link
+        }
         path
       }
       frontmatter {
@@ -195,6 +200,31 @@ export const pageQuery = graphql`
         title
         tags
         date
+        structuredData {
+          type
+          dependencies
+          proficiencyLevel
+          articleSection
+          pageStart
+          pageEnd
+          pagination
+          about {
+            name
+            alternateName
+            description
+            identifier
+            image
+            sameAs
+          }
+          accessMode
+          accessModeSufficient
+          accessibilityAPI
+          accessibilityControl
+          accessibilitySummary
+          accountablePerson {
+            additionalName
+          }
+        }
       }
     }
   }

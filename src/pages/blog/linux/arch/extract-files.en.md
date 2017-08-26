@@ -9,9 +9,9 @@ tags:
   - Extract files
 ---
 
-## .rar
+## Extract .rar
 
-## .zip
+## Extract .zip
 
 Install unzip
 ```bash
