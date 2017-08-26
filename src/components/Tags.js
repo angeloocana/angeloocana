@@ -5,43 +5,31 @@ import styled from 'styled-components';
 
 const Header = styled.header`
     padding: 1rem 0;
+    display: inline-block;
 `;
 
 const Li = styled.li`
     float: left;
+
+    &:after{
+        content: ',';
+        margin-right: 1rem;
+    }
 `;
 
 const A = styled(Link)`
   font-weight: bold;
-  background: ${({theme}) => theme.colors.red};
-  border-radius: 0.2rem;
-  color: ${({theme}) => theme.colors.white};
+  color: ${({theme}) => theme.colors.yellow};
   display: inline-block;
-  height: ${({theme}) => theme.scale(3)};
-  line-height: 1;
-  padding: ${({theme}) => `${theme.scale(-3)} ${theme.scale(2)} 0 ${theme.scale(2)}` };
   position: relative;
-  margin: ${({theme}) => `0 ${theme.scale(1)} ${theme.scale(1)} 0`};
-  text-decoration: none;
+  text-decoration: underline;
   transition: 0.2s;
 
-  &::before {
-    background: ${({theme}) => theme.colors.white};
-    border-radius: ${({theme}) => theme.scale(1)};
-    box-shadow: inset 0 1px rgba(0, 0, 0, 0.25);
-    content: '';
-    height: ${({theme}) => theme.scale(-4)};
-    left: ${({theme}) => theme.scale(-3)};
-    position: absolute;
-    width: ${({theme}) => theme.scale(-4)};
-    top: ${({theme}) => theme.scale(-2)};
-  }
-
     &:hover {
-        background-color: ${({theme}) => theme.colors.white};
-        color: ${({theme}) => theme.colors.black};
+        color: ${({theme}) => theme.colors.white};
     }
-`;
+
+   `;
 
 const Tag = ({tag}) => {
   return (
@@ -54,14 +42,14 @@ const Tag = ({tag}) => {
 };
 
 Tag.propTypes = {
-  tag: PropTypes.Object
+  tag: PropTypes.object
 };
 
-const Ul = styled.ul`    
+const Ul = styled.ul`
     list-style: none;
     margin: 0;
-    overflow: hidden; 
     padding: 0;
+    display: inline-block;
 `;
 
 const Tags = ({tags}) => {
@@ -87,4 +75,3 @@ Tags.propTypes = {
 };
 
 export default Tags;
-
