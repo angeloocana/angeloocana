@@ -3,15 +3,21 @@ import PropTypes from 'proptypes';
 import Link from 'gatsby-link';
 import styled from 'styled-components';
 
+const Section = styled.section`
+  text-align: center;
+  margin: 1rem;
+  padding: 0;
+`;
+
 const Header = styled.header`
-    padding: 1rem 0;
-    display: inline-block;
+    padding: ${({theme}) => theme.scale(-3)} 0;
+    display: block;
 `;
 
 const Li = styled.li`
     float: left;
 
-    &:after{
+    &:not(:last-child):after{
         content: ',';
         margin-right: 1rem;
     }
@@ -56,7 +62,7 @@ const Tags = ({tags}) => {
   if(!tags || tags.length === 0) return null;
 
   return (
-    <section>
+    <Section>
       <Header>
         Tags:
       </Header>
@@ -66,7 +72,7 @@ const Tags = ({tags}) => {
             <Tag tag={tag} key={i} />)
         }
       </Ul>
-    </section>
+    </Section>
   );
 };
 
