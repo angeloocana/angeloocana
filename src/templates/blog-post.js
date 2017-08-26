@@ -104,6 +104,10 @@ const Content = styled.section`
       margin: ${props => props.theme.p.firstLetter.margin};
   }
 
+  strong{
+    font-weight: bold;
+  }
+
   ul, ol {
     margin:${props => props.theme.blog.post.content.ul.margin};
     padding:${props => props.theme.blog.post.content.ul.padding};

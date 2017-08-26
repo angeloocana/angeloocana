@@ -46,6 +46,10 @@ class Wrapper extends React.Component {
     const homeLink = `/${currentLangKey}/`;
     const langs = getLangs(currentLangKey, getUrlForLang(homeLink, url));
 
+    const children = this.props.children();
+
+    console.log('layout index', children);
+
     return (
       <ThemeProvider theme={theme}>
         <Background>
@@ -58,7 +62,7 @@ class Wrapper extends React.Component {
               url={url}
             />
             <main>
-              {this.props.children()}
+              {children}
             </main>
             <Footer
               currentLangKey={currentLangKey}
