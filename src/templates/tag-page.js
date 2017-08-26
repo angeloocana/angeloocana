@@ -13,8 +13,8 @@ class TagRoute extends React.Component {
     const posts = this.props.data.allMarkdownRemark.edges;
     const postLinks = posts.map(post => {
       return (
-        <li key={post.node.fields.slug}>
-          <Link to={post.node.fields.slug}>
+        <li key={post.node.fields.path}>
+          <Link to={post.node.fields.path}>
             {post.node.frontmatter.title}
           </Link>
         </li>
@@ -50,7 +50,7 @@ export const pageQuery = graphql`
       edges {
         node {
           fields {
-            slug
+            path
           }
           frontmatter {
             title
