@@ -10,6 +10,8 @@ class TagRoute extends React.Component {
   }
 
   render() {
+    console.log('props', this.props);
+
     const posts = this.props.data.allMarkdownRemark.edges;
     const postLinks = posts.map(post => {
       return (
@@ -44,7 +46,12 @@ export const pageQuery = graphql`
     allMarkdownRemark(
       limit: 1000
       sort: { fields: [frontmatter___date], order: DESC }
-      filter: { frontmatter: { tags: { in: [$tag] }, draft: { ne: true } } }
+      filter: {
+        frontmatter: {
+          tags: { in: [$tag] },
+          draft: { ne: true }
+        }
+      }
     ) {
       totalCount
       edges {

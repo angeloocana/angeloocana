@@ -25,6 +25,7 @@ exports.createPages = ({ graphql, boundActionCreators }) => {
               node {
                 fields {
                   slug,
+                  langKey,
                   path
                 }
                 frontmatter {
@@ -58,25 +59,26 @@ exports.createPages = ({ graphql, boundActionCreators }) => {
         });
       });
 
-      // Tag pages.
-      let tags = [];
-      _.each(result.data.allMarkdownRemark.edges, edge => {
-        if (_.get(edge, 'node.frontmatter.tags')) {
-          tags = tags.concat(edge.node.frontmatter.tags);
-        }
-      });
-      tags = _.uniq(tags);
-      tags.forEach(tag => {
-        const tagPath = `/tags/${_.kebabCase(tag)}/`;
-        createPage({
-          path: tagPath,
-          component: tagPages,
-          context: {
-            tag,
-          },
+      const langTags = result.data.allMarkdownRemark.edges.reduce((tags, edge) => {
+        const langKey = edge.node.fields.langKey;
+        tags[langKey] = (tags[langKey] || []).concat(edge.node.frontmatter.tags);
+        return tags;
+      }, {});
+
+      Object.keys(langTags).forEach(langKey => {
+        const tags = _.uniq(langTags[langKey]);
+        tags.forEach(tag => {
+          const tagPath = `/${langKey}/tags/${_.kebabCase(tag)}/`;
+          createPage({
+            path: tagPath,
+            component: tagPages,
+            context: {
+              tag,
+              langKey
+            },
+          });
         });
       });
-
       resolve();
     });
   });
@@ -141,7 +143,7 @@ exports.onCreateNode = ({ node, boundActionCreators, getNode }) => {
         tag => {
           return {
             tag,
-            link: `/tags/${_.kebabCase(tag)}/`
+            link: `/${pathAndLang.langKey}/tags/${_.kebabCase(tag)}/`
           };
         }
       );
