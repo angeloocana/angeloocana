@@ -3954,6 +3954,13 @@ gatsby-plugin-google-analytics@^1.0.1:
   dependencies:
     babel-runtime "6.26.0"
 
+gatsby-plugin-i18n@^0.0.4:
+  version "0.0.4"
+  resolved "https://registry.yarnpkg.com/gatsby-plugin-i18n/-/gatsby-plugin-i18n-0.0.4.tgz#4cbb6b4d5c54c479c9f017ac68722569b481dc35"
+  dependencies:
+    bluebird "^3.5.0"
+    graphql "^0.11.1"
+
 gatsby-plugin-manifest@^1.0.1:
   version "1.0.5"
   resolved "https://registry.yarnpkg.com/gatsby-plugin-manifest/-/gatsby-plugin-manifest-1.0.5.tgz#c8087b326842cae9766524a699587268ae6859e8"
@@ -4467,6 +4474,12 @@ graphql-skip-limit@^1.0.3:
 graphql@^0.10.3, graphql@^0.10.5:
   version "0.10.5"
   resolved "https://registry.yarnpkg.com/graphql/-/graphql-0.10.5.tgz#c9be17ca2bdfdbd134077ffd9bbaa48b8becd298"
+  dependencies:
+    iterall "^1.1.0"
+
+graphql@^0.11.1:
+  version "0.11.1"
+  resolved "https://registry.yarnpkg.com/graphql/-/graphql-0.11.1.tgz#c9f004255db946a7f5f48ada0041290b9bd02c3d"
   dependencies:
     iterall "^1.1.0"
 
@@ -8348,7 +8361,7 @@ react-router-dom@^4.1.1:
     react-router "^4.2.0"
     warning "^3.0.0"
 
-"react-router-scroll@github:ytase/react-router-scroll#build":
+react-router-scroll@ytase/react-router-scroll#build:
   version "0.4.1"
   resolved "https://codeload.github.com/ytase/react-router-scroll/tar.gz/991ecddb08885e1fb80ec1e9dbf3a35844b7d4cd"
   dependencies:

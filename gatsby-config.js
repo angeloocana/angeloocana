@@ -73,5 +73,6 @@ module.exports = {
     {
       resolve: 'gatsby-plugin-sitemap'
     },
+    'gatsby-plugin-i18n',
   ],
 };
