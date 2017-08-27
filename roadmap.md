@@ -27,6 +27,7 @@
 - Old pages.
 
 ## Done
+- Create gatsby-plugin-i18n.
 - Fix tags name and link.
 - Setup ssl.
 - Increase code font size.
