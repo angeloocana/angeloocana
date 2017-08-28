@@ -6,6 +6,7 @@ import Link from '../components/Link';
 const TagRoute = ({data, pathContext}) => {
   const posts = data.allMarkdownRemark.edges;
   console.log('tag pathContext', pathContext);
+  const allTagsLink = `/${pathContext.langKey}/tags/`;
   const postLinks = posts.map(post => {
     return (
       <li key={post.node.fields.slug}>
@@ -25,7 +26,7 @@ const TagRoute = ({data, pathContext}) => {
         {postLinks}
       </ul>
       <p>
-        <Link to="/tags/">Browse all tags</Link>
+        <Link to={allTagsLink}>Browse all tags</Link>
       </p>
     </div>
   );
@@ -39,28 +40,30 @@ TagRoute.propTypes = {
 export default TagRoute;
 
 export const pageQuery = graphql`
-  query TagPage($tag: String) {
-    allMarkdownRemark(
-      limit: 1000
-      sort: { fields: [frontmatter___date], order: DESC }
-      filter: {
-        frontmatter: {
-          tags: { in: [$tag] },
-          draft: { ne: true }
-        }
+  query TagPage($tag: String, $langKey: String) {
+  allMarkdownRemark(limit: 1000,
+    sort: {fields: [frontmatter___date], order: DESC},
+    filter: {
+      frontmatter: {
+        tags: {in: [$tag]},
+        draft: {ne: true}},
+      fields: {
+        langKey: {eq: $langKey}
       }
-    ) {
-      totalCount
-      edges {
-        node {
-          fields {
-            slug
-          }
-          frontmatter {
-            title
-          }
+    }) {
+    totalCount
+    edges {
+      node {
+        fields {
+          slug
+          langKey
+        }
+        frontmatter {
+          tags
+          title
         }
       }
     }
+  }
   }
 `;

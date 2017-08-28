@@ -3,7 +3,6 @@
 ## To do
 - Search.
 - Add comments.
-- Index blog tags.
 - Test offline.
 - Test speed (2017-07-25 B B).
 - Hire me.
@@ -27,6 +26,8 @@
 - Old pages.
 
 ## Done
+- Index blog tags.
+- Fix css on page loading.
 - Create gatsby-plugin-i18n.
 - Fix tags name and link.
 - Setup ssl.

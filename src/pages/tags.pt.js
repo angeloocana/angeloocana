@@ -5,13 +5,13 @@ import graphql from 'graphql';
 export default (props) => <TagsPageRoute {...props} />;
 
 export const pageQuery = graphql`
-  query TagsEnQuery {
+  query TagsPtQuery {
     allMarkdownRemark(
       limit: 2000
       filter: {
         frontmatter: { draft: { ne: true } } ,
         fields: {
-          langKey: {eq: "en"}
+          langKey: {eq: "pt"}
         }
       }
     ) {
