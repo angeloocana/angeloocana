@@ -4011,6 +4011,13 @@ gatsby-plugin-sitemap@^1.2.2:
     babel-runtime "6.26.0"
     sitemap "^1.12.0"
 
+gatsby-plugin-styled-components@^1.0.4:
+  version "1.0.4"
+  resolved "https://registry.yarnpkg.com/gatsby-plugin-styled-components/-/gatsby-plugin-styled-components-1.0.4.tgz#48b9508a2ebbe39b28b1bf7d4ca3ec9e6aac992c"
+  dependencies:
+    babel-runtime "6.26.0"
+    styled-components "^2.0.0"
+
 gatsby-remark-copy-linked-files@^1.5.0:
   version "1.5.3"
   resolved "https://registry.yarnpkg.com/gatsby-remark-copy-linked-files/-/gatsby-remark-copy-linked-files-1.5.3.tgz#563d0d0161edac64fe8c6eb9d1971968e40a0011"
@@ -9749,7 +9756,7 @@ style-loader@^0.13.0:
   dependencies:
     loader-utils "^1.0.2"
 
-styled-components@^2.1.2:
+styled-components@^2.0.0, styled-components@^2.1.2:
   version "2.1.2"
   resolved "https://registry.yarnpkg.com/styled-components/-/styled-components-2.1.2.tgz#bb419978e1287c5d0d88fa9106b2dd75f66a324c"
   dependencies:
