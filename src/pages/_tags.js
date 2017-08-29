@@ -2,28 +2,44 @@ import React from 'react';
 import PropTypes from 'proptypes';
 import Link from '../components/Link';
 import kebabCase from 'lodash/kebabCase';
+import H1 from '../components/H1';
+import styled from 'styled-components';
+
+const Nav = styled.nav`
+  margin-top: ${({theme}) => theme.scale(-1)};
+`;
+
+const Li = styled.li`
+  text-align: center;
+  font-size: ${({theme}) => theme.scale(1)};
+  padding: ${({theme}) => theme.scale(-1)} 0;
+`;
 
 const TagsPageRoute = ({data, pathContext}) => {
   const allTags = data.allMarkdownRemark.group;
 
   return (
-    <div>
-      <h1>Tags</h1>
-      <ul>
-        {allTags.map(tag =>
-          <li key={tag.fieldValue}>
-            <Link
-              style={{
-                textDecoration: 'none',
-              }}
-              to={`${pathContext.langKey}/tags/${kebabCase(tag.fieldValue)}/`}
-            >
-              {tag.fieldValue} ({tag.totalCount})
-            </Link>
-          </li>
-        )}
-      </ul>
-    </div>
+    <section className="post-list">
+      <header>
+        <H1>Tags</H1>
+      </header>
+      <Nav>
+        <ul>
+          {allTags.map(tag =>
+            <Li key={tag.fieldValue}>
+              <Link
+                style={{
+                  textDecoration: 'none',
+                }}
+                to={`${pathContext.langKey}/tags/${kebabCase(tag.fieldValue)}/`}
+              >
+                {tag.fieldValue} ({tag.totalCount})
+              </Link>
+            </Li>
+          )}
+        </ul>
+      </Nav>
+    </section>
   );
 };
 

@@ -144,6 +144,12 @@ const theme = {
     marginTop: scale(6),
     marginBottom: scale(2),
   },
+  h1: {
+    fontSize: scale(6),
+    padding: `${scale(1)} 0 0 0`,
+    margin: `${scale(4)} 0 0 0`,
+    textAlign: 'center'
+  },
   blog: {
     list: {
       header: {
