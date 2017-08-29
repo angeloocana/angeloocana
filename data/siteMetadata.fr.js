@@ -14,6 +14,7 @@ module.exports = {
   menu: [
     {label: 'Accueil', link: '/fr/'},
     {label: 'Articles', link: '/fr/blog/'},
+    {label: 'Tags', link: '/fr/tags/'},
     {label: 'À propos de moi', link: '/fr/about/'},
     {label: 'Résumé', link: '/fr/resume/'}
   ]
