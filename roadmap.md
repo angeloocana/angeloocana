@@ -22,11 +22,11 @@
 - Resume.
 - Add rich cards for google.
 - Add AMP.
-- close menu after click.
 - Fix dns.
 - Fix firefox first big letter.
 
 ## Done
+- close menu after click.
 - Update tags layout.
 - Menu.
 - Old pages.
