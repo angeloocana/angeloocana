@@ -13,11 +13,15 @@
 - Try to get browser lang, when no lang in the url
 - Add post sugestions
 - Fix readnext
+- Fix firefox first big letter
+- All Tags page: divid list into columns
 
 ## Working
-- Add structured data for google, see webmasters
-- Add rich cards for google
-- Add AMP
+- Use post-list style from home in tags page.
+- Fix dns.
+- Add structured data for google, see webmasters.
+- Add rich cards for google.
+- Add AMP.
 - Update tags layout.
 - Menu.
 - Resume.
@@ -26,6 +30,7 @@
 - Old pages.
 
 ## Done
+- Remove redirect to htps.
 - Index blog tags.
 - Fix css on page loading.
 - Create gatsby-plugin-i18n.
