@@ -7,10 +7,18 @@ import styled from 'styled-components';
 
 const Nav = styled.nav`
   margin-top: ${({theme}) => theme.scale(-1)};
+  column-count: 2;
+
+  @media (min-width: 450px) {
+    column-count: 3;
+  }
+
+  @media (min-width: 650px) {
+    column-count: 4;
+  }
 `;
 
 const Li = styled.li`
-  text-align: center;
   font-size: ${({theme}) => theme.scale(1)};
   padding: ${({theme}) => theme.scale(-1)} 0;
 `;

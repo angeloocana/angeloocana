@@ -16,7 +16,6 @@
 - Fix firefox first big letter
 
 ## Working
-- All Tags page: divid list into columns
 - Fix dns.
 - Add structured data for google, see webmasters.
 - Add rich cards for google.
@@ -29,6 +28,7 @@
 - Old pages.
 
 ## Done
+- All Tags page: divid list into columns
 - Use post-list style from home in tags page.
 - Remove redirect to htps.
 - Index blog tags.
