@@ -10,10 +10,11 @@
 - Search for cambo in npm, if not available add it.
 - Find new theme for code examples.
 - Localize dates.
-- Try to get browser lang, when no lang in the url
-- Add post sugestions
-- Fix readnext
-- Fix firefox first big letter
+- Try to get browser lang, when no lang in the url.
+- Add post sugestions.
+- Fix readnext.
+- Fix firefox first big letter.
+- close menu after click.
 
 ## Working
 - Fix dns.
@@ -28,6 +29,7 @@
 - Old pages.
 
 ## Done
+- Updata US flag for Canada.
 - All Tags page: divid list into columns
 - Use post-list style from home in tags page.
 - Remove redirect to htps.

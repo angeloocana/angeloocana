@@ -1,14 +1,14 @@
 import React from 'react';
 import PropTypes from 'proptypes';
 import Br from './flags/Br';
-import Us from './flags/Us';
+import Ca from './flags/Ca';
 import Fr from './flags/Fr';
 import { InvisibleSpan } from '../components/Invisible';
 import styled from 'styled-components';
 import Link from 'gatsby-link';
 
 const Nav = styled.nav`
-  
+
 `;
 
 const Ul = styled.ul`
@@ -34,7 +34,7 @@ const Li = styled.li`
 
 const getIcon = langKey => {
   switch (langKey) {
-  case 'en': return <Us />;
+  case 'en': return <Ca />;
   case 'fr': return <Fr />;
   case 'pt': return <Br />;
   default: return null;
