@@ -31,11 +31,10 @@ const A = styled(Link)`
   text-decoration: underline;
   transition: 0.2s;
 
-    &:hover {
-        color: ${({theme}) => theme.colors.white};
-    }
-
-   `;
+  &:hover {
+      color: ${({theme}) => theme.colors.white};
+  }
+`;
 
 const Tag = ({tag}) => {
   return (
