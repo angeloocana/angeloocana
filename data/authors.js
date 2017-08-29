@@ -56,7 +56,10 @@ const authors = {
 };
 
 const getAuthor = (id) => {
-  const author = authors[id];
+  const author = {
+    ...authors[id],
+    '@type': 'Person'
+  };
   return author
     ? author
     : authors[0];

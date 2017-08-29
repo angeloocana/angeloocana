@@ -1,5 +1,5 @@
 import {assocPath, curry, pipe, prop} from 'ramda';
-import {isNilOrEmpty, isNotNilOrEmpty, log} from 'ptz-fp';
+import {isNilOrEmpty, isNotNilOrEmpty} from 'ptz-fp';
 import {getAuthor} from '../data/authors';
 
 const filterObj = curry((fn, obj) => {
