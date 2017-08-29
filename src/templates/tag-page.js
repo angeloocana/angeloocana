@@ -1,9 +1,9 @@
 import React from 'react';
 import PropTypes from 'proptypes';
 import graphql from 'graphql';
-import Link from '../components/Link';
-import CleanLink from 'gatsby-link';
+import Link from 'gatsby-link';
 import styled from 'styled-components';
+import PostList from '../components/PostList';
 
 const Header = styled.header`
   text-align: center;
@@ -16,22 +16,12 @@ const TagName = styled.span`
   text-align: center;
 `;
 
-const Nav = styled.nav`
-  margin-top: ${({theme}) => theme.scale(-1)};
-`;
-
-const Li = styled.li`
-  text-align: center;
-  font-size: ${({theme}) => theme.scale(1)};
-  padding: ${({theme}) => theme.scale(-1)} 0;
-`;
-
 const Footer = styled.footer`
   text-align: center;
   padding: ${({theme}) => theme.scale(1)} 0;
 `;
 
-const BrowseAllLink = styled(CleanLink)`
+const BrowseAllLink = styled(Link)`
   font-weight: bold;
   color: ${({theme}) => theme.colors.yellow};
   display: inline-block;
@@ -47,15 +37,6 @@ const BrowseAllLink = styled(CleanLink)`
 const TagRoute = ({data, pathContext}) => {
   const posts = data.allMarkdownRemark.edges;
   const allTagsLink = `/${pathContext.langKey}/tags/`;
-  const postLinks = posts.map(post => {
-    return (
-      <Li key={post.node.fields.slug}>
-        <Link to={post.node.fields.slug}>
-          {post.node.frontmatter.title}
-        </Link>
-      </Li>
-    );
-  });
 
   return (
     <section>
@@ -63,11 +44,7 @@ const TagRoute = ({data, pathContext}) => {
         {data.allMarkdownRemark.totalCount} posts tagged with
         <TagName>“{pathContext.tag}”</TagName>
       </Header>
-      <Nav>
-        <ul>
-          {postLinks}
-        </ul>
-      </Nav>
+      <PostList posts={posts} currentLangKey={pathContext.langKey} />
       <Footer>
         <BrowseAllLink to={allTagsLink}>Browse all tags</BrowseAllLink>
       </Footer>
@@ -97,14 +74,14 @@ export const pageQuery = graphql`
     totalCount
     edges {
       node {
-        fields {
+        frontmatter{
+          title,
+          date
+        },
+        fields{
           slug
-          langKey
-        }
-        frontmatter {
-          tags
-          title
-        }
+        },
+        excerpt
       }
     }
   }

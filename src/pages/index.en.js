@@ -18,15 +18,10 @@ export const pageQuery = graphql`
         node{
           frontmatter{
             title,
-            tags,
             date
           },
           fields{
-            slug,
-            tagSlugs{
-              tag,
-              link
-            }
+            slug
           },
           excerpt
         }

@@ -14,10 +14,9 @@
 - Add post sugestions
 - Fix readnext
 - Fix firefox first big letter
-- All Tags page: divid list into columns
 
 ## Working
-- Use post-list style from home in tags page.
+- All Tags page: divid list into columns
 - Fix dns.
 - Add structured data for google, see webmasters.
 - Add rich cards for google.
@@ -30,6 +29,7 @@
 - Old pages.
 
 ## Done
+- Use post-list style from home in tags page.
 - Remove redirect to htps.
 - Index blog tags.
 - Fix css on page loading.

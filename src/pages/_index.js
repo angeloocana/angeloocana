@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'proptypes';
-import PostList from '../components/PostList';
+import Posts from '../components/Posts';
 import SocialLinks from '../components/SocialLinks';
 import Welcome from '../components/Welcome';
 import Link from 'gatsby-link';
@@ -33,7 +33,7 @@ const Index = ({data, pathContext}) => {
     <div>
       <SocialLinks />
       <Welcome currentLangKey={langKey} />
-      <PostList posts={posts} currentLangKey={langKey} />
+      <Posts posts={posts} currentLangKey={langKey} />
       <Btn to={`/${langKey}/blog/`}>
         {getBtnMorePostsText()[langKey]}
       </Btn>
