@@ -101,18 +101,6 @@ const Ul = styled.ul`
     opacity: ${props => props.isOpen ? 1 : 0};
 `;
 
-const getMenuItems = (isSelected, menu) => {
-  return menu.map(item => {
-    return (
-      <li>
-        <MenuLink selected={isSelected(item.link)} to={item.link}>
-          {item.label}
-        </MenuLink>
-      </li>
-    );
-  });
-};
-
 class Menu extends React.Component {
   constructor(props) {
     super(props);
@@ -133,11 +121,27 @@ class Menu extends React.Component {
     });
   }
 
+  getMenuItems = (isSelected, menu) => {
+    return menu.map(item => {
+      return (
+        <li>
+          <MenuLink
+            selected={isSelected(item.link)}
+            to={item.link}
+            onClick={this.open}
+          >
+            {item.label}
+          </MenuLink>
+        </li>
+      );
+    });
+  }
+
   render() {
     const {isOpen} = this.state;
 
     const isSelected = endsWith(this.props.url);
-    const menuItems = getMenuItems(isSelected, this.props.menu);
+    const menuItems = this.getMenuItems(isSelected, this.props.menu);
 
     return (
       <section>
@@ -161,4 +165,3 @@ class Menu extends React.Component {
 };
 
 export default Menu;
-

@@ -15,6 +15,7 @@
 - Fix readnext.
 - Test google search.
 - Fix font Victor's phone.
+- Add tags section to home.
 
 ## Working
 - Add structured data for google, see webmasters.
