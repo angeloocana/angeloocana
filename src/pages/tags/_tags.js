@@ -1,8 +1,8 @@
 import React from 'react';
 import PropTypes from 'proptypes';
-import Link from '../components/Link';
+import Link from '../../components/Link';
 import kebabCase from 'lodash/kebabCase';
-import H1 from '../components/H1';
+import H1 from '../../components/H1';
 import styled from 'styled-components';
 
 const Nav = styled.nav`
