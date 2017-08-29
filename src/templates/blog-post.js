@@ -199,12 +199,13 @@ export const pageQuery = graphql`
         tags
         date
         structuredData {
+          alternativeHeadline
           type
           dependencies
           proficiencyLevel
           articleSection
-          pageStart
           pageEnd
+          pageStart
           pagination
           about {
             name
@@ -219,9 +220,26 @@ export const pageQuery = graphql`
           accessibilityAPI
           accessibilityControl
           accessibilitySummary
-          accountablePerson {
-            additionalName
-          }
+          aggregateRating
+          audience
+          author
+          comment
+          commentCount
+          contentLocation
+          dateCreated
+          dateModified
+          datePublished
+          discussionUrl
+          educationalUse
+          headline
+          inLanguage
+          isAccessibleForFree
+          isFamilyFriendly
+          keywords
+          locationCreated
+          thumbnailUrl
+          version
+          video
         }
       }
     }

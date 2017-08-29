@@ -1,5 +1,6 @@
 import {assocPath, curry, pipe, prop} from 'ramda';
-import {isNilOrEmpty, isNotNilOrEmpty} from 'ptz-fp';
+import {isNilOrEmpty, isNotNilOrEmpty, log} from 'ptz-fp';
+import {getAuthor} from '../data/authors';
 
 const filterObj = curry((fn, obj) => {
   if(isNilOrEmpty(obj)) return obj;
@@ -71,6 +72,15 @@ const addArticleBody = (markdownRemark) => {
     getArticleBody(markdownRemark), markdownRemark);
 };
 
+const addAuthor = (structuredData) => {
+  return structuredData.author
+    ? {
+      ...structuredData,
+      author: getAuthor(structuredData.author)
+    }
+    : structuredData;
+};
+
 /**
  *  Prepare structuredData from markdownRemark to google
  *  - get Structured Data from markdownRemark
@@ -87,9 +97,10 @@ const getStructuredData =
     addArticleBody,
     prop('frontmatter'),
     prop('structuredData'),
-    cleanStructuredData,
     renameType,
     addContext,
+    addAuthor,
+    cleanStructuredData,
     JSON.stringify
   );
 
