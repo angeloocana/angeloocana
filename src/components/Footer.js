@@ -37,7 +37,9 @@ const GithubIcon = styled(FaGithub)`
 `;
 
 const HomeCountryIcon = styled(Ca)`
-  font-size: ${({theme}) => theme.scale(4)};
+  top: -0.1rem;
+  position: relative;
+  font-size: ${({theme}) => theme.scale(2)};
   margin-left: ${({theme}) => theme.scale(-6)};
 `;
 
@@ -129,4 +131,3 @@ Footer.propTypes = {
 };
 
 export default Footer;
-

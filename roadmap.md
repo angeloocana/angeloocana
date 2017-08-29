@@ -13,23 +13,23 @@
 - Try to get browser lang, when no lang in the url.
 - Add post sugestions.
 - Fix readnext.
-- Fix firefox first big letter.
-- close menu after click.
-
-## Working
-- Fix dns.
-- Add structured data for google, see webmasters.
-- Add rich cards for google.
-- Add AMP.
-- Update tags layout.
-- Menu.
-- Resume.
 - Test google search.
 - Fix font Victor's phone.
-- Old pages.
+
+## Working
+- Add structured data for google, see webmasters.
+- Resume.
+- Add rich cards for google.
+- Add AMP.
+- close menu after click.
+- Fix dns.
+- Fix firefox first big letter.
 
 ## Done
-- Updata US flag for Canada.
+- Update tags layout.
+- Menu.
+- Old pages.
+- Update US flag for Canada.
 - All Tags page: divid list into columns
 - Use post-list style from home in tags page.
 - Remove redirect to htps.
