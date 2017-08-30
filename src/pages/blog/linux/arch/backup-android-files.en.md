@@ -9,7 +9,7 @@ tags:
   - Android
 structuredData:
   alternativeHeadline: ...
-  locationCreated: Barueri BR
+  locationCreated: Ottawa CA
   type: TechArticle
   dependencies: Arch Linux and Android Mobile Phone
   proficiencyLevel: Beginner

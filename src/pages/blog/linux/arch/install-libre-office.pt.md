@@ -1,5 +1,5 @@
 ---
-title: How to use Word and Excel on Linux or maybe not...
+title: Como usar Word e Excel no Linux or talvez não...
 date: '2017-08-30'
 layout: post
 draft: false
@@ -50,14 +50,14 @@ structuredData:
   video: ...
 ---
 
-Do you need Word and Excel on linux?
-Follow my steps to install LibreOffice an open source option for linux distros.
+Você precisa editar arquivos no Word e Excel no Linux?
+Siga minhas etapas para instalar o LibreOffice, uma pacote de programas similar ao Microsoft Office
+mas opensource (GRATUÍTO).
 
-
-## Install LibreOffice
+## Instalar LibreOffice
 
 ```bash
     sudo pacman -S libreoffice-still
 ```
 
-Official guide: https://wiki.archlinux.org/index.php/LibreOffice
+Guia Oficial: https://wiki.archlinux.org/index.php/LibreOffice
