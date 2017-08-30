@@ -1,6 +1,6 @@
 ---
-title: How to install Yaourt on Arch linux
-date: '2017-08-26'
+title: Comment installer Yaourt sur Arch Linux
+date: '2017-08-30'
 layout: post
 draft: false
 tags:
@@ -46,23 +46,24 @@ structuredData:
   video: ...
 ---
 
-Yaourt is the community packager manager for Arch Linux.
+Yaourt est le gestionnaire de paquets de communauté pour Arch Linux.
 
-When you are using **pacman** (official packager manager), you do need to use **sudo**,
-when you are using **yaourt**, you don't.
+Lorsque vous utilisez **pacman** (gestionnaire de paquetage officiel), vous devez utiliser **sudo**,
+pour le **yaourt** vous n'avez pas à le faire.
 
-Open the file below for editing:
+Ouvrez le fichier ci-dessous pour l'édition:
 ```bash
     sudo vim /etc/pacman.conf
 ```
-Add it to the bottom:
+
+Ajoutez ceci à la fin du fichier:
 ```conf
     [archlinuxfr]
     SigLevel = Never
     Server = http://repo.archlinux.fr/$arch
 ```
 
-Install yaourt
+Installer yaourt
 ```bash
     sudo pacman -Sy yaourt
 ```
