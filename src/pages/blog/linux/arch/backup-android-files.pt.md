@@ -1,6 +1,6 @@
 ---
-title: Access and Backup Android Files and Photos
-date: '2017-08-28'
+title: Como salvar fotos do celular pro Arch Linux
+date: '2017-08-30'
 layout: post
 draft: false
 tags:
@@ -11,7 +11,7 @@ structuredData:
   alternativeHeadline: ...
   locationCreated: Barueri BR
   type: TechArticle
-  dependencies: Arch Linux and Android Mobile Phone
+  dependencies: Arch Linux e Celular Android
   proficiencyLevel: Beginner
   articleSection: Arch Linux
   pageEnd:
@@ -48,33 +48,31 @@ structuredData:
   video: ...
 ---
 
-Is your Android mobile FULL? Backup your data to your Arch Linux.
-It is easy following my steps (I hope hahaha).
-I had some trouble with other programs (android-file-transfer e mtpfs),
-so here it goes what works for me:
+O seu telefone esta lotado? Faça backup dos seus arquivos pro Arch Linux.
+Vai ser fácil seguindo este tutorial (Eu espero hahaha).
+Eu tive alguns problemas com outros programas (android-file-transfer e mtpfs),
+segue aqui o que funcionou comigo, espero que ajude:
 
-
-## Install simple-mtpfs
-If you do not have or know what is **Yaourt**, please check it out:
+## Instalar simple-mtpfs
+Se você não tem ou não sabe o que é **Yaourt**, por favor confira aqui primeiro:
 https://angeloocana.com/en/blog/linux/arch/install-yaourt/
 
 ```bash
     yaourt -S simple-mtpfs
 ```
 
-## Create destination folder
-I'll be using **mnt** folder, you can use any name, but remember it for the next step.
+## Criar pasta de destino
+Eu vou usar a pasta **~/mnt**, você pode usar qualquer uma, mas lembre-se dela para a próxima etapa.
 ```bash
     mkdir ~/mnt
 ```
 
-## Mount your Phone to a folder
+## Monte seu telefone para uma pasta
 ```bash
     simple-mtpfs --device 1 ~/mnt
 ```
 
-That is it! uhuhuh
-Just go to **~/mnt**, your files will be there!
+É isso ai! uhuhuh
+Acesse a pasta **~/mnt**, seus arquivos estão lá!
 
-
-Official guide: https://wiki.archlinux.org/index.php/MTP
+Guia oficial: https://wiki.archlinux.org/index.php/MTP

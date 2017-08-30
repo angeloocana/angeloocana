@@ -13,7 +13,6 @@
 - Fix readnext.
 - Test google search.
 - Fix font Victor's phone.
-- Add tags section to home.
 - Fix firefox first big letter.
 
 ## Working
@@ -23,6 +22,7 @@
 - Add AMP.
 - Fix dns.
 - Add options to  i18n module.
+- Add tags section to home.
 
 ## Done
 - Localize dates.
