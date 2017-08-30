@@ -7,6 +7,16 @@ import styled from 'styled-components';
 import EditBtn from '../components/EditBtn';
 import Tags from '../components/Tags';
 import {getStructuredData} from '../structuredData';
+import CleanTime from '../components/Time';
+
+const Time = styled(CleanTime)`
+  text-align: center;
+  font-size: ${props => props.theme.blog.post.header.time.fontSize};
+  font-weight: bold;
+  color: ${props => props.theme.blog.post.header.time.color};
+  width: 100%;
+  display: block;
+`;
 
 const Post = styled.article`
   margin: ${props => props.theme.blog.post.margin};
@@ -17,15 +27,6 @@ const H1 = styled.h1`
   padding-bottom: 0;
   text-align: center;
   font-size: ${props => props.theme.blog.post.header.fontSize};
-`;
-
-const Time = styled.time`
-  text-align: center;
-  font-size: ${props => props.theme.blog.post.header.time.fontSize};
-  font-weight: bold;
-  color: ${props => props.theme.blog.post.header.time.color};
-  width: 100%;
-  display: block;
 `;
 
 const Content = styled.section`
@@ -158,7 +159,11 @@ const BlogPostRoute = ({data, pathContext}) => {
         <H1>
           {markdownRemark.frontmatter.title}
         </H1>
-        <Time pubdate>{markdownRemark.frontmatter.date}</Time>
+        <Time
+          pubdate
+          date={markdownRemark.frontmatter.date}
+          langKey={pathContext.langKey}
+        />
       </header>
       <EditBtn
         fileAbsolutePath={markdownRemark.fileAbsolutePath}

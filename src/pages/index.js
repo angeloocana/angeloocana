@@ -21,7 +21,8 @@ export const pageQuery = graphql`
             date
           },
           fields{
-            slug
+            slug,
+            langKey
           },
           excerpt
         }

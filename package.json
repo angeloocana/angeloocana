@@ -56,6 +56,7 @@
     "gatsby-transformer-sharp": "^1.6.0",
     "jest": "^20.0.4",
     "lodash-webpack-plugin": "^0.11.4",
+    "moment": "^2.18.1",
     "prettier": "^1.5.2",
     "proptypes": "^1.1.0",
     "ptz-assert": "^1.6.8",
@@ -63,6 +64,7 @@
     "ramda": "^0.24.1",
     "react-gravatar": "^2.6.3",
     "react-icons": "^2.2.5",
+    "react-moment": "^0.6.4",
     "regenerator-runtime": "^0.10.5",
     "styled-components": "^2.1.2",
     "surge": "^0.19.0"

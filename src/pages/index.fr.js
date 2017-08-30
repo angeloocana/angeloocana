@@ -11,7 +11,7 @@ export const pageQuery = graphql`
       sort: { fields: [frontmatter___date], order: DESC }
       filter: {
         frontmatter: { draft: { ne: true } },
-        fields: { langKey: { regex: "/(pt|any)/" } }
+        fields: { langKey: { regex: "/(fr|any)/" } }
       },
     ) {
       edges {
@@ -21,7 +21,8 @@ export const pageQuery = graphql`
             date
           },
           fields{
-            slug
+            slug,
+            langKey
           },
           excerpt
         }

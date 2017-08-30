@@ -14,17 +14,18 @@
 - Test google search.
 - Fix font Victor's phone.
 - Add tags section to home.
+- Fix firefox first big letter.
 
 ## Working
 - Add comments.
-- Localize dates.
 - Resume.
 - Add rich cards for google.
 - Add AMP.
 - Fix dns.
-- Fix firefox first big letter.
+- Add options to  i18n module.
 
 ## Done
+- Localize dates.
 - Add structured data for google, see webmasters.
 - close menu after click.
 - Update tags layout.

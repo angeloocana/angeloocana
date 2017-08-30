@@ -2,9 +2,10 @@ import React from 'react';
 import PropTypes from 'proptypes';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
-import { siteMetadata } from '../../gatsby-config';
+import { siteMetadata as allSiteMetada } from '../../gatsby-config';
 import styled, { ThemeProvider } from 'styled-components';
 import theme from '../themes/theme';
+
 // Broke into files
 import {
   getLangs,
@@ -42,12 +43,14 @@ const Wrapper = (props) => {
   const homeLink = `/${currentLangKey}/`;
   const langs = getLangs(currentLangKey, getUrlForLang(homeLink, url));
 
+  const siteMetadata = allSiteMetada[currentLangKey];
+
   return (
     <ThemeProvider theme={theme}>
       <Background>
         <BodyContainer>
           <Header
-            siteMetadata={siteMetadata[currentLangKey]}
+            siteMetadata={siteMetadata}
             isHome={isHome}
             langs={langs}
             homeLink={homeLink}
@@ -58,7 +61,7 @@ const Wrapper = (props) => {
           </main>
           <Footer
             currentLangKey={currentLangKey}
-            siteMetadata={siteMetadata[currentLangKey]}
+            siteMetadata={siteMetadata}
           />
         </BodyContainer>
       </Background>

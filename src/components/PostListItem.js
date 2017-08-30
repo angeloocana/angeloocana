@@ -1,8 +1,8 @@
 import React from 'react';
 import PropTypes from 'proptypes';
 import Link from '../components/Link';
-import graphql from 'graphql';
 import styled from 'styled-components';
+import CleanTime from '../components/Time';
 
 const Li = styled.li`
   padding: ${props => props.theme.blog.list.item.padding};
@@ -20,7 +20,7 @@ const Header = styled.header`
   line-height: ${props => props.theme.blog.list.item.header.lineHeight};
 `;
 
-const Time = styled.time`
+const Time = styled(CleanTime)`
   font-size: ${props => props.theme.blog.list.item.header.time.fontSize};
   font-weight: bold;
   color: ${props => props.theme.blog.list.item.header.time.color};
@@ -43,7 +43,11 @@ const PostListItem = ({ post }) => {
     <Li key={post.node.fields.slug}>
       <Link to={getToLink(post)}>
         <Header>
-          <Time pubdate>{post.node.frontmatter.date}</Time>
+          <Time
+            pubdate
+            langKey={post.node.fields.langKey}
+            date={post.node.frontmatter.date}
+          />
           {post.node.frontmatter.title}
         </Header>
         <P>{post.node.excerpt}</P>
@@ -57,21 +61,3 @@ PostListItem.propTypes = {
 };
 
 export default PostListItem;
-
-export const pageQueryTest = graphql`
-  fragment postListItem on MarkdownRemark {
-    frontmatter{
-      title,
-      tags,
-      date
-    },
-    fields{
-      slug,
-      tagSlugs{
-        tag,
-        link
-      }
-    },
-    excerpt
-  }
-`;
