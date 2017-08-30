@@ -1,10 +1,10 @@
 import React from 'react';
 import PropTypes from 'proptypes';
-import PostList from '../components/PostList';
+import Posts from '../components/Posts';
 
 const Blog = ({data, pathContext}) => {
   return (
-    <PostList
+    <Posts
       posts={data.allMarkdownRemark.edges}
       currentLangKey={pathContext.langKey}
     />
