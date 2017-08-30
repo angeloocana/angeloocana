@@ -16,15 +16,15 @@
 - Fix firefox first big letter.
 
 ## Working
-- Add comments.
 - Resume.
 - Add rich cards for google.
 - Add AMP.
 - Fix dns.
-- Add options to  i18n module.
+- Add options to i18n module.
 - Add tags section to home.
 
 ## Done
+- Add comments.
 - Localize dates.
 - Add structured data for google, see webmasters.
 - close menu after click.

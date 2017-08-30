@@ -6,8 +6,9 @@ import ReadNext from '../components/ReadNext';
 import styled from 'styled-components';
 import EditBtn from '../components/EditBtn';
 import Tags from '../components/Tags';
-import {getStructuredData} from '../structuredData';
+import { getStructuredData } from '../structuredData';
 import CleanTime from '../components/Time';
+import Comments from '../components/Comments';
 
 const Time = styled(CleanTime)`
   text-align: center;
@@ -30,6 +31,8 @@ const H1 = styled.h1`
 `;
 
 const Content = styled.section`
+  margin: 0 0 ${({theme}) => theme.scale(6)} 0;
+
   code {
     color: ${props => props.theme.blog.post.content.code.color};
     font-size: ${props => props.theme.blog.post.content.code.fontSize};
@@ -141,10 +144,12 @@ const getYoutube = (markdownRemark) => {
     : null;
 };
 
-const BlogPostRoute = ({data, pathContext}) => {
+const BlogPostRoute = ({ data, pathContext }) => {
   const { markdownRemark } = data;
   const youtube = getYoutube(markdownRemark);
   const structuredData = getStructuredData(markdownRemark);
+
+  const url = `https://angeloocana.com${markdownRemark.fields.slug}`;
 
   return (
     <Post>
@@ -174,6 +179,12 @@ const BlogPostRoute = ({data, pathContext}) => {
       <Content dangerouslySetInnerHTML={{ __html: markdownRemark.html }} />
       <Tags tags={markdownRemark.fields.tagSlugs} />
       <ReadNext nextPost={markdownRemark.frontmatter.readNext} />
+      <Comments
+        shortname="angeloocana-com"
+        identifier={markdownRemark.fields.slug}
+        title={markdownRemark.frontmatter.title}
+        url={url}
+      />
     </Post>
   );
 };
