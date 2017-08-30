@@ -81,6 +81,16 @@ const addAuthor = (structuredData) => {
     : structuredData;
 };
 
+const getLangKey = pipe(
+  prop('frontmatter'),
+  prop('title')
+);
+
+const addLanguage = (markdownRemark) => {
+  return assocPath(['fields', 'langKey'],
+    getLangKey(markdownRemark), markdownRemark);
+};
+
 /**
  *  Prepare structuredData from markdownRemark to google
  *  - get Structured Data from markdownRemark
@@ -95,6 +105,7 @@ const getStructuredData =
     addDatePublished,
     addHeadline,
     addArticleBody,
+    addLanguage,
     prop('frontmatter'),
     prop('structuredData'),
     renameType,
