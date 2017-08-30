@@ -1,6 +1,6 @@
 ---
-title: How to setup ssl https:// for your site
-date: '2017-08-30'
+title: Como configurar ssl https:// pro seu site
+date: '2017-08-26'
 layout: post
 draft: false
 tags:
@@ -38,9 +38,9 @@ structuredData:
   comment: ...
   commentCount: ...
   contentLocation: ...
-  dateCreated: '2017-08-26'
-  dateModified: '2017-08-30'
-  datePublished: '2017-08-30'
+  dateCreated: ...
+  dateModified: ...
+  datePublished: ...
   discussionUrl: ...
   educationalUse: ...    
   isAccessibleForFree: true
@@ -50,31 +50,32 @@ structuredData:
   video: ...
 ---
 
-How to setup https / ssl for surge.sh and ssl.com, It was hard to grab all the pieces,
-So I hope I can help who is in trouble.
+Como configurar **https://** usando **surge.sh** e **ssl.com**.
+Foi um pouco difícil juntar todas as peças, espero poder ajudar quem esteja com problemas.
 
-You can follow the oficial tutorial at https://surge.sh/help/securing-your-custom-domain-with-ssl
-But keep checking here, I did somethings different and it is focused to ssl.com
+Você pode seguir o tutorial oficial aqui https://surge.sh/help/securing-your-custom-domain-with-ssl
 
-## Generate .pem file
+Mas continue aqui, eu fiz algumas coisas bem diferentes e é focado no **ssl.com**
+
+## Gerar arquivo .pem
 
 ```bash
     cat angeloocana_com.key angeloocana_com.crt 'SSL.com DV CA.crt' > surge3.pem
 ```
 
-I had problems with the chain, my https was working in chrome but not in firefox.
-When I tested on sslshopper.com I get this error:
+Eu tive problemas com o **chain**, meu https estava funcionando no chrome, mas não no firefox.
+Quando eu testei no sslshopper.com, eu obtive esse erro:
 
 **The certificate is not trusted in all web browsers. You may need to install an Intermediate/chain certificate to link it to a trusted root certificate. Learn more about this error. The fastest way to fix this problem is to contact your SSL provider.**
 
-I solved it by adding **'SSL.com DV CA.crt'** as the third file when generating the .pem file.
+Eu resolvi isso adicionando **'SSL.com DV CA.crt'** como o terceiro arquivo na geração do arquivo .pem.
 
-## Upload .pem to surge.sh
+## Subir .pem pro surge.sh
 
 ```bash
     surge ssl
 ```
 
-## Test your confs
-ssl tools is a great way to test your ssl configuration and download missing files:
+## Testar suas configurações
+ssl tools é uma boa ferramenta para testar suas configurações de ssl e baixar arquivos que estejam faltando:
 http://www.ssltools.com/

@@ -1,5 +1,5 @@
 ---
-title: How to setup ssl https:// for your site
+title: Comment configurer ssl https:// pour votre site
 date: '2017-08-30'
 layout: post
 draft: false
@@ -50,31 +50,34 @@ structuredData:
   video: ...
 ---
 
-How to setup https / ssl for surge.sh and ssl.com, It was hard to grab all the pieces,
-So I hope I can help who is in trouble.
+Comment configurer **https://** en utilisant **surge.sh** et **ssl.com**.
+C'était un peu difficile de rassembler toutes les pièces, j'espère que je peux aider toute personne en difficulté.
 
-You can follow the oficial tutorial at https://surge.sh/help/securing-your-custom-domain-with-ssl
-But keep checking here, I did somethings different and it is focused to ssl.com
+Vous pouvez suivre le didacticiel officiel ici https://surge.sh/help/securing-your-custom-domain-with-ssl
 
-## Generate .pem file
+Mais reste ici, j'ai fait des choses assez différentes et c'est axé sur **ssl.com**
+
+## Générer le fichier .pem
 
 ```bash
     cat angeloocana_com.key angeloocana_com.crt 'SSL.com DV CA.crt' > surge3.pem
 ```
 
-I had problems with the chain, my https was working in chrome but not in firefox.
-When I tested on sslshopper.com I get this error:
+
+J'ai eu des problèmes avec la **chaîne**, mon https fonctionnait dans Chrome, mais pas dans Firefox.
+Lorsque j'ai testé sur sslshopper.com, j'ai eu cette erreur:
 
 **The certificate is not trusted in all web browsers. You may need to install an Intermediate/chain certificate to link it to a trusted root certificate. Learn more about this error. The fastest way to fix this problem is to contact your SSL provider.**
 
-I solved it by adding **'SSL.com DV CA.crt'** as the third file when generating the .pem file.
 
-## Upload .pem to surge.sh
+J'ai résolu cela en ajoutant **'SSL.com DV CA.crt'** comme troisième fichier dans la génération de fichiers .pem.
+
+## Télécharger le fichier .pem sur surge.sh
 
 ```bash
     surge ssl
 ```
 
-## Test your confs
-ssl tools is a great way to test your ssl configuration and download missing files:
+## Testez vos paramètres
+ssl tools est un bon outil pour tester vos paramètres ssl et télécharger les fichiers manquants:
 http://www.ssltools.com/
