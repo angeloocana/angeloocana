@@ -10,17 +10,17 @@
 - Find new theme for code examples.
 - Try to get browser lang, when no lang in the url.
 - Add post sugestions.
-- Fix readnext.
 - Test google search.
 - Fix font Victor's phone.
 - Fix firefox first big letter.
 
 ## Working
+- Add options to i18n module.
 - Resume.
+- Fix readnext.
 - Add rich cards for google.
 - Add AMP.
 - Fix dns.
-- Add options to i18n module.
 - Add tags section to home.
 
 ## Done
