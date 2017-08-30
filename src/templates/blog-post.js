@@ -231,8 +231,6 @@ export const pageQuery = graphql`
           datePublished
           discussionUrl
           educationalUse
-          headline
-          inLanguage
           isAccessibleForFree
           isFamilyFriendly
           keywords

@@ -2,14 +2,12 @@
 
 ## To do
 - Search.
-- Add comments.
 - Test offline.
 - Test speed (2017-07-25 B B).
 - Hire me.
 - Clean dependencies.
 - Search for cambo in npm, if not available add it.
 - Find new theme for code examples.
-- Localize dates.
 - Try to get browser lang, when no lang in the url.
 - Add post sugestions.
 - Fix readnext.
@@ -18,7 +16,8 @@
 - Add tags section to home.
 
 ## Working
-- Add structured data for google, see webmasters.
+- Add comments.
+- Localize dates.
 - Resume.
 - Add rich cards for google.
 - Add AMP.
@@ -26,6 +25,7 @@
 - Fix firefox first big letter.
 
 ## Done
+- Add structured data for google, see webmasters.
 - close menu after click.
 - Update tags layout.
 - Menu.
