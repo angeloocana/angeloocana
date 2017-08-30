@@ -5,6 +5,9 @@ import Footer from '../components/Footer';
 import { siteMetadata as allSiteMetada } from '../../gatsby-config';
 import styled, { ThemeProvider } from 'styled-components';
 import theme from '../themes/theme';
+import 'moment/locale/en-ca';
+import 'moment/locale/fr-ca';
+import 'moment/locale/pt-br';
 
 // Broke into files
 import {

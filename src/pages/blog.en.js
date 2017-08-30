@@ -23,6 +23,7 @@ export const pageQuery = graphql`
           },
           fields{
             slug,
+            langKey,
             tagSlugs{
               tag,
               link
