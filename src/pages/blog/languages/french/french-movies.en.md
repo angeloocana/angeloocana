@@ -8,7 +8,7 @@ tags:
   - French
 ---
 
-I love French Movies, their are so close to real life,
+I love French Movies. They are so close to real life,
 real people.
 They talk about sex, drugs and other taboos openly.
 
@@ -17,12 +17,12 @@ en: Bright Days Ahead
 
 pt: Os Belos Dias
 
-## Chroniques sexuelles d'une famille d'aujourd'hui 
+## Chroniques sexuelles d'une famille d'aujourd'hui
 en: Sexual Chronicles of a French Family
 
 pt: Crônicas Sexuais de uma Família Francesa
 
-## La vie d'Adele 
+## La vie d'Adele
 en: Blue Is the Warmest Color
 
 pt: Azul É a Cor Mais Quente
