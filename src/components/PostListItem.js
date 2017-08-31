@@ -7,10 +7,12 @@ import CleanTime from '../components/Time';
 const Li = styled.li`
   padding: ${props => props.theme.blog.list.item.padding};
   margin: ${props => props.theme.blog.list.item.margin};
+  transition: 0.3s;
 
   &:hover {
     background-color: ${props => props.theme.blog.list.item.hover.backgroundColor};
     border-radius: ${props => props.theme.borderRadius};
+    transition: 0.3s;
   }
 `;
 

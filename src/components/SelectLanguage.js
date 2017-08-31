@@ -21,14 +21,14 @@ const Li = styled.li`
   font-size: ${props => props.theme.i18n.selectLanguage.li.fontSize};
   cursor: pointer;
   border-radius: ${props => props.theme.i18n.selectLanguage.li.borderRadius};
-  transition: 0.5s;
+  transition: 0.3s;
   background-color: ${props => props.selected
     ? props.theme.i18n.selectLanguage.li.selected.backgroundColor
     : `transparent`};
 
   &:hover{
     background-color: ${props => props.theme.i18n.selectLanguage.li.selected.backgroundColor};
-    transition: 0.5s;
+    transition: 0.3s;
   }
 `;
 

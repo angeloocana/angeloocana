@@ -5,10 +5,11 @@ const A = styled.a`
     color: ${props => props.theme.a.color};
     text-decoration: ${props => props.theme.a.textDecoration};
     cursor: hover;
+    transition: 0.3s;
 
     &:hover {
         color: ${props => props.theme.a.hover.color};
-        transition: 0.5s color;
+        transition: 0.3s;
     }
 `;
 

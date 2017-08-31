@@ -23,7 +23,8 @@ const A = styled.a`
   display: inline-block;
   margin: ${props => props.theme.socialLinks.a.margin};
   padding: ${props => props.theme.socialLinks.a.padding};
-
+  transition: 0.3s;
+  
   svg {
     font-size: ${props => props.theme.socialLinks.a.svg.fontSize};
     display: block;
@@ -33,6 +34,7 @@ const A = styled.a`
 
   &:hover {
     color: ${props => props.theme.socialLinks.a.hover.color};
+    transition: 0.3s;
   }
 `;
 

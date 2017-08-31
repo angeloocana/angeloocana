@@ -13,9 +13,11 @@ const Link = styled(A)`
   margin: ${props => props.theme.footer.margin};
   line-height: 1.5;
   border-radius: ${props => props.theme.borderRadius};
+  transition: 0.3s;
   
   &:hover {
     background-color: ${props => props.theme.footer.hover.backgroundColor};
+    transition: 0.3s;
   }
 `;
 
@@ -27,20 +29,20 @@ const FooterSection = styled.section`
   }
 `;
 
-const ProfilePicture = styled(Gravatar) `
+const ProfilePicture = styled(Gravatar)`
   display: block;
   margin: auto;
   border-radius: 50%;
   margin-bottom: 1rem;
 `;
 
-const GithubIcon = styled(FaGithub) `
+const GithubIcon = styled(FaGithub)`
   font-size: ${({ theme }) => theme.scale(4)};
   display: block;
   margin: auto;
 `;
 
-const HomeCountryIcon = styled(Ca) `
+const HomeCountryIcon = styled(Ca)`
   top: -0.1rem;
   position: relative;
   font-size: ${({ theme }) => theme.scale(2)};

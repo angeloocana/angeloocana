@@ -27,10 +27,11 @@ const BrowseAllLink = styled(Link)`
   display: inline-block;
   position: relative;
   text-decoration: underline;
-  transition: 0.2s;
+  transition: 0.3s;
 
   &:hover {
       color: ${({theme}) => theme.colors.white};
+      transition: 0.3s;
   }
 `;
 

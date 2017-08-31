@@ -12,6 +12,7 @@
         "multilib",
         "ocana",
         "passwd",
+        "proptypes",
         "systemctl"
     ],
     // flagWords - list of words to be always considered incorrect

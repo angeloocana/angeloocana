@@ -30,11 +30,12 @@ const A = styled(Link)`
   display: inline-block;
   position: relative;
   text-decoration: underline;
-  transition: 0.2s;
+  transition: 0.3s;
   padding: ${({theme}) => theme.scale(-2)} 0 ${({theme}) => theme.scale(-2)} 0;
 
   &:hover {
       color: ${({theme}) => theme.colors.white};
+      transition: 0.3s;
   }
 `;
 
