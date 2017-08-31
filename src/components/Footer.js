@@ -7,40 +7,48 @@ import A from './A';
 import styled from 'styled-components';
 import Ca from './flags/Ca';
 
-const FooterSection = styled.section`
-  text-align: center;
+const Link = styled(A)`
+  display: inline-block;
   padding: ${props => props.theme.footer.padding};
   margin: ${props => props.theme.footer.margin};
   line-height: 1.5;
   border-radius: ${props => props.theme.borderRadius};
-
+  
   &:hover {
     background-color: ${props => props.theme.footer.hover.backgroundColor};
   }
+`;
 
+const FooterSection = styled.section`
+  text-align: center;
+  
   span {
     font-weight: bold;
   }
 `;
 
-const ProfilePicture = styled(Gravatar)`
+const ProfilePicture = styled(Gravatar) `
   display: block;
   margin: auto;
   border-radius: 50%;
   margin-bottom: 1rem;
 `;
 
-const GithubIcon = styled(FaGithub)`
-  font-size: ${({theme}) => theme.scale(4)};
+const GithubIcon = styled(FaGithub) `
+  font-size: ${({ theme }) => theme.scale(4)};
   display: block;
   margin: auto;
 `;
 
-const HomeCountryIcon = styled(Ca)`
+const HomeCountryIcon = styled(Ca) `
   top: -0.1rem;
   position: relative;
-  font-size: ${({theme}) => theme.scale(2)};
-  margin-left: ${({theme}) => theme.scale(-6)};
+  font-size: ${({ theme }) => theme.scale(2)};
+  margin-left: ${({ theme }) => theme.scale(-6)};
+`;
+
+const Span = styled.span`
+  color: ${({ theme }) => theme.colors.yellow};
 `;
 
 const getGitHubMsg = () => {
@@ -51,7 +59,7 @@ const getGitHubMsg = () => {
         Do you want to see the source code of this site? <br />
         It's <span>FREE</span>!  <br />
         It's <span>OPEN SOURCE</span>! <br />
-        Click <span>HERE</span> to check it out!!!
+        Click <Span>HERE</Span> to check it out!!!
       </p>
     ),
     pt: (
@@ -60,7 +68,7 @@ const getGitHubMsg = () => {
         Você quer ver o codigo fonte deste site? <br />
         É <span>GRATUÍTO</span>!  <br />
         É <span>OPEN SOURCE</span>! <br />
-        Click <span>AQUI</span> e confira!!!
+        Click <Span>AQUI</Span> e confira!!!
       </p>
     ),
     fr: (
@@ -69,7 +77,7 @@ const getGitHubMsg = () => {
         Voulez-vous voir le code source de ce site? <br />
         c'est <span>GRATUIT</span>!  <br />
         C'est une <span>SOURCE OUVERTE</span>! <br />
-        Cliquez <span>ICI</span> pour vérifier!!!
+        Cliquez <Span>ICI</Span> pour vérifier!!!
       </p>
     )
   };
@@ -80,29 +88,35 @@ const getCreatedBy = (author) => {
   return {
     en: (
       <FooterSection>
-        {profilePicture}
-        {'Built with '} <HeartIcon />
-        {' by '} <span>{author.name}</span>
-        {' who lives in '} <span>{author.homeCity}</span>
-        <HomeCountryIcon />
+        <Link href={author.defaultLink} target="_blank">
+          {profilePicture}
+          {'Built with '} <HeartIcon />
+          {' by '} <span>{author.name}</span>
+          {' who lives in '} <span>{author.homeCity}</span>
+          <HomeCountryIcon />
+        </Link>
       </FooterSection>
     ),
     pt: (
       <FooterSection>
-        {profilePicture}
-        {'Criado com '} <HeartIcon />
-        {' por '} <span>{author.name}</span>
-        {' que mora em '} <span>{author.homeCity}</span>
-        <HomeCountryIcon />
+        <Link href={author.defaultLink} target="_blank">
+          {profilePicture}
+          {'Criado com '} <HeartIcon />
+          {' por '} <span>{author.name}</span>
+          {' que mora em '} <span>{author.homeCity}</span>
+          <HomeCountryIcon />
+        </Link>
       </FooterSection>
     ),
     fr: (
       <FooterSection>
-        {profilePicture}
-        {'Créé avec '} <HeartIcon />
-        {' par '} <span>{author.name}</span>
-        {' qui vit à '} <span>{author.homeCity}</span>
-        <HomeCountryIcon />
+        <Link href={author.defaultLink} target="_blank">
+          {profilePicture}
+          {'Créé avec '} <HeartIcon />
+          {' par '} <span>{author.name}</span>
+          {' qui vit à '} <span>{author.homeCity}</span>
+          <HomeCountryIcon />
+        </Link>
       </FooterSection>
     )
   };
@@ -113,14 +127,12 @@ const Footer = ({ siteMetadata, currentLangKey }) => {
 
   return (
     <footer>
-      <A href={author.defaultLink} target="_blank">
-        {getCreatedBy(author)[currentLangKey]}
-      </A>
-      <A href={sourceCodeLink} target="_blank">
-        <FooterSection>
+      {getCreatedBy(author)[currentLangKey]}
+      <FooterSection>
+        <Link href={sourceCodeLink} target="_blank">
           {getGitHubMsg()[currentLangKey]}
-        </FooterSection>
-      </A>
+        </Link>
+      </FooterSection>
     </footer>
   );
 };
