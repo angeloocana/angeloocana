@@ -15,11 +15,12 @@ const Header = styled.header`
 `;
 
 const Li = styled.li`
-    float: left;
+    display: inline;
 
     &:not(:last-child):after{
         content: ',';
-        margin-right: 1rem;
+        margin: 0 1rem 0 0;
+        display: inline-block;
     }
 `;
 
@@ -30,6 +31,7 @@ const A = styled(Link)`
   position: relative;
   text-decoration: underline;
   transition: 0.2s;
+  padding: ${({theme}) => theme.scale(-2)} 0 ${({theme}) => theme.scale(-2)} 0;
 
   &:hover {
       color: ${({theme}) => theme.colors.white};
@@ -54,7 +56,7 @@ const Ul = styled.ul`
     list-style: none;
     margin: 0;
     padding: 0;
-    display: inline-block;
+    display: block;
 `;
 
 const Tags = ({tags}) => {

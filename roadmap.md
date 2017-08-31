@@ -1,4 +1,4 @@
-# Roadmap
+# RoadMap
 
 ## To do
 - Search.
@@ -9,23 +9,26 @@
 - Search for cambo in npm, if not available add it.
 - Find new theme for code examples.
 - Try to get browser lang, when no lang in the url.
-- Add post sugestions.
+- Add post suggestions.
 - Test google search.
 - Fix font Victor's phone.
 - Fix firefox first big letter.
 - Add images.
 
 ## Working
+- ssl post: Change error color to red.
+- footer: change `HERE` color to yellow.
 - E-mail subscription.
 - Add options to i18n module.
 - Resume.
-- Fix readnext.
+- Fix readNext.
 - Add rich cards for google.
 - Add AMP.
 - Fix dns.
 - Add tags section to home.
 
 ## Done
+- post page: Add padding to tags list and centralize items.
 - Add comments.
 - Localize dates.
 - Add structured data for google, see webmasters.
@@ -34,9 +37,9 @@
 - Menu.
 - Old pages.
 - Update US flag for Canada.
-- All Tags page: divid list into columns
+- All Tags page: divide list into columns
 - Use post-list style from home in tags page.
-- Remove redirect to htps.
+- Remove redirect to https.
 - Index blog tags.
 - Fix css on page loading.
 - Create gatsby-plugin-i18n.
