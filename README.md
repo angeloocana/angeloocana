@@ -7,5 +7,15 @@
 [![bitHound Score](https://www.bithound.io/github/gotwarlost/istanbul/badges/score.svg)](https://www.bithound.io/github/angeloocana/angeloocana)
 [![MIT license](http://img.shields.io/badge/license-MIT-brightgreen.svg)](http://opensource.org/licenses/MIT)
 
-Visit the beta version at http://angeloocana.surge.sh/
-Visit the actual site at http://angeloocana.com
+=> https://angeloocana.com
+
+# Built with
+
+- Gatsby
+- React
+- Graphql
+- Nodejs
+- Styled Components
+- Eslint
+- Jest
+- Babel
