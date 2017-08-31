@@ -17,7 +17,6 @@
 
 ## Working
 - E-mail subscription.
-- Add options to i18n module.
 - Resume.
 - Fix readNext.
 - Add rich cards for google.
@@ -26,6 +25,7 @@
 - Add tags section to home.
 
 ## Done
+- Add options to i18n module.
 - ssl post: Change error to block quote.
 - footer: change `HERE` color to yellow and remove display block.
 - post page: Add padding to tags list and centralize items.

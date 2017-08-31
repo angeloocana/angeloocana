@@ -135,7 +135,7 @@ const Content = styled.section`
     display: block;
     content: "\\201C";
     position: absolute;
-    top: 0;
+    top: -${({theme}) => theme.scale(-4)};
     left: -${({theme}) => theme.scale(1)};
     font-size: ${({theme}) => theme.scale(10)};
     color: ${({theme}) => theme.colors.white};
@@ -145,7 +145,7 @@ const Content = styled.section`
     display: block;
     content: "\\201D";
     position: absolute;
-    bottom: -${({theme}) => theme.scale(2)};
+    bottom: -${({theme}) => theme.scale(6)};
     right: ${({theme}) => theme.scale(1)};
     font-size: ${({theme}) => theme.scale(10)};
     color: ${({theme}) => theme.colors.white};
