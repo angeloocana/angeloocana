@@ -65,7 +65,10 @@ But keep checking here, I did somethings different and it is focused to ssl.com
 I had problems with the chain, my https was working in chrome but not in firefox.
 When I tested on sslshopper.com I get this error:
 
-**The certificate is not trusted in all web browsers. You may need to install an Intermediate/chain certificate to link it to a trusted root certificate. Learn more about this error. The fastest way to fix this problem is to contact your SSL provider.**
+> The certificate is not trusted in all web browsers. 
+> You may need to install an Intermediate/chain certificate to link it to a trusted root certificate. 
+> Learn more about this error. The fastest way to fix this problem is to contact your SSL provider.
+> <cite>sslshopper</cite>
 
 I solved it by adding **'SSL.com DV CA.crt'** as the third file when generating the .pem file.
 

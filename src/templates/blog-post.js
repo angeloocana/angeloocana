@@ -120,6 +120,46 @@ const Content = styled.section`
   ul {
     list-style: disc;
   }
+
+  blockquote {
+    font-style: italic;
+    margin: 0;
+    padding: ${({theme}) => theme.scale(3)};    
+    position: relative;
+    text-align: center;
+    color: ${({theme}) => theme.colors.white};
+  }
+
+  blockquote:before {
+    line-height: 1.45;
+    display: block;
+    content: "\\201C";
+    position: absolute;
+    top: 0;
+    left: -${({theme}) => theme.scale(1)};
+    font-size: ${({theme}) => theme.scale(10)};
+    color: ${({theme}) => theme.colors.white};
+  }
+
+  blockquote:after {
+    display: block;
+    content: "\\201D";
+    position: absolute;
+    bottom: -${({theme}) => theme.scale(2)};
+    right: ${({theme}) => theme.scale(1)};
+    font-size: ${({theme}) => theme.scale(10)};
+    color: ${({theme}) => theme.colors.white};
+  }
+
+  blockquote cite {
+    color: ${({theme}) => theme.colors.blue};
+    font-size: ${({theme}) => theme.scale(-1)};
+    display: block;
+  }
+     
+  blockquote cite:before {
+    content: "\\2014 \\2009";
+  }
 `;
 
 const Iframe = styled.iframe`

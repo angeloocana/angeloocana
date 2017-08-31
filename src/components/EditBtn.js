@@ -10,6 +10,12 @@ const A = styled.a`
   color: ${({ theme }) => theme.colors.yellow};
   cursor: pointer;
   font-size: 1rem;
+  transition: 0.3s;
+
+  &:hover{
+    transition: 0.3s;
+    color: ${({ theme }) => theme.colors.white};
+  }
 `;
 
 const EditIcon = styled(FaEdit)`

@@ -16,7 +16,6 @@
 - Add images.
 
 ## Working
-- ssl post: Change error color to red.
 - E-mail subscription.
 - Add options to i18n module.
 - Resume.
@@ -27,6 +26,7 @@
 - Add tags section to home.
 
 ## Done
+- ssl post: Change error to block quote.
 - footer: change `HERE` color to yellow and remove display block.
 - post page: Add padding to tags list and centralize items.
 - Add comments.
