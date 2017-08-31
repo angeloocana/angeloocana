@@ -13,8 +13,10 @@
 - Test google search.
 - Fix font Victor's phone.
 - Fix firefox first big letter.
+- Add images.
 
 ## Working
+- E-mail subscription.
 - Add options to i18n module.
 - Resume.
 - Fix readnext.

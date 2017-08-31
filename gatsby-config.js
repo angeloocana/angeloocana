@@ -73,7 +73,16 @@ module.exports = {
     {
       resolve: 'gatsby-plugin-sitemap'
     },
-    'gatsby-plugin-i18n',
+    {
+      resolve: 'gatsby-plugin-i18n',
+      options: {
+        postPage: 'src/templates/blog-post.js',
+        tagPage: 'src/templates/tag-page.js',
+        tagsUrl: '/tags/',
+        langKeyForNull: 'any',
+        langKeyDefault: 'en'
+      }
+    },
     'gatsby-plugin-styled-components'
   ],
 };
