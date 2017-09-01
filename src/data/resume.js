@@ -61,6 +61,18 @@ const technologies = {
     level: levels.proficient,
     img: 'gatsby.svg'
   },
+  // 'Ramda': {
+  //   years: range(),
+  //   tags: [],
+  //   level: levels.,
+  //   img: ''
+  // },
+  // 'Docker': {
+  //   years: range(),
+  //   tags: [],
+  //   level: levels.,
+  //   img: ''
+  // },
   // 'Arch Linux': {
   //   years: range(),
   //   tags: [],
