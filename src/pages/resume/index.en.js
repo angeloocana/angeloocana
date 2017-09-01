@@ -2,12 +2,12 @@ import React from 'react';
 import Resume from './_index';
 import graphql from 'graphql';
 
-const yearsMsg = `{nYears, number} {nYears, plural,
+export const yearsMsg = `{nYears, number} {nYears, plural,
   one {year}
   other {years}
 }`;
 
-const getLevelMsg = (level) => {
+export const getLevelMsg = (level) => {
   switch(level){
   case 'expert': return 'Expert';
   case 'novice': return 'Novice';

@@ -1,8 +1,19 @@
 import React from 'react';
 import Index from './_index';
 import graphql from 'graphql';
+import {yearsMsg, getLevelMsg} from './resume/index.fr';
 
-export default (props) => <Index {...props} />;
+const btnMorePostsMsg = `Voir d'autres messages intéressants >>`;
+
+const btnResumeMsg = `Voir toutes les technologies +`;
+
+export default (props) => <Index
+  {...props}
+  yearsMsg={yearsMsg}
+  getLevelMsg={getLevelMsg}
+  btnMorePostsMsg={btnMorePostsMsg}
+  btnResumeMsg={btnResumeMsg}
+/>;
 
 export const pageQuery = graphql`
   query IndexFrQuery {
@@ -25,6 +36,19 @@ export const pageQuery = graphql`
             langKey
           },
           excerpt
+        }
+      }
+    }
+    site{
+      siteMetadata{
+        resume{
+          technologies{
+            name,
+            tags,
+            level,
+            years,
+            img
+          }
         }
       }
     }

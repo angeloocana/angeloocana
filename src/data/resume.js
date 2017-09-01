@@ -25,6 +25,12 @@ const tags = {
 const thisYear = (new Date()).getFullYear();
 
 const technologies = {
+  'Javascript': {
+    years: range(2007, thisYear),
+    tags: [tags.language, tags.js, tags.frontEnd, tags.backEnd],
+    level: levels.expert,
+    img: 'javascript.png'
+  },
   'React': {
     years: range(2016, thisYear),
     tags: [tags.frontEnd, tags.js],
@@ -42,12 +48,6 @@ const technologies = {
     tags: [tags.backEnd, tags.js],
     level: levels.expert,
     img: 'nodejs.svg'
-  },
-  'Javascript': {
-    years: range(2007, thisYear),
-    tags: [tags.language, tags.js, tags.frontEnd, tags.backEnd],
-    level: levels.expert,
-    img: 'javascript.png'
   },
   'MongoDB': {
     years: range(2015, thisYear),

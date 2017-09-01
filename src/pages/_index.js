@@ -5,6 +5,8 @@ import SocialLinks from '../components/SocialLinks';
 import Welcome from '../components/Welcome';
 import Link from 'gatsby-link';
 import styled from 'styled-components';
+import Technologies from '../components/Technologies';
+import {take} from 'ramda';
 
 const Btn = styled(Link)`
   background-color: ${({theme}) => theme.colors.white};
@@ -23,25 +25,26 @@ const Btn = styled(Link)`
   }
 `;
 
-const getBtnMorePostsText = (currentLangKey) => {
-  return {
-    en: 'See more interesting posts >>',
-    fr: `Voir d'autres messages intéressants >>`,
-    pt: 'Ver mais posts interessantes >>'
-  };
-};
-
-const Index = ({data, pathContext}) => {
-  const posts = data.allMarkdownRemark.edges;
-  const {langKey} = pathContext;
+const Index = (props) => {
+  const posts = props.data.allMarkdownRemark.edges;
+  const {langKey} = props.pathContext;
+  const technologies = take(6, props.data.site.siteMetadata.resume.technologies);
 
   return (
     <div>
       <SocialLinks />
       <Welcome currentLangKey={langKey} />
+      <Technologies
+        technologies={technologies}
+        yearsMsg={props.yearsMsg}
+        getLevelMsg={props.getLevelMsg}
+      />
+      <Btn to={`/${langKey}/resume/`}>
+        {props.btnResumeMsg}
+      </Btn>
       <Posts posts={posts} currentLangKey={langKey} />
       <Btn to={`/${langKey}/blog/`}>
-        {getBtnMorePostsText()[langKey]}
+        {props.btnMorePostsMsg}
       </Btn>
     </div>
   );
@@ -49,7 +52,11 @@ const Index = ({data, pathContext}) => {
 
 Index.propTypes = {
   data: PropTypes.object,
-  pathContext: PropTypes.object
+  pathContext: PropTypes.object,
+  yearsMsg: PropTypes.string,
+  getLevelMsg: PropTypes.func,
+  btnResumeMsg: PropTypes.string,
+  btnMorePostsMsg: PropTypes.string
 };
 
 export default Index;

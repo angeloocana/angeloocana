@@ -77,6 +77,8 @@ const Ul = styled.ul`
   display: flex;
   flex-flow: row wrap;
   justify-content: space-around;
+  margin: 1rem 0 0 0;
+  padding: 0;
 `;
 
 const Technologies = ({ technologies, yearsMsg, getLevelMsg }) => {
