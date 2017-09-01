@@ -1,7 +1,11 @@
 import React from 'react';
 import Index from './_index';
 import graphql from 'graphql';
-import {yearsMsg, getLevelMsg} from './resume/index.fr';
+import {
+  yearsMsg, 
+  getLevelMsg, 
+  technologiesTitle
+} from './resume/index.fr';
 
 const btnMorePostsMsg = `Voir d'autres messages intéressants >>`;
 
@@ -13,6 +17,7 @@ export default (props) => <Index
   getLevelMsg={getLevelMsg}
   btnMorePostsMsg={btnMorePostsMsg}
   btnResumeMsg={btnResumeMsg}
+  technologiesTitle={technologiesTitle}
 />;
 
 export const pageQuery = graphql`

@@ -38,6 +38,7 @@ const Index = (props) => {
         technologies={technologies}
         yearsMsg={props.yearsMsg}
         getLevelMsg={props.getLevelMsg}
+        title={props.technologiesTitle}
       />
       <Btn to={`/${langKey}/resume/`}>
         {props.btnResumeMsg}
@@ -51,12 +52,13 @@ const Index = (props) => {
 };
 
 Index.propTypes = {
-  data: PropTypes.object,
-  pathContext: PropTypes.object,
-  yearsMsg: PropTypes.string,
-  getLevelMsg: PropTypes.func,
-  btnResumeMsg: PropTypes.string,
-  btnMorePostsMsg: PropTypes.string
+  data: PropTypes.object.isRequired,
+  pathContext: PropTypes.object.isRequired,
+  yearsMsg: PropTypes.string.isRequired,
+  getLevelMsg: PropTypes.func.isRequired,
+  btnResumeMsg: PropTypes.string.isRequired,
+  btnMorePostsMsg: PropTypes.string.isRequired,
+  technologiesTitle: PropTypes.string.isRequired
 };
 
 export default Index;

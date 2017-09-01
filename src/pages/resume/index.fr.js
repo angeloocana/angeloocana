@@ -16,12 +16,15 @@ export const getLevelMsg = (level) => {
   }
 };
 
+export const technologiesTitle = `Les technologies`;
+
 export default (props) => 
   <Resume 
     {...props}
     title="Résumé"
     yearsMsg={yearsMsg}
     getLevelMsg={getLevelMsg}
+    technologiesTitle={technologiesTitle}
   />;
 
 export const pageQuery = graphql`
