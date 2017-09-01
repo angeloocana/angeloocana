@@ -17,7 +17,8 @@
 
 ## Working
 - E-mail subscription.
-- Resume.
+- Resume: Add filter by year.
+- Resume: Add filter by tag.
 - Fix readNext.
 - Add rich cards for google.
 - Add AMP.
@@ -25,6 +26,7 @@
 - Add tags section to home.
 
 ## Done
+- Resume.
 - Add options to i18n module.
 - ssl post: Change error to block quote.
 - footer: change `HERE` color to yellow and remove display block.
