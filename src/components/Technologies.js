@@ -11,11 +11,11 @@ const Img = styled.img`
 `;
 
 const Name = styled.cite`
-  font-size: ${({ theme }) => theme.scale(1)};
+  font-size: ${({ theme }) => theme.scale(0)};
 `;
 
 const Li = styled.li`
-  padding: 1rem;
+  padding: 1rem ${({ theme }) => theme.scale(-6)};
   text-align: center;
   width: ${({ theme }) => theme.scale(9)};
 `;

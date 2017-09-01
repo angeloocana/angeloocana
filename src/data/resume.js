@@ -61,12 +61,24 @@ const technologies = {
     level: levels.proficient,
     img: 'gatsby.svg'
   },
-  'Angular': {
-    years: range(2014, 2016),
-    tags: [tags.frontEnd, tags.js],
-    level: levels.expert,
-    img: 'angular.svg'
-  },
+  // 'Arch Linux': {
+  //   years: range(),
+  //   tags: [],
+  //   level: levels.,
+  //   img: ''
+  // },
+  // 'Vim': {
+  //   years: range(),
+  //   tags: [],
+  //   level: levels.,
+  //   img: ''
+  // },
+  // 'vs code': {
+  //   years: range(),
+  //   tags: [],
+  //   level: levels.,
+  //   img: ''
+  // },  
   'C#': {
     years: range(2008, 2016),
     tags: [tags.language, tags.net, tags.backEnd],
@@ -79,6 +91,12 @@ const technologies = {
     level: levels.expert,
     img: 'asp_net_mvc.svg'
   },
+  // 'visual studio': {
+  //   years: range(),
+  //   tags: [],
+  //   level: levels.,
+  //   img: ''
+  // },
   'JQuery': {
     years: range(2007, thisYear),
     tags: [tags.js, tags.frontEnd],
