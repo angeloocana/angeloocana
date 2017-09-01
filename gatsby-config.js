@@ -1,7 +1,7 @@
-var pt = require('./data/siteMetadata.pt');
-var fr = require('./data/siteMetadata.fr');
-var en = require('./data/siteMetadata.en');
-var resume = require('./data/resume');
+var pt = require('./src/data/siteMetadata.pt');
+var fr = require('./src/data/siteMetadata.fr');
+var en = require('./src/data/siteMetadata.en');
+var resume = require('./src/data/resume');
 
 module.exports = {
   siteMetadata: {

@@ -16,6 +16,6 @@ module.exports = {
     {label: 'Posts', link: '/en/blog/'},
     {label: 'Tags', link: '/en/tags/'},
     {label: 'About me', link: '/en/about/'},
-    {label: 'CV', link: '/en/resume/'}
+    {label: 'Curriculum Vitae', link: '/en/resume/'}
   ]
 };

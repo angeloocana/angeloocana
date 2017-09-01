@@ -8,6 +8,7 @@ import theme from '../themes/theme';
 import 'moment/locale/en-ca';
 import 'moment/locale/fr-ca';
 import 'moment/locale/pt-br';
+import {IntlProvider} from 'react-intl';
 
 // Broke into files
 import {
@@ -38,8 +39,8 @@ const BodyContainer = styled.div`
 `;
 
 const Wrapper = (props) => {
-  const {children, location} = props;
-  if(!location) console.log('wrapper: ', props);
+  const { children, location } = props;
+  if (!location) console.log('wrapper: ', props);
   const url = location.pathname;
   const currentLangKey = getCurrentLangKey(url);
   const isHome = isHomePage(url);
@@ -50,24 +51,26 @@ const Wrapper = (props) => {
 
   return (
     <ThemeProvider theme={theme}>
-      <Background>
-        <BodyContainer>
-          <Header
-            siteMetadata={siteMetadata}
-            isHome={isHome}
-            langs={langs}
-            homeLink={homeLink}
-            url={url}
-          />
-          <main>
-            {children()}
-          </main>
-          <Footer
-            currentLangKey={currentLangKey}
-            siteMetadata={siteMetadata}
-          />
-        </BodyContainer>
-      </Background>
+      <IntlProvider locale={currentLangKey}>
+        <Background>
+          <BodyContainer>
+            <Header
+              siteMetadata={siteMetadata}
+              isHome={isHome}
+              langs={langs}
+              homeLink={homeLink}
+              url={url}
+            />
+            <main>
+              {children()}
+            </main>
+            <Footer
+              currentLangKey={currentLangKey}
+              siteMetadata={siteMetadata}
+            />
+          </BodyContainer>
+        </Background>
+      </IntlProvider>
     </ThemeProvider>
   );
 };

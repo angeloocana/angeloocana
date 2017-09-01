@@ -1,6 +1,6 @@
 import {assocPath, curry, pipe, prop} from 'ramda';
 import {isNilOrEmpty, isNotNilOrEmpty} from 'ptz-fp';
-import {getAuthor} from '../data/authors';
+import {getAuthor} from './data/authors';
 
 const filterObj = curry((fn, obj) => {
   if(isNilOrEmpty(obj)) return obj;

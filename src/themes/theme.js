@@ -15,7 +15,9 @@ const colors = {
   black: '#1E2019', // #393E41
   yellow: '#E2C044',
   red: '#FF0000',
-  blue: '#587B7F',
+  darkBlue: '#587B7F',
+  blue: '#85B9BF',
+  green: '#9FE80C',
   gray: '#393E41',
 
   blackShades: [
@@ -146,6 +148,12 @@ const theme = {
   },
   h1: {
     fontSize: scale(6),
+    padding: `${scale(1)} 0 0 0`,
+    margin: `${scale(4)} 0 0 0`,
+    textAlign: 'center'
+  },
+  h2: {
+    fontSize: scale(4),
     padding: `${scale(1)} 0 0 0`,
     margin: `${scale(4)} 0 0 0`,
     textAlign: 'center'
