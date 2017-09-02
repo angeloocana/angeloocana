@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'proptypes';
 import H1 from '../H1';
+import Educations from './Educations';
 import Technologies from './Technologies';
 import {InvisibleSpan} from '../Invisible';
 import CheckboxList, {
@@ -27,6 +28,11 @@ const filterTechnologies = (technologies, years, tags) => {
     .filter(t => !isEmpty(intersection(t.tags, tags)));
 };
 
+const filterEducations = (educations, years) => {
+  return educations
+    .filter(t => !isEmpty(intersection(t.years, years)));
+};
+
 const select = (item, selectedItems) => {
   return contains(item, selectedItems)
     ? selectedItems.filter(i => i !== item)
@@ -49,6 +55,8 @@ class Resume extends React.Component {
     super(props);
 
     this.technologies = props.data.site.siteMetadata.resume.technologies;
+    this.educations = props.data.site.siteMetadata.resume.educations;
+
     this.years = getUniqList(this.technologies, 'years');
     this.tags = getUniqList(this.technologies, 'tags');
 
@@ -83,10 +91,11 @@ class Resume extends React.Component {
   }
 
   render() {
-    const { i18n } = this.props;
+    const { i18n, pathContext } = this.props;
     const years = getCbListFromArray(this.years, this.state.selectedYears);
     const tags = getCbListFromArray(this.tags, this.state.selectedTags);
     const technologies = filterTechnologies(this.technologies, this.state.selectedYears, this.state.selectedTags);
+    const educations = filterEducations(this.educations, this.state.selectedYears);
 
     return (
       <section>
@@ -116,6 +125,11 @@ class Resume extends React.Component {
           technologies={technologies}
           i18n={i18n.technologies}
         />
+        <Educations
+          educations={educations}
+          i18n={i18n.educations}
+          langKey={pathContext.langKey}
+        />
       </section>
     );
   }
@@ -123,6 +137,7 @@ class Resume extends React.Component {
 
 Resume.propTypes = {
   data: PropTypes.object.isRequired,
+  pathContext: PropTypes.object.isRequired,
   i18n: PropTypes.shape({
     title: PropTypes.string.isRequired,
     filters: PropTypes.shape({

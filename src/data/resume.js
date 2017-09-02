@@ -52,7 +52,7 @@ const technologies = {
     tags: [tags.db, tags.backEnd],
     level: levels.proficient,
     img: 'mongodb.svg'
-  },  
+  },
   'Gatsby': {
     years: range(2017, thisYear),
     tags: [tags.frontEnd],
@@ -130,7 +130,7 @@ const technologies = {
     tags: [tags.frontEnd],
     level: levels.expert,
     img: 'jquery.svg'
-  },  
+  },
   'SQL Server': {
     years: range(2008, 2016),
     tags: [tags.db, tags.backEnd],
@@ -166,19 +166,91 @@ const technologies = {
     tags: [tags.backEnd],
     level: levels.novice,
     img: 'vb.svg'
+  },
+  // 'Gimp': {
+  //   years: range(2007, 2008),
+  //   tags: [tags.backEnd],
+  //   level: levels.novice,
+  //   img: 'vb.svg'
+  // },
+  // 'Inkscape': {
+  //   years: range(2007, 2008),
+  //   tags: [tags.backEnd],
+  //   level: levels.novice,
+  //   img: 'vb.svg'
+  // },
+};
+
+const educations = {
+  'Pluralsight': {
+    years: range(2013, thisYear),
+    link: 'https://app.pluralsight.com/profile/ocanaangelo',
+    img: 'pluralsight.png',
+    needWhiteBg: true,
+    subject: {
+      pt: 'Tecnologia e Design',
+      en: 'Technology and Design',
+      fr: 'Technologie et Design'
+    }
+  },
+  'FIAP': {
+    subject: {
+      pt: 'Análise e Desenvolvimento de Sistemas',
+      en: 'Analysis and systems development',
+      fr: 'Analyse et développement de systèmes'
+    },
+    fullName: 'Faculdade de Informática e Administração Paulista',
+    years: range(2010, 2011),
+    img: 'fiap.svg'
+  },
+  'UNIP': {
+    subject: {
+      pt: 'Análise e Desenvolvimento de Sistemas',
+      en: 'Analysis and systems development',
+      fr: 'Analyse et développement de systèmes'
+    },
+    fullName: 'Universidade Paulista',
+    years: range(2013, 2014),
+    img: 'unip.png'
+  },
+  'ITB': {
+    subject: {
+      pt: 'Web Design com Ênfase em Mídias Digitais',
+      en: 'Web Design with Emphasis on Digital Media',
+      fr: 'Conception Web avec accent sur les médias numériques'
+    },
+    fullName: 'Instituto Técnico de Barueri',
+    years: range(2007, 2009),
+    img: 'fieb.png'
+  },
+  'Inglês 200h': {
+    years: range(2008, 2009),
+    img: 'ingles200h.png',
+    needWhiteBg: true,
+    subject: {
+      pt: 'Inglês',
+      en: 'English',
+      fr: 'Anglais'
+    }
   }
 };
 
-const getTechnologiesArray = (technologies) => {
-  return Object.keys(technologies).map(key => {
-    const tech = technologies[key];
+const jobsAndClients = {
+
+};
+
+const getArray = (list) => {
+  return Object.keys(list).map(key => {
+    const item = list[key];
     return {
       name: key,
-      ...tech
+      ...item
     };
   });
 };
 
 module.exports = {
-  technologies: getTechnologiesArray(technologies)
+  technologies: getArray(technologies),
+  educations: getArray(educations),
+  jobsAndClients: getArray(jobsAndClients)
 };

@@ -31,11 +31,15 @@ export const i18n = {
   },
   technologies: {
     title: `Les technologies`,
-    noTechnologies: `0 Technologies. Sélectionnez des années et des tags`,
+    noTechnologies: `0 Enseignants. Sélectionnez les autres années.`,
     technology: {
       getLevelMsg,
       yearsMsg
     }
+  },
+  educations: {
+    title: `Éducation`,
+    noEducations: `0 Instituições de Ensino. Selecione outros anos.`
   }
 };
 
@@ -46,15 +50,28 @@ export default (props) =>
   />;
 
 export const pageQuery = graphql`
-  query ResumeFr{
-    site{
-      siteMetadata{
-        resume{
-          technologies{
-            name,
-            tags,
-            level,
-            years,
+  query ResumeFr {
+    site {
+      siteMetadata {
+        resume {
+          technologies {
+            name
+            tags
+            level
+            years
+            img
+          }
+          educations {
+            name
+            subject {
+              pt
+              en
+              fr
+            }
+            needWhiteBg
+            link
+            fullName
+            years
             img
           }
         }

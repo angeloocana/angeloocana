@@ -1,28 +1,30 @@
 # RoadMap
 
 ## To do
+- Hire me.
 - Search.
 - Test offline.
 - Test speed (2017-07-25 B B).
-- Hire me.
 - Clean dependencies.
 - Search for cambo in npm, if not available add it.
 - Find new theme for code examples.
 - Try to get browser lang, when no lang in the url.
-- Add post suggestions.
 - Test google search.
 - Fix font Victor's phone.
 - Fix firefox first big letter.
-- Add images.
+- Fix react intl locales (Remove moment).
 
 ## Working
-- Fix react intl locales (Remove moment).
+- Resume: Add jobs and clients.
+- Resume: Add Education.
 - E-mail subscription.
 - Fix readNext.
 - Add rich cards for google.
 - Add AMP.
 - Fix dns.
 - Add tags section to home.
+- Add post suggestions.
+- Add images.
 
 ## Done
 - Resume: Add filter by tag.

@@ -36,6 +36,10 @@ export const i18n = {
       getLevelMsg,
       yearsMsg
     }
+  },
+  educations: {
+    title: `Education`,
+    noEducations: `0 Teaching Institutions. Select other years.`
   }
 };
 
@@ -46,15 +50,28 @@ export default (props) =>
   />;
 
 export const pageQuery = graphql`
-  query ResumeEn{
-    site{
-      siteMetadata{
-        resume{
-          technologies{
-            name,
-            tags,
-            level,
-            years,
+  query ResumeEn {
+    site {
+      siteMetadata {
+        resume {
+          technologies {
+            name
+            tags
+            level
+            years
+            img
+          }
+          educations {
+            name
+            subject {
+              pt
+              en
+              fr
+            }
+            needWhiteBg
+            link
+            fullName
+            years
             img
           }
         }
