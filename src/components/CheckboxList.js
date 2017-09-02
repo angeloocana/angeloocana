@@ -19,7 +19,7 @@ const Div = styled.div`
   text-align: center;
 `;
 
-export const allItemsChecked = pipe(
+export const isAllItemsChecked = pipe(
   any(i => !i.checked),
   not
 );
@@ -33,18 +33,10 @@ export const getCbListFromArray = (items, checkedItems) => {
 };
 
 const CheckboxList = ({ i18n, items, check, checkAll }) => {
-  return (
-    <fieldset>
-      <legend>
-        <InvisibleSpan>{i18n.title}</InvisibleSpan>
-      </legend>
-      <Div>
-        <Checkbox
-          label={i18n.checkAll}
-          check={checkAll}
-          checked={allItemsChecked(items)}
-        />
-      </Div>
+  const allItemsChecked = isAllItemsChecked(items);
+  const ul = allItemsChecked
+    ? null
+    : (
       <Ul>
         {items.map(item => (
           <li>
@@ -57,6 +49,21 @@ const CheckboxList = ({ i18n, items, check, checkAll }) => {
           </li>
         ))}
       </Ul>
+    );
+
+  return (
+    <fieldset>
+      <legend>
+        <InvisibleSpan>{i18n.title}</InvisibleSpan>
+      </legend>
+      <Div>
+        <Checkbox
+          label={i18n.checkAll}
+          check={checkAll}
+          checked={allItemsChecked}
+        />
+      </Div>
+      {ul}
     </fieldset>
   );
 };
