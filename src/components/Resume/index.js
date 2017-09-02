@@ -2,8 +2,10 @@ import React from 'react';
 import PropTypes from 'proptypes';
 import H1 from '../H1';
 import Technologies from './Technologies';
-import Years from './Years';
-import CheckboxList, { getCbListFromArray } from '../CheckboxList';
+import CheckboxList, {
+  getCbListFromArray,
+  i18nPropTypes
+} from '../CheckboxList';
 import {
   intersection,
   isEmpty,
@@ -11,56 +13,72 @@ import {
   uniq
 } from 'ramda';
 
-const getYears = (technologies) => {
+const getUniqList = (technologies, prop) => {
   return uniq(technologies.reduce((years, tech) => {
-    return years.concat(tech.years);
+    return years.concat(tech[prop]);
   }, []));
 };
 
-const filterTechnologies = (technologies, selectedYears) => {
-  return technologies.filter(t => !isEmpty(intersection(t.years, selectedYears)));
+const filterTechnologies = (technologies, years, tags) => {
+  return technologies
+    .filter(t => !isEmpty(intersection(t.years, years)))
+    .filter(t => !isEmpty(intersection(t.tags, tags)));
 };
+
+const select = (item, selectedItems) => {
+  return contains(item, selectedItems)
+    ? selectedItems.filter(i => i !== item)
+    : [...selectedItems, item];
+};
+
+const selectAll = (items, selectedItems) =>
+  items === selectedItems
+    ? []
+    : items;
 
 class Resume extends React.Component {
   constructor(props) {
     super(props);
 
     this.technologies = props.data.site.siteMetadata.resume.technologies;
-    this.years = getYears(this.technologies);
+    this.years = getUniqList(this.technologies, 'years');
+    this.tags = getUniqList(this.technologies, 'tags');
 
     this.state = {
-      selectedYears: this.years
+      selectedYears: this.years,
+      selectedTags: this.tags
     };
   }
 
   selectYear = (year) => {
-    const containsYear = contains(year, this.state.selectedYears);
-
-    const selectedYears = containsYear
-      ? this.state.selectedYears.filter(y => y !== year)
-      : [...this.state.selectedYears, year];
-
     this.setState({
-      selectedYears
+      selectedYears: select(year, this.state.selectedYears)
     });
   }
 
-  isAllYearsSelected = () => this.years === this.state.selectedYears;
+  selectTag = (tag) => {
+    this.setState({
+      selectedTags: select(tag, this.state.selectedTags)
+    });
+  }
 
   selectAllYears = () => {
-    const selectedYears = this.isAllYearsSelected()
-      ? []
-      : this.years;
-
     this.setState({
-      selectedYears
+      selectedYears: selectAll(this.years, this.state.selectedYears)
+    });
+  }
+
+  selectAllTags = () => {
+    this.setState({
+      selectedTags: selectAll(this.tags, this.state.selectedTags)
     });
   }
 
   render() {
     const { i18n } = this.props;
     const years = getCbListFromArray(this.years, this.state.selectedYears);
-    const technologies = filterTechnologies(this.technologies, this.state.selectedYears);
+    const tags = getCbListFromArray(this.tags, this.state.selectedTags);
+    const technologies = filterTechnologies(this.technologies, this.state.selectedYears, this.state.selectedTags);
 
     return (
       <section>
@@ -69,6 +87,12 @@ class Resume extends React.Component {
             {i18n.title}
           </H1>
         </header>
+        <CheckboxList
+          items={tags}
+          check={this.selectTag}
+          checkAll={this.selectAllTags}
+          i18n={i18n.tags}
+        />
         <CheckboxList
           items={years}
           check={this.selectYear}
@@ -88,7 +112,8 @@ Resume.propTypes = {
   data: PropTypes.object.isRequired,
   i18n: PropTypes.shape({
     title: PropTypes.string.isRequired,
-    years: PropTypes.object.isRequired,
+    years: i18nPropTypes,
+    tags: i18nPropTypes,
     technologies: PropTypes.object.isRequired
   })
 };

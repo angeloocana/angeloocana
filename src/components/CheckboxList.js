@@ -61,6 +61,11 @@ const CheckboxList = ({ i18n, items, check, checkAll }) => {
   );
 };
 
+export const i18nPropTypes = PropTypes.shape({
+  title: PropTypes.string.isRequired,
+  checkAll: PropTypes.object.isRequired
+});
+
 CheckboxList.propTypes = {
   items: PropTypes.arrayOf(PropTypes.shape({
     value: PropTypes.any.isRequired,
@@ -69,10 +74,7 @@ CheckboxList.propTypes = {
   })).isRequired,
   check: PropTypes.func.isRequired,
   checkAll: PropTypes.func.isRequired,
-  i18n: PropTypes.shape({
-    title: PropTypes.string.isRequired,
-    checkAll: PropTypes.object.isRequired
-  })
+  i18n: i18nPropTypes
 };
 
 export default CheckboxList;

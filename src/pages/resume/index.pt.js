@@ -22,9 +22,13 @@ export const i18n = {
     title: `Anos`,
     checkAll: `Todos os anos`
   },
+  tags: {
+    title: `Tags`,
+    checkAll: `Todas as tags`
+  },
   technologies: {
     title: `Tecnologias`,
-    noTechnologies: `0 Tecnologias. Selecione um ano.`,
+    noTechnologies: `0 Tecnologias. Selecione anos e tags`,
     technology: {
       getLevelMsg,
       yearsMsg
