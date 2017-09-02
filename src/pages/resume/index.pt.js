@@ -2,12 +2,12 @@ import React from 'react';
 import Resume from '../../components/Resume';
 import graphql from 'graphql';
 
-export const yearsMsg = `{nYears, number} {nYears, plural,
+const yearsMsg = `{nYears, number} {nYears, plural,
   one {ano}
   other {anos}
 }`;
 
-export const getLevelMsg = (level) => {
+const getLevelMsg = (level) => {
   switch(level){
   case 'expert': return 'Expert';
   case 'novice': return 'Novice';
@@ -16,8 +16,6 @@ export const getLevelMsg = (level) => {
   }
 };
 
-export const technologiesTitle = `Tecnologias`;
-
 export const i18n = {
   title: `Currículo`,
   years: {
@@ -25,16 +23,20 @@ export const i18n = {
     btnAllYears: {
       selectAllYears: `Todos os anos`
     }
+  },
+  technologies: {
+    title: `Tecnologias`,
+    technology: {
+      getLevelMsg,
+      yearsMsg
+    }
   }
 };
 
-export default (props) =>
+export default (props) => 
   <Resume 
     {...props}
     i18n={i18n}
-    yearsMsg={yearsMsg}
-    getLevelMsg={getLevelMsg}
-    technologiesTitle={technologiesTitle}
   />;
 
 export const pageQuery = graphql`

@@ -55,7 +55,7 @@ class Resume extends React.Component {
   }
 
   render() {
-    const { i18n, yearsMsg, getLevelMsg, technologiesTitle } = this.props;
+    const { i18n } = this.props;
 
     const technologies = filterTechnologies(this.technologies, this.state.selectedYears);
 
@@ -75,9 +75,7 @@ class Resume extends React.Component {
         />
         <Technologies
           technologies={technologies}
-          yearsMsg={yearsMsg}
-          getLevelMsg={getLevelMsg}
-          title={technologiesTitle}
+          i18n={i18n.technologies}
         />
       </section>
     );
@@ -88,11 +86,9 @@ Resume.propTypes = {
   data: PropTypes.object.isRequired,
   i18n: PropTypes.shape({
     title: PropTypes.string.isRequired,
-    years: PropTypes.object.isRequired
-  }),
-  yearsMsg: PropTypes.string.isRequired,
-  getLevelMsg: PropTypes.func.isRequired,
-  technologiesTitle: PropTypes.string.isRequired
+    years: PropTypes.object.isRequired,
+    technologies: PropTypes.object.isRequired
+  })
 };
 
 export default Resume;

@@ -18,16 +18,14 @@ const Index = (props) => {
       <Welcome currentLangKey={langKey} />
       <Technologies
         technologies={technologies}
-        yearsMsg={props.yearsMsg}
-        getLevelMsg={props.getLevelMsg}
-        title={props.technologiesTitle}
+        i18n={props.i18n.technologies}
       />
       <BtnLink to={`/${langKey}/resume/`}>
-        {props.btnResumeMsg}
+        {props.i18n.btnResumeMsg}
       </BtnLink>
       <Posts posts={posts} currentLangKey={langKey} />
       <BtnLink to={`/${langKey}/blog/`}>
-        {props.btnMorePostsMsg}
+        {props.i18n.btnMorePostsMsg}
       </BtnLink>
     </div>
   );
@@ -36,11 +34,11 @@ const Index = (props) => {
 Index.propTypes = {
   data: PropTypes.object.isRequired,
   pathContext: PropTypes.object.isRequired,
-  yearsMsg: PropTypes.string.isRequired,
-  getLevelMsg: PropTypes.func.isRequired,
-  btnResumeMsg: PropTypes.string.isRequired,
-  btnMorePostsMsg: PropTypes.string.isRequired,
-  technologiesTitle: PropTypes.string.isRequired
+  i18n: PropTypes.shape({
+    technologies: PropTypes.object.isRequired,
+    btnResumeMsg: PropTypes.string.isRequired,
+    btnMorePostsMsg: PropTypes.string.isRequired
+  })  
 };
 
 export default Index;
