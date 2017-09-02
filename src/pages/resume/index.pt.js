@@ -8,7 +8,7 @@ const yearsMsg = `{nYears, number} {nYears, plural,
 }`;
 
 const getLevelMsg = (level) => {
-  switch(level){
+  switch (level) {
   case 'expert': return 'Expert';
   case 'novice': return 'Novice';
   case 'proficient': return 'Proficient';
@@ -20,9 +20,7 @@ export const i18n = {
   title: `Currículo`,
   years: {
     title: `Anos`,
-    btnAllYears: {
-      selectAllYears: `Todos os anos`
-    }
+    checkAll: `Todos os anos`
   },
   technologies: {
     title: `Tecnologias`,
@@ -34,8 +32,8 @@ export const i18n = {
   }
 };
 
-export default (props) => 
-  <Resume 
+export default (props) =>
+  <Resume
     {...props}
     i18n={i18n}
   />;

@@ -3,6 +3,7 @@ import PropTypes from 'proptypes';
 import H1 from '../H1';
 import Technologies from './Technologies';
 import Years from './Years';
+import CheckboxList, { getCbListFromArray } from '../CheckboxList';
 import {
   intersection,
   isEmpty,
@@ -58,7 +59,7 @@ class Resume extends React.Component {
 
   render() {
     const { i18n } = this.props;
-
+    const years = getCbListFromArray(this.years, this.state.selectedYears);
     const technologies = filterTechnologies(this.technologies, this.state.selectedYears);
 
     return (
@@ -68,13 +69,11 @@ class Resume extends React.Component {
             {i18n.title}
           </H1>
         </header>
-        <Years
-          years={this.years}
-          selectedYears={this.state.selectedYears}
-          selectYear={this.selectYear}
+        <CheckboxList
+          items={years}
+          check={this.selectYear}
+          checkAll={this.selectAllYears}
           i18n={i18n.years}
-          selectAllYears={this.selectAllYears}
-          allYearsSelected={this.isAllYearsSelected()}
         />
         <Technologies
           technologies={technologies}

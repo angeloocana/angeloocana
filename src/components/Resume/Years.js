@@ -1,10 +1,9 @@
 import React from 'react';
 import PropTypes from 'proptypes';
 import styled from 'styled-components';
-import BtnAllYears from './BtnAllYears';
-import Year from './Year';
-import {contains} from 'ramda';
-import {InvisibleSpan} from '../Invisible';
+import Checkbox from '../Checkbox';
+import { contains } from 'ramda';
+import { InvisibleSpan } from '../Invisible';
 
 const Ul = styled.ul`
     display: flex;
@@ -14,24 +13,35 @@ const Ul = styled.ul`
     padding: 0;
 `;
 
+const Div = styled.div`
+  display: block;
+  margin: auto;
+  text-align: center;
+`;
+
 const Years = ({ i18n, years, selectYear, selectAllYears, selectedYears, allYearsSelected }) => {
   return (
     <section>
       <header>
         <InvisibleSpan>{i18n.title}</InvisibleSpan>
       </header>
-      <BtnAllYears
-        selectAllYears={selectAllYears} 
-        i18n={i18n.btnAllYears}
-        selected={allYearsSelected}
-      />
+      <Div>
+        <Checkbox
+          label={i18n.selectAllYears}
+          check={selectAllYears}
+          checked={allYearsSelected}
+        />
+      </Div>
       <Ul>
         {years.map(year => (
-          <Year
-            year={year}
-            selectYear={selectYear}
-            selected={contains(year, selectedYears)}
-          />
+          <li>
+            <Checkbox
+              value={year}
+              label={year}
+              check={selectYear}
+              checked={contains(year, selectedYears)}
+            />
+          </li>
         ))}
       </Ul>
     </section>
