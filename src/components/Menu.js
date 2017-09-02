@@ -20,12 +20,15 @@ const Nav = styled.nav`
   text-align: center;
   position: fixed;
   top: 0;
-  right: calc(2rem - 100%);
-  height: 100%;
+  right: calc(2rem - 100%);  
   width: 100%;
   z-index: 1;
   padding: ${props => props.theme.menu.padding};
   transition-timing-function: ease-in, step-start, cubic-bezier(0.1, 0.7, 1.0, 0.1);
+  
+  ${props => props.isOpen
+    ? `height: 100%;`
+    : `height: 4rem;`}; 
 
   transition: ${props => props.isOpen
     ? 'transform 1s, background-color 0.5s'
