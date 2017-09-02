@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'proptypes';
 import H1 from '../H1';
 import Technologies from './Technologies';
+import {InvisibleSpan} from '../Invisible';
 import CheckboxList, {
   getCbListFromArray,
   i18nPropTypes
@@ -12,6 +13,7 @@ import {
   contains,
   uniq
 } from 'ramda';
+import styled from 'styled-components';
 
 const getUniqList = (technologies, prop) => {
   return uniq(technologies.reduce((years, tech) => {
@@ -35,6 +37,12 @@ const selectAll = (items, selectedItems) =>
   items === selectedItems
     ? []
     : items;
+
+const Filters = styled.fieldset`
+  display: flex;
+  flex-flow: row wrap;
+  justify-content: space-around;
+`;
 
 class Resume extends React.Component {
   constructor(props) {
@@ -87,18 +95,23 @@ class Resume extends React.Component {
             {i18n.title}
           </H1>
         </header>
-        <CheckboxList
-          items={tags}
-          check={this.selectTag}
-          checkAll={this.selectAllTags}
-          i18n={i18n.tags}
-        />
-        <CheckboxList
-          items={years}
-          check={this.selectYear}
-          checkAll={this.selectAllYears}
-          i18n={i18n.years}
-        />
+        <Filters>
+          <legend>
+            <InvisibleSpan>{i18n.filters.title}</InvisibleSpan>
+          </legend>
+          <CheckboxList
+            items={tags}
+            check={this.selectTag}
+            checkAll={this.selectAllTags}
+            i18n={i18n.filters.tags}
+          />
+          <CheckboxList
+            items={years}
+            check={this.selectYear}
+            checkAll={this.selectAllYears}
+            i18n={i18n.filters.years}
+          />
+        </Filters>
         <Technologies
           technologies={technologies}
           i18n={i18n.technologies}
@@ -112,8 +125,11 @@ Resume.propTypes = {
   data: PropTypes.object.isRequired,
   i18n: PropTypes.shape({
     title: PropTypes.string.isRequired,
-    years: i18nPropTypes,
-    tags: i18nPropTypes,
+    filters: PropTypes.shape({
+      title: PropTypes.string.isRequired,
+      years: i18nPropTypes,
+      tags: i18nPropTypes,
+    }),
     technologies: PropTypes.object.isRequired
   })
 };

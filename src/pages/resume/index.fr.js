@@ -18,13 +18,16 @@ const getLevelMsg = (level) => {
 
 export const i18n = {
   title: `Résumé`,
-  years: {
-    title: `Années`,
-    checkAll: `Toutes les années`
-  },
-  tags: {
-    title: `Tags`,
-    checkAll: `Tous les tags`
+  filters: {
+    title: `Filtres`,
+    years: {
+      title: `Années`,
+      checkAll: `Toutes les années`
+    },
+    tags: {
+      title: `Tags`,
+      checkAll: `Tous les tags`
+    }
   },
   technologies: {
     title: `Les technologies`,

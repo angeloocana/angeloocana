@@ -6,7 +6,7 @@ const Label = styled.label`
   padding: 1rem ${({ theme }) => theme.scale(-3)} 0 ${({ theme }) => theme.scale(-3)};
   display: inline-block;
   font-size: ${({ theme }) => theme.scale(0)};
-  width: ${({ theme }) => theme.scale(8)};
+  min-width: ${({ theme }) => theme.scale(8)};
 
   ${(props) => props.checked
     ? `font-weight: bold;`

@@ -9,7 +9,7 @@ const Ul = styled.ul`
     display: flex;
     flex-flow: row wrap;
     justify-content: center;
-    margin: 0;
+    margin: 0 0 1rem 0;
     padding: 0;
 `;
 
@@ -70,7 +70,7 @@ const CheckboxList = ({ i18n, items, check, checkAll }) => {
 
 export const i18nPropTypes = PropTypes.shape({
   title: PropTypes.string.isRequired,
-  checkAll: PropTypes.object.isRequired
+  checkAll: PropTypes.string.isRequired
 });
 
 CheckboxList.propTypes = {
