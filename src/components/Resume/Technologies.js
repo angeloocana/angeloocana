@@ -3,6 +3,7 @@ import PropTypes from 'proptypes';
 import styled from 'styled-components';
 import H2 from '../H2';
 import Technology from './Technology';
+import Error from '../Error';
 
 const Ul = styled.ul`
   display: flex;
@@ -13,6 +14,10 @@ const Ul = styled.ul`
 `;
 
 const Technologies = ({ technologies, i18n }) => {
+  const noTechnologies = technologies && technologies.length > 0
+    ? null
+    : <Error>{i18n.noTechnologies}</Error>;
+
   return (
     <section>
       <header>
@@ -29,16 +34,18 @@ const Technologies = ({ technologies, i18n }) => {
           )
         }
       </Ul>
+      {noTechnologies}
     </section>
   );
 };
 
 Technologies.propTypes = {
-  technologies: PropTypes.array.isRequired,  
+  technologies: PropTypes.array.isRequired,
   i18n: PropTypes.shape({
     title: PropTypes.string.isRequired,
-    technology: PropTypes.object.isRequired
-  })  
+    technology: PropTypes.object.isRequired,
+    noTechnologies: PropTypes.object.isRequired
+  })
 };
 
 export default Technologies;

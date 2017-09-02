@@ -26,6 +26,7 @@ export const i18n = {
   },
   technologies: {
     title: `Technologies`,
+    noTechnologies: `0 Technologies. Please select a year.`,
     technology: {
       getLevelMsg,
       yearsMsg

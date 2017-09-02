@@ -5,6 +5,14 @@ import BtnAllYears from './BtnAllYears';
 import Year from './Year';
 import {contains} from 'ramda';
 
+const Header = styled.header`
+  display: block;
+  text-align: center;
+  font-size: ${({theme}) => theme.scale(2)};
+  margin: 1rem 0;
+  padding: 0;
+`;
+
 const Ul = styled.ul`
     display: flex;
     flex-flow: row wrap;
@@ -16,9 +24,9 @@ const Ul = styled.ul`
 const Years = ({ i18n, years, selectYear, selectAllYears, selectedYears }) => {
   return (
     <section>
-      <header>
+      <Header>
         {i18n.title}
-      </header>
+      </Header>
       <BtnAllYears
         selectAllYears={selectAllYears} 
         i18n={i18n.btnAllYears}
