@@ -63,13 +63,15 @@ const technologies = {
     years: range(2017, thisYear),
     tags: [tags.frontEnd, tags.backEnd],
     level: levels.proficient,
-    img: 'ramda.svg'
+    img: 'ramda.svg',
+    needWhiteBg: true
   },
   'Docker': {
     years: range(2017, thisYear),
     tags: [tags.backEnd],
     level: levels.proficient,
-    img: 'docker.svg'
+    img: 'docker.svg',
+    needWhiteBg: true
   },
   'Arch Linux': {
     years: range(2015, thisYear),

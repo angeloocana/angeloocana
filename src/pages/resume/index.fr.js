@@ -60,6 +60,7 @@ export const pageQuery = graphql`
             level
             years
             img
+            needWhiteBg
           }
           educations {
             name

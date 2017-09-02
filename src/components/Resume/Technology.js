@@ -25,6 +25,11 @@ const ImgContainer = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
+  margin: 0 0 1rem 0;
+
+  ${(props) => props.needWhiteBg
+    ? `background-color: ${props.theme.colors.white};`
+    : ``};
 `;
 
 const Level = styled.p`
@@ -42,11 +47,11 @@ const Level = styled.p`
 
 const getNYears = (years) => last(years) - head(years) + 1;
 
-const Technology = ({ name, level, years, img, i18n }) => {
+const Technology = ({ name, needWhiteBg, level, years, img, i18n }) => {
   return (
     <Li>
       <figure>
-        <ImgContainer>
+        <ImgContainer needWhiteBg={needWhiteBg}>
           <Img src={`/imgs/${img}`} />
         </ImgContainer>
         <figcaption>
@@ -68,6 +73,7 @@ Technology.propTypes = {
   level: PropTypes.string,
   years: PropTypes.array,
   img: PropTypes.string,
+  needWhiteBg: PropTypes.bool,
   i18n: PropTypes.shape({
     yearsMsg: PropTypes.string.isRequired,
     getLevelMsg: PropTypes.func.isRequired

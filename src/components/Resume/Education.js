@@ -15,11 +15,11 @@ const Name = styled.cite`
 const Li = styled.li`
   padding: 1rem ${({ theme }) => theme.scale(-6)};
   text-align: center;
-  width: ${({ theme }) => theme.scale(15)};
+  width: ${({ theme }) => theme.scale(13)};
 `;
 
 const ImgContainer = styled.div`
-  width: ${({ theme }) => theme.scale(15)};
+  width: ${({ theme }) => theme.scale(13)};
   height: ${({ theme }) => theme.scale(8)};
   display: flex;
   align-items: center;
