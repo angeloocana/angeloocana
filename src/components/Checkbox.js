@@ -3,14 +3,27 @@ import PropTypes from 'proptypes';
 import styled from 'styled-components';
 
 const Label = styled.label`
-  padding: 1rem ${({ theme }) => theme.scale(-3)} 0 ${({ theme }) => theme.scale(-3)};
+  cursor: pointer;
+  padding: ${({ theme }) => theme.scale(-3)};
   display: inline-block;
   font-size: ${({ theme }) => theme.scale(0)};
   min-width: ${({ theme }) => theme.scale(8)};
+  border-radius: 1rem;
+  margin: ${({ theme }) => theme.scale(-6)};
+  background-color: ${({ theme }) => theme.colors.blackShades[0]};
+  text-align: center;
 
   ${(props) => props.checked
-    ? `font-weight: bold;`
+    ? `
+      font-weight: bold;
+      color:  ${props.theme.colors.black};
+      background-color: ${props.theme.colors.white};
+    `
     : ``}
+`;
+
+const Input = styled.input`
+    cursor: pointer;
 `;
 
 class Checkbox extends React.Component {
@@ -28,7 +41,7 @@ class Checkbox extends React.Component {
   render() {
     return (
       <Label checked={this.props.checked}>
-        <input
+        <Input
           type="checkbox"
           onChange={this.onChange}
           checked={this.props.checked}

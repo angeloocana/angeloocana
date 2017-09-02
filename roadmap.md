@@ -18,7 +18,6 @@
 ## Working
 - Fix react intl locales (Remove moment).
 - E-mail subscription.
-- Resume: Add filter by tag.
 - Fix readNext.
 - Add rich cards for google.
 - Add AMP.
@@ -26,6 +25,7 @@
 - Add tags section to home.
 
 ## Done
+- Resume: Add filter by tag.
 - Resume: Add filter by year.
 - Resume.
 - Add options to i18n module.
