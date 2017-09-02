@@ -13,9 +13,11 @@ const levels = {
 };
 
 const tags = {
-  db: 'db',
-  frontEnd: 'frontEnd',
-  backEnd: 'backEnd'
+  db: 'DB',
+  frontEnd: 'FrontEnd',
+  backEnd: 'BackEnd',
+  os: 'OS',
+  textEditor: 'Text Editor'
 };
 
 const thisYear = (new Date()).getFullYear();
@@ -57,36 +59,48 @@ const technologies = {
     level: levels.proficient,
     img: 'gatsby.svg'
   },
-  // 'Ramda': {
-  //   years: range(),
-  //   tags: [],
-  //   level: levels.,
-  //   img: ''
-  // },
-  // 'Docker': {
-  //   years: range(),
-  //   tags: [],
-  //   level: levels.,
-  //   img: ''
-  // },
-  // 'Arch Linux': {
-  //   years: range(),
-  //   tags: [],
-  //   level: levels.,
-  //   img: ''
-  // },
-  // 'Vim': {
-  //   years: range(),
-  //   tags: [],
-  //   level: levels.,
-  //   img: ''
-  // },
-  // 'vs code': {
-  //   years: range(),
-  //   tags: [],
-  //   level: levels.,
-  //   img: ''
-  // },  
+  'Ramda': {
+    years: range(2017, thisYear),
+    tags: [tags.frontEnd, tags.backEnd],
+    level: levels.proficient,
+    img: 'ramda.svg'
+  },
+  'Docker': {
+    years: range(2017, thisYear),
+    tags: [tags.backEnd],
+    level: levels.proficient,
+    img: 'docker.svg'
+  },
+  'Arch Linux': {
+    years: range(2015, thisYear),
+    tags: [tags.os],
+    level: levels.proficient,
+    img: 'archlinux.svg'
+  },
+  'Debian': {
+    years: range(2014, 2016),
+    tags: [tags.os],
+    level: levels.proficient,
+    img: 'debian.png'
+  },
+  'Vim': {
+    years: range(2015, thisYear),
+    tags: [tags.textEditor],
+    level: levels.proficient,
+    img: 'vim.svg'
+  },
+  'vs code': {
+    years: range(2015, thisYear),
+    tags: [tags.textEditor],
+    level: levels.expert,
+    img: 'vscode.ico'
+  },
+  'Angular': {
+    years: range(2014, 2016),
+    tags: [tags.frontEnd],
+    level: levels.expert,
+    img: 'angular.svg'
+  },
   'C#': {
     years: range(2008, 2016),
     tags: [tags.backEnd],
@@ -94,22 +108,28 @@ const technologies = {
     img: 'csharp.svg'
   },
   '.net MVC': {
-    years: range(2008, 2016),
-    tags: [tags.backEnd],
+    years: range(2010, 2016),
+    tags: [tags.frontEnd, tags.backEnd],
     level: levels.expert,
     img: 'asp_net_mvc.svg'
   },
-  // 'visual studio': {
-  //   years: range(),
-  //   tags: [],
-  //   level: levels.,
-  //   img: ''
-  // },
+  'web forms': {
+    years: range(2008, 2012),
+    tags: [tags.frontEnd, tags.backEnd],
+    level: levels.expert,
+    img: 'webforms.png'
+  },
+  'visual studio': {
+    years: range(2007, 2016),
+    tags: [tags.textEditor],
+    level: levels.expert,
+    img: 'vs.svg'
+  },
   'JQuery': {
     years: range(2007, thisYear),
     tags: [tags.frontEnd],
     level: levels.expert,
-    img: 'jquery.gif'
+    img: 'jquery.svg'
   },  
   'SQL Server': {
     years: range(2008, 2016),

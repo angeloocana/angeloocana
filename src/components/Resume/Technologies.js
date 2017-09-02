@@ -44,7 +44,7 @@ Technologies.propTypes = {
   i18n: PropTypes.shape({
     title: PropTypes.string.isRequired,
     technology: PropTypes.object.isRequired,
-    noTechnologies: PropTypes.object.isRequired
+    noTechnologies: PropTypes.string.isRequired
   })
 };
 
