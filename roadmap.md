@@ -18,7 +18,6 @@
 ## Working
 - Fix react intl locales (Remove moment).
 - E-mail subscription.
-- Resume: Add filter by year.
 - Resume: Add filter by tag.
 - Fix readNext.
 - Add rich cards for google.
@@ -27,6 +26,7 @@
 - Add tags section to home.
 
 ## Done
+- Resume: Add filter by year.
 - Resume.
 - Add options to i18n module.
 - ssl post: Change error to block quote.

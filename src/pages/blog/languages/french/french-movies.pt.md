@@ -4,8 +4,8 @@ date: '2017-08-08'
 layout: post
 draft: false
 tags:
-  - Language
-  - French
+  - Idioma
+  - Françês
 ---
 
 Divertidos, questionadores, mostram o côtidiano real da vida das pessoas, falam sobre sexo, drogas e vários outros tabus abertamente.

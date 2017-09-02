@@ -1,5 +1,5 @@
 ---
-title: Links pra aprender Francês
+title: Aprenda Francês (Links)
 date: '2017-08-03'
 layout: post
 draft: false

@@ -1,5 +1,5 @@
 ---
-title: Links to learn French
+title: Learn French links
 date: '2017-08-03'
 layout: post
 draft: false
