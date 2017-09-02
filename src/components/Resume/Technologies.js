@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'proptypes';
 import styled from 'styled-components';
-import H2 from './H2';
+import H2 from '../H2';
 import { head, last } from 'ramda';
 import { FormattedMessage } from 'react-intl';
 

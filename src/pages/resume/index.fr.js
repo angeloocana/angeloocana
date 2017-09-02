@@ -1,5 +1,5 @@
 import React from 'react';
-import Resume from './_index';
+import Resume from '../../components/Resume';
 import graphql from 'graphql';
 
 export const yearsMsg = `{nYears, number} {nYears, plural,
@@ -18,10 +18,20 @@ export const getLevelMsg = (level) => {
 
 export const technologiesTitle = `Les technologies`;
 
+export const i18n = {
+  title: `Résumé`,
+  years: {
+    title: `Années`,
+    btnAllYears: {
+      selectAllYears: `Toutes les années`
+    }
+  }
+};
+
 export default (props) => 
   <Resume 
     {...props}
-    title="Résumé"
+    i18n={i18n}
     yearsMsg={yearsMsg}
     getLevelMsg={getLevelMsg}
     technologiesTitle={technologiesTitle}

@@ -16,6 +16,7 @@
 - Add images.
 
 ## Working
+- Fix react intl locales (Remove moment).
 - E-mail subscription.
 - Resume: Add filter by year.
 - Resume: Add filter by tag.

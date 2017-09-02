@@ -1,5 +1,5 @@
 import React from 'react';
-import Index from './_index';
+import Index from '../components/Index';
 import graphql from 'graphql';
 import {
   yearsMsg, 
