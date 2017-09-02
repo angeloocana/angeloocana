@@ -1,37 +1,34 @@
 import React from 'react';
 import PropTypes from 'proptypes';
+import { Label } from './Year';
 import styled from 'styled-components';
 
-const Input = styled.button`
-  background-color: ${({theme}) => theme.colors.white};
-  padding: 1rem;
-  margin: ${({theme}) => theme.scale(2)} auto;
-  color: ${({theme}) => theme.colors.black};
-  border-radius: 0.2rem;
-  text-decoration: none;
-  display: table;
-  border: none;
-  transition: 0.3s;
-
-  &:hover {
-      background-color: ${props => props.theme.colors.blackShades[0]};
-      color: ${({theme}) => theme.colors.yellow};
-      transition: 0.3s;
-  }
+const Div = styled.div`
+  display: block;
+  margin: auto;
+  text-align: center;
 `;
 
 const BtnAllYears = (props) => {
   return (
-    <Input type="button" onClick={props.selectAllYears}>
-      {props.i18n.selectAllYears}
-    </Input>
+    <Div>
+      <Label checked={props.selected}>
+        <input
+          type="checkbox"
+          onChange={props.selectAllYears}
+          checked={props.selected}
+        />
+        {props.i18n.selectAllYears}
+      </Label>
+    </Div>
   );
 };
 
 BtnAllYears.propTypes = {
-  selectAllYears: PropTypes.func,
+  selectAllYears: PropTypes.func.isRequired,
+  selected: PropTypes.bool.isRequired,
   i18n: PropTypes.shape({
-    selectAllYears: PropTypes.string
+    selectAllYears: PropTypes.string.isRequired
   })
 };
 

@@ -44,8 +44,10 @@ class Resume extends React.Component {
     });
   }
 
+  isAllYearsSelected = () => this.years === this.state.selectedYears;
+
   selectAllYears = () => {
-    const selectedYears = this.years === this.state.selectedYears
+    const selectedYears = this.isAllYearsSelected()
       ? []
       : this.years;
 
@@ -72,6 +74,7 @@ class Resume extends React.Component {
           selectYear={this.selectYear}
           i18n={i18n.years}
           selectAllYears={this.selectAllYears}
+          allYearsSelected={this.isAllYearsSelected()}
         />
         <Technologies
           technologies={technologies}
