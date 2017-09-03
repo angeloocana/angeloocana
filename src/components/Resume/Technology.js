@@ -23,10 +23,11 @@ const ImgContainer = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  margin: 0 auto 1rem auto;
+  margin: 0 auto 1rem auto;  
 
   ${(props) => props.needWhiteBg
-    ? `background-color: ${props.theme.colors.white};`
+    ? `background-color: ${props.theme.colors.white};
+       color: ${props.theme.colors.black};`
     : ``};
 `;
 
@@ -62,7 +63,7 @@ const Technology = ({ name, link, needWhiteBg, level, years, img, i18n }) => {
       <A href={link} target="_blank">
         <figure>
           <ImgContainer needWhiteBg={needWhiteBg}>
-            <Img src={`/imgs/${img}`} />
+            <Img src={`/imgs/${img}`} alt={name} title={name} />
           </ImgContainer>
           <figcaption>
             <Name>{name}</Name>
