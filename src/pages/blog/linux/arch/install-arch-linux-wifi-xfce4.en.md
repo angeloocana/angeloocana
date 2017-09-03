@@ -1,5 +1,5 @@
 ---
-title: How to install Arch linux
+title: Install Arch linux + wifi and xfce4
 date: '2017-08-12'
 layout: post
 draft: false

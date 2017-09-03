@@ -1,5 +1,5 @@
 ---
-title: Como instalar o Arch linux
+title: Instalar Arch linux + wifi and xfce4
 date: '2017-08-04'
 layout: post
 draft: false
@@ -9,6 +9,22 @@ tags:
 ---
 
 Se você quer aprender linux de verdade, Arch é a minha distribuição favorita, esteja preparado pra quebrar muito a cabeça, mas relaxa que você vai aprender!
+
+## Boot Arch Linux pela USB usando pendrive
+
+### Baixar Arch Linux
+Baixar o arquivo .iso:
+https://www.archlinux.org/download/
+
+### Baixar Rufus
+Rufus é um programa pra criar pendrives bootaveis apartir de arquivos .iso
+https://rufus.akeo.ie/
+
+Abra o rufus, seleciona o seu arquivo .iso, selecione o local do pendrive e BURN!
+
+Agora você esta pronto pra ligar o PC pelo pendrive e seguir as proximas etapas!
+
+Divirta-se!
 
 ## Trocar layout do teclado para abnt2
 ```bash
