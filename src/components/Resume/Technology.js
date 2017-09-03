@@ -5,7 +5,7 @@ import { head, last } from 'ramda';
 import { FormattedMessage } from 'react-intl';
 
 const Img = styled.img`
-  max-width: ${({ theme }) => theme.scale(8)};
+  max-width: 90%;
   max-height: ${({ theme }) => theme.scale(8)};
 `;
 
@@ -13,19 +13,17 @@ const Name = styled.cite`
   font-size: ${({ theme }) => theme.scale(0)};
 `;
 
-const Li = styled.li`
-  padding: 1rem ${({ theme }) => theme.scale(-6)};
-  text-align: center;
+const Li = styled.li`  
   width: ${({ theme }) => theme.scale(9)};
 `;
 
 const ImgContainer = styled.div`
-  width: ${({ theme }) => theme.scale(9)};
+  width: 90%;
   height: ${({ theme }) => theme.scale(9)};
   display: flex;
   align-items: center;
   justify-content: center;
-  margin: 0 0 1rem 0;
+  margin: 0 auto 1rem auto;
 
   ${(props) => props.needWhiteBg
     ? `background-color: ${props.theme.colors.white};`
@@ -45,34 +43,48 @@ const Level = styled.p`
   padding: ${({ theme }) => theme.scale(-6)} 0;
 `;
 
+const A = styled.a`
+  display: block;
+  padding: 1rem ${({ theme }) => theme.scale(-6)};
+  text-align: center;
+  cursor: pointer;
+
+  &:hover {
+    background-color: ${({theme}) => theme.colors.blackShades[0]};
+  }
+`;
+
 const getNYears = (years) => last(years) - head(years) + 1;
 
-const Technology = ({ name, needWhiteBg, level, years, img, i18n }) => {
+const Technology = ({ name, link, needWhiteBg, level, years, img, i18n }) => {
   return (
     <Li>
-      <figure>
-        <ImgContainer needWhiteBg={needWhiteBg}>
-          <Img src={`/imgs/${img}`} />
-        </ImgContainer>
-        <figcaption>
-          <Name>{name}</Name>
-          <Level level={level}>{i18n.getLevelMsg(level)}</Level>
-          <FormattedMessage
-            id="resume.technologies.years"
-            defaultMessage={i18n.yearsMsg}
-            values={{ nYears: getNYears(years) }}
-          />
-        </figcaption>
-      </figure>
+      <A href={link} target="_blank">
+        <figure>
+          <ImgContainer needWhiteBg={needWhiteBg}>
+            <Img src={`/imgs/${img}`} />
+          </ImgContainer>
+          <figcaption>
+            <Name>{name}</Name>
+            <Level level={level}>{i18n.getLevelMsg(level)}</Level>
+            <FormattedMessage
+              id="resume.technologies.years"
+              defaultMessage={i18n.yearsMsg}
+              values={{ nYears: getNYears(years) }}
+            />
+          </figcaption>
+        </figure>
+      </A>
     </Li>
   );
 };
 
 Technology.propTypes = {
-  name: PropTypes.string,
-  level: PropTypes.string,
-  years: PropTypes.array,
-  img: PropTypes.string,
+  name: PropTypes.string.isRequired,
+  level: PropTypes.string.isRequired,
+  years: PropTypes.array.isRequired,
+  img: PropTypes.string.isRequired,
+  link: PropTypes.string,
   needWhiteBg: PropTypes.bool,
   i18n: PropTypes.shape({
     yearsMsg: PropTypes.string.isRequired,

@@ -44,7 +44,6 @@ Educations.propTypes = {
   langKey: PropTypes.string.isRequired,
   i18n: PropTypes.shape({
     title: PropTypes.string.isRequired,
-    education: PropTypes.object.isRequired,
     noEducations: PropTypes.string.isRequired
   })
 };
