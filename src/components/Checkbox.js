@@ -3,7 +3,7 @@ import PropTypes from 'proptypes';
 import styled from 'styled-components';
 
 const Label = styled.label`
-  cursor: pointer;
+  cursor: 'pointer';
   padding: ${({ theme }) => theme.scale(-3)} 1rem;
   display: inline-block;
   font-size: ${({ theme }) => theme.scale(0)};
@@ -23,7 +23,7 @@ const Label = styled.label`
 `;
 
 const Input = styled.input`
-    cursor: pointer;
+    cursor: 'pointer';
     padding: 0;
     margin: 0 0.2rem 0 0;
 `;
@@ -46,6 +46,7 @@ class Checkbox extends React.Component {
         <Input
           type="checkbox"
           onChange={this.onChange}
+          onClick={this.onClick}
           checked={this.props.checked}
         />
         {this.props.label}

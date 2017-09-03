@@ -13,6 +13,10 @@
 - Fix font Victor's phone.
 - Fix firefox first big letter.
 - Fix react intl locales (Remove moment).
+- Rewrite welcome (simplify).
+- Breadcrumb.
+- Add site to yahoo.
+- Add site to bing.
 
 ## Working
 - Resume: Add jobs and clients.
