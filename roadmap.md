@@ -13,14 +13,12 @@
 - Fix font Victor's phone.
 - Fix firefox first big letter.
 - Fix react intl locales (Remove moment).
-- Rewrite welcome (simplify).
 - Breadcrumb.
 - Add site to yahoo.
 - Add site to bing.
 
 ## Working
 - Resume: Add jobs and clients.
-- Resume: Add Education.
 - E-mail subscription.
 - Fix readNext.
 - Add rich cards for google.
@@ -31,6 +29,8 @@
 - Add images.
 
 ## Done
+- Rewrite welcome (simplify).
+- Resume: Add Education.
 - Resume: Add filter by tag.
 - Resume: Add filter by year.
 - Resume.

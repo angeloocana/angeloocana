@@ -77,7 +77,7 @@ const technologies = {
     years: range(2017, thisYear),
     tags: [tags.backEnd],
     level: levels.proficient,
-    img: 'docker.svg',
+    img: 'docker.png',
     needWhiteBg: true,
     link: 'https://www.docker.com/'
   },
@@ -177,7 +177,7 @@ const technologies = {
     years: range(2007, 2009),
     tags: [tags.db, tags.backEnd],
     level: levels.proficient,
-    img: 'mysql.svg',
+    img: 'mysql.png',
     link: 'https://www.mysql.com/'
   },
   'PostgreSQL': {

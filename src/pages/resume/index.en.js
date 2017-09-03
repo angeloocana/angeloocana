@@ -61,6 +61,7 @@ export const pageQuery = graphql`
             years
             img
             needWhiteBg
+            link
           }
           educations {
             name

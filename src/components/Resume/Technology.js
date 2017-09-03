@@ -49,6 +49,8 @@ const A = styled.a`
   padding: 1rem ${({ theme }) => theme.scale(-6)};
   text-align: center;
   cursor: pointer;
+  text-decoration: none;
+  color: ${({theme}) => theme.colors.white};
 
   &:hover {
     background-color: ${({theme}) => theme.colors.blackShades[0]};
