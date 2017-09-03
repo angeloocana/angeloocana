@@ -69,7 +69,7 @@ const technologies = {
     years: range(2017, thisYear),
     tags: [tags.frontEnd, tags.backEnd],
     level: levels.proficient,
-    img: 'ramda.svg',
+    img: 'ramda.png',
     needWhiteBg: true,
     link: 'http://ramdajs.com/'
   },
@@ -106,7 +106,7 @@ const technologies = {
     years: range(2015, thisYear),
     tags: [tags.textEditor],
     level: levels.expert,
-    img: 'vscode.ico',
+    img: 'vscode.png',
     link: 'https://code.visualstudio.com/'
   },
   'Angular': {
@@ -169,7 +169,7 @@ const technologies = {
     years: range(2008, 2016),
     tags: [tags.db, tags.backEnd],
     level: levels.expert,
-    img: 'sql-server.svg',
+    img: 'sql-server.png',
     needWhiteBg: true,
     link: 'https://en.wikipedia.org/wiki/Microsoft_SQL_Server'
   },
