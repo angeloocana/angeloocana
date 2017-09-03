@@ -12,11 +12,10 @@ J'adore les films français, ils sont aussi proches de la vie réelle,
 de vraies personnes.
 Ils parlent de sexe, de drogues et d'autres tabous ouvertement.
 
+## Jeune & jolie
+en: Young & Beautiful
 
-## Les beaux jours
-en: Bright Days Ahead
-
-pt: Os Belos Dias
+pt: Jovem e Bela
 
 ## Chroniques sexuelles d'une famille d'aujourd'hui 
 en: Sexual Chronicles of a French Family
@@ -32,8 +31,3 @@ pt: Azul É a Cor Mais Quente
 en: Bang Gang (A Modern Love Story)
 
 pt: Bang Gang (A Modern Love Story)
-
-## Jeune & jolie
-en: Young & Beautiful
-
-pt: Jovem e Bela
