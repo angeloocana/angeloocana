@@ -1,6 +1,6 @@
 ---
 title: How to install Arch linux
-date: '2017-07-30'
+date: '2017-08-12'
 layout: post
 draft: false
 tags:
@@ -8,8 +8,24 @@ tags:
   - Arch
 ---
 
-## Links
- - https://www.ostechnix.com/install-arch-linux-latest-version/
+If you want to learn Linux for real, Arch is my favorite distribution, be prepared for lots of commands and research, but keep calm, you are goin to learn!
+
+## Boot Arch Linux from USB pendrive
+
+### Download Arch Linux
+Download the .iso image at:
+https://www.archlinux.org/download/
+
+### Download Rufus
+Rufus is a program to create bootable USB drivers
+https://rufus.akeo.ie/
+
+Open rufus, select your .iso image, select your pendrive and BURN!
+
+Boot your PC using your new pendrive and follow the next steps!
+
+Have fun!
+
 
 ## Change keyboard to abnt2
 ```bash
@@ -32,10 +48,6 @@ fdisk -l
 ```
 
 ```bash
-    mkfs.ext4 /dev/sda5
-```
-
-```bash
     mkswap /dev/sda2
 ```
 
@@ -47,14 +59,6 @@ fdisk -l
 
 ```bash
     mount /dev/sda1 /mnt
-```
-
-```bash
-    mkdir /mnt/home
-```
-
-```bash
-    mount /dev/sda5 /mnt/home
 ```
 
 ```bash
@@ -245,18 +249,6 @@ Start Network Manager:
     alsactl restore
 ```
 
-## ENOSPC error
+## Links
+ - https://www.ostechnix.com/install-arch-linux-latest-version/
 
-https://stackoverflow.com/questions/22475849/node-js-error-enospc/32600959#32600959
-
-For Arch Linux add this line to /etc/sysctl.d/99-sysctl.conf:
-
-```bash
-    sudo fs.inotify.max_user_watches=524288
-```
-
-Then execute:
-
-```bash
-    sudo sysctl --system
-```

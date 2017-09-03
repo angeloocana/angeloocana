@@ -1,6 +1,6 @@
 ---
-title: How to install Arch linux
-date: '2017-08-12'
+title: Install Arch linux + wifi and xfce4
+date: '2017-07-30'
 layout: post
 draft: false
 tags:
@@ -249,13 +249,5 @@ Start Network Manager:
     alsactl restore
 ```
 
-## ENOSPC error
-
-
-```bash
-    echo fs.inotify.max_user_watches=524288 | sudo tee -a /etc/sysctl.conf && sudo sysctl -p
-```
-
 ## Links
  - https://www.ostechnix.com/install-arch-linux-latest-version/
-

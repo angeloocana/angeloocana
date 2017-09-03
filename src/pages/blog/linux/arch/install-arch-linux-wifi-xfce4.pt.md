@@ -16,8 +16,8 @@ Se você quer aprender linux de verdade, Arch é a minha distribuição favorita
 ```
 
 ## Mostrar Partições
-```
-fdisk -l
+```bash
+    fdisk -l
 ```
 
 ## Create Partitions
