@@ -67,7 +67,8 @@ export const pageQuery = graphql`
     filter: {
       frontmatter: {
         tags: {in: [$tag]},
-        draft: {ne: true}},
+        draft: {ne: true}
+      },
       fields: {
         langKey: {eq: $langKey}
       }

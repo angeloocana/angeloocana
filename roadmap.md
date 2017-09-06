@@ -18,6 +18,7 @@
 - Add site to bing.
 
 ## Working
+- Rewrite welcome (simplify).
 - Resume: Add jobs and clients.
 - E-mail subscription.
 - Fix readNext.
@@ -29,7 +30,6 @@
 - Add images.
 
 ## Done
-- Rewrite welcome (simplify).
 - Resume: Add Education.
 - Resume: Add filter by tag.
 - Resume: Add filter by year.
