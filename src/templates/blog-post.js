@@ -2,13 +2,13 @@ import React from 'react';
 import PropTypes from 'proptypes';
 import graphql from 'graphql';
 import Helmet from 'react-helmet';
-import ReadNext from '../components/ReadNext';
 import styled from 'styled-components';
 import EditBtn from '../components/EditBtn';
 import Tags from '../components/Tags';
 import { getStructuredData } from '../structuredData';
 import CleanTime from '../components/Time';
 import Comments from '../components/Comments';
+import ReadNext from '../components/ReadNext';
 
 const Time = styled(CleanTime)`
   text-align: center;
@@ -31,7 +31,7 @@ const H1 = styled.h1`
 `;
 
 const Content = styled.section`
-  margin: 0 0 ${({theme}) => theme.scale(6)} 0;
+  margin: 0 0 ${({ theme }) => theme.scale(6)} 0;
 
   code {
     color: ${props => props.theme.blog.post.content.code.color};
@@ -124,10 +124,10 @@ const Content = styled.section`
   blockquote {
     font-style: italic;
     margin: 0;
-    padding: ${({theme}) => theme.scale(3)};    
+    padding: ${({ theme }) => theme.scale(3)};    
     position: relative;
     text-align: center;
-    color: ${({theme}) => theme.colors.white};
+    color: ${({ theme }) => theme.colors.white};
   }
 
   blockquote:before {
@@ -135,25 +135,25 @@ const Content = styled.section`
     display: block;
     content: "\\201C";
     position: absolute;
-    top: -${({theme}) => theme.scale(-4)};
-    left: -${({theme}) => theme.scale(1)};
-    font-size: ${({theme}) => theme.scale(10)};
-    color: ${({theme}) => theme.colors.white};
+    top: -${({ theme }) => theme.scale(-4)};
+    left: -${({ theme }) => theme.scale(1)};
+    font-size: ${({ theme }) => theme.scale(10)};
+    color: ${({ theme }) => theme.colors.white};
   }
 
   blockquote:after {
     display: block;
     content: "\\201D";
     position: absolute;
-    bottom: -${({theme}) => theme.scale(6)};
-    right: ${({theme}) => theme.scale(1)};
-    font-size: ${({theme}) => theme.scale(10)};
-    color: ${({theme}) => theme.colors.white};
+    bottom: -${({ theme }) => theme.scale(6)};
+    right: ${({ theme }) => theme.scale(1)};
+    font-size: ${({ theme }) => theme.scale(10)};
+    color: ${({ theme }) => theme.colors.white};
   }
 
   blockquote cite {
-    color: ${({theme}) => theme.colors.blue};
-    font-size: ${({theme}) => theme.scale(-1)};
+    color: ${({ theme }) => theme.colors.blue};
+    font-size: ${({ theme }) => theme.scale(-1)};
     display: block;
   }
      
@@ -184,8 +184,10 @@ const getYoutube = (markdownRemark) => {
     : null;
 };
 
-const BlogPostRoute = ({ data, pathContext }) => {
-  const { markdownRemark } = data;
+const BlogPostRoute = (props) => {
+  console.log('props', props);
+  const { markdownRemark } = props.data;
+  const { langKey } = props.pathContext;
   const youtube = getYoutube(markdownRemark);
   const structuredData = getStructuredData(markdownRemark);
 
@@ -207,23 +209,26 @@ const BlogPostRoute = ({ data, pathContext }) => {
         <Time
           pubdate
           date={markdownRemark.frontmatter.date}
-          langKey={pathContext.langKey}
+          langKey={langKey}
         />
       </header>
       <EditBtn
         fileAbsolutePath={markdownRemark.fileAbsolutePath}
-        currentLangKey={pathContext.langKey}
+        currentLangKey={langKey}
       />
       <Tags tags={markdownRemark.fields.tagSlugs} />
       {youtube}
-      <Content dangerouslySetInnerHTML={{ __html: markdownRemark.html }} />
-      <Tags tags={markdownRemark.fields.tagSlugs} />
-      <ReadNext nextPost={markdownRemark.frontmatter.readNext} />
+      <Content dangerouslySetInnerHTML={{ __html: markdownRemark.html }} />      
       <Comments
         shortname="angeloocana-com"
         identifier={markdownRemark.fields.slug}
         title={markdownRemark.frontmatter.title}
         url={url}
+      />
+      <Tags tags={markdownRemark.fields.tagSlugs} />
+      <ReadNext
+        posts={markdownRemark.fields.readNextPosts}
+        langKey={langKey}
       />
     </Post>
   );
@@ -248,6 +253,17 @@ export const pageQuery = graphql`
           link
         }
         slug
+        readNextPosts {
+          excerpt
+          frontmatter {
+            title
+            date
+          }
+          fields {
+            slug
+            langKey
+          }
+        }
       }
       frontmatter {
         youtubeId

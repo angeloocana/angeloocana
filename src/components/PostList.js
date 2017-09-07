@@ -9,11 +9,11 @@ const Ul = styled.ul`
   padding: ${props => props.theme.blog.list.ul.padding};
 `;
 
-const PostList = ({ posts, currentLangKey }) => {
+const PostList = (props) => {
   return (
     <nav>
       <Ul>
-        {posts.map(post =>
+        {props.posts.map(post =>
           <PostListItem post={post} />
         )}
       </Ul>
@@ -22,8 +22,7 @@ const PostList = ({ posts, currentLangKey }) => {
 };
 
 PostList.propTypes = {
-  posts: PropTypes.array,
-  currentLangKey: PropTypes.string
+  posts: PropTypes.array
 };
 
 export default PostList;

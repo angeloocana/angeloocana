@@ -34,8 +34,8 @@ const Posts = (props) => {
 };
 
 Posts.propTypes = {
-  posts: PropTypes.array,
-  currentLangKey: PropTypes.string
+  posts: PropTypes.array.isRequired,
+  currentLangKey: PropTypes.string.isRequired
 };
 
 export default Posts;

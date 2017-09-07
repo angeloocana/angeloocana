@@ -38,28 +38,38 @@ const P = styled.p`
   line-height: ${props => props.theme.blog.list.item.p.lineHeight};
 `;
 
-const getToLink = (post) => post.node.fields.slug;
+const getToLink = (post) => post.fields.slug;
 
 const PostListItem = ({ post }) => {
   return (
-    <Li key={post.node.fields.slug}>
+    <Li key={post.fields.slug}>
       <Link to={getToLink(post)}>
         <Header>
           <Time
             pubdate
-            langKey={post.node.fields.langKey}
-            date={post.node.frontmatter.date}
+            langKey={post.fields.langKey}
+            date={post.frontmatter.date}
           />
-          {post.node.frontmatter.title}
+          {post.frontmatter.title}
         </Header>
-        <P>{post.node.excerpt}</P>
+        <P>{post.excerpt}</P>
       </Link>
     </Li>
   );
 };
 
 PostListItem.propTypes = {
-  post: PropTypes.object
+  post: PropTypes.shape({
+    fields: PropTypes.shape({
+      slug: PropTypes.string.isRequired,
+      langKey: PropTypes.string.isRequired
+    }),
+    frontmatter: PropTypes.shape({
+      title: PropTypes.string.isRequired,
+      date: PropTypes.string.isRequired
+    }),
+    excerpt: PropTypes.string.isRequired
+  })
 };
 
 export default PostListItem;

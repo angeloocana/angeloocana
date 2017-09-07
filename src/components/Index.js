@@ -8,7 +8,7 @@ import Technologies from './Resume/Technologies';
 import {take} from 'ramda';
 
 const Index = (props) => {
-  const posts = props.data.allMarkdownRemark.edges;
+  const posts = props.data.allMarkdownRemark.edges.map(p => p.node);
   const {langKey} = props.pathContext;
   const technologies = take(6, props.data.site.siteMetadata.resume.technologies);
 

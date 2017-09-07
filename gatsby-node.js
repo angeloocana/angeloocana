@@ -45,7 +45,11 @@ exports.createPages = ({ graphql, boundActionCreators, getNode }, pluginOptions)
 
         postsWithReadNext.forEach(post => {
           const readNextPosts = getReadNextPosts(post.node.frontmatter.readNext)(posts)
-            .map(p => getNode(p.node.id));
+            .map(p => {
+              const node = getNode(p.node.id);
+              node.excerpt = p.node.excerpt;
+              return node;
+            });
 
           createNodeField({
             node: getNode(post.node.id),

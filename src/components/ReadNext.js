@@ -1,52 +1,34 @@
 import React from 'react';
 import PropTypes from 'proptypes';
-import graphql from 'graphql';
-import Link from '../components/Link';
+import PostList from './PostList';
+import H2 from './H2';
 
-class Component extends React.Component {
-  static propTypes = {
-    nextPost: PropTypes.object
-  };
+const getTitle = () => ({
+  en: 'Read Next',
+  pt: 'Mais posts',
+  fr: 'Lisez la suite'
+});
 
-  render() {
-    let { nextPost } = this.props;
-    if (nextPost && nextPost.children && nextPost.children[0]) {
-      nextPost = nextPost.children[0];
-    }
-
-    if (!nextPost) {
-      return null;
-    } else {
-      return (
-        <div>
-          <h6>
-            READ THIS NEXT:
-          </h6>
-          <h3>
-            <Link to={nextPost.fields.slug}>
-              {nextPost.frontmatter.title}
-            </Link>
-          </h3>
-          <p>
-            {nextPost.excerpt}
-          </p>
-          <hr />
-        </div>
-      );
-    }
-  }
+const ReadNext = (props) => {
+  return props.posts
+    ? (
+      <section>
+        <header>
+          <H2>
+            {getTitle()[props.langKey]}
+          </H2>
+        </header>
+        <PostList
+          posts={props.posts}
+        />
+      </section>
+    )
+    : null;
 };
 
-export default Component;
+ReadNext.propTypes = {
+  posts: PropTypes.array,
+  langKey: PropTypes.string.isRequired
+};
 
-export const query = graphql`
-  fragment ReadNext on MarkdownRemark {
-    fields {
-      slug
-    }
-    excerpt(pruneLength: 200)
-    frontmatter {
-      title
-    }
-  }
-`;
+export default ReadNext;
