@@ -1,5 +1,6 @@
 const webpackLodashPlugin = require('lodash-webpack-plugin');
 const R = require('ramda');
+const ptzMath = require('ptz-math');
 
 // Add Lodash plugin
 exports.modifyWebpackConfig = ({ config, stage }) => {
@@ -8,9 +9,26 @@ exports.modifyWebpackConfig = ({ config, stage }) => {
   }
 };
 
-const getPostsWithReadNext = R.filter(p => p.node.frontmatter.readNext && p.node.frontmatter.readNext.length > 0);
+const getReadNextPostsRandom = ({ nPosts, post, readNextPosts, posts }) => {
+  const validPosts = posts.filter(p =>
+    p.node.fields.slug !== post.node.fields.slug &&
+    p.node.fields.langKey === post.node.fields.langKey);
+  const randomPosts = R.range(0, nPosts).map(_ => ptzMath.getRandomItem(validPosts));
+  return R.take(nPosts, R.concat(readNextPosts, randomPosts));
+};
 
-const getReadNextPosts = (readNext) => R.filter(p => R.contains(p.node.fields.slug, readNext));
+const filterReadNextPosts = (nPosts, readNext, posts) => {
+  return !readNext || !posts
+    ? []
+    : R.filter(p => R.contains(p.node.fields.slug, readNext), posts);
+};
+
+const getReadNextPosts = (nPosts, post, posts) => {
+  const readNextPosts = filterReadNextPosts(nPosts, post.node.frontmatter.readNext, posts);
+  return readNextPosts.length === nPosts
+    ? readNextPosts
+    : getReadNextPostsRandom({ nPosts, post, readNextPosts, posts });
+};
 
 exports.createPages = ({ graphql, boundActionCreators, getNode }, pluginOptions) => {
   return new Promise((resolve, reject) => {
@@ -27,6 +45,7 @@ exports.createPages = ({ graphql, boundActionCreators, getNode }, pluginOptions)
               },
               fields{
                 slug
+                langKey
               }
             }
           }
@@ -40,17 +59,28 @@ exports.createPages = ({ graphql, boundActionCreators, getNode }, pluginOptions)
         }
 
         const posts = result.data.allMarkdownRemark.edges;
-        const postsWithReadNext = getPostsWithReadNext(posts);
         const { createNodeField } = boundActionCreators;
 
-        postsWithReadNext.forEach(post => {
-          const readNextPosts = getReadNextPosts(post.node.frontmatter.readNext)(posts)
+        posts.forEach(post => {
+          const readNextPosts = getReadNextPosts(3, post, posts)
             .map(p => {
               const node = getNode(p.node.id);
-              node.excerpt = p.node.excerpt;
-              return node;
+              const pNode = { ...p.node, ...node };
+
+              return {
+                excerpt: pNode.excerpt,
+                frontmatter: {
+                  date: pNode.frontmatter.date,
+                  title: pNode.frontmatter.title
+                },
+                fields: {
+                  langKey: pNode.fields.langKey,
+                  slug: pNode.fields.slug
+                }
+              };
             });
 
+          console.log('post.node.id: ', getNode(post.node.id).id);
           createNodeField({
             node: getNode(post.node.id),
             name: 'readNextPosts',

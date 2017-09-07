@@ -8207,6 +8207,12 @@ ptz-log@^1.0.0:
   dependencies:
     moment "^2.18.1"
 
+ptz-math@^1.1.0:
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/ptz-math/-/ptz-math-1.1.0.tgz#ad8107f9974ce61b9988cf80a0583227496ad8db"
+  dependencies:
+    ptz-log "^1.0.0"
+
 public-encrypt@^4.0.0:
   version "4.0.0"
   resolved "https://registry.yarnpkg.com/public-encrypt/-/public-encrypt-4.0.0.tgz#39f699f3a46560dd5ebacbca693caf7c65c18cc6"
