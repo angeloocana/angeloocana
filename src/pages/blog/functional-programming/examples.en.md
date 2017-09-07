@@ -4,7 +4,11 @@ date: '2017-06-23'
 layout: post
 draft: false
 tags:
-  - Functional Programming
+    - Functional Programming
+readNext:
+    - /en/blog/js/spred-operator/
+    - /en/blog/vim/vim-help-commands/
+    - /en/blog/terminal/install-zsh/
 structuredData:
   alternativeHeadline: ...  
   locationCreated: Barueri BR

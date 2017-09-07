@@ -4,7 +4,11 @@ date: '2017-06-23'
 layout: post
 draft: false
 tags:
-  - Programmation fonctionnelle
+    - Programmation fonctionnelle
+readNext:
+    - /fr/blog/js/spred-operator/
+    - /fr/blog/vim/vim-help-commands/
+    - /fr/blog/terminal/install-zsh/
 structuredData:
   locationCreated: Barueri BR
   alternativeHeadline: ...
