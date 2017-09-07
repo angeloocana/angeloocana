@@ -36,7 +36,7 @@ const BrowseAllLink = styled(Link)`
 `;
 
 const TagRoute = ({data, pathContext}) => {
-  const posts = data.allMarkdownRemark.edges;
+  const posts = data.allMarkdownRemark.edges.map(p => p.node);
   const allTagsLink = `/${pathContext.langKey}/tags/`;
 
   return (

@@ -40,7 +40,6 @@ const BodyContainer = styled.div`
 
 const Wrapper = (props) => {
   const { children, location } = props;
-  if (!location) console.log('wrapper: ', props);
   const url = location.pathname;
   const currentLangKey = getCurrentLangKey(url);
   const isHome = isHomePage(url);

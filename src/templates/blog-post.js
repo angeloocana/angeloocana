@@ -185,7 +185,6 @@ const getYoutube = (markdownRemark) => {
 };
 
 const BlogPostRoute = (props) => {
-  console.log('props', props);
   const { markdownRemark } = props.data;
   const { langKey } = props.pathContext;
   const youtube = getYoutube(markdownRemark);

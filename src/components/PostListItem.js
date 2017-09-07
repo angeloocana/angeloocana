@@ -38,12 +38,10 @@ const P = styled.p`
   line-height: ${props => props.theme.blog.list.item.p.lineHeight};
 `;
 
-const getToLink = (post) => post.fields.slug;
-
 const PostListItem = ({ post }) => {
   return (
     <Li key={post.fields.slug}>
-      <Link to={getToLink(post)}>
+      <Link to={post.fields.slug}>
         <Header>
           <Time
             pubdate
