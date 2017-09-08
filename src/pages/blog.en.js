@@ -2,7 +2,11 @@ import React from 'react';
 import Blog from './_blog';
 import graphql from 'graphql';
 
-export default (props) => <Blog {...props} />;
+const i18n = {
+  title: 'Posts'
+};
+
+export default (props) => <Blog i18n={i18n} {...props} />;
 
 export const pageQuery = graphql`
   query BlogEnQuery {

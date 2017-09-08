@@ -1,5 +1,5 @@
 const webpackLodashPlugin = require('lodash-webpack-plugin');
-const { GraphQLList, GraphQLObjectType, GraphQLString } = require('graphql');
+// const { GraphQLList, GraphQLObjectType, GraphQLString } = require('graphql');
 const R = require('ramda');
 const ptzMath = require('ptz-math');
 
@@ -14,8 +14,8 @@ const getReadNextRandom = ({ nPosts, post, readNext, posts }) => {
   const validPosts = posts.filter(p =>
     p.fields.slug !== post.fields.slug &&
     p.fields.langKey === post.fields.langKey);
-  const randomPosts = R.range(0, nPosts).map(_ => ptzMath.getRandomItem(validPosts));
-  return R.take(nPosts, R.concat(readNext, randomPosts));
+  const randomPosts = R.range(0, nPosts + 2).map(_ => ptzMath.getRandomItem(validPosts));
+  return R.take(nPosts, R.concat(readNext, R.uniq(randomPosts)));
 };
 
 const filterReadNext = (nPosts, readNext, posts) => {
@@ -31,62 +31,46 @@ const getReadNext = (nPosts, post, posts) => {
     : getReadNextRandom({ nPosts, post, readNext, posts });
 };
 
-const FrontmatterType = new GraphQLObjectType({
-  name: `ReadNext_Frontmatter`,
-  fields: {
-    date: {
-      type: GraphQLString
-    },
-    title: {
-      type: GraphQLString
-    }
-  }
-});
+exports.createPages = ({ graphql, boundActionCreators, getNode }, pluginOptions) => {
+  return new Promise((resolve, reject) => {
+    graphql(`
+      {
+        allMarkdownRemark{
+          edges{
+            node{
+              id,
+              excerpt,
+              frontmatter{
+                title
+                readNext
+              },
+              fields{
+                slug
+                langKey
+              }
+            }
+          }
+        }
+      }
+    `).then(result => {
+      try {
 
-const FieldsType = new GraphQLObjectType({
-  name: `ReadNext_Fields`,
-  fields: {
-    langKey: {
-      type: GraphQLString
-    },
-    slug: {
-      type: GraphQLString
-    }
-  }
-});
+        if (result.errors) {
+          throw result.errors;
+        }
 
-const ReadNextType = new GraphQLObjectType({
-  name: `ReadNext`,
-  fields: {
-    excerpt: {
-      type: GraphQLString
-    },
-    frontmatter: {
-      type: FrontmatterType
-    },
-    fields: {
-      type: FieldsType
-    }
-  }
-});
+        const posts = result.data.allMarkdownRemark.edges.map(n => n.node);
+        const { createNodeField } = boundActionCreators;
 
-exports.setFieldsOnGraphQLNodeType = (args) => {
-  return new Promise(function (resolve, reject) {
-    resolve({
-      readNext: {
-        type: new GraphQLList(ReadNextType),
-        resolve(markdownNode) {
-          console.log('markdownNode: ', markdownNode);
-
-          const nodes = args.getNodes()
-            .filter(n => n.fields && n.fields.langKey);
-
-          const readNext = getReadNext(3, markdownNode, nodes)
+        posts.forEach(post => {
+          const readNextPosts = getReadNext(3, post, posts)
             .map(p => {
+              const node = getNode(p.id);
+
               return {
                 excerpt: p.excerpt,
                 frontmatter: {
-                  date: p.frontmatter.date,
+                  date: node.frontmatter.date,
                   title: p.frontmatter.title
                 },
                 fields: {
@@ -95,9 +79,59 @@ exports.setFieldsOnGraphQLNodeType = (args) => {
                 }
               };
             });
-          return readNext;
-        }
+
+          createNodeField({
+            node: getNode(post.id),
+            name: 'readNextPosts',
+            value: readNextPosts
+          });
+        });
+
+        resolve();
+
+      } catch (e) {
+        console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>');
+        console.log('i18n createPage error:');
+        console.log(e);
+        console.log('<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<');
+        reject(e);
       }
     });
+  });
+};
+
+// Add readNextPosts fields
+// Here we can't access the excerpt field
+// If we use only the exports.createPages an error happens
+exports.setFieldsOnGraphQLNodeType = (args) => {
+  return new Promise(function (resolve, reject) {
+    const { createNodeField } = args.boundActionCreators;
+
+    const posts = args.getNodes().filter(n => n.fields && n.fields.langKey && !n.fields.readNextPosts);
+
+    posts.forEach(post => {
+      const readNextPosts = getReadNext(3, post, posts)
+        .map(p => {
+          return {
+            excerpt: '',
+            frontmatter: {
+              date: p.frontmatter.date,
+              title: p.frontmatter.title
+            },
+            fields: {
+              langKey: p.fields.langKey,
+              slug: p.fields.slug
+            }
+          };
+        });
+
+      createNodeField({
+        node: post,
+        name: 'readNextPosts',
+        value: readNextPosts
+      });
+    });
+
+    resolve();
   });
 };

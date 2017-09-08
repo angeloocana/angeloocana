@@ -8,7 +8,7 @@ import Tags from '../components/Tags';
 import { getStructuredData } from '../structuredData';
 import CleanTime from '../components/Time';
 import Comments from '../components/Comments';
-import ReadNext from '../components/ReadNext';
+import Posts from '../components/Posts';
 
 const Time = styled(CleanTime)`
   text-align: center;
@@ -184,12 +184,37 @@ const getYoutube = (markdownRemark) => {
     : null;
 };
 
+const getI18n = (langKey) => {
+  const i18n = {
+    'en': {
+      readNext: {
+        title: 'Read Next',
+        btnMorePostsMsg: 'See more interesting posts >>',
+      }
+    },
+    'pt': {
+      readNext: {
+        title: 'Mais posts',
+        btnMorePostsMsg: 'Ver mais posts interessantes >>'
+      }
+    },
+    'fr': {
+      readNext: {
+        title: 'Lisez la suite',
+        btnMorePostsMsg: `Voir d'autres messages intéressants >>`,
+      }
+    }
+  };
+
+  return i18n[langKey] || i18n.en;
+};
+
 const BlogPostRoute = (props) => {
   const { markdownRemark } = props.data;
   const { langKey } = props.pathContext;
   const youtube = getYoutube(markdownRemark);
   const structuredData = getStructuredData(markdownRemark);
-
+  const i18n = getI18n(langKey);
   const url = `https://angeloocana.com${markdownRemark.fields.slug}`;
 
   return (
@@ -217,7 +242,7 @@ const BlogPostRoute = (props) => {
       />
       <Tags tags={markdownRemark.fields.tagSlugs} />
       {youtube}
-      <Content dangerouslySetInnerHTML={{ __html: markdownRemark.html }} />      
+      <Content dangerouslySetInnerHTML={{ __html: markdownRemark.html }} />
       <Comments
         shortname="angeloocana-com"
         identifier={markdownRemark.fields.slug}
@@ -225,8 +250,9 @@ const BlogPostRoute = (props) => {
         url={url}
       />
       <Tags tags={markdownRemark.fields.tagSlugs} />
-      <ReadNext
-        posts={markdownRemark.readNext}
+      <Posts
+        posts={markdownRemark.fields.readNextPosts}
+        i18n={i18n.readNext}
         langKey={langKey}
       />
     </Post>
@@ -252,18 +278,18 @@ export const pageQuery = graphql`
           link
         }
         slug        
-      }
-      readNext {
-        excerpt
-        frontmatter {
-          title
-          date
+        readNextPosts {
+          excerpt
+          frontmatter {
+            title
+            date
+          }
+          fields {
+            slug
+            langKey
+          }
         }
-        fields {
-          slug
-          langKey
-        }
-      }
+      }      
       frontmatter {
         youtubeId
         title

@@ -4,7 +4,10 @@ import graphql from 'graphql';
 import { i18n as resume } from './resume/index.fr';
 
 export const i18n = {
-  btnMorePostsMsg: `Voir d'autres messages intéressants >>`,
+  posts: {
+    title: 'Articles',
+    btnMorePostsMsg: `Voir d'autres messages intéressants >>`,
+  },  
   btnResumeMsg: `Voir toutes les technologies +`,
   technologies: resume.technologies
 };
