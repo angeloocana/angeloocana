@@ -60,17 +60,17 @@ const Ul = styled.ul`
     display: block;
 `;
 
-const Tags = ({tags}) => {
-  if(!tags || tags.length === 0) return null;
+const Tags = (props) => {
+  if(!props.tags || props.tags.length === 0) return null;
 
   return (
     <Section>
       <Header>
-        Tags:
+        {props.i18n.title}
       </Header>
       <Ul>
         {
-          (tags || []).map((tag, i) =>
+          (props.tags || []).map((tag, i) =>
             <Tag tag={tag} key={i} />)
         }
       </Ul>
@@ -79,7 +79,10 @@ const Tags = ({tags}) => {
 };
 
 Tags.propTypes = {
-  tags: PropTypes.array
+  tags: PropTypes.array,
+  i18n: PropTypes.shape({
+    title: PropTypes.string.isRequired
+  }).isRequired
 };
 
 export default Tags;

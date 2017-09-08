@@ -9,8 +9,9 @@ import { getStructuredData } from '../structuredData';
 import CleanTime from '../components/Time';
 import Comments from '../components/Comments';
 import Posts from '../components/Posts';
+import { getI18nBase } from '../i18n/langs';
 
-const Time = styled(CleanTime)`
+const Time = styled(CleanTime) `
   text-align: center;
   font-size: ${props => props.theme.blog.post.header.time.fontSize};
   font-weight: bold;
@@ -184,30 +185,35 @@ const getYoutube = (markdownRemark) => {
     : null;
 };
 
-const getI18n = (langKey) => {
-  const i18n = {
-    'en': {
-      readNext: {
-        title: 'Read Next',
-        btnMorePostsMsg: 'See more interesting posts >>',
-      }
+const getI18n = getI18nBase({
+  'en': {
+    readNext: {
+      title: 'Read Next',
+      btnMorePostsMsg: 'See more interesting posts >>',
     },
-    'pt': {
-      readNext: {
-        title: 'Mais posts',
-        btnMorePostsMsg: 'Ver mais posts interessantes >>'
-      }
-    },
-    'fr': {
-      readNext: {
-        title: 'Lisez la suite',
-        btnMorePostsMsg: `Voir d'autres messages intéressants >>`,
-      }
+    tags: {
+      title: 'tags:'
     }
-  };
-
-  return i18n[langKey] || i18n.en;
-};
+  },
+  'pt': {
+    readNext: {
+      title: 'Mais posts',
+      btnMorePostsMsg: 'Ver mais posts interessantes >>'
+    },
+    tags: {
+      title: 'tags:'
+    }
+  },
+  'fr': {
+    readNext: {
+      title: 'Lisez la suite',
+      btnMorePostsMsg: `Voir d'autres messages intéressants >>`,
+    },
+    tags: {
+      title: 'étiquettes:'
+    }
+  }
+});
 
 const BlogPostRoute = (props) => {
   const { markdownRemark } = props.data;
@@ -216,6 +222,13 @@ const BlogPostRoute = (props) => {
   const structuredData = getStructuredData(markdownRemark);
   const i18n = getI18n(langKey);
   const url = `https://angeloocana.com${markdownRemark.fields.slug}`;
+
+  const tags = (
+    <Tags
+      tags={markdownRemark.fields.tagSlugs}
+      i18n={i18n.tags}
+    />
+  );
 
   return (
     <Post>
@@ -240,7 +253,7 @@ const BlogPostRoute = (props) => {
         fileAbsolutePath={markdownRemark.fileAbsolutePath}
         currentLangKey={langKey}
       />
-      <Tags tags={markdownRemark.fields.tagSlugs} />
+      {tags}
       {youtube}
       <Content dangerouslySetInnerHTML={{ __html: markdownRemark.html }} />
       <Comments
@@ -249,7 +262,7 @@ const BlogPostRoute = (props) => {
         title={markdownRemark.frontmatter.title}
         url={url}
       />
-      <Tags tags={markdownRemark.fields.tagSlugs} />
+      {tags}
       <Posts
         posts={markdownRemark.fields.readNextPosts}
         i18n={i18n.readNext}

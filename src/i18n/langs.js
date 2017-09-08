@@ -63,7 +63,15 @@ const getLangs = (currentLangKey, getUrlForLang) => {
   });
 };
 
+/**
+ * Get i18n obj for the given langKey
+ * @param {*} i18n Translations object
+ * @returns {*} i18n[langKey] or i18n[0]
+ */
+const getI18nBase = (i18n) => (langKey) => i18n[langKey] || i18n[0];
+
 export {
+  getI18nBase,
   getCurrentLangKey,
   getLangs,
   getUrlForLang,

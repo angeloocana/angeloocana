@@ -2,7 +2,11 @@ import React from 'react';
 import TagsPageRoute from './_tags';
 import graphql from 'graphql';
 
-export default (props) => <TagsPageRoute {...props} />;
+const i18n = {
+  title: 'Tags'
+};
+
+export default (props) => <TagsPageRoute i18n={i18n} {...props} />;
 
 export const pageQuery = graphql`
   query TagsPtQuery {

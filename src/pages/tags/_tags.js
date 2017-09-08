@@ -7,6 +7,7 @@ import styled from 'styled-components';
 
 const Nav = styled.nav`
   margin-top: ${({theme}) => theme.scale(-1)};
+  margin-bottom: ${({theme}) => theme.scale(6)};
   column-count: 2;
 
   @media (min-width: 450px) {
@@ -23,13 +24,13 @@ const Li = styled.li`
   padding: ${({theme}) => theme.scale(-1)} 0;
 `;
 
-const TagsPageRoute = ({data, pathContext}) => {
-  const allTags = data.allMarkdownRemark.group;
+const TagsPageRoute = (props) => {
+  const allTags = props.data.allMarkdownRemark.group;
 
   return (
     <section className="post-list">
       <header>
-        <H1>Tags</H1>
+        <H1>{props.i18n.title}</H1>
       </header>
       <Nav>
         <ul>
@@ -39,7 +40,7 @@ const TagsPageRoute = ({data, pathContext}) => {
                 style={{
                   textDecoration: 'none',
                 }}
-                to={`${pathContext.langKey}/tags/${kebabCase(tag.fieldValue)}/`}
+                to={`${props.pathContext.langKey}/tags/${kebabCase(tag.fieldValue)}/`}
               >
                 {tag.fieldValue} ({tag.totalCount})
               </Link>
@@ -53,7 +54,10 @@ const TagsPageRoute = ({data, pathContext}) => {
 
 TagsPageRoute.propTypes = {
   data: PropTypes.object,
-  pathContext: PropTypes.object
+  pathContext: PropTypes.object,
+  i18n: PropTypes.shape({
+    title: PropTypes.string
+  })
 };
 
 export default TagsPageRoute;
