@@ -1,4 +1,5 @@
 const webpackLodashPlugin = require('lodash-webpack-plugin');
+const { GraphQLList, GraphQLObjectType, GraphQLString } = require('graphql');
 const R = require('ramda');
 const ptzMath = require('ptz-math');
 
@@ -9,93 +10,93 @@ exports.modifyWebpackConfig = ({ config, stage }) => {
   }
 };
 
-const getReadNextPostsRandom = ({ nPosts, post, readNextPosts, posts }) => {
+const getReadNextRandom = ({ nPosts, post, readNext, posts }) => {
   const validPosts = posts.filter(p =>
-    p.node.fields.slug !== post.node.fields.slug &&
-    p.node.fields.langKey === post.node.fields.langKey);
+    p.fields.slug !== post.fields.slug &&
+    p.fields.langKey === post.fields.langKey);
   const randomPosts = R.range(0, nPosts).map(_ => ptzMath.getRandomItem(validPosts));
-  return R.take(nPosts, R.concat(readNextPosts, randomPosts));
+  return R.take(nPosts, R.concat(readNext, randomPosts));
 };
 
-const filterReadNextPosts = (nPosts, readNext, posts) => {
+const filterReadNext = (nPosts, readNext, posts) => {
   return !readNext || !posts
     ? []
-    : R.filter(p => R.contains(p.node.fields.slug, readNext), posts);
+    : R.filter(p => R.contains(p.fields.slug, readNext), posts);
 };
 
-const getReadNextPosts = (nPosts, post, posts) => {
-  const readNextPosts = filterReadNextPosts(nPosts, post.node.frontmatter.readNext, posts);
-  return readNextPosts.length === nPosts
-    ? readNextPosts
-    : getReadNextPostsRandom({ nPosts, post, readNextPosts, posts });
+const getReadNext = (nPosts, post, posts) => {
+  const readNext = filterReadNext(nPosts, post.frontmatter.readNext, posts);
+  return readNext.length === nPosts
+    ? readNext
+    : getReadNextRandom({ nPosts, post, readNext, posts });
 };
 
-exports.createPages = ({ graphql, boundActionCreators, getNode }, pluginOptions) => {
-  return new Promise((resolve, reject) => {
-    graphql(`
-      {
-        allMarkdownRemark{
-          edges{
-            node{
-              id,
-              excerpt,
-              frontmatter{
-                title
-                readNext
-              },
-              fields{
-                slug
-                langKey
-              }
-            }
-          }
-        }
-      }
-    `).then(result => {
-      try {
+const FrontmatterType = new GraphQLObjectType({
+  name: `ReadNext_Frontmatter`,
+  fields: {
+    date: {
+      type: GraphQLString
+    },
+    title: {
+      type: GraphQLString
+    }
+  }
+});
 
-        if (result.errors) {
-          throw result.errors;
-        }
+const FieldsType = new GraphQLObjectType({
+  name: `ReadNext_Fields`,
+  fields: {
+    langKey: {
+      type: GraphQLString
+    },
+    slug: {
+      type: GraphQLString
+    }
+  }
+});
 
-        const posts = result.data.allMarkdownRemark.edges;
-        const { createNodeField } = boundActionCreators;
+const ReadNextType = new GraphQLObjectType({
+  name: `ReadNext`,
+  fields: {
+    excerpt: {
+      type: GraphQLString
+    },
+    frontmatter: {
+      type: FrontmatterType
+    },
+    fields: {
+      type: FieldsType
+    }
+  }
+});
 
-        posts.forEach(post => {
-          const readNextPosts = getReadNextPosts(3, post, posts)
+exports.setFieldsOnGraphQLNodeType = (args) => {
+  return new Promise(function (resolve, reject) {
+    resolve({
+      readNext: {
+        type: new GraphQLList(ReadNextType),
+        resolve(markdownNode) {
+          console.log('markdownNode: ', markdownNode);
+
+          const nodes = args.getNodes()
+            .filter(n => n.fields && n.fields.langKey);
+
+          const readNext = getReadNext(3, markdownNode, nodes)
             .map(p => {
-              const node = getNode(p.node.id);
-              const pNode = { ...p.node, ...node };
-
               return {
-                excerpt: pNode.excerpt,
+                excerpt: p.excerpt,
                 frontmatter: {
-                  date: pNode.frontmatter.date,
-                  title: pNode.frontmatter.title
+                  date: p.frontmatter.date,
+                  title: p.frontmatter.title
                 },
                 fields: {
-                  langKey: pNode.fields.langKey,
-                  slug: pNode.fields.slug
+                  langKey: p.fields.langKey,
+                  slug: p.fields.slug
                 }
               };
             });
-
-          console.log('post.node.id: ', getNode(post.node.id).id);
-          createNodeField({
-            node: getNode(post.node.id),
-            name: 'readNextPosts',
-            value: readNextPosts
-          });
-        });
-
-        resolve();
-
-      } catch (e) {
-        console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>');
-        console.log('i18n createPage error:');
-        console.log(e);
-        console.log('<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<');
-        reject(e);
+          return readNext;
+        }
       }
     });
   });

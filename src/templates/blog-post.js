@@ -226,7 +226,7 @@ const BlogPostRoute = (props) => {
       />
       <Tags tags={markdownRemark.fields.tagSlugs} />
       <ReadNext
-        posts={markdownRemark.fields.readNextPosts}
+        posts={markdownRemark.readNext}
         langKey={langKey}
       />
     </Post>
@@ -251,17 +251,17 @@ export const pageQuery = graphql`
           tag
           link
         }
-        slug
-        readNextPosts {
-          excerpt
-          frontmatter {
-            title
-            date
-          }
-          fields {
-            slug
-            langKey
-          }
+        slug        
+      }
+      readNext {
+        excerpt
+        frontmatter {
+          title
+          date
+        }
+        fields {
+          slug
+          langKey
         }
       }
       frontmatter {
