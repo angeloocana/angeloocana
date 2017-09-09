@@ -14,13 +14,11 @@
 - Fix firefox first big letter.
 - Fix react intl locales (Remove moment).
 - Breadcrumb.
-- Add site to yahoo.
-- Add site to bing.
 
 ## Working
+- Resume: Add jobs and clients.
 - Add pluralsight bonus http://referral.pluralsight.com/mQcW67u
 - Rewrite welcome (simplify).
-- Resume: Add jobs and clients.
 - E-mail subscription.
 - Add rich cards for google.
 - Add AMP.
@@ -29,6 +27,7 @@
 - Add images.
 
 ## Done
+- Add site to bing (yahoo).
 - Add post suggestions.
 - i18n tags.
 - Fix readNext.
