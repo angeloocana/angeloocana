@@ -63,14 +63,21 @@ const getLangs = (currentLangKey, getUrlForLang) => {
   });
 };
 
+
 /**
  * Get i18n obj for the given langKey
+ * @param {*} defaultLangKey default langKey
  * @param {*} i18n Translations object
- * @returns {*} i18n[langKey] or i18n[0]
+ * @param {*} langKey langKey
+ * @returns {*} i18n[langKey] or i18n[defaultLangKey]
  */
-const getI18nBase = (i18n) => (langKey) => i18n[langKey] || i18n[0];
+const getI18n = curry((defaultLangKey, i18n, langKey) =>
+  i18n[langKey] || i18n[defaultLangKey]);
+
+const getI18nBase = getI18n(defaultLangKey);
 
 export {
+  getI18n,
   getI18nBase,
   getCurrentLangKey,
   getLangs,

@@ -1,7 +1,8 @@
 import {
   getCurrentLangKey,
   getLangs,
-  getUrlForLang
+  getUrlForLang,
+  getI18nBase
 } from './langs';
 import * as assert from 'ptz-assert';
 
@@ -78,6 +79,29 @@ describe('langs', () => {
           'selected': false
         }];
       assert.deepEqual(langs, expected);
+    });
+  });
+
+  describe('getI18nBase', () => {
+    const en = {
+      title: 'test'
+    };
+    const pt = {
+      title: 'teste'
+    };
+
+    const getI18n = getI18nBase({
+      en,
+      pt
+    });
+
+    it('return pt for pt', () => {
+      const i18n = getI18n('pt');
+      assert.equal(i18n, pt);
+    });
+    it('return en for any', () => {
+      const i18n = getI18n('any');
+      assert.equal(i18n, en);
     });
   });
 });

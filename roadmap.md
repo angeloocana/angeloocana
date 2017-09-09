@@ -18,18 +18,20 @@
 - Add site to bing.
 
 ## Working
+- Add pluralsight bonus http://referral.pluralsight.com/mQcW67u
 - Rewrite welcome (simplify).
 - Resume: Add jobs and clients.
 - E-mail subscription.
-- Fix readNext.
 - Add rich cards for google.
 - Add AMP.
 - Fix dns.
 - Add tags section to home.
-- Add post suggestions.
 - Add images.
 
 ## Done
+- Add post suggestions.
+- i18n tags.
+- Fix readNext.
 - Resume: Add Education.
 - Resume: Add filter by tag.
 - Resume: Add filter by year.

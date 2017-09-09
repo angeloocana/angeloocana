@@ -11,7 +11,7 @@ import Comments from '../components/Comments';
 import Posts from '../components/Posts';
 import { getI18nBase } from '../i18n/langs';
 
-const Time = styled(CleanTime) `
+const Time = styled(CleanTime)`
   text-align: center;
   font-size: ${props => props.theme.blog.post.header.time.fontSize};
   font-weight: bold;
@@ -222,6 +222,11 @@ const BlogPostRoute = (props) => {
   const structuredData = getStructuredData(markdownRemark);
   const i18n = getI18n(langKey);
   const url = `https://angeloocana.com${markdownRemark.fields.slug}`;
+
+  if (!i18n) {
+    console.log(' props: ', props.pathContext);
+    console.log('i18n', i18n);
+  }
 
   const tags = (
     <Tags
