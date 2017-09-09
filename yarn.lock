@@ -3953,12 +3953,21 @@ gatsby-plugin-google-analytics@^1.0.1:
   dependencies:
     babel-runtime "^6.26.0"
 
-gatsby-plugin-i18n@^0.0.5:
-  version "0.0.5"
-  resolved "https://registry.yarnpkg.com/gatsby-plugin-i18n/-/gatsby-plugin-i18n-0.0.5.tgz#970d0d7fceb6dba526c6acd35f518ddd87ed2a82"
+gatsby-plugin-i18n-tags@^0.0.2:
+  version "0.0.2"
+  resolved "https://registry.yarnpkg.com/gatsby-plugin-i18n-tags/-/gatsby-plugin-i18n-tags-0.0.2.tgz#1add27674f1159ecf32c1f57247d196d44c20467"
   dependencies:
     bluebird "^3.5.0"
     graphql "^0.11.1"
+    ptz-i18n "^0.0.6"
+
+gatsby-plugin-i18n@^0.1.1:
+  version "0.1.1"
+  resolved "https://registry.yarnpkg.com/gatsby-plugin-i18n/-/gatsby-plugin-i18n-0.1.1.tgz#f0a0b61d2b1e8fab5514d0ffd8e5e28909e91909"
+  dependencies:
+    bluebird "^3.5.0"
+    graphql "^0.11.1"
+    ptz-i18n "^0.0.6"
 
 gatsby-plugin-manifest@^1.0.1:
   version "1.0.7"
@@ -8236,6 +8245,12 @@ ptz-fp@^1.2.0:
     "@types/ramda" "0.0.10"
     ptz-log "^1.0.0"
     ramda "^0.24.0"
+
+ptz-i18n@^0.0.6:
+  version "0.0.6"
+  resolved "https://registry.yarnpkg.com/ptz-i18n/-/ptz-i18n-0.0.6.tgz#56c96b73d4befb10118d4573f4659d0a7a67100c"
+  dependencies:
+    ramda "^0.24.1"
 
 ptz-log@^1.0.0:
   version "1.1.0"

@@ -16,7 +16,7 @@ import {
   getUrlForLang,
   getCurrentLangKey,
   isHomePage
-} from '../i18n/langs';
+} from 'ptz-i18n';
 
 const Background = styled.div`
   background-color: ${props => props.theme.bg};

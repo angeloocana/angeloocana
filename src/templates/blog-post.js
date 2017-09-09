@@ -9,7 +9,7 @@ import { getStructuredData } from '../structuredData';
 import CleanTime from '../components/Time';
 import Comments from '../components/Comments';
 import Posts from '../components/Posts';
-import { getI18nBase } from '../i18n/langs';
+import { getI18nBase } from 'ptz-i18n';
 
 const Time = styled(CleanTime)`
   text-align: center;

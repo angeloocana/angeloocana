@@ -77,10 +77,16 @@ module.exports = {
       resolve: 'gatsby-plugin-i18n',
       options: {
         postPage: 'src/templates/blog-post.js',
-        tagPage: 'src/templates/tag-page.js',
-        tagsUrl: '/tags/',
         langKeyForNull: 'any',
         langKeyDefault: 'en'
+      }
+    },
+    {
+      resolve: 'gatsby-plugin-i18n-tags',
+      options: { // Default options
+        tagPage: 'src/templates/tag-page.js',
+        tagsUrl: '/tags/',
+        langKeyForNull: 'any'
       }
     },
     'gatsby-plugin-styled-components'

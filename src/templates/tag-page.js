@@ -4,7 +4,7 @@ import graphql from 'graphql';
 import Link from 'gatsby-link';
 import styled from 'styled-components';
 import PostList from '../components/PostList';
-import { getI18nBase } from '../i18n/langs';
+import { getI18nBase } from 'ptz-i18n';
 import { FormattedMessage } from 'react-intl';
 
 const Header = styled.header`
