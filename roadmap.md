@@ -14,8 +14,6 @@
 - Fix firefox first big letter.
 - Fix react intl locales (Remove moment).
 - Breadcrumb.
-- create gatsby-plugins-i18n-tags
-- create gatsby-plugins-i18n-readnext
 
 ## Working
 - Resume: Add jobs and clients.
@@ -29,6 +27,8 @@
 - Add images.
 
 ## Done
+- create gatsby-plugins-i18n-tags
+- create gatsby-plugins-i18n-readnext
 - Add site to bing (yahoo).
 - Add post suggestions.
 - i18n tags.

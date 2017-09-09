@@ -3953,6 +3953,14 @@ gatsby-plugin-google-analytics@^1.0.1:
   dependencies:
     babel-runtime "^6.26.0"
 
+gatsby-plugin-i18n-readnext@^0.0.1:
+  version "0.0.1"
+  resolved "https://registry.yarnpkg.com/gatsby-plugin-i18n-readnext/-/gatsby-plugin-i18n-readnext-0.0.1.tgz#eac1262ebfc655242b920292112a0ada8b5d2d30"
+  dependencies:
+    bluebird "^3.5.0"
+    ptz-math "^1.1.0"
+    ramda "^0.24.1"
+
 gatsby-plugin-i18n-tags@^0.0.2:
   version "0.0.2"
   resolved "https://registry.yarnpkg.com/gatsby-plugin-i18n-tags/-/gatsby-plugin-i18n-tags-0.0.2.tgz#1add27674f1159ecf32c1f57247d196d44c20467"
