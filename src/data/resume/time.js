@@ -1,4 +1,4 @@
-const range = (from, to) => {
+exports.range = (from, to) => {
   var list = [];
   for (var i = from; i <= to; i += 1) {
     list.push(i);
@@ -6,9 +6,4 @@ const range = (from, to) => {
   return list;
 };
 
-const thisYear = (new Date()).getFullYear();
-
-export {
-  range,
-  thisYear
-};
+exports.thisYear = (new Date()).getFullYear();

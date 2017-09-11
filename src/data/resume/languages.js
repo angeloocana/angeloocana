@@ -40,7 +40,7 @@ const languages = {
   }
 };
 
-export {
+module.exports = {
   levels,
   languages
 };

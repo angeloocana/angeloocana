@@ -1,7 +1,7 @@
-import { technologies } from './technologies';
-import { languages } from './languages';
-import { jobsAndClients } from './jobsAndClients';
-import { educations } from './educations';
+const { technologies } = require('./technologies');
+const { languages } = require('./languages');
+const { jobsAndClients } = require('./jobsAndClients');
+const { educations } = require('./educations');
 
 const getArray = (list) => {
   return Object.keys(list).map(key => {

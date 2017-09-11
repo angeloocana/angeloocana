@@ -1,4 +1,4 @@
-// import {range, thisYear} from './time';
+// const {range, thisYear} = require('./time');
 
 const jobsAndClients = {
 //   '': {
@@ -18,6 +18,6 @@ const jobsAndClients = {
 //   },
 };
 
-export {
+module.exports = {
   jobsAndClients
 };

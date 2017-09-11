@@ -1,4 +1,4 @@
-import {range, thisYear} from './time';
+const {range, thisYear} = require('./time');
 
 const levels = {
   novice: 'novice',
@@ -214,8 +214,8 @@ const technologies = {
   // },
 };
 
-export {
+module.exports = {
   technologies,
-  levels,
-  tags
+  tags,
+  levels
 };

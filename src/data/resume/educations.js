@@ -1,4 +1,4 @@
-import {range, thisYear} from './time';
+const {range, thisYear} = require('./time');
 
 const educations = {
   'Pluralsight': {
@@ -58,6 +58,6 @@ const educations = {
   }
 };
 
-export {
+module.exports = {
   educations
 };
