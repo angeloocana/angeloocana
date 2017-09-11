@@ -281,8 +281,24 @@ const educations = {
 };
 
 const jobsAndClients = {
-
+  '': {
+    years: range(),
+    img: '',
+    link: ''
+  },
+  '': {
+    years: range(),
+    img: '',
+    link: ''
+  },
+  '': {
+    years: range(),
+    img: '',
+    link: ''
+  },
 };
+
+
 
 const getArray = (list) => {
   return Object.keys(list).map(key => {
