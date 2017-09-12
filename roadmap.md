@@ -25,6 +25,7 @@
 - Fix dns.
 - Add tags section to home.
 - Add images.
+- Optically align objects.
 
 ## Done
 - create gatsby-plugins-i18n-tags

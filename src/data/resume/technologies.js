@@ -86,32 +86,40 @@ const technologies = {
     years: range(2015, thisYear),
     tags: [tags.frontEnd, tags.backEnd],
     level: levels.expert,
-    img: '',
-    link: ''
+    img: 'typescript.png',
+    link: 'https://www.typescriptlang.org/'
   },
   tslint: {
     name: 'TSLint',
     years: range(2015, thisYear),
     tags: [tags.frontEnd, tags.backEnd],
     level: levels.expert,
-    img: '',
-    link: ''
+    img: 'tslint.png',
+    link: 'https://palantir.github.io/tslint/'
   },
   gulp: {
     name: 'Gulp',
     years: range(2015, 2016),
     tags: [tags.frontEnd],
     level: levels.expert,
-    img: '',
-    link: ''
+    img: 'gulp.svg',
+    link: 'https://gulpjs.com/'
   },
   jasmine: {
     name: 'Jasmine',
     years: range(2015, 2016),
     tags: [tags.frontEnd],
     level: levels.proficient,
-    img: '',
-    link: ''
+    img: 'jasmine.svg',
+    link: 'https://jasmine.github.io/'
+  },
+  mocha: {
+    name: 'mocha',
+    years: range(2016, thisYear),
+    tags: [tags.frontEnd, tags.backEnd],
+    level: levels.expert,
+    img: 'mocha.svg',
+    link: 'https://mochajs.org/'
   },
   arch: {
     name: 'Arch Linux',
@@ -158,48 +166,50 @@ const technologies = {
     years: range(2015, 2016),
     tags: [tags.frontEnd, tags.mobile],
     level: levels.proficient,
-    img: '',
-    link: ''
+    img: 'ionic.png',
+    link: 'https://ionicframework.com/'
   },
   cordova: {
     name: 'Cordova',
     years: range(2015, thisYear),
     tags: [tags.frontEnd, tags.mobile],
     level: levels.proficient,
-    img: '',
-    link: ''
+    needWhiteBg: true,
+    img: 'cordova.svg',
+    link: 'https://cordova.apache.org/'
   },
   azure: {
     name: 'Azure',
     years: range(2015, thisYear),
     tags: [tags.cloud],
     level: levels.proficient,
-    img: '',
-    link: ''
+    img: 'azure.svg',
+    link: 'https://azure.microsoft.com'
   },
   amazon: {
     name: 'Amazon',
     years: range(2014, thisYear),
     tags: [tags.cloud],
     level: levels.novice,
-    img: '',
-    link: ''
+    needWhiteBg: true,
+    img: 'amazon.svg',
+    link: 'https://aws.amazon.com/'
   },
   eroku: {
     name: 'Eroku',
     years: range(2014, 2015),
     tags: [tags.cloud],
     level: levels.novice,
-    img: '',
-    link: ''
+    img: 'heroku.svg',
+    link: 'https://www.heroku.com'
   },
   surge: {
     name: 'Surge',
     years: range(2017, thisYear),
     tags: [tags.cloud],
     level: levels.proficient,
-    img: '',
-    link: ''
+    img: 'surge.svg',
+    link: 'http://surge.sh'
   },
   cSharp: {
     name: 'C#',
@@ -230,104 +240,115 @@ const technologies = {
     years: range(2008, 2012),
     tags: [tags.frontEnd, tags.backEnd],
     level: levels.expert,
-    img: '',
-    link: ''
+    img: 'windowsforms.png',
+    link: 'https://en.wikipedia.org/wiki/Windows_Forms'
   },
   wpf: {
     name: 'WPF',
     years: range(2010, 2011),
     tags: [tags.frontEnd, tags.backEnd],
     level: levels.proficient,
-    img: '',
-    link: ''
+    img: 'wpf.png',
+    link: 'https://en.wikipedia.org/wiki/Windows_Presentation_Foundation'
   },
   lucene: {
     name: 'Lucene',
     years: range(2014, 2015),
     tags: [tags.backEnd],
     level: levels.proficient,
-    img: '',
-    link: ''
+    img: 'lucene.png',
+    link: 'https://lucene.apache.org'
   },
   rabbitmq: {
     name: 'RabbitMQ',
     years: range(2014, 2015),
     tags: [tags.backEnd],
     level: levels.proficient,
-    img: '',
-    link: ''
+    img: 'rabbitmq.svg',
+    link: 'https://www.rabbitmq.com/'
   },
   structureMap: {
     name: 'StructureMap',
     years: range(2014, 2016),
     tags: [tags.backEnd],
     level: levels.expert,
-    img: '',
-    link: ''
+    img: 'structuremap.png',
+    link: 'http://structuremap.github.io/'
   },
   entityFramework: {
     name: 'Entity Framework',
     years: range(2012, 2016),
     tags: [tags.backEnd],
     level: levels.expert,
-    img: '',
-    link: ''
+    img: 'entityframework.png',
+    link: 'https://en.wikipedia.org/wiki/Entity_Framework'
   },
   wcf: {
     name: 'WCF',
     years: range(2011, 2015),
     tags: [tags.backEnd],
     level: levels.expert,
-    img: '',
-    link: ''
+    img: 'wcf.png',
+    link: 'https://en.wikipedia.org/wiki/Windows_Communication_Foundation'
   },
   ext: {
     name: 'EXT .net',
     years: range(2010, 2011),
     tags: [tags.frontEnd],
+    needWhiteBg: true,
     level: levels.proficient,
-    img: '',
-    link: ''
+    img: 'extnet.png',
+    link: 'http://ext.net/'
   },
   d3: {
     name: 'D3',
     years: range(2016, thisYear),
     tags: [tags.frontEnd],
     level: levels.proficient,
-    img: '',
-    link: ''
+    img: 'd3.png',
+    link: 'https://d3js.org/'
   },
   styledComponents: {
     name: 'Styled Components',
     years: range(2017, thisYear),
+    needWhiteBg: true,
     tags: [tags.frontEnd],
     level: levels.proficient,
-    img: '',
-    link: ''
+    img: 'styled-components.png',
+    link: 'https://www.styled-components.com/'
   },
   jest: {
     name: 'Jest',
     years: range(2017, thisYear),
     tags: [tags.frontEnd, tags.backEnd],
     level: levels.proficient,
-    img: '',
-    link: ''
+    img: 'jest.svg',
+    link: 'https://facebook.github.io/jest/'
   },
   eslint: {
     name: 'ESlint',
     years: range(2016, thisYear),
     tags: [tags.frontEnd, tags.backEnd],
     level: levels.proficient,
-    img: '',
-    link: ''
+    img: 'eslint.svg',
+    link: 'https://eslint.org/'
   },
   babel: {
     name: 'babel',
     years: range(2016, thisYear),
     tags: [tags.frontEnd, tags.backEnd],
     level: levels.proficient,
-    img: '',
-    link: ''
+    img: 'babel.svg',
+    needWhiteBg: true,
+    link: 'https://babeljs.io/'
+  },
+  webpack: {
+    name: 'webpack',
+    years: range(2016, thisYear),
+    tags: [tags.frontEnd],
+    level: levels.proficient,
+    img: 'webpack.svg',
+    link: 'https://webpack.js.org/'
   },
   visualStudio: {
     name: 'visual studio',
@@ -423,24 +444,24 @@ const technologies = {
     years: range(2008, 2010),
     tags: [tags.frontEnd],
     level: levels.proficient,
-    img: '',
-    link: ''
+    img: 'telerik.png',
+    link: 'http://www.telerik.com/'
   },
   flash: {
-    name: 'Flash / Action Script',
+    name: 'Flash',
     years: range(2007, 2010),
     tags: [tags.frontEnd],
     level: levels.proficient,
-    img: '',
-    link: ''
+    img: 'flash.png',
+    link: 'http://www.adobe.com/Animate'
   },
   adobeFlex: {
-    name: 'Adobe Flex Builder',
+    name: 'Flex',
     years: range(2008, 2009),
     tags: [tags.frontEnd],
     level: levels.proficient,
-    img: '',
-    link: ''
+    img: 'flex.png',
+    link: 'http://www.adobe.com/products/flex.html'
   }  
   // 'Gimp': {
   //   years: range(2007, 2008),
