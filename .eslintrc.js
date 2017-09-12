@@ -93,7 +93,7 @@ module.exports = {
         "id-blacklist": "error",
         "id-length": "off",
         "id-match": "error",
-        "indent": [2, 2],
+        "indent": ["error", 2, { "SwitchCase": 1 }],
         "indent-legacy": "off",
         "react/jsx-indent": [2, 2],
         "react/jsx-indent-props": [2, 2],
