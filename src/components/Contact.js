@@ -27,8 +27,8 @@ const getIcon = (type) => {
 const Link = styled(A)`
   padding-top: ${({theme}) => theme.scale(0)};
   padding-bottom: ${({theme}) => theme.scale(1)};
-  padding-right: ${({theme}) => theme.scale(0)};
-  padding-left: ${({theme}) => theme.scale(1)};
+  padding-right: 0;
+  padding-left: ${({theme}) => theme.scale(0)};
   margin: 0;
 
   color: ${({theme}) => theme.colors.white};
@@ -72,10 +72,13 @@ ContactItem.propTypes = {
 
 const Ul = styled.ul`
   padding-top: ${({theme}) => theme.scale(0)};
-  padding-bottom: ${({theme}) => theme.scale(1)};
+  padding-bottom: ${({theme}) => theme.scale(7)};
   padding-right: 0;
   padding-left: 0;
-  margin: 0;
+  margin: auto;
+
+  width: 100%;
+  max-width: 20rem;
 `;
 
 const Contact = (props) => {

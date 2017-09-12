@@ -9,14 +9,19 @@ import Ca from './flags/Ca';
 
 const Link = styled(A)`
   display: inline-block;
-  padding: ${props => props.theme.footer.padding};
-  margin: ${props => props.theme.footer.margin};
+
+  padding-top: ${({theme}) => theme.scale(6)};
+  padding-bottom: ${({theme}) => theme.scale(7)};
+  padding-right: ${({theme}) => theme.scale(0)};
+  padding-left: ${({theme}) => theme.scale(0)};
+  margin: 0;
+
   line-height: 1.5;
   border-radius: ${props => props.theme.borderRadius};
   transition: 0.3s;
   
   &:hover {
-    background-color: ${props => props.theme.footer.hover.backgroundColor};
+    background-color: ${props => props.theme.colors.blackShades[0]};
     transition: 0.3s;
   }
 `;

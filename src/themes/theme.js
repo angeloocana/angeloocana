@@ -117,13 +117,6 @@ const theme = {
       marginLeft: scale(7.8)
     }
   },
-  footer: {
-    padding: scale(2),
-    margin: `0 -${scaleN(2)}rem`,
-    hover: {
-      backgroundColor: colors.blackShades[0]
-    }
-  },
   socialLinks: {
     margin: `0 ${scale(0)}`,
     padding: 0,
