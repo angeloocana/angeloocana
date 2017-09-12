@@ -6,6 +6,7 @@ import FaGithub from 'react-icons/lib/fa/github';
 import A from './A';
 import styled from 'styled-components';
 import Ca from './flags/Ca';
+import Like from 'react-icons/lib/md/thumb-up';
 
 const Link = styled(A)`
   display: inline-block;
@@ -43,8 +44,10 @@ const ProfilePicture = styled(Gravatar)`
 
 const GithubIcon = styled(FaGithub)`
   font-size: ${({ theme }) => theme.scale(4)};
-  display: block;
+  display: inline-block;
   margin: auto;
+  margin: 0;
+  padding: 0 ${({ theme }) => theme.scale(-6)} 0 0;
 `;
 
 const HomeCountryIcon = styled(Ca)`
@@ -54,37 +57,24 @@ const HomeCountryIcon = styled(Ca)`
   margin-left: ${({ theme }) => theme.scale(-6)};
 `;
 
-const Span = styled.span`
-  color: ${({ theme }) => theme.colors.yellow};
-`;
-
 const getGitHubMsg = () => {
   return {
     en: (
       <p>
         <GithubIcon />
-        Do you want to see the source code of this site? <br />
-        It's <span>FREE</span>!  <br />
-        It's <span>OPEN SOURCE</span>! <br />
-        Click <Span>HERE</Span> to check it out!!!
+        <span>OPEN SOURCE</span>!
       </p>
     ),
     pt: (
       <p>
         <GithubIcon />
-        Você quer ver o codigo fonte deste site? <br />
-        É <span>GRATUÍTO</span>!  <br />
-        É <span>OPEN SOURCE</span>! <br />
-        Click <Span>AQUI</Span> e confira!!!
+        <span>OPEN SOURCE</span>!
       </p>
     ),
     fr: (
       <p>
         <GithubIcon />
-        Voulez-vous voir le code source de ce site? <br />
-        c'est <span>GRATUIT</span>!  <br />
-        C'est une <span>SOURCE OUVERTE</span>! <br />
-        Cliquez <Span>ICI</Span> pour vérifier!!!
+        <span>SOURCE OUVERTE</span>!
       </p>
     )
   };

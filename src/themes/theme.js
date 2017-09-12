@@ -29,11 +29,12 @@ const fontFamily = '"Cambo", serif';
 
 const theme = {
   scale,
+  scaleN,
   colors,
   fontFamily,
   color: colors.white,
   bg: colors.black,
-  padding: `0 ${scaleN(1)}rem ${scaleN(2)}rem ${scaleN(0)}rem`,
+  padding: `0 ${scaleN(1)}rem ${scaleN(10)}rem ${scaleN(0)}rem`,
   margin: '0 auto',
   maxWidth: '60rem',
   borderRadius: '0.2rem',
