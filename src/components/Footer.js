@@ -6,7 +6,6 @@ import FaGithub from 'react-icons/lib/fa/github';
 import A from './A';
 import styled from 'styled-components';
 import Ca from './flags/Ca';
-import Like from 'react-icons/lib/md/thumb-up';
 
 const Link = styled(A)`
   display: inline-block;
