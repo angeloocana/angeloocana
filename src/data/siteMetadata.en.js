@@ -16,6 +16,8 @@ module.exports = {
     {label: 'Posts', link: '/en/blog/'},
     {label: 'Tags', link: '/en/tags/'},
     {label: 'About me', link: '/en/about/'},
-    {label: 'Curriculum Vitae', link: '/en/resume/'}
-  ]
+    {label: 'Curriculum Vitae', link: '/en/resume/'},
+    // {label: 'Source Code', link: 'https://github.com/angeloocana/angeloocana'},
+    {label: 'Contact', link: '/en/contact/'}
+  ]  
 };

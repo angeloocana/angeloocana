@@ -34,10 +34,10 @@ const ImgContainer = styled.div`
 const Level = styled.p`
   color: ${({ theme, level }) => {
     switch (level) {
-    case 'expert': return theme.colors.green;
-    case 'novice': return theme.colors.darkBlue;
-    case 'proficient': return theme.colors.blue;
-    default: return '';
+      case 'expert': return theme.colors.green;
+      case 'novice': return theme.colors.darkBlue;
+      case 'proficient': return theme.colors.blue;
+      default: return '';
     }
   }};
   font-weight: bold;

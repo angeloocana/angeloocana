@@ -9,10 +9,10 @@ const yearsMsg = `{nYears, number} {nYears, plural,
 
 const getLevelMsg = (level) => {
   switch (level) {
-  case 'expert': return 'Expert';
-  case 'novice': return 'Novice';
-  case 'proficient': return 'Proficient';
-  default: return '';
+    case 'expert': return 'Expert';
+    case 'novice': return 'Novice';
+    case 'proficient': return 'Proficient';
+    default: return '';
   }
 };
 

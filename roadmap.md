@@ -14,8 +14,11 @@
 - Fix firefox first big letter.
 - Fix react intl locales (Remove moment).
 - Breadcrumb.
+- Rewrite footer (simplify) - better align.
+- Add social links to menu.
 
 ## Working
+- Contact page.
 - Resume: Add jobs and clients.
 - Add pluralsight bonus http://referral.pluralsight.com/mQcW67u
 - Rewrite welcome (simplify).

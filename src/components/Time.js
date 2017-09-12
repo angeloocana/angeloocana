@@ -4,10 +4,10 @@ import moment from 'moment';
 
 const getLocale = (langKey) => {
   switch (langKey) {
-  case 'en': return 'en-ca';
-  case 'fr': return 'fr-ca';
-  case 'pt': return 'pt-br';
-  default: return langKey;
+    case 'en': return 'en-ca';
+    case 'fr': return 'fr-ca';
+    case 'pt': return 'pt-br';
+    default: return langKey;
   }
 };
 
