@@ -11,9 +11,10 @@ const i18n = {
     </p>
   ),
   descriptionForGoogle: `
-    OI! Eu sou o Ângelo! Sou Desenvolvedor Full-Stack desde 2007.
-    Amo Linux, technologias Open Source, minha filha e minha mulher.
-    Hoje uso React, Nodejs e Arch linux para desenvolvimento de Apps Web e Mobile.
+    Oi! Eu sou o Ângelo! Desenvolvedor Full-Stack desde 2007. 
+Amo Linux e tecnologias Open Source tanto quanto amo minha filha e esposa. 
+Atualmente uso React, Nodejs e Arch linux para desenvolvimento de Apps Web e Mobile.
+
   `
 };
 
