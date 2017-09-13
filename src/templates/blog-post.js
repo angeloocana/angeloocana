@@ -241,9 +241,10 @@ const BlogPostRoute = (props) => {
         title={`${markdownRemark.frontmatter.title}`}
         meta={[{ name: 'description', content: markdownRemark.excerpt }]}
       />
-      <script type="application/ld+json">
-        {structuredData}
-      </script>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: structuredData }}
+      />
       <header>
         <H1>
           {markdownRemark.frontmatter.title}

@@ -1,16 +1,16 @@
-import {assocPath, curry, pipe, prop} from 'ramda';
-import {isNilOrEmpty, isNotNilOrEmpty} from 'ptz-fp';
-import {getAuthor} from './data/authors';
+import { assocPath, curry, pipe, prop } from 'ramda';
+import { isNilOrEmpty, isNotNilOrEmpty } from 'ptz-fp';
+import { getAuthor } from './data/authors';
 
 const filterObj = curry((fn, obj) => {
-  if(isNilOrEmpty(obj)) return obj;
+  if (isNilOrEmpty(obj)) return obj;
 
   return Object.keys(obj).reduce((newObj, key) => {
     const value = obj[key];
 
-    if(typeof value === 'object'){
+    if (typeof value === 'object') {
       newObj[key] = filterObj(fn, obj[key]);
-    } else if(fn(value)){
+    } else if (fn(value)) {
       newObj[key] = obj[key];
     }
 
@@ -115,7 +115,16 @@ const getStructuredData =
     JSON.stringify
   );
 
+const getStructuredDataForAuthor =
+  pipe(
+    renameType,
+    addContext,
+    cleanStructuredData,
+    JSON.stringify
+  );
+
 export {
   cleanStructuredData,
-  getStructuredData
+  getStructuredData,
+  getStructuredDataForAuthor
 };

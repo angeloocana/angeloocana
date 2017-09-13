@@ -9,7 +9,7 @@ const i18n = {
 export default (props) => <Blog i18n={i18n} {...props} />;
 
 export const pageQuery = graphql`
-query ContactEn {
+  query ContactEn {
     site{
       siteMetadata{
         contact {
