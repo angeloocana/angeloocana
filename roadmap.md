@@ -18,7 +18,7 @@
 - Add social links to menu.
 
 ## Working
-- Contact page.
+- Fix events error old iphone and old android.
 - Resume: Add jobs and clients.
 - Add pluralsight bonus http://referral.pluralsight.com/mQcW67u
 - Rewrite welcome (simplify).
@@ -31,6 +31,7 @@
 - Optically align objects.
 
 ## Done
+- Contact page.
 - create gatsby-plugins-i18n-tags
 - create gatsby-plugins-i18n-readnext
 - Add site to bing (yahoo).

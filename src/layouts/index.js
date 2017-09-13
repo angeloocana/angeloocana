@@ -5,18 +5,20 @@ import Footer from '../components/Footer';
 import { siteMetadata as allSiteMetada } from '../../gatsby-config';
 import styled, { ThemeProvider } from 'styled-components';
 import theme from '../themes/theme';
-import 'moment/locale/en-ca';
-import 'moment/locale/fr-ca';
-import 'moment/locale/pt-br';
-import {IntlProvider} from 'react-intl';
 
-// Broke into files
+import {addLocaleData, IntlProvider} from 'react-intl';
+import en from 'react-intl/locale-data/en';
+import fr from 'react-intl/locale-data/fr';
+import pt from 'react-intl/locale-data/pt';
+
 import {
   getLangs,
   getUrlForLang,
   getCurrentLangKey,
   isHomePage
 } from 'ptz-i18n';
+
+addLocaleData([...en, ...fr, ...pt]);
 
 const Background = styled.div`
   background-color: ${props => props.theme.bg};
