@@ -5,6 +5,7 @@ import Footer from '../components/Footer';
 import { siteMetadata as allSiteMetada } from '../../gatsby-config';
 import styled, { ThemeProvider } from 'styled-components';
 import theme from '../themes/theme';
+import {getMessages} from '../data/messages';
 
 import {addLocaleData, IntlProvider} from 'react-intl';
 import en from 'react-intl/locale-data/en';
@@ -48,16 +49,19 @@ const BodyContainer = styled.div`
 const Wrapper = (props) => {
   const { children, location } = props;
   const url = location.pathname;
-  const currentLangKey = getCurrentLangKey(url);
+  const langKey = getCurrentLangKey(url);
   const isHome = isHomePage(url);
-  const homeLink = `/${currentLangKey}/`;
-  const langs = getLangs(currentLangKey, getUrlForLang(homeLink, url));
+  const homeLink = `/${langKey}/`;
+  const langs = getLangs(langKey, getUrlForLang(homeLink, url));
 
-  const siteMetadata = allSiteMetada[currentLangKey];
+  const siteMetadata = allSiteMetada[langKey];
 
   return (
     <ThemeProvider theme={theme}>
-      <IntlProvider locale={currentLangKey}>
+      <IntlProvider 
+        locale={langKey} 
+        messages={getMessages(langKey)}
+      >
         <Background>
           <BodyContainer>
             <Header
@@ -71,7 +75,7 @@ const Wrapper = (props) => {
               {children()}
             </main>
             <Footer
-              currentLangKey={currentLangKey}
+              currentLangKey={langKey}
               siteMetadata={siteMetadata}
             />
           </BodyContainer>

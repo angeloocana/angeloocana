@@ -4,16 +4,18 @@ import Header from './Header';
 import Educations from './Educations';
 
 const EducationsPage = (props) => {
-  const { educations } = props.data.site.siteMetadata.resume;
+  const { educations, menu } = props.data.site.siteMetadata.resume;
   const { langKey } = props.pathContext;
 
   return (
     <section>
-      <Header i18n={props.i18n.header} />
+      <Header
+        menu={menu}
+        selectedPage="/resume/education/"
+      />
       <Educations
         educations={educations}
         langKey={langKey}
-        i18n={props.i18n.educations}
       />
     </section>
   );
@@ -21,11 +23,7 @@ const EducationsPage = (props) => {
 
 EducationsPage.propTypes = {
   data: PropTypes.object.isRequired,
-  pathContext: PropTypes.object.isRequired,
-  i18n: PropTypes.shape({
-    header: PropTypes.object.isRequired,
-    educations: PropTypes.object.isRequired
-  })
+  pathContext: PropTypes.object.isRequired
 };
 
 export default EducationsPage;

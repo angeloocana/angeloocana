@@ -4,6 +4,7 @@ import styled from 'styled-components';
 import H2 from '../H2';
 import Technology from './Technology';
 import Error from '../Error';
+import { FormattedMessage } from 'react-intl';
 
 const Ul = styled.ul`
   display: flex;
@@ -13,22 +14,27 @@ const Ul = styled.ul`
   padding: 0;
 `;
 
-const Technologies = ({ technologies, i18n }) => {
+const Technologies = ({ technologies }) => {
   const noTechnologies = technologies && technologies.length > 0
     ? null
-    : <Error>{i18n.noTechnologies}</Error>;
+    : (
+      <Error>
+        <FormattedMessage id="resume.technologies.noTechnologies" />
+      </Error>
+    );
 
   return (
     <section>
       <header>
-        <H2>{i18n.title}</H2>
+        <H2>
+          <FormattedMessage id="resume.technologies" />
+        </H2>
       </header>
       <Ul>
         {
           technologies.map((technology, i) =>
             <Technology
               key={i}
-              i18n={i18n.technology}
               {...technology}
             />
           )
@@ -40,12 +46,7 @@ const Technologies = ({ technologies, i18n }) => {
 };
 
 Technologies.propTypes = {
-  technologies: PropTypes.array.isRequired,
-  i18n: PropTypes.shape({
-    title: PropTypes.string.isRequired,
-    technology: PropTypes.object.isRequired,
-    noTechnologies: PropTypes.string.isRequired
-  })
+  technologies: PropTypes.array.isRequired
 };
 
 export default Technologies;

@@ -1,14 +1,14 @@
 import React from 'react';
-import TechnologiesPage from '../../components/Resume/TechnologiesPage';
+import EducationsPage from '../../../components/Resume/EducationsPage';
 import graphql from 'graphql';
 
 export default (props) =>
-  <TechnologiesPage
+  <EducationsPage
     {...props}
   />;
 
 export const pageQuery = graphql`
-  query ResumeTechnologiesFr {
+  query ResumeJobsAndClientsFr {
     site {
       siteMetadata {
         resume {
@@ -16,14 +16,16 @@ export const pageQuery = graphql`
             label
             link
           }
-          technologies {
+          educations {
             name
-            tags
-            level
-            years
-            img
+            subject {
+              fr
+            }
             needWhiteBg
             link
+            fullName
+            years
+            img
           }
         }
       }

@@ -1,29 +1,31 @@
 import React from 'react';
-import TechnologiesPage from '../../components/Resume/TechnologiesPage';
+import LanguagesPage from '../../../components/Resume/LanguagesPage';
 import graphql from 'graphql';
 
 export default (props) =>
-  <TechnologiesPage
+  <LanguagesPage
     {...props}
   />;
 
 export const pageQuery = graphql`
-  query ResumeTechnologiesFr {
+  query ResumeLanguagesEn {
     site {
-      siteMetadata {
+      siteMetadata {        
         resume {
           menu {
             label
             link
           }
-          technologies {
+          educations {
             name
-            tags
-            level
-            years
-            img
+            subject {
+              en
+            }
             needWhiteBg
             link
+            fullName
+            years
+            img
           }
         }
       }

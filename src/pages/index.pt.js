@@ -1,15 +1,13 @@
 import React from 'react';
 import Index from '../components/Index';
 import graphql from 'graphql';
-import { i18n as resume } from './resume/index.pt';
 
 export const i18n = {
   posts: {
     title: 'Posts',
     btnMorePostsMsg: 'Ver mais posts interessantes >>'
   },
-  btnResumeMsg: 'Ver todas tecnologias +',
-  technologies: resume.technologies
+  btnResumeMsg: 'Ver todas tecnologias +'
 };
 
 export default (props) => <Index

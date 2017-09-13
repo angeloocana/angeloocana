@@ -223,11 +223,6 @@ const BlogPostRoute = (props) => {
   const i18n = getI18n(langKey);
   const url = `https://angeloocana.com${markdownRemark.fields.slug}`;
 
-  if (!i18n) {
-    console.log(' props: ', props.pathContext);
-    console.log('i18n', i18n);
-  }
-
   const tags = (
     <Tags
       tags={markdownRemark.fields.tagSlugs}

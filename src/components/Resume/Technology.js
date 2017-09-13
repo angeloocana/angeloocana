@@ -50,10 +50,10 @@ const A = styled.a`
   text-align: center;
   cursor: pointer;
   text-decoration: none;
-  color: ${({theme}) => theme.colors.white};
+  color: ${({ theme }) => theme.colors.white};
 
   &:hover {
-    background-color: ${({theme}) => theme.colors.blackShades[0]};
+    background-color: ${({ theme }) => theme.colors.blackShades[0]};
   }
 `;
 
@@ -69,10 +69,13 @@ const Technology = ({ name, link, needWhiteBg, level, years, img, i18n }) => {
           </ImgContainer>
           <figcaption>
             <Name>{name}</Name>
-            <Level level={level}>{i18n.getLevelMsg(level)}</Level>
+            <Level level={level}>
+              <FormattedMessage
+                id={'resume.technologies.level.' + level}
+              />
+            </Level>
             <FormattedMessage
-              id="resume.technologies.years"
-              defaultMessage={i18n.yearsMsg}
+              id="resume.technologies.yearsMsg"
               values={{ nYears: getNYears(years) }}
             />
           </figcaption>

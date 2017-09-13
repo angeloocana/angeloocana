@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'proptypes';
 import styled from 'styled-components';
+import { FormattedMessage } from 'react-intl';
 
 const Label = styled.label`
   cursor: 'pointer';
@@ -49,7 +50,10 @@ class Checkbox extends React.Component {
           onClick={this.onClick}
           checked={this.props.checked}
         />
-        {this.props.label}
+        <FormattedMessage 
+          id={this.props.label}
+          defaultMessage={this.props.label}
+        />
       </Label>
     );
   }

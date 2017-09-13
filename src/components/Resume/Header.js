@@ -3,22 +3,23 @@ import PropTypes from 'proptypes';
 import Link from '../Link';
 import H1 from '../H1';
 import styled from 'styled-components';
+import { FormattedMessage, injectIntl } from 'react-intl';
 
 const Li = styled.li`
   a {
     display: inline-block;
     border-radius: 0.2rem;
-    padding-top: ${({theme}) => theme.scale(-1)};
-    padding-bottom: ${({theme}) => theme.scale(0)};
-    padding-left: ${({theme}) => theme.scale(-1)};
-    padding-right: ${({theme}) => theme.scale(0)};
+    padding-top: ${({ theme }) => theme.scale(-1)};
+    padding-bottom: ${({ theme }) => theme.scale(0)};
+    padding-left: ${({ theme }) => theme.scale(-1)};
+    padding-right: ${({ theme }) => theme.scale(0)};
 
     margin-top: 0;
-    margin-bottom: ${({theme}) => theme.scale(0)};
+    margin-bottom: ${({ theme }) => theme.scale(0)};
     margin-left: 0;
-    margin-right: ${({theme}) => theme.scale(0)};
+    margin-right: ${({ theme }) => theme.scale(0)};
 
-    ${({theme, selected}) => selected
+    ${({ theme, selected }) => selected
     ? `
       color: ${theme.colors.black};
       font-size: ${theme.scale(2)};
@@ -33,15 +34,15 @@ const Li = styled.li`
 }
 
   a:hover {
-    color: ${({theme}) => theme.colors.black};
-    font-size: ${({theme}) => theme.scale(2)};
-    background-color: ${({theme}) => theme.colors.white};
+    color: ${({ theme }) => theme.colors.black};
+    font-size: ${({ theme }) => theme.scale(2)};
+    background-color: ${({ theme }) => theme.colors.white};
   }
 `;
 
 const Ul = styled.ul`
-  padding-top: ${({theme}) => theme.scale(2)};
-  padding-bottom: ${({theme}) => theme.scale(0)};
+  padding-top: ${({ theme }) => theme.scale(2)};
+  padding-bottom: ${({ theme }) => theme.scale(0)};
   padding-left: 0;
   padding-right: 0;
 
@@ -58,7 +59,7 @@ const Page = ({ label, link, selected }) => {
   return (
     <Li selected={selected}>
       <Link to={link}>
-        {label}
+        <FormattedMessage id={label} />
       </Link>
     </Li>
   );
@@ -70,22 +71,32 @@ Page.propTypes = {
   selected: PropTypes.bool
 };
 
+const getMenu = (menu, selectedPage, langKey) =>
+  menu.map((props) => ({
+    link: `/${langKey}${props.link}`,
+    label: props.label,
+    selected: props.link === selectedPage
+  }));
+
 const Header = (props) => {
+  const menu = getMenu(props.menu, props.selectedPage, props.intl.locale);
+
   return (
     <header>
-      <H1>{props.i18n.title}</H1>
+      <H1>
+        <FormattedMessage id="resume" />
+      </H1>
       <Ul>
-        {props.i18n.pages.map(page => (<Page {...page} />))}
+        {menu.map(page => (<Page {...page} />))}
       </Ul>
     </header>
   );
 };
 
 Header.propTypes = {
-  i18n: PropTypes.shape({
-    pages: PropTypes.array.isRequired,
-    title: PropTypes.string.isRequired
-  }).isRequired
+  menu: PropTypes.array.isRequired,
+  selectedPage: PropTypes.string.isRequired,
+  intl: PropTypes.object.isRequired
 };
 
-export default Header;
+export default injectIntl(Header);

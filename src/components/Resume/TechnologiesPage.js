@@ -3,10 +3,7 @@ import PropTypes from 'proptypes';
 import Header from './Header';
 import Technologies from './Technologies';
 import { InvisibleSpan } from '../Invisible';
-import CheckboxList, {
-  getCbListFromArray,
-  i18nPropTypes
-} from '../CheckboxList';
+import CheckboxList, { getCbListFromArray } from '../CheckboxList';
 import {
   intersection,
   isEmpty,
@@ -14,6 +11,7 @@ import {
   uniq
 } from 'ramda';
 import styled from 'styled-components';
+import { FormattedMessage } from 'react-intl';
 
 const getUniqList = (technologies, prop) => {
   return uniq(technologies.reduce((years, tech) => {
@@ -44,7 +42,7 @@ const Filters = styled.fieldset`
   justify-content: space-around;
 `;
 
-class Resume extends React.Component {
+class TechnologiesPage extends React.Component {
   constructor(props) {
     super(props);
 
@@ -84,51 +82,50 @@ class Resume extends React.Component {
   }
 
   render() {
-    const { i18n } = this.props;
     const years = getCbListFromArray(this.years, this.state.selectedYears);
     const tags = getCbListFromArray(this.tags, this.state.selectedTags);
     const technologies = filterTechnologies(this.technologies, this.state.selectedYears, this.state.selectedTags);
+    const { menu } = this.props.data.site.siteMetadata.resume;
 
     return (
       <section>
-        <Header i18n={i18n.header} />
+        <Header
+          menu={menu}
+          selectedPage="/resume/"
+        />
         <Filters>
           <legend>
-            <InvisibleSpan>{i18n.filters.title}</InvisibleSpan>
+            <InvisibleSpan>
+              <FormattedMessage id="resume.technologies" />
+            </InvisibleSpan>
           </legend>
           <CheckboxList
             items={tags}
             check={this.selectTag}
             checkAll={this.selectAllTags}
-            i18n={i18n.filters.tags}
+            i18n={{
+              title: 'resume.filters.tags',
+              checkAll: 'resume.filters.tags.checkAll'
+            }}
           />
           <CheckboxList
             items={years}
             check={this.selectYear}
             checkAll={this.selectAllYears}
-            i18n={i18n.filters.years}
+            i18n={{
+              title: 'resume.filters.years',
+              checkAll: 'resume.filters.years.checkAll'
+            }}
           />
         </Filters>
-        <Technologies
-          technologies={technologies}
-          i18n={i18n.technologies}
-        />
+        <Technologies technologies={technologies} />
       </section>
     );
   }
 }
 
-Resume.propTypes = {
-  data: PropTypes.object.isRequired,
-  i18n: PropTypes.shape({
-    filters: PropTypes.shape({
-      title: PropTypes.string.isRequired,
-      years: i18nPropTypes,
-      tags: i18nPropTypes,
-    }),
-    technologies: PropTypes.object.isRequired,
-    header: PropTypes.object.isRequired
-  })
+TechnologiesPage.propTypes = {
+  data: PropTypes.object.isRequired
 };
 
-export default Resume;
+export default TechnologiesPage;
