@@ -5,15 +5,15 @@ const i18n = {
   title: 'À propos de moi',
   description: (
     <p>
-      Je suis un développeur complet depuis 2007. <br />
-      J'adore les technologies Linux et Open Source. <br />
-      Aujourd'hui, j'utilise React, Nodejs et Arch linux pour le développement d'applications Web et mobiles.
+      Bonjour! Je suis Angelo! Depuis 2007, je suis un développeur complet. <br />
+      J'aime Linux, Open Source technologies, ma fille et ma femme. <br />
+      Aujourd'hui, j'utilise React, Nodejs et Arch Linux pour le développement d'applications Web et mobiles.
     </p>
   ),
   descriptionForGoogle: `
-    Je suis un développeur complet depuis 2007.
-    J'adore les technologies Linux et Open Source.
-    Aujourd'hui, j'utilise React, Nodejs et Arch linux pour le développement d'applications Web et mobiles.
+    Bonjour! Je suis Angelo! Depuis 2007, je suis un développeur complet.
+    J'aime Linux, Open Source technologies, ma fille et ma femme.
+    Aujourd'hui, j'utilise React, Nodejs et Arch Linux pour le développement d'applications Web et mobiles.
   `
 };
 

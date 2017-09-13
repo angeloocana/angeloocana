@@ -11,8 +11,6 @@ const AboutMe = (props) => {
   author.description = props.i18n.descriptionForGoogle;
 
   const structuredData = getStructuredDataForAuthor(author);
-  
-  console.log(structuredData);
 
   return (
     <BigFirstLetter>

@@ -5,15 +5,15 @@ const i18n = {
   title: 'About me',
   description: (
     <p>
-      I am full stack developer since 2007. <br />
-      I love Linux and Open Source technologies. <br />
+      Hi! I am Ângelo, a Freelance Full-Stack Developer with a Global mindset since 2007. <br />
+      I love Linux and Open Source technologies as much as my wife and daughter. <br />
       Today I'm using React, Nodejs and Arch linux for development of Web and Mobile Apps.
     </p>
   ),
   descriptionForGoogle: `
-      I am full stack developer since 2007.
-      I love Linux and Open Source technologies.
-      Today I'm using React, Nodejs and Arch linux for development of Web and Mobile Apps.
+    Hi! I am Ângelo, a Freelance Full-Stack Developer with a Global mindset since 2007.
+    I love Linux and Open Source technologies as much as my wife and daughter.
+    Today I'm using React, Nodejs and Arch linux for development of Web and Mobile Apps.
   `
 };
 

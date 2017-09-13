@@ -28,8 +28,9 @@
 
 ## Working
 - Fix events error old iphone and old android.
-- Resume: Add jobs and clients.
 - Resume: Filter year by year.
+- Resume: Add jobs and clients.
+- Resume: divide in tabs.
 - About me.
 
 ## Done
