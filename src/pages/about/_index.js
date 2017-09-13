@@ -4,6 +4,11 @@ import H1 from '../../components/H1';
 import { getAuthor } from '../../data/authors';
 import { getStructuredDataForAuthor } from '../../structuredData';
 import BigFirstLetter from '../../components/BigFirstLetter';
+import styled from 'styled-components';
+
+const Header = styled.header`
+  padding: 0 0 ${({theme}) => theme.scale(2)} 0;
+`;
 
 const AboutMe = (props) => {
   const author = getAuthor('angeloocana');
@@ -18,11 +23,11 @@ const AboutMe = (props) => {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: structuredData }}
       />
-      <header>
+      <Header>
         <H1>
           {props.i18n.title}
         </H1>
-      </header>
+      </Header>
       {props.i18n.description}
     </BigFirstLetter>
   );

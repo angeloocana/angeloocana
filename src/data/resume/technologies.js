@@ -11,7 +11,9 @@ const tags = {
   frontEnd: 'FrontEnd',
   backEnd: 'BackEnd',
   os: 'OS',
-  textEditor: 'Text Editor'
+  textEditor: 'Text Editor',
+  cloud: 'Cloud',
+  mobile: 'Mobile'
 };
 
 const technologies = {
@@ -365,7 +367,7 @@ const technologies = {
     level: levels.expert,
     img: 'vs.svg',
     link: 'https://www.visualstudio.com/'
-  },  
+  },
   jquery: {
     name: 'JQuery',
     years: range(2008, thisYear),
@@ -462,7 +464,7 @@ const technologies = {
     level: levels.proficient,
     img: 'flex.png',
     link: 'http://www.adobe.com/products/flex.html'
-  }  
+  }
   // 'Gimp': {
   //   years: range(2007, 2008),
   //   tags: [tags.backEnd],
@@ -477,8 +479,17 @@ const technologies = {
   // },
 };
 
+const throwErrorForNullTags = (techs) => {
+  Object.values(techs).forEach(t =>
+    t.tags.forEach(tag => {
+      if (!tag) throw new Error('Null tag for ' + t.name);
+    }));
+
+  return techs;
+};
+
 module.exports = {
-  technologies,
+  technologies: throwErrorForNullTags(technologies),
   tags,
   levels
 };

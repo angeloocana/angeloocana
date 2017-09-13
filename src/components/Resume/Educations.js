@@ -14,10 +14,6 @@ const Ul = styled.ul`
 `;
 
 const Educations = ({ educations, i18n, langKey }) => {
-  const noEducations = educations && educations.length > 0
-    ? null
-    : <Error>{i18n.noEducations}</Error>;
-
   return (
     <section>
       <header>
@@ -34,7 +30,6 @@ const Educations = ({ educations, i18n, langKey }) => {
           )
         }
       </Ul>
-      {noEducations}
     </section>
   );
 };
@@ -43,8 +38,7 @@ Educations.propTypes = {
   educations: PropTypes.array.isRequired,
   langKey: PropTypes.string.isRequired,
   i18n: PropTypes.shape({
-    title: PropTypes.string.isRequired,
-    noEducations: PropTypes.string.isRequired
+    title: PropTypes.string.isRequired
   })
 };
 

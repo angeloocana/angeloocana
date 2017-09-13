@@ -32,6 +32,7 @@
 - Resume: Add jobs and clients.
 - Resume: divide in tabs.
 - About me.
+- Fix header size when url not ends with /
 
 ## Done
 - Contact page.

@@ -1,5 +1,5 @@
 import React from 'react';
-import Resume from '../../components/Resume';
+import TechnologiesPage from '../../components/Resume/TechnologiesPage';
 import graphql from 'graphql';
 
 const yearsMsg = `{nYears, number} {nYears, plural,
@@ -16,8 +16,29 @@ const getLevelMsg = (level) => {
   }
 };
 
-export const i18n = {
-  title: `Curriculum Vitae`,
+export const i18n = {  
+  header: {
+    title: `Curriculum Vitae`,
+    pages: [
+      {
+        label: 'Technologies',
+        link: '/en/resume/',
+        selected: true
+      },
+      {
+        label: 'Jobs and Clients',
+        link: '/en/resume/jobsAndClients'
+      },
+      {
+        label: 'Educations',
+        link: '/en/resume/educations'
+      },
+      {
+        label: 'Languages',
+        link: '/en/resume/languages'
+      }
+    ]
+  },
   filters: {
     title: `Filters`,
     years: {
@@ -36,21 +57,17 @@ export const i18n = {
       getLevelMsg,
       yearsMsg
     }
-  },
-  educations: {
-    title: `Education`,
-    noEducations: `0 Teaching Institutions. Select other years.`
   }
 };
 
 export default (props) =>
-  <Resume
+  <TechnologiesPage
     {...props}
     i18n={i18n}
   />;
 
 export const pageQuery = graphql`
-  query ResumeEn {
+  query ResumeTechnologiesEn {
     site {
       siteMetadata {
         resume {
@@ -62,19 +79,6 @@ export const pageQuery = graphql`
             img
             needWhiteBg
             link
-          }
-          educations {
-            name
-            subject {
-              pt
-              en
-              fr
-            }
-            needWhiteBg
-            link
-            fullName
-            years
-            img
           }
         }
       }
