@@ -41,35 +41,33 @@ const A = styled.a`
 const SocialLinks = () => {
   return (
     <section>
-      <nav>
-        <Ul>
-          <li>
-            <A href="https://github.com/angeloocana" target="_blank">
-              <GithubIcon />Github
-            </A>
-          </li>
-          <li>
-            <A href="https://pluralsight.com/profile/ocanaangelo" target="_blank">
-              <PluralsightIcon />Pluralsight
-            </A>
-          </li>
-          <li>
-            <A href="https://youtube.com/ocanaangelo" target="_blank">
-              <YoutubeIcon />Youtube
-            </A>
-          </li>
-          <li>
-            <A href="https://facebook.com/angeloocanadev" target="_blank">
-              <FacebookIcon />Facebook
-            </A>
-          </li>
-          <li>
-            <A href="https://twitter.com/ocanaangelo" target="_blank">
-              <TwitterIcon />Twitter
-            </A>
-          </li>
-        </Ul>
-      </nav>
+      <Ul>
+        <li>
+          <A href="https://github.com/angeloocana" target="_blank">
+            <GithubIcon />Github
+          </A>
+        </li>
+        <li>
+          <A href="https://pluralsight.com/profile/ocanaangelo" target="_blank">
+            <PluralsightIcon />Pluralsight
+          </A>
+        </li>
+        <li>
+          <A href="https://youtube.com/ocanaangelo" target="_blank">
+            <YoutubeIcon />Youtube
+          </A>
+        </li>
+        <li>
+          <A href="https://facebook.com/angeloocanadev" target="_blank">
+            <FacebookIcon />Facebook
+          </A>
+        </li>
+        <li>
+          <A href="https://twitter.com/ocanaangelo" target="_blank">
+            <TwitterIcon />Twitter
+          </A>
+        </li>
+      </Ul>
     </section>
   );
 };
