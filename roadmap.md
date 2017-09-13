@@ -16,10 +16,6 @@
 - Breadcrumb.
 - Rewrite footer (simplify) - better align.
 - Add social links to menu.
-
-## Working
-- Fix events error old iphone and old android.
-- Resume: Add jobs and clients.
 - Add pluralsight bonus http://referral.pluralsight.com/mQcW67u
 - Rewrite welcome (simplify).
 - E-mail subscription.
@@ -29,6 +25,11 @@
 - Add tags section to home.
 - Add images.
 - Optically align objects.
+
+## Working
+- Fix events error old iphone and old android.
+- Resume: Add jobs and clients.
+- About me.
 
 ## Done
 - Contact page.
