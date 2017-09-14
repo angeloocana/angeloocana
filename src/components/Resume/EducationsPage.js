@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'proptypes';
-import Header from './Header';
+import ResumeContainer from './ResumeContainer';
 import Educations from './Educations';
 
 const EducationsPage = (props) => {
@@ -8,16 +8,15 @@ const EducationsPage = (props) => {
   const { langKey } = props.pathContext;
 
   return (
-    <section>
-      <Header
-        menu={menu}
-        selectedPage="/resume/education/"
-      />
+    <ResumeContainer
+      menu={menu}
+      selectedPage="/resume/education/"
+    >
       <Educations
         educations={educations}
         langKey={langKey}
       />
-    </section>
+    </ResumeContainer>
   );
 };
 

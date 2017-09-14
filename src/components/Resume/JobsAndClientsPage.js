@@ -1,17 +1,17 @@
 import React from 'react';
 import PropTypes from 'proptypes';
-import Header from './Header';
+import ResumeContainer from './ResumeContainer';
 
 const JobsAndClientsPage = (props) => {
   const { menu } = props.data.site.siteMetadata.resume;
 
   return (
-    <section>
-      <Header
-        menu={menu}
-        selectedPage="/resume/jobs-and-clients/"
-      />
-    </section>
+    <ResumeContainer
+      menu={menu}
+      selectedPage="/resume/jobs-and-clients/"
+    >
+      <div>Jobs and clients</div>
+    </ResumeContainer>
   );
 };
 

@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'proptypes';
-import Header from './Header';
+import ResumeContainer from './ResumeContainer';
 import Technologies from './Technologies';
 import { InvisibleSpan } from '../Invisible';
 import Select, {
@@ -118,7 +118,10 @@ class TechnologiesPage extends React.Component {
     const { menu } = this.props.data.site.siteMetadata.resume;
 
     return (
-      <section>
+      <ResumeContainer
+        menu={menu}
+        selectedPage="/resume/"
+      >
         <Filters>
           <legend>
             <InvisibleSpan>
@@ -141,11 +144,7 @@ class TechnologiesPage extends React.Component {
           </Selects>
         </Filters>
         <Technologies technologies={technologies} />
-        <Header
-          menu={menu}
-          selectedPage="/resume/"
-        />
-      </section>
+      </ResumeContainer>
     );
   }
 }
