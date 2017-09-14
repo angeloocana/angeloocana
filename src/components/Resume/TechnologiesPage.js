@@ -3,15 +3,17 @@ import PropTypes from 'proptypes';
 import Header from './Header';
 import Technologies from './Technologies';
 import { InvisibleSpan } from '../Invisible';
-import CheckboxList, { getCbListFromArray } from '../CheckboxList';
-import RadioList from '../RadioList';
+import Select, {
+  addAll,
+  getItemsFromArray
+} from '../Select';
 import {
-  intersection,
-  isEmpty,
   contains,
   uniq,
-  head
+  head,
+  pipe
 } from 'ramda';
+import { log } from 'ptz-fp';
 import styled from 'styled-components';
 import { FormattedMessage } from 'react-intl';
 
@@ -21,27 +23,46 @@ const getUniqList = (technologies, prop) => {
   }, []));
 };
 
-const filterTechnologies = (technologies, years, tags) => {
-  return technologies
-    .filter(t => !isEmpty(intersection(t.years, years)))
-    .filter(t => !isEmpty(intersection(t.tags, tags)));
+const filterTechBy = (prop, value) => (technologies) => {
+  return value === ''
+    ? technologies
+    : technologies.filter(t => contains(value, t[prop]));
 };
-
-const select = (item, selectedItems) => {
-  return contains(item, selectedItems)
-    ? selectedItems.filter(i => i !== item)
-    : [...selectedItems, item];
-};
-
-const selectAll = (items, selectedItems) =>
-  items === selectedItems
-    ? []
-    : items;
 
 const Filters = styled.fieldset`
   display: flex;
   flex-flow: row wrap;
   justify-content: space-around;
+
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background-color: ${({ theme }) => theme.colors.blackShades[0]};  
+`;
+
+const Selects = styled.div`
+  text-align: center;
+
+  label {
+    display: inline-block;
+
+    padding-top: ${({ theme }) => theme.scale(-1)};
+    padding-bottom: ${({ theme }) => theme.scale(0)};
+    padding-left: ${({ theme }) => theme.scale(-1)};
+    padding-right: ${({ theme }) => theme.scale(0)};
+
+    margin: 0;
+
+    select {
+      padding: 0;
+  
+      margin-top: 0;
+      margin-bottom: 0;
+      margin-left: ${({ theme }) => theme.scale(-1)};
+      margin-right: 0;
+    }
+  }
 `;
 
 class TechnologiesPage extends React.Component {
@@ -52,73 +73,69 @@ class TechnologiesPage extends React.Component {
 
     this.years = getUniqList(this.technologies, 'years');
     this.tags = getUniqList(this.technologies, 'tags');
-    
+
     this.state = {
-      selectedYears: [head(this.years)],
-      selectedTags: ['FrontEnd', 'BackEnd']
+      selectedYear: head(this.years),
+      selectedTag: ''
     };
   }
 
   selectYear = (year) => {
+    console.log('page select year: ', year);
     this.setState({
-      selectedYears: [year]
+      selectedYear: year
     });
   }
 
   selectTag = (tag) => {
+    console.log('page select tag: ', tag);
     this.setState({
-      selectedTags: select(tag, this.state.selectedTags)
+      selectedTag: tag
     });
   }
 
-  selectAllYears = () => {
-    this.setState({
-      selectedYears: selectAll(this.years, this.state.selectedYears)
-    });
-  }
-
-  selectAllTags = () => {
-    this.setState({
-      selectedTags: selectAll(this.tags, this.state.selectedTags)
-    });
-  }
+  getTechnologies = () => pipe(
+    log,
+    filterTechBy('years', this.state.selectedYear),
+    log,
+    filterTechBy('tags', this.state.selectedTag),
+    log
+  )(this.technologies);
 
   render() {
-    const years = getCbListFromArray(this.years, this.state.selectedYears);
-    const tags = getCbListFromArray(this.tags, this.state.selectedTags);
-    const technologies = filterTechnologies(this.technologies, this.state.selectedYears, this.state.selectedTags);
+    const years = addAll(getItemsFromArray(this.years, this.state.selectedYear));
+    const tags = addAll(getItemsFromArray(this.tags, this.state.selectedTag));
+    const technologies = this.getTechnologies();
     const { menu } = this.props.data.site.siteMetadata.resume;
 
     return (
       <section>
-        <Header
-          menu={menu}
-          selectedPage="/resume/"
-        />
         <Filters>
           <legend>
             <InvisibleSpan>
               <FormattedMessage id="resume.technologies" />
             </InvisibleSpan>
           </legend>
-          <RadioList
-            items={years}
-            check={this.selectYear}
-            i18n={{
-              title: 'resume.filters.years'
-            }}
-          />
-          <CheckboxList
-            items={tags}
-            check={this.selectTag}
-            checkAll={this.selectAllTags}
-            i18n={{
-              title: 'resume.filters.tags',
-              checkAll: 'resume.filters.tags.checkAll'
-            }}
-          />          
+          <Selects>
+            <Select
+              items={years}
+              onChange={this.selectYear}
+              selected={this.state.selectedYear}
+              label="resume.filters.years"
+            />
+            <Select
+              items={tags}
+              onChange={this.selectTag}
+              selected={this.state.selectedTag}
+              label="resume.filters.tags"
+            />
+          </Selects>
         </Filters>
         <Technologies technologies={technologies} />
+        <Header
+          menu={menu}
+          selectedPage="/resume/"
+        />
       </section>
     );
   }
