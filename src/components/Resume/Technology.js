@@ -14,7 +14,7 @@ const Name = styled.cite`
 `;
 
 const Li = styled.li`  
-  width: ${({ theme }) => theme.scale(9)};
+  width: ${({ theme }) => theme.scale(11)};
 `;
 
 const ImgContainer = styled.div`
@@ -26,7 +26,7 @@ const ImgContainer = styled.div`
   margin: 0 auto 1rem auto;  
 
   ${(props) => props.needWhiteBg
-    ? `background-color: ${props.theme.colors.white};
+    ? `background-color: #fff;
        color: ${props.theme.colors.black};`
     : ``};
 `;
@@ -46,7 +46,7 @@ const Level = styled.p`
 
 const A = styled.a`
   display: block;
-  padding: 1rem ${({ theme }) => theme.scale(-6)};
+  padding: 1rem;
   text-align: center;
   cursor: pointer;
   text-decoration: none;
@@ -57,7 +57,7 @@ const A = styled.a`
   }
 `;
 
-const getNYears = (years) => last(years) - head(years) + 1;
+const getNYears = (years) => head(years) - last(years) + 1;
 
 const Technology = ({ name, link, needWhiteBg, level, years, img, i18n }) => {
   return (

@@ -4,11 +4,13 @@ import Header from './Header';
 import Technologies from './Technologies';
 import { InvisibleSpan } from '../Invisible';
 import CheckboxList, { getCbListFromArray } from '../CheckboxList';
+import RadioList from '../RadioList';
 import {
   intersection,
   isEmpty,
   contains,
-  uniq
+  uniq,
+  head
 } from 'ramda';
 import styled from 'styled-components';
 import { FormattedMessage } from 'react-intl';
@@ -50,16 +52,16 @@ class TechnologiesPage extends React.Component {
 
     this.years = getUniqList(this.technologies, 'years');
     this.tags = getUniqList(this.technologies, 'tags');
-
+    
     this.state = {
-      selectedYears: this.years,
-      selectedTags: this.tags
+      selectedYears: [head(this.years)],
+      selectedTags: ['FrontEnd', 'BackEnd']
     };
   }
 
   selectYear = (year) => {
     this.setState({
-      selectedYears: select(year, this.state.selectedYears)
+      selectedYears: [year]
     });
   }
 
@@ -99,6 +101,13 @@ class TechnologiesPage extends React.Component {
               <FormattedMessage id="resume.technologies" />
             </InvisibleSpan>
           </legend>
+          <RadioList
+            items={years}
+            check={this.selectYear}
+            i18n={{
+              title: 'resume.filters.years'
+            }}
+          />
           <CheckboxList
             items={tags}
             check={this.selectTag}
@@ -107,16 +116,7 @@ class TechnologiesPage extends React.Component {
               title: 'resume.filters.tags',
               checkAll: 'resume.filters.tags.checkAll'
             }}
-          />
-          <CheckboxList
-            items={years}
-            check={this.selectYear}
-            checkAll={this.selectAllYears}
-            i18n={{
-              title: 'resume.filters.years',
-              checkAll: 'resume.filters.years.checkAll'
-            }}
-          />
+          />          
         </Filters>
         <Technologies technologies={technologies} />
       </section>

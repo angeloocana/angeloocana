@@ -17,26 +17,28 @@ const Li = styled.li`
     margin-top: 0;
     margin-bottom: ${({ theme }) => theme.scale(0)};
     margin-left: 0;
-    margin-right: ${({ theme }) => theme.scale(0)};
+    margin-right: 0;
 
     ${({ theme, selected }) => selected
     ? `
       color: ${theme.colors.black};
-      font-size: ${theme.scale(2)};
+      font-size: ${theme.scale(0)};
       background-color: ${theme.colors.white};
     `
     : `
       color: ${theme.colors.white};
-      font-size: ${theme.scale(1)};
-      background-color: ${theme.colors.black};
+      font-size: ${theme.scale(-1)};
+      background-color: ${theme.colors.black};      
     `
 }
 }
 
   a:hover {
     color: ${({ theme }) => theme.colors.black};
-    font-size: ${({ theme }) => theme.scale(2)};
+    font-size: ${({ theme }) => theme.scale(0)};
     background-color: ${({ theme }) => theme.colors.white};
+    margin-left: ${({ theme }) => theme.scale(-6)};;
+    margin-right: ${({ theme }) => theme.scale(-6)};;
   }
 `;
 
@@ -46,13 +48,9 @@ const Ul = styled.ul`
   padding-left: 0;
   padding-right: 0;
 
+  justify-content: start;
   display: flex;
   flex-wrap: wrap;
-  flex-direction: column;
-
-  @media (min-width: 45rem) {
-    flex-direction: row;
-  }
 `;
 
 const Page = ({ label, link, selected }) => {

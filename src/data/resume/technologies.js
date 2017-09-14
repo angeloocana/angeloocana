@@ -25,6 +25,14 @@ const technologies = {
     img: 'javascript.png',
     link: 'https://en.wikipedia.org/wiki/JavaScript'
   },
+  nodejs: {
+    name: 'NodeJs',
+    years: range(2015, thisYear),
+    tags: [tags.backEnd],
+    level: levels.expert,
+    img: 'nodejs.svg',
+    link: 'https://nodejs.org'
+  },
   react: {
     name: 'React',
     years: range(2016, thisYear),
@@ -33,21 +41,13 @@ const technologies = {
     img: 'react.svg',
     link: 'https://facebook.github.io/react/'
   },
-  'graphql': {
+  graphql: {
     name: 'GraphQL',
     years: range(2016, thisYear),
     tags: [tags.backEnd],
     level: levels.proficient,
     img: 'graphql.svg',
     link: 'http://graphql.org/'
-  },
-  nodejs: {
-    name: 'NodeJs',
-    years: range(2015, thisYear),
-    tags: [tags.backEnd],
-    level: levels.expert,
-    img: 'nodejs.svg',
-    link: 'https://nodejs.org'
   },
   mongodb: {
     name: 'MongoDB',
@@ -65,15 +65,6 @@ const technologies = {
     img: 'gatsby.svg',
     link: 'https://www.gatsbyjs.org/'
   },
-  ramda: {
-    name: 'Ramda',
-    years: range(2017, thisYear),
-    tags: [tags.frontEnd, tags.backEnd],
-    level: levels.proficient,
-    img: 'ramda.png',
-    needWhiteBg: true,
-    link: 'http://ramdajs.com/'
-  },
   docker: {
     name: 'Docker',
     years: range(2017, thisYear),
@@ -83,6 +74,15 @@ const technologies = {
     needWhiteBg: true,
     link: 'https://www.docker.com/'
   },
+  ramda: {
+    name: 'Ramda',
+    years: range(2017, thisYear),
+    tags: [tags.frontEnd, tags.backEnd],
+    level: levels.proficient,
+    img: 'ramda.png',
+    needWhiteBg: true,
+    link: 'http://ramdajs.com/'
+  },  
   typeScript: {
     name: 'TypeScript',
     years: range(2015, thisYear),
@@ -91,14 +91,15 @@ const technologies = {
     img: 'typescript.png',
     link: 'https://www.typescriptlang.org/'
   },
-  tslint: {
-    name: 'TSLint',
-    years: range(2015, thisYear),
-    tags: [tags.frontEnd, tags.backEnd],
-    level: levels.expert,
-    img: 'tslint.png',
-    link: 'https://palantir.github.io/tslint/'
-  },
+  // tslint: {
+  //   name: 'TSLint',
+  //   years: range(2015, thisYear),
+  //   tags: [tags.frontEnd, tags.backEnd],
+  //   level: levels.expert,
+  //   needWhiteBg: true,
+  //   img: 'tslint.png',
+  //   link: 'https://palantir.github.io/tslint/'
+  // },
   gulp: {
     name: 'Gulp',
     years: range(2015, 2016),
@@ -302,14 +303,14 @@ const technologies = {
     img: 'extnet.png',
     link: 'http://ext.net/'
   },
-  d3: {
-    name: 'D3',
-    years: range(2016, thisYear),
-    tags: [tags.frontEnd],
-    level: levels.proficient,
-    img: 'd3.png',
-    link: 'https://d3js.org/'
-  },
+  // d3: {
+  //   name: 'D3',
+  //   years: range(2016, thisYear),
+  //   tags: [tags.frontEnd],
+  //   level: levels.proficient,
+  //   img: 'd3.png',
+  //   link: 'https://d3js.org/'
+  // },
   styledComponents: {
     name: 'Styled Components',
     years: range(2017, thisYear),

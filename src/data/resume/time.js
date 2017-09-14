@@ -1,7 +1,7 @@
 exports.range = (from, to) => {
   var list = [];
   for (var i = from; i <= to; i += 1) {
-    list.push(i);
+    list = [i].concat(list);
   }
   return list;
 };

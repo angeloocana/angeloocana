@@ -13,12 +13,13 @@ const Label = styled.label`
   margin-top: 0;
   margin-bottom: ${({ theme }) => theme.scale(0)};
   margin-left: 0;
-  margin-right: ${({ theme }) => theme.scale(-6)};
+  margin-right: 0;
 
   display: inline-block;
-  border-radius: 0.2rem;
-  transition: 0.2s;
   font-size: ${({ theme }) => theme.scale(-1)};
+  border-radius: 0.2rem;
+  text-align: center;
+  transition: 0.2s;
 
   ${(props) => props.checked
     ? `
@@ -29,9 +30,12 @@ const Label = styled.label`
     : ``}
 
   &:hover {
+    transition: 0.2s;
     color:  ${({ theme }) => theme.colors.black};
     background-color: ${({ theme }) => theme.colors.white};
     font-size: ${({ theme }) => theme.scale(0)};
+    margin-left: ${({ theme }) => theme.scale(-6)};
+    margin-right: ${({ theme }) => theme.scale(-6)};
   }
 `;
 
@@ -42,7 +46,7 @@ const Input = styled.input`
     appearance: none;
 `;
 
-class Checkbox extends React.Component {
+class Radio extends React.Component {
   static propTypes = {
     label: PropTypes.string,
     value: PropTypes.any,
@@ -58,7 +62,7 @@ class Checkbox extends React.Component {
     return (
       <Label checked={this.props.checked}>
         <Input
-          type="checkbox"
+          type="radio"
           onChange={this.onChange}
           onClick={this.onClick}
           checked={this.props.checked}
@@ -72,4 +76,4 @@ class Checkbox extends React.Component {
   }
 }
 
-export default Checkbox;
+export default Radio;

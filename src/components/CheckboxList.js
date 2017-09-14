@@ -2,21 +2,29 @@ import React from 'react';
 import PropTypes from 'proptypes';
 import styled from 'styled-components';
 import Checkbox from './Checkbox';
-import { InvisibleSpan } from './Invisible';
+import { FormattedMessage } from 'react-intl';
 import { pipe, not, any, contains } from 'ramda';
+import { InvisibleSpan } from './Invisible';
 
 const Ul = styled.ul`
-    display: flex;
-    flex-flow: row wrap;
-    justify-content: center;
-    margin: 0 0 1rem 0;
-    padding: 0;
+  padding: 0;
+  justify-content: start;
+  display: flex;
+  flex-wrap: wrap;
 `;
 
-const Div = styled.div`
-  display: block;
-  margin: auto;
-  text-align: center;
+const Li = styled.ul`
+  ${(props) => props.allItemsChecked
+    ? `
+    overflow: hidden;
+    transform: scale(0);
+    height: 0;
+  `
+    : `
+    transform: scale(1);
+    height: auto;
+  `
+}
 `;
 
 export const isAllItemsChecked = pipe(
@@ -34,36 +42,33 @@ export const getCbListFromArray = (items, checkedItems) => {
 
 const CheckboxList = ({ i18n, items, check, checkAll }) => {
   const allItemsChecked = isAllItemsChecked(items);
-  const ul = allItemsChecked
-    ? null
-    : (
+
+  return (
+    <fieldset>
+      <legend>
+        <InvisibleSpan>
+          <FormattedMessage id={i18n.title} />
+        </InvisibleSpan>
+      </legend>
       <Ul>
+        <li>
+          <Checkbox
+            label={i18n.checkAll}
+            check={checkAll}
+            checked={allItemsChecked}
+          />
+        </li>
         {items.map(item => (
-          <li>
+          <Li allItemsChecked={allItemsChecked}>
             <Checkbox
               value={item.value}
               label={item.label}
               check={check}
               checked={item.checked}
             />
-          </li>
+          </Li>
         ))}
       </Ul>
-    );
-
-  return (
-    <fieldset>
-      <legend>
-        <InvisibleSpan>{i18n.title}</InvisibleSpan>
-      </legend>
-      <Div>
-        <Checkbox
-          label={i18n.checkAll}
-          check={checkAll}
-          checked={allItemsChecked}
-        />
-      </Div>
-      {ul}
     </fieldset>
   );
 };
