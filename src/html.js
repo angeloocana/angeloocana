@@ -14,6 +14,29 @@ class Html extends React.Component {
       <html lang="en">
         <head>
           <meta charSet="utf-8" />
+          <script
+            type="text/javascript"
+            dangerouslySetInnerHTML={{ __html: `
+            var logErro = function (message, source, lineno, colno, error) {
+
+                if(location.href.match('localhost'))
+                  return;
+            
+                alert(message, source, lineno, colno, error);
+
+                var xhr = new XMLHttpRequest();
+                var url = "http://staffgeist.com/api/Errors/Erro";
+                xhr.open("POST", url, true);
+                xhr.setRequestHeader("Content-type", "application/json");
+                var data = JSON.stringify({"url": window.location.href, "message": message, "source": source, "lineno": lineno, "colno": colno, "error": error });
+                xhr.send(data);
+            };
+
+            window.onerror = function (message, source, lineno, colno, error) {
+              logErro(message, source, lineno, colno, error);
+            };
+            ` }}
+          />
           <meta httpEquiv="X-UA-Compatible" content="IE=edge" />
           <meta
             name="viewport"

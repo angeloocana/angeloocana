@@ -30,7 +30,7 @@ const Li = styled.li`
       font-size: ${theme.scale(0)};
       background-color: ${theme.colors.black};      
     `
-  }
+}
 }
 
   a:hover {

@@ -13,7 +13,6 @@ import {
   head,
   pipe
 } from 'ramda';
-import { log } from 'ptz-fp';
 import styled from 'styled-components';
 import { FormattedMessage } from 'react-intl';
 
@@ -90,25 +89,20 @@ class TechnologiesPage extends React.Component {
   }
 
   selectYear = (year) => {
-    console.log('page select year: ', year);
     this.setState({
       selectedYear: year
     });
   }
 
   selectTag = (tag) => {
-    console.log('page select tag: ', tag);
     this.setState({
       selectedTag: tag
     });
   }
 
   getTechnologies = () => pipe(
-    log,
     filterTechBy('years', this.state.selectedYear),
-    log,
-    filterTechBy('tags', this.state.selectedTag),
-    log
+    filterTechBy('tags', this.state.selectedTag)
   )(this.technologies);
 
   render() {

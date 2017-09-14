@@ -2,9 +2,10 @@ const { technologies } = require('./technologies');
 const { languages } = require('./languages');
 const { jobsAndClients } = require('./jobsAndClients');
 const { educations } = require('./educations');
+const R = require('ramda');
 
 const getArray = (list) => {
-  return Object.keys(list).map(key => {
+  return R.keys(list).map(key => {
     const item = list[key];
     return {
       name: key,

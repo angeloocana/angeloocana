@@ -1,4 +1,5 @@
 const { range, thisYear } = require('./time');
+const R = require('ramda');
 
 const levels = {
   novice: 'novice',
@@ -481,7 +482,7 @@ const technologies = {
 };
 
 const throwErrorForNullTags = (techs) => {
-  Object.values(techs).forEach(t =>
+  R.values(techs).forEach(t =>
     t.tags.forEach(tag => {
       if (!tag) throw new Error('Null tag for ' + t.name);
     }));
