@@ -22,6 +22,7 @@ module.exports = {
   'resume.languages.level.basic': 'Basic',
 
   'resume.jobsAndClients': 'Jobs and Clients',
+  'resume.jobsAndClients.date.actual': 'Actual',
 
   'resume.filters': 'Filters',
   'resume.filters.year': 'Year',

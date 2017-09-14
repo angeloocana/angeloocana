@@ -16,16 +16,27 @@ export const pageQuery = graphql`
             label
             link
           }
-          educations {
+          jobsAndClients{
             name
-            subject {
-              en
-            }
+            date {
+              start
+              end
+            },
+            img,
+            link,
+            projects {
+              name
+              description
+              link
+            },
+            technologies {
+              name
+              level
+              img
+              link
+              needWhiteBg
+            },
             needWhiteBg
-            link
-            fullName
-            years
-            img
           }
         }
       }

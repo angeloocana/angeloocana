@@ -3,7 +3,7 @@ const { technologies } = require('./technologies');
 const t = technologies;
 
 const jobsAndClients = {
-  'Ângelo Ocanã Consultoria e Treinamentos': {
+  'Freelancer': {
     date: {
       start: '2007-02-01',
       end: null

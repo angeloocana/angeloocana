@@ -4,7 +4,7 @@ import { FormattedDate } from 'react-intl';
 
 const Time = (props) => {
   return (
-    <time {...props}>
+    <time {...props} dateTime={props.date}>
       <FormattedDate
         value={new Date(props.date)}
         month="long"
@@ -16,9 +16,7 @@ const Time = (props) => {
 };
 
 Time.propTypes = {
-  date: PropTypes.string,
-  langKey: PropTypes.string,
-  format: PropTypes.string
+  date: PropTypes.string.isRequired
 };
 
 export default Time;
