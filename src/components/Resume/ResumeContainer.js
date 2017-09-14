@@ -1,7 +1,6 @@
 import React from 'react';
 import PropTypes from 'proptypes';
 import Link from '../Link';
-import H1 from '../H1';
 import styled from 'styled-components';
 import { FormattedMessage, injectIntl } from 'react-intl';
 
@@ -57,6 +56,7 @@ const Ul = styled.ul`
 
   @media (min-width: 650px) {
     flex-direction: row;
+    justify-content: center;
   }
 `;
 
@@ -83,16 +83,25 @@ const getMenu = (menu, selectedPage, langKey) =>
     selected: props.link === selectedPage
   }));
 
+const Header = styled.header`
+  margin-bottom: -${({ theme }) => theme.scale(4)};
+`;
+
+const H1 = styled.h1`
+  text-align: center;
+  font-size: ${({ theme }) => theme.scale(1)};
+`;
+
 const ResumeContainer = (props) => {
   const menu = getMenu(props.menu, props.selectedPage, props.intl.locale);
 
   return (
     <section>
-      <header>
+      <Header>
         <H1>
           <FormattedMessage id="resume" />
         </H1>
-      </header>
+      </Header>
       {props.children}
       <footer>
         <Ul>
