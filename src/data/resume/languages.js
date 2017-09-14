@@ -1,8 +1,8 @@
 const levels = {
-  native: 'Native',
-  fluent: 'Fluent',
-  proficient: 'Proficient',
-  basic: 'Basic'
+  native: 'native',
+  fluent: 'fluent',
+  proficient: 'proficient',
+  basic: 'basic'
 };
 
 const languages = {

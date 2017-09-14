@@ -12,7 +12,13 @@ module.exports = {
   'resume.technologies.yearsMsg': `{nYears, number} {nYears, plural, one {ano} other {anos} }`,
 
   'resume.educations': 'Educação',
+
   'resume.languages': 'Idiomas',
+  'resume.languages.level.native': 'Nativo',
+  'resume.languages.level.fluent': 'Fluente',
+  'resume.languages.level.proficient': 'Intermediário',
+  'resume.languages.level.basic': 'Básico',
+
   'resume.jobsAndClients': 'Clients e Jobs',
 
   'resume.filters': 'Filtros',
