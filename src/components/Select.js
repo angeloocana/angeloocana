@@ -11,7 +11,7 @@ export const getItemsFromArray = (items) =>
 
 export const addAll = (items) => 
   [{
-    label: 'All',
+    label: 'all',
     value: ''
   }].concat(items);
 

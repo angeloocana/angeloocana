@@ -61,7 +61,7 @@ const Selects = styled.div`
   
       margin-top: 0;
       margin-bottom: 0;
-      margin-left: ${({ theme }) => theme.scale(-1)};
+      margin-left: ${({ theme }) => theme.scale(-6)};
       margin-right: 0;
 
       border-radius: 0.2rem;
@@ -127,13 +127,13 @@ class TechnologiesPage extends React.Component {
               items={years}
               onChange={this.selectYear}
               selected={this.state.selectedYear}
-              label="resume.filters.years"
+              label="resume.filters.year"
             />
             <Select
               items={tags}
               onChange={this.selectTag}
               selected={this.state.selectedTag}
-              label="resume.filters.tags"
+              label="resume.filters.tag"
             />
           </Selects>
         </Filters>

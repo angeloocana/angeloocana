@@ -1,4 +1,6 @@
 module.exports = {
+  'all': 'Todos',
+
   'resume': `Currículo`,
 
   'resume.technologies': 'Tecnologias',
@@ -22,10 +24,6 @@ module.exports = {
   'resume.jobsAndClients': 'Clients e Jobs',
 
   'resume.filters': 'Filtros',
-
-  'resume.filters.years': `Anos`,
-  'resume.filters.years.checkAll': `Todos os anos`,
-
-  'resume.filters.tags': `Tags`,
-  'resume.filters.tags.checkAll': `Todas as tags`,
+  'resume.filters.year': `Ano`,
+  'resume.filters.tag': `Tag`
 };
