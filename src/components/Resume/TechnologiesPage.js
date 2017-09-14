@@ -33,6 +33,7 @@ const Filters = styled.fieldset`
   display: flex;
   flex-flow: row wrap;
   justify-content: space-around;
+  z-index: 1;
 
   position: fixed;
   bottom: 0;
@@ -49,19 +50,27 @@ const Selects = styled.div`
 
     padding-top: ${({ theme }) => theme.scale(-1)};
     padding-bottom: ${({ theme }) => theme.scale(0)};
-    padding-left: ${({ theme }) => theme.scale(-1)};
-    padding-right: ${({ theme }) => theme.scale(0)};
-
+    padding-right: 0;
+    padding-left: 0;
     margin: 0;
 
     select {
-      padding: 0;
+      padding-top: ${({ theme }) => theme.scale(-6)};
+      padding-bottom: ${({ theme }) => theme.scale(-4)};
+      padding-left: ${({ theme }) => theme.scale(-6)};
+      padding-right: ${({ theme }) => theme.scale(-4)};
   
       margin-top: 0;
       margin-bottom: 0;
       margin-left: ${({ theme }) => theme.scale(-1)};
       margin-right: 0;
+
+      border-radius: 0.2rem;
     }
+  }
+
+  label:last-child {
+    padding-left: ${({ theme }) => theme.scale(-1)};
   }
 `;
 

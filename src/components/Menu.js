@@ -22,7 +22,7 @@ const Nav = styled.nav`
   top: 0;
   right: calc(2rem - 100%);  
   width: 100%;
-  z-index: 1;
+  z-index: 2;
   padding: ${props => props.theme.menu.padding};
   transition-timing-function: ease-in, step-start, cubic-bezier(0.1, 0.7, 1.0, 0.1);
   
