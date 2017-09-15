@@ -25,16 +25,17 @@
 - Add tags section to home.
 - Add images.
 - Optically align objects.
+- fix pages with duplicate title tags
 
 ## Working
-- Fix events error old iphone and old android.
-- Resume: Filter year by year.
 - Resume: Add jobs and clients.
 - Resume: divide in tabs.
-- About me.
 - Fix header size when url not ends with /
 
 ## Done
+- About me.
+- Fix events error old iphone and old android.
+- Resume: Filter year by year.
 - Contact page.
 - create gatsby-plugins-i18n-tags
 - create gatsby-plugins-i18n-readnext
