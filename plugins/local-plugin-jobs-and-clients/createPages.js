@@ -1,17 +1,34 @@
 const defaultOptions = require('./defaultOptions');
-const { forEach } = require('ramda');
+const { forEach, reduce, concat } = require('ramda');
 const path = require('path');
 
-const createPageForEach = (createPage, component) => forEach(edge => {
-  const path = edge.node.fields.slug;
-  const langKey = edge.node.fields.langKey;
-  createPage({
-    path, // required
-    component,
+const reduceJobs = (getJobUrl, langKey) => reduce((pages, job) =>
+  concat(pages, [{
+    path: getJobUrl(langKey, job.slug),
     context: {
-      path,
-      langKey
+      job
     }
+  }]));
+
+const reduceLangs = (getJobUrl, jobsAndClients) => reduce((pages, langKey) =>
+  reduceJobs(getJobUrl, langKey)(pages, jobsAndClients), []);
+
+/**
+ * Get page list for jobs and langs
+ * @param {Function} getJobUrl (langKey, slug) => url
+ * @param {*} jobsAndClients jobs
+ * @param {*} langs langKey list
+ * @return {[{slug: String, langKey: String}]} page list
+ */
+const getPages = (getJobUrl, jobsAndClients, langs) => {
+  return reduceLangs(getJobUrl, jobsAndClients)(langs);
+};
+
+const createPageForEach = (createPage, component) => forEach(({path, context}) => {
+  createPage({
+    path,
+    component,
+    context
   });
 });
 
@@ -32,7 +49,12 @@ const createPages = ({ graphql, boundActionCreators }, pluginOptions) => {
           throw result.errors;
         }
 
-        createPageForEach(createPage, component)(result.data.allMarkdownRemark.edges);
+        const { langs } = result.data.site.siteMetadata.languages;
+        const { jobsAndClients } = result.data.site.siteMetadata.resume;
+
+        const pages = getPages(options.getJobUrl, jobsAndClients, langs);
+
+        createPageForEach(createPage, component)(pages);
 
         resolve();
 
@@ -44,7 +66,7 @@ const createPages = ({ graphql, boundActionCreators }, pluginOptions) => {
   });
 };
 
-export {
+module.exports = {
   createPageForEach,
   createPages
 };

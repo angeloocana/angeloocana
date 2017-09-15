@@ -3,6 +3,7 @@ const fr = require('./src/data/siteMetadata.fr');
 const en = require('./src/data/siteMetadata.en');
 const resume = require('./src/data/resume');
 const languages = require('./src/data/languages');
+const {getJobUrl} = require('./src/data/resume/getJobUrl');
 
 module.exports = {
   siteMetadata: {
@@ -116,7 +117,12 @@ module.exports = {
         nPosts: 3
       }
     },
-    // 'local-plugin-jobs-and-clients',
-    'gatsby-plugin-styled-components'    
+    {
+      resolve: 'local-plugin-jobs-and-clients',
+      options: {
+        getJobUrl
+      }
+    },
+    'gatsby-plugin-styled-components'
   ],
 };

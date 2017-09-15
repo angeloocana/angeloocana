@@ -1,45 +1,14 @@
 import React from 'react';
 import PropTypes from 'proptypes';
-import { FormattedDate, FormattedMessage } from 'react-intl';
+import { injectIntl } from 'react-intl';
 import styled from 'styled-components';
-
-const Time = styled((props) => {
-  return (
-    <time {...props} dateTime={props.date || new Date()}>
-      {
-        props.date
-          ? (
-            <FormattedDate
-              value={new Date(props.date)}
-              month="numeric"
-              year="numeric"
-            />
-          )
-          : (
-            <FormattedMessage
-              id="resume.jobsAndClients.date.actual"
-            />
-          )
-      }
-    </time>
-  );
-})`
-  line-height: 1.2;
-  display: inline-block;
-
-  &:last-of-type:before {
-    content: '>';
-    padding-left: ${({ theme }) => theme.scale(-4)};
-    padding-right: ${({ theme }) => theme.scale(-4)};
-  }
-`;
-
-Time.propTypes = {
-  date: PropTypes.string
-};
+import { getJobUrl } from '../../data/resume/getJobUrl';
+import Link from '../Link';
+import JobDates from './JobDates';
 
 const H3 = styled.h3`
   font-size: ${({ theme }) => theme.scale(3)};
+  padding-top: ${({ theme }) => theme.scale(-4)};
 `;
 
 const Li = styled.li`
@@ -51,24 +20,27 @@ const Li = styled.li`
 `;
 
 const JobsAndClients = (props) => {
-  console.log(props);
-  
+  const url = getJobUrl(props.intl.locale, props.slug);
+
   return (
     <Li>
-      <section>
-        <header>
-          <Time date={props.date.start} />
-          <Time date={props.date.end} />
-          <H3>{props.name}</H3>
-        </header>
-      </section>
+      <Link to={url}>
+        <section>
+          <header>
+            <JobDates {...props.date} />
+            <H3>{props.name}</H3>
+          </header>
+        </section>
+      </Link>
     </Li>
   );
 };
 
 JobsAndClients.propTypes = {
   date: PropTypes.object.isRequired,
-  name: PropTypes.string.isRequired
+  name: PropTypes.string.isRequired,
+  slug: PropTypes.string.isRequired,
+  intl: PropTypes.object.isRequired
 };
 
-export default JobsAndClients;
+export default injectIntl(JobsAndClients);

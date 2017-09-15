@@ -23,6 +23,7 @@ module.exports = {
 
   'resume.jobsAndClients': 'Jobs and Clients',
   'resume.jobsAndClients.date.actual': 'Actual',
+  'resume.jobsAndClients.projects': 'Projects',
 
   'resume.filters': 'Filters',
   'resume.filters.year': 'Year',

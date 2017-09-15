@@ -18,6 +18,7 @@ export const pageQuery = graphql`
           }
           jobsAndClients{
             name
+            slug
             date {
               start
               end

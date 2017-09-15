@@ -2,18 +2,7 @@ const { technologies } = require('./technologies');
 const { languages } = require('./languages');
 const { jobsAndClients } = require('./jobsAndClients');
 const { educations } = require('./educations');
-const R = require('ramda');
-
-const getArray = (list) => {
-  return R.keys(list).map(key => {
-    const item = list[key];
-    return {
-      key,
-      name: key,
-      ...item
-    };
-  });
-};
+const {getArray} = require('./getArray');
 
 const menu = [
   {
@@ -37,7 +26,7 @@ const menu = [
 module.exports = {
   technologies: getArray(technologies),
   educations: getArray(educations),
-  jobsAndClients: getArray(jobsAndClients),
+  jobsAndClients,
   languages: getArray(languages),
   menu
 };

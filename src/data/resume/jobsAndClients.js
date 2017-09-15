@@ -1,4 +1,6 @@
 const { technologies } = require('./technologies');
+const R = require('ramda');
+const {getArray} = require('./getArray');
 
 const t = technologies;
 
@@ -645,6 +647,16 @@ const jobsAndClients = {
   }
 };
 
+const getAllProjectsTech = R.reduce((techs, project) => {
+  return R.uniq((techs || []).concat(project.technologies))
+    .filter(t => t);
+});
+
+const concatProjectTechs = R.map(job => ({
+  ...job,
+  technologies: getAllProjectsTech(job.technologies, job.projects)
+}));
+
 module.exports = {
-  jobsAndClients
+  jobsAndClients: concatProjectTechs(getArray(jobsAndClients))
 };
