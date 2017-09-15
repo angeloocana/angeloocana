@@ -114,6 +114,7 @@ module.exports = {
         nPosts: 3
       }
     },
-    'gatsby-plugin-styled-components'
+    'local-plugin-jobs-and-clients',
+    'gatsby-plugin-styled-components'    
   ],
 };

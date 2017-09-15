@@ -51,6 +51,8 @@ const Li = styled.li`
 `;
 
 const JobsAndClients = (props) => {
+  console.log(props);
+  
   return (
     <Li>
       <section>
