@@ -1,8 +1,9 @@
 import React from 'react';
 import PropTypes from 'proptypes';
+import graphql from 'graphql';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
-import { siteMetadata as allSiteMetada } from '../../gatsby-config';
+import { siteMetadata as allSiteMetadata } from '../../gatsby-config';
 import styled, { ThemeProvider } from 'styled-components';
 import theme from '../themes/theme';
 import {getMessages} from '../data/messages';
@@ -47,14 +48,17 @@ const BodyContainer = styled.div`
 `;
 
 const Wrapper = (props) => {
-  const { children, location } = props;
-  const url = location.pathname;
-  const langKey = getCurrentLangKey(url);
+  const { children, location } = props;  
+  const url = location.pathname;  
   const isHome = isHomePage(url);
-  const homeLink = `/${langKey}/`;
-  const langs = getLangs(langKey, getUrlForLang(homeLink, url));
 
-  const siteMetadata = allSiteMetada[langKey];
+  const {langs, defaultLangKey} = props.data.site.siteMetadata.languages;
+  const langKey = getCurrentLangKey(langs, defaultLangKey, url);
+
+  const homeLink = `/${langKey}/`;
+  const langsMenu = getLangs(langs, langKey, getUrlForLang(homeLink, url));
+
+  const siteMetadata = allSiteMetadata[langKey];
 
   return (
     <ThemeProvider theme={theme}>
@@ -67,7 +71,7 @@ const Wrapper = (props) => {
             <Header
               siteMetadata={siteMetadata}
               isHome={isHome}
-              langs={langs}
+              langs={langsMenu}
               homeLink={homeLink}
               url={url}
             />
@@ -86,8 +90,22 @@ const Wrapper = (props) => {
 };
 
 Wrapper.propTypes = {
-  children: PropTypes.func,
-  location: PropTypes.object
+  children: PropTypes.func.isRequired,
+  location: PropTypes.object.isRequired,
+  data: PropTypes.object.isRequired
 };
 
 export default Wrapper;
+
+export const pageQuery = graphql`
+  query Layout {
+    site {
+      siteMetadata {
+        languages {
+          defaultLangKey
+          langs
+        }
+      }
+    }
+  }
+`;

@@ -63,7 +63,7 @@
     "proptypes": "^1.1.0",
     "ptz-assert": "^1.6.8",
     "ptz-fp": "^1.2.0",
-    "ptz-i18n": "^0.0.6",
+    "ptz-i18n": "^0.1.2",
     "ptz-math": "^1.1.0",
     "ramda": "^0.24.1",
     "react-disqus-comments": "^1.0.3",

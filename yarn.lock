@@ -8264,6 +8264,12 @@ ptz-i18n@^0.0.6:
   dependencies:
     ramda "^0.24.1"
 
+ptz-i18n@^0.1.2:
+  version "0.1.2"
+  resolved "https://registry.yarnpkg.com/ptz-i18n/-/ptz-i18n-0.1.2.tgz#0aea423ca0a4f301278b4584b046bb3ae8c05c7e"
+  dependencies:
+    ramda "^0.24.1"
+
 ptz-log@^1.0.0:
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/ptz-log/-/ptz-log-1.1.0.tgz#a5f81680da30e491e49c6a6022ec4972506d473b"

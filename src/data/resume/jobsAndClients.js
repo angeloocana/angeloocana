@@ -4,6 +4,7 @@ const t = technologies;
 
 const jobsAndClients = {
   'Freelancer': {
+    slug: '/freelancer/',
     date: {
       start: '2007-02-01',
       end: null
@@ -333,6 +334,7 @@ const jobsAndClients = {
     ]
   },
   'POL': {
+    slug: '/pol/',
     date: {
       start: '2011-04-18',
       end: '2015-03-17'
@@ -399,6 +401,7 @@ const jobsAndClients = {
     ]
   },
   'Total On Demand': {
+    slug: '/total-on-demand/',
     date: {
       start: '2011-04-18',
       end: '2015-03-17'
@@ -495,6 +498,7 @@ const jobsAndClients = {
     ]
   },
   'Empresário Cobrança': {
+    slug: '/empresario-cobranca/',
     date: {
       start: '2010-07-23',
       end: '2011-03-18'
@@ -535,6 +539,7 @@ const jobsAndClients = {
     ]
   },
   'Media W': {
+    slug: '/media-w/',
     date: {
       start: '2010-06-14',
       end: '2010-07-22'
@@ -565,6 +570,7 @@ const jobsAndClients = {
     ]
   },
   'Upgrade Consultoria': {
+    slug: '/upgrade-consultoria/',
     date: {
       start: '2008-10-28',
       end: '2010-06-11'

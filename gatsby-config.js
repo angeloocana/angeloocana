@@ -1,11 +1,13 @@
-var pt = require('./src/data/siteMetadata.pt');
-var fr = require('./src/data/siteMetadata.fr');
-var en = require('./src/data/siteMetadata.en');
-var resume = require('./src/data/resume');
+const pt = require('./src/data/siteMetadata.pt');
+const fr = require('./src/data/siteMetadata.fr');
+const en = require('./src/data/siteMetadata.en');
+const resume = require('./src/data/resume');
+const languages = require('./src/data/languages');
 
 module.exports = {
   siteMetadata: {
     siteUrl: 'https://angeloocana.com',
+    languages,
     pt,
     en,
     fr,
@@ -114,7 +116,7 @@ module.exports = {
         nPosts: 3
       }
     },
-    'local-plugin-jobs-and-clients',
+    // 'local-plugin-jobs-and-clients',
     'gatsby-plugin-styled-components'    
   ],
 };

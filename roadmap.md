@@ -38,7 +38,7 @@
 - Resume: Filter year by year.
 - Contact page.
 - create gatsby-plugins-i18n-tags
-- create gatsby-plugins-i18n-readnext
+- create gatsby-plugins-i18n-readNext
 - Add site to bing (yahoo).
 - Add post suggestions.
 - i18n tags.

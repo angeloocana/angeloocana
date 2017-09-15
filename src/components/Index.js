@@ -18,7 +18,6 @@ const Index = (props) => {
       <Welcome currentLangKey={langKey} />
       <Technologies
         technologies={technologies}
-        i18n={props.i18n.technologies}
       />
       <BtnLink to={`/${langKey}/resume/`}>
         {props.i18n.btnResumeMsg}
@@ -36,7 +35,6 @@ Index.propTypes = {
   data: PropTypes.object.isRequired,
   pathContext: PropTypes.object.isRequired,
   i18n: PropTypes.shape({
-    technologies: PropTypes.object.isRequired,
     btnResumeMsg: PropTypes.string.isRequired,
     posts: PropTypes.object.isRequired
   })

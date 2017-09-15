@@ -1,4 +1,5 @@
+const {createPages} = require('./createPages');
 
-exports.createPages = ({ graphql, boundActionCreators }, pluginOptions) => {
-  console.log('Hi from local plugin');
+module.exports = {
+  createPages
 };
