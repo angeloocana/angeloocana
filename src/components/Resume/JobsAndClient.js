@@ -35,7 +35,7 @@ const Time = styled((props) => {
 `;
 
 Time.propTypes = {
-  date: PropTypes.string.isRequired
+  date: PropTypes.string
 };
 
 const H3 = styled.h3`
@@ -51,8 +51,6 @@ const Li = styled.li`
 `;
 
 const JobsAndClients = (props) => {
-  console.log(props);
-
   return (
     <Li>
       <section>
@@ -67,7 +65,7 @@ const JobsAndClients = (props) => {
 };
 
 JobsAndClients.propTypes = {
-  date: PropTypes.string.isRequired,
+  date: PropTypes.object.isRequired,
   name: PropTypes.string.isRequired
 };
 

@@ -12,7 +12,7 @@ const jobsAndClients = {
     link: 'https://angeloocana.com',
     description: {
       'pt': 'Desenvolvi sistemas e sites para: Envio de SMS, Academias, E-commerce, Sistes Institucionais, entre outros.'
-    },    
+    },
     projects: [
       {
         name: 'angeloocana.com',
@@ -329,138 +329,41 @@ const jobsAndClients = {
             link: ''
           }
         ]
-      },      
+      },
     ]
   },
-  'Upgrade Consultoria': {
+  'POL': {
     date: {
-      start: '2008-10-28',
-      end: '2010-06-11'
+      start: '2011-04-18',
+      end: '2015-03-17'
     },
-    img: '',
-    link: '',
+    img: 'pol.png',
+    link: 'http://pol.com.br',
+    needWhiteBg: true,
     technologies: [
       t.cSharp,
-      t.webForms,
-      t.windowsForms,
-      t.telerik,
-      t.flash,
       t.html,
       t.css,
       t.js,
       t.jquery,
-      t.sqlServer,
-      t.visualStudio
-    ],
-    description: {
-      'pt': `PriManager [Sistema de Gerenciamento de Obras da Sistema Pri]
-        - Sistema web para cadastramento das obras para os principais clientes: Eletropaulo, CDHU, entre outros.
-        
-        FDE [Fundação para o Desenvolvimento da Educação]
-        - Sistema para gerenciamento de infra-estrutura das escolas do Estado de São Paulo.
-        
-        ERP / CRM para controle de todas as operações da empresa: fluxo de caixa, cadastro e acompanhamento de relacionamento com clientes e fornecedores, entre outros módulos.
-        
-        Principais Tecnologias: .NET 2.0 / 3.5 utilizando linguagem C#, construção de aplicações web 2.0 com Telerik, Web Services, Windows Services, Flash / Action Script, Google Maps API, Banco de Dados: SQL Server 2005 / 2008`
-    },
-    projects: [
-      {
-        name: 'PriManager',
-        description: 'Sistema de Gerenciamento de Obras',
-        link: 'http://www.sistemapri.com.br/en/primanager.html',
-        clients: [
-          {
-            name: 'Sistema Pri',
-            link: 'http://www.sistemapri.com.br'
-          }
-        ]
-      },
-      {
-        name: 'FDE',
-        description: 'Sistema para gerenciamento de infra-estrutura das escolas do Estado de São Paulo',
-        link: 'http://www.fde.sp.gov.br',
-        clients: [
-          {
-            name: 'FDE',
-            link: 'http://www.fde.sp.gov.br'
-          }
-        ]
-      },
-      {
-        name: 'Mapa de Obras',
-        description: '',
-        link: 'https://www.aeseletropaulo.com.br',
-        clients: [
-          {
-            name: 'AES Eletropaulo',
-            link: 'https://www.aeseletropaulo.com.br'
-          }
-        ]
-      },
-      {
-        name: 'ERP / CRM',        
-        description: 'ERP / CRM para controle de todas as operações da empresa: fluxo de caixa, cadastro e acompanhamento de relacionamento com clientes e fornecedores, entre outros módulos.',
-        link: null,
-        clients: []
-      }
-    ]
-  },
-  'Media W': {
-    date: {
-      start: '2010-06-14',
-      end: '2010-07-22'
-    },
-    img: '',
-    link: 'http://www.mediaw.com.br/',
-    technologies: [
-      t.cSharp,
-      t.windowsForms,
-      t.mySql,
-      t.vs
-    ],
-    description: `Desenvolvimento de software para automação comercial PDV TED das lojas "Cadê o Nenê", impressora fiscal e máquina de cartão Bematech.
-    
-        Principais Tecnologias: .NET 3.5 utilizando linguagem C# para Windows Forms, Banco de Dados: MySQL`,
-    projects: [
-      {
-        name: 'PDV TED',
-        description: 'software para automação comercial PDV TED das lojas "Cadê o Nenê", impressora fiscal e máquina de cartão Bematech',
-        link: null,
-        clients: [
-          {
-            name: 'Cadê o Nenê',
-            link: ''
-          }
-        ]
-      }
-    ]
-  },
-  'Empresário Cobrança': {
-    date: {
-      start: '2010-07-23',
-      end: '2011-03-18'
-    },
-    img: 'empresario-cobranca.gif',
-    link: 'http://www.empresariocobranca.com.br/',
-    technologies: [
-      t.cSharp,
+      t.netMvc,
+      t.postgres,
       t.webForms,
-      t.wpf,
-      t.ext,
-      t.html,
-      t.css,
-      t.js,
-      t.jquery,
+      t.wcf,
       t.sqlServer,
-      t.visualStudio
+      t.visualStudio,
+      t.lucene,
+      t.rabbitmq,
+      t.structureMap,
+      t.entityFramework
     ],
-    description: `Sistema para negociação de dívidas de pessoa física e jurídica de todo o Brasil, utilizando complexos cálculos financeiros, gerador do algoritmo do código de barras, business inteligence para importação e tratamento de milhões de registros em diversas extensões e formatação de arquivo.
-    Sistema para controle de acesso com captura de foto utilizando WPF.
-    Sistema de Recursos Humanos interno para os colaboradores.
-    Sistema para controle financeiro e CRM
-    
-    Principais Tecnologias: WCF, WPF, NET 3.5 utilizando linguagem C#, WebForms, Windows Forms, Windows Services,  EXT.Net
-    Banco de Dados: SQL Server (Criação de Querys, Stored Procedures, Functions, Views e Jobs com alta performance para suportar a grande massa de dados )`,
+    description: `POL (Prêmios Online), plataforma de e-commerce para resgate de produtos / serviços através da pontuação adquirida na apuração das metas e resultados. Integração com parceiros B2W, Magazine Luiza, Walmart, Casas Bahia, FastShop, entre outros.
+        
+        Criação de Engine de busca utilizando Lucene.
+        
+        Principais Tecnologias: MVC, API, Jquery, Ajax, .NET 4.0 / 4.5 utilizando linguagem C#, Entity Framework, Migrations, UnitTest, Lucene, StructureMap, WebForms
+        Principais Metodologias: Domain Driven Design, Test Driven Development, Scrum
+        Banco de Dados: SQL Server (Gerenciamento, Criação de Querys, Stored Procedures, Functions, Views e Jobs)`,
     projects: [
       {
         name: '',
@@ -468,7 +371,27 @@ const jobsAndClients = {
         link: null,
         clients: [
           {
-            name: '',
+            name: 'B2W',
+            link: ''
+          },
+          {
+            name: 'Magazine Luiza',
+            link: ''
+          },
+          {
+            name: 'Walmart',
+            link: ''
+          },
+          {
+            name: 'Avon',
+            link: ''
+          },
+          {
+            name: 'Casas Bahia',
+            link: ''
+          },
+          {
+            name: 'FastShop',
             link: ''
           }
         ]
@@ -571,38 +494,32 @@ const jobsAndClients = {
       }
     ]
   },
-  'POL': {
+  'Empresário Cobrança': {
     date: {
-      start: '2011-04-18',
-      end: '2015-03-17'
+      start: '2010-07-23',
+      end: '2011-03-18'
     },
-    img: 'pol.png',
-    link: 'http://pol.com.br',
-    needWhiteBg: true,
+    img: 'empresario-cobranca.gif',
+    link: 'http://www.empresariocobranca.com.br/',
     technologies: [
       t.cSharp,
+      t.webForms,
+      t.wpf,
+      t.ext,
       t.html,
       t.css,
       t.js,
       t.jquery,
-      t.netMvc,
-      t.postgres,
-      t.webForms,
-      t.wcf,
       t.sqlServer,
-      t.visualStudio,
-      t.lucene,
-      t.rabbitmq,
-      t.structureMap,
-      t.entityFramework
+      t.visualStudio
     ],
-    description: `POL (Prêmios Online), plataforma de e-commerce para resgate de produtos / serviços através da pontuação adquirida na apuração das metas e resultados. Integração com parceiros B2W, Magazine Luiza, Walmart, Casas Bahia, FastShop, entre outros.
-        
-        Criação de Engine de busca utilizando Lucene.
-        
-        Principais Tecnologias: MVC, API, Jquery, Ajax, .NET 4.0 / 4.5 utilizando linguagem C#, Entity Framework, Migrations, UnitTest, Lucene, StructureMap, WebForms
-        Principais Metodologias: Domain Driven Design, Test Driven Development, Scrum
-        Banco de Dados: SQL Server (Gerenciamento, Criação de Querys, Stored Procedures, Functions, Views e Jobs)`,
+    description: `Sistema para negociação de dívidas de pessoa física e jurídica de todo o Brasil, utilizando complexos cálculos financeiros, gerador do algoritmo do código de barras, business inteligence para importação e tratamento de milhões de registros em diversas extensões e formatação de arquivo.
+    Sistema para controle de acesso com captura de foto utilizando WPF.
+    Sistema de Recursos Humanos interno para os colaboradores.
+    Sistema para controle financeiro e CRM
+    
+    Principais Tecnologias: WCF, WPF, NET 3.5 utilizando linguagem C#, WebForms, Windows Forms, Windows Services,  EXT.Net
+    Banco de Dados: SQL Server (Criação de Querys, Stored Procedures, Functions, Views e Jobs com alta performance para suportar a grande massa de dados )`,
     projects: [
       {
         name: '',
@@ -610,30 +527,113 @@ const jobsAndClients = {
         link: null,
         clients: [
           {
-            name: 'B2W',
-            link: ''
-          },
-          {
-            name: 'Magazine Luiza',
-            link: ''
-          },
-          {
-            name: 'Walmart',
-            link: ''
-          },
-          {
-            name: 'Avon',
-            link: ''
-          },
-          {
-            name: 'Casas Bahia',
-            link: ''
-          },
-          {
-            name: 'FastShop',
+            name: '',
             link: ''
           }
         ]
+      }
+    ]
+  },
+  'Media W': {
+    date: {
+      start: '2010-06-14',
+      end: '2010-07-22'
+    },
+    img: '',
+    link: 'http://www.mediaw.com.br/',
+    technologies: [
+      t.cSharp,
+      t.windowsForms,
+      t.mySql,
+      t.vs
+    ],
+    description: `Desenvolvimento de software para automação comercial PDV TED das lojas "Cadê o Nenê", impressora fiscal e máquina de cartão Bematech.
+    
+        Principais Tecnologias: .NET 3.5 utilizando linguagem C# para Windows Forms, Banco de Dados: MySQL`,
+    projects: [
+      {
+        name: 'PDV TED',
+        description: 'software para automação comercial PDV TED das lojas "Cadê o Nenê", impressora fiscal e máquina de cartão Bematech',
+        link: null,
+        clients: [
+          {
+            name: 'Cadê o Nenê',
+            link: ''
+          }
+        ]
+      }
+    ]
+  },
+  'Upgrade Consultoria': {
+    date: {
+      start: '2008-10-28',
+      end: '2010-06-11'
+    },
+    img: '',
+    link: '',
+    technologies: [
+      t.cSharp,
+      t.webForms,
+      t.windowsForms,
+      t.telerik,
+      t.flash,
+      t.html,
+      t.css,
+      t.js,
+      t.jquery,
+      t.sqlServer,
+      t.visualStudio
+    ],
+    description: {
+      'pt': `PriManager [Sistema de Gerenciamento de Obras da Sistema Pri]
+        - Sistema web para cadastramento das obras para os principais clientes: Eletropaulo, CDHU, entre outros.
+        
+        FDE [Fundação para o Desenvolvimento da Educação]
+        - Sistema para gerenciamento de infra-estrutura das escolas do Estado de São Paulo.
+        
+        ERP / CRM para controle de todas as operações da empresa: fluxo de caixa, cadastro e acompanhamento de relacionamento com clientes e fornecedores, entre outros módulos.
+        
+        Principais Tecnologias: .NET 2.0 / 3.5 utilizando linguagem C#, construção de aplicações web 2.0 com Telerik, Web Services, Windows Services, Flash / Action Script, Google Maps API, Banco de Dados: SQL Server 2005 / 2008`
+    },
+    projects: [
+      {
+        name: 'PriManager',
+        description: 'Sistema de Gerenciamento de Obras',
+        link: 'http://www.sistemapri.com.br/en/primanager.html',
+        clients: [
+          {
+            name: 'Sistema Pri',
+            link: 'http://www.sistemapri.com.br'
+          }
+        ]
+      },
+      {
+        name: 'FDE',
+        description: 'Sistema para gerenciamento de infra-estrutura das escolas do Estado de São Paulo',
+        link: 'http://www.fde.sp.gov.br',
+        clients: [
+          {
+            name: 'FDE',
+            link: 'http://www.fde.sp.gov.br'
+          }
+        ]
+      },
+      {
+        name: 'Mapa de Obras',
+        description: '',
+        link: 'https://www.aeseletropaulo.com.br',
+        clients: [
+          {
+            name: 'AES Eletropaulo',
+            link: 'https://www.aeseletropaulo.com.br'
+          }
+        ]
+      },
+      {
+        name: 'ERP / CRM',
+        description: 'ERP / CRM para controle de todas as operações da empresa: fluxo de caixa, cadastro e acompanhamento de relacionamento com clientes e fornecedores, entre outros módulos.',
+        link: null,
+        clients: []
       }
     ]
   }

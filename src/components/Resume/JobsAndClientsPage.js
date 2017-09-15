@@ -8,8 +8,6 @@ import JobsAndClient from './JobsAndClient';
 const JobsAndClientsPage = (props) => {
   const { menu, jobsAndClients } = props.data.site.siteMetadata.resume;
 
-  jobsAndClients.map(job => console.log(job));
-
   return (
     <ResumeContainer
       menu={menu}

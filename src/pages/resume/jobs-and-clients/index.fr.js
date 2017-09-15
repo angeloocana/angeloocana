@@ -1,9 +1,9 @@
 import React from 'react';
-import EducationsPage from '../../../components/Resume/EducationsPage';
+import JobsAndClientsPage from '../../../components/Resume/JobsAndClientsPage';
 import graphql from 'graphql';
 
 export default (props) =>
-  <EducationsPage
+  <JobsAndClientsPage
     {...props}
   />;
 
