@@ -1,6 +1,8 @@
 module.exports = {
   'all': 'All',
 
+  'contact': 'Contact',
+
   'resume': `Curriculum`,
 
   'resume.technologies': 'Technologies',

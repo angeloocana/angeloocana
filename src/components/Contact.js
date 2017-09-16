@@ -7,6 +7,7 @@ import styled from 'styled-components';
 import Br from './flags/Br';
 import Ca from './flags/Ca';
 import A from './A';
+import { FormattedMessage } from 'react-intl';
 
 const getCountry = (country) => {
   switch (country) {
@@ -25,29 +26,29 @@ const getIcon = (type) => {
 };
 
 const Link = styled(A)`
-  padding-top: ${({theme}) => theme.scale(0)};
-  padding-bottom: ${({theme}) => theme.scale(1)};
+  padding-top: ${({ theme }) => theme.scale(0)};
+  padding-bottom: ${({ theme }) => theme.scale(1)};
   padding-right: 0;
-  padding-left: ${({theme}) => theme.scale(0)};
+  padding-left: ${({ theme }) => theme.scale(0)};
   margin: 0;
 
-  color: ${({theme}) => theme.colors.white};
+  color: ${({ theme }) => theme.colors.white};
   display: block;
-  font-size: ${({theme}) => theme.scale(1)};
+  font-size: ${({ theme }) => theme.scale(1)};
   text-decoration: none;
 
   &:hover {
-    background-color: ${({theme}) => theme.colors.blackShades[0]}
+    background-color: ${({ theme }) => theme.colors.blackShades[0]}
   }
 
   .contact-icon {
-    padding-right: ${({theme}) => theme.scale(-2)};
-    font-size: ${({theme}) => theme.scale(4)};
+    padding-right: ${({ theme }) => theme.scale(-2)};
+    font-size: ${({ theme }) => theme.scale(4)};
   }
 
   .country-icon {
-    padding-left: ${({theme}) => theme.scale(-2)};
-    font-size: ${({theme}) => theme.scale(3)};
+    padding-left: ${({ theme }) => theme.scale(-2)};
+    font-size: ${({ theme }) => theme.scale(3)};
   }
 `;
 
@@ -71,8 +72,8 @@ ContactItem.propTypes = {
 };
 
 const Ul = styled.ul`
-  padding-top: ${({theme}) => theme.scale(0)};
-  padding-bottom: ${({theme}) => theme.scale(7)};
+  padding-top: ${({ theme }) => theme.scale(0)};
+  padding-bottom: ${({ theme }) => theme.scale(7)};
   padding-right: 0;
   padding-left: 0;
   margin: auto;
@@ -90,9 +91,13 @@ const Contact = (props) => {
   return (
     <section>
       <header>
-        <H1>
-          {props.i18n.title}
-        </H1>
+        <FormattedMessage id="contact">
+          {(txt) => (
+            <H1>
+              {txt}
+            </H1>
+          )}
+        </FormattedMessage>
       </header>
       <Ul>
         {contactList}
@@ -102,9 +107,6 @@ const Contact = (props) => {
 };
 
 Contact.propTypes = {
-  i18n: PropTypes.shape({
-    title: PropTypes.string.isRequired
-  }).isRequired,
   data: PropTypes.shape({
     site: PropTypes.shape({
       siteMetadata: PropTypes.shape({
