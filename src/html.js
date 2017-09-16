@@ -16,7 +16,8 @@ class Html extends React.Component {
           <meta charSet="utf-8" />
           <script
             type="text/javascript"
-            dangerouslySetInnerHTML={{ __html: `
+            dangerouslySetInnerHTML={{
+              __html: `
             var logErro = function (message, source, lineno, colno, error) {
 
                 if(location.href.match('localhost'))
