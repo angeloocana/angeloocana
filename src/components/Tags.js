@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'proptypes';
 import Link from 'gatsby-link';
 import styled from 'styled-components';
+import {FormattedMessage} from 'react-intl';
 
 const Section = styled.section`
   text-align: center;
@@ -66,7 +67,7 @@ const Tags = (props) => {
   return (
     <Section>
       <Header>
-        {props.i18n.title}
+        <FormattedMessage id="tags" />
       </Header>
       <Ul>
         {
@@ -79,10 +80,7 @@ const Tags = (props) => {
 };
 
 Tags.propTypes = {
-  tags: PropTypes.array,
-  i18n: PropTypes.shape({
-    title: PropTypes.string.isRequired
-  }).isRequired
+  tags: PropTypes.array
 };
 
 export default Tags;

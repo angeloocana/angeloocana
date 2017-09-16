@@ -5,6 +5,13 @@ module.exports = {
 
   'posts.seeMore': 'Ver mais posts interessantes >>',
 
+  'tags': 'Tags',
+  'tags.allTagsLink': 'Ver todas as tags',
+  'tags.nPostsTaggedWith': `{nPosts, number} {nPosts, plural,
+      one {post}
+      other {posts}
+    } com a tag`,
+
   'contact': 'Contato',
 
   'resume': `Currículo`,

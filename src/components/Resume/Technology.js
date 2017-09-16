@@ -59,7 +59,8 @@ const A = styled.a`
 
 const getNYears = (years) => head(years) - last(years) + 1;
 
-const Technology = ({ name, link, needWhiteBg, level, years, img, i18n }) => {
+const Technology = (props) => {
+  const { name, link, needWhiteBg, level, years, img } = props;
   return (
     <Li>
       <A href={link} target="_blank">
@@ -95,11 +96,7 @@ Technology.propTypes = {
   years: PropTypes.array.isRequired,
   img: PropTypes.string.isRequired,
   link: PropTypes.string,
-  needWhiteBg: PropTypes.bool,
-  i18n: PropTypes.shape({
-    yearsMsg: PropTypes.string.isRequired,
-    getLevelMsg: PropTypes.func.isRequired
-  })
+  needWhiteBg: PropTypes.bool
 };
 
 export default Technology;

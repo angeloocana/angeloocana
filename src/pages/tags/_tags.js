@@ -4,10 +4,11 @@ import Link from '../../components/Link';
 import kebabCase from 'lodash/kebabCase';
 import H1 from '../../components/H1';
 import styled from 'styled-components';
+import { FormattedMessage } from 'react-intl';
 
 const Nav = styled.nav`
-  margin-top: ${({theme}) => theme.scale(-1)};
-  margin-bottom: ${({theme}) => theme.scale(6)};
+  margin-top: ${({ theme }) => theme.scale(-1)};
+  margin-bottom: ${({ theme }) => theme.scale(6)};
   column-count: 2;
 
   @media (min-width: 450px) {
@@ -20,8 +21,8 @@ const Nav = styled.nav`
 `;
 
 const Li = styled.li`
-  font-size: ${({theme}) => theme.scale(1)};
-  padding: ${({theme}) => theme.scale(-1)} 0;
+  font-size: ${({ theme }) => theme.scale(1)};
+  padding: ${({ theme }) => theme.scale(-1)} 0;
 `;
 
 const TagsPageRoute = (props) => {
@@ -30,7 +31,11 @@ const TagsPageRoute = (props) => {
   return (
     <section className="post-list">
       <header>
-        <H1>{props.i18n.title}</H1>
+        <FormattedMessage id="tags" >
+          {(txt) => (
+            <H1>{txt}</H1>
+          )}
+        </FormattedMessage>
       </header>
       <Nav>
         <ul>
@@ -54,10 +59,7 @@ const TagsPageRoute = (props) => {
 
 TagsPageRoute.propTypes = {
   data: PropTypes.object,
-  pathContext: PropTypes.object,
-  i18n: PropTypes.shape({
-    title: PropTypes.string
-  })
+  pathContext: PropTypes.object
 };
 
 export default TagsPageRoute;

@@ -2,11 +2,7 @@ import React from 'react';
 import TagsPageRoute from './_tags';
 import graphql from 'graphql';
 
-const i18n = {
-  title: 'Étiquettes'
-};
-
-export default (props) => <TagsPageRoute i18n={i18n} {...props} />;
+export default (props) => <TagsPageRoute {...props} />;
 
 export const pageQuery = graphql`
   query TagsFrQuery {

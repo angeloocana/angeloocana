@@ -4,7 +4,6 @@ import graphql from 'graphql';
 import Link from 'gatsby-link';
 import styled from 'styled-components';
 import PostList from '../components/PostList';
-import { getI18nBase } from 'ptz-i18n';
 import { FormattedMessage } from 'react-intl';
 
 const Header = styled.header`
@@ -35,51 +34,26 @@ const AllTagsLink = styled(Link)`
   }
 `;
 
-const getI18n = getI18nBase({
-  'en': {
-    allTags: 'Browse all tags',
-    nPostsTaggedWith: `{nPosts, number} {nPosts, plural,
-      one {post}
-      other {posts}
-    } tagged with`,
-    and: 'and'
-  },
-  'pt': {
-    allTags: 'Ver todas as tags',
-    nPostsTaggedWith: `{nPosts, number} {nPosts, plural,
-      one {post}
-      other {posts}
-    } com a tag`,
-    and: 'e'
-  },
-  'fr': {
-    allTags: 'Parcourir tous les tags',
-    nPostsTaggedWith: `{nPosts, number} {nPosts, plural,
-      one {article}
-      other {articles}
-    } avec l'étiquette`,
-    and: 'et'
-  }
-});
-
 const TagRoute = ({ data, pathContext }) => {
   const posts = data.allMarkdownRemark.edges.map(p => p.node);
-  const i18n = getI18n(pathContext.langKey);
 
   const allTagsLink = (
-    <AllTagsLink
-      to={`/${pathContext.langKey}/tags/`}
-    >
-      {i18n.allTags}
-    </AllTagsLink>
+    <FormattedMessage id="tags.allTagsLink" >
+      {(txt) => (
+        <AllTagsLink
+          to={`/${pathContext.langKey}/tags/`}
+        >
+          {txt}
+        </AllTagsLink>
+      )}
+    </FormattedMessage>
   );
 
   return (
     <section>
       <Header>
         <FormattedMessage
-          id="tag-page.n-posts-tagged-with"
-          defaultMessage={i18n.nPostsTaggedWith}
+          id="tags.nPostsTaggedWith"
           values={{ nPosts: data.allMarkdownRemark.totalCount }}
         />
         <TagName>“{pathContext.tag}”</TagName>
@@ -124,6 +98,7 @@ export const pageQuery = graphql`
         },
         fields{
           slug
+          langKey
         },
         excerpt
       }

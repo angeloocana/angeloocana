@@ -5,6 +5,14 @@ module.exports = {
 
   'posts.seeMore': `Voir d'autres messages intéressants >>`,
 
+  'tags': 'Étiquettes',
+  'tags.nPostsTaggedWith': `{nPosts, number} {nPosts, plural,
+      one {article}
+      other {articles}
+    } avec l'étiquette`,
+
+  'tags.allTagsLink': 'Parcourir tous les tags',
+
   'contact': 'Contact',
 
   'resume': `Résumé`,

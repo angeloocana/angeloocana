@@ -190,27 +190,18 @@ const getI18n = getI18nBase({
     readNext: {
       title: 'Read Next',
       btnMorePostsMsg: 'See more interesting posts >>',
-    },
-    tags: {
-      title: 'tags:'
     }
   },
   'pt': {
     readNext: {
       title: 'Mais posts',
       btnMorePostsMsg: 'Ver mais posts interessantes >>'
-    },
-    tags: {
-      title: 'tags:'
     }
   },
   'fr': {
     readNext: {
       title: 'Lisez la suite',
       btnMorePostsMsg: `Voir d'autres messages intéressants >>`,
-    },
-    tags: {
-      title: 'étiquettes:'
     }
   }
 });
@@ -224,10 +215,7 @@ const BlogPostRoute = (props) => {
   const url = `https://angeloocana.com${markdownRemark.fields.slug}`;
 
   const tags = (
-    <Tags
-      tags={markdownRemark.fields.tagSlugs}
-      i18n={i18n.tags}
-    />
+    <Tags tags={markdownRemark.fields.tagSlugs} />
   );
 
   return (
