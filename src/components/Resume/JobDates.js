@@ -5,25 +5,23 @@ import styled from 'styled-components';
 import CalendarNoStyle from 'react-icons/lib/fa/calendar';
 
 const Time = styled((props) => {
-  return (
-    <time {...props} dateTime={props.date || new Date()}>
-      {
-        props.date
-          ? (
-            <FormattedDate
-              value={new Date(props.date)}
-              month="numeric"
-              year="numeric"
-            />
-          )
-          : (
-            <FormattedMessage
-              id="resume.jobsAndClients.date.actual"
-            />
-          )
-      }
-    </time>
-  );
+  return props.date
+    ? (
+      <FormattedDate
+        value={new Date(props.date)}
+        month="numeric"
+        year="numeric"
+        tagName="time"
+        dateTime={props.date || new Date()}
+      />
+    )
+    : (
+      <FormattedMessage
+        id="resume.jobsAndClients.date.actual"
+        tagName="time"
+        dateTime={props.date || new Date()}
+      />
+    );
 })`
   display: inline-block;
 
@@ -39,10 +37,10 @@ Time.propTypes = {
 };
 
 const CalendarIcon = styled(CalendarNoStyle)`
-  padding-right: ${({theme}) => theme.scale(-4)};
+  padding-right: ${({ theme }) => theme.scale(-4)};
 `;
 
-const JobDates = ({start, end}) => {
+const JobDates = ({ start, end }) => {
   return (
     <div>
       <CalendarIcon />

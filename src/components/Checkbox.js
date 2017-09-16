@@ -56,18 +56,22 @@ class Checkbox extends React.Component {
 
   render() {
     return (
-      <Label checked={this.props.checked}>
-        <Input
-          type="checkbox"
-          onChange={this.onChange}
-          onClick={this.onClick}
-          checked={this.props.checked}
-        />
-        <FormattedMessage 
-          id={this.props.label}
-          defaultMessage={this.props.label}
-        />
-      </Label>
+      <FormattedMessage
+        id={this.props.label}
+        defaultMessage={this.props.label}
+      >
+        {(txt) => (
+          <Label checked={this.props.checked}>
+            <Input
+              type="checkbox"
+              onChange={this.onChange}
+              onClick={this.onClick}
+              checked={this.props.checked}
+            />
+            {txt}
+          </Label>
+        )}
+      </FormattedMessage>
     );
   }
 }

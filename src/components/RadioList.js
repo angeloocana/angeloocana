@@ -26,9 +26,13 @@ const RadioList = (props) => {
   return (
     <fieldset>
       <legend>
-        <InvisibleSpan>
-          <FormattedMessage id={props.i18n.title} />
-        </InvisibleSpan>
+        <FormattedMessage id={props.i18n.title}>
+          {(txt) => (
+            <InvisibleSpan>
+              {txt}
+            </InvisibleSpan>
+          )}
+        </FormattedMessage>
       </legend>
       <Ul>
         {props.items.map(item => (

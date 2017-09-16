@@ -19,9 +19,13 @@ const Projects = ({ projects }) => {
   return (
     <section>
       <Header>
-        <H2>
-          <FormattedMessage id="resume.jobsAndClients.projects" />
-        </H2>
+        <FormattedMessage id="resume.jobsAndClients.projects">
+          {(txt) => (
+            <H2>
+              {txt}
+            </H2>
+          )}
+        </FormattedMessage>
       </Header>
       <ul>
         {projects.map(project => (

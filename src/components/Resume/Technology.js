@@ -69,11 +69,15 @@ const Technology = ({ name, link, needWhiteBg, level, years, img, i18n }) => {
           </ImgContainer>
           <figcaption>
             <Name>{name}</Name>
-            <Level level={level}>
-              <FormattedMessage
-                id={'resume.technologies.level.' + level}
-              />
-            </Level>
+            <FormattedMessage
+              id={'resume.technologies.level.' + level}
+            >
+              {(txt) => (
+                <Level level={level}>
+                  {txt}
+                </Level>
+              )}
+            </FormattedMessage>
             <FormattedMessage
               id="resume.technologies.yearsMsg"
               values={{ nYears: getNYears(years) }}

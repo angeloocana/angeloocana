@@ -118,9 +118,13 @@ class TechnologiesPage extends React.Component {
       >
         <Filters>
           <legend>
-            <InvisibleSpan>
-              <FormattedMessage id="resume.technologies" />
-            </InvisibleSpan>
+            <FormattedMessage id="resume.technologies">
+              {(txt) => (
+                <InvisibleSpan>
+                  {txt}
+                </InvisibleSpan>
+              )}
+            </FormattedMessage>
           </legend>
           <Selects>
             <Select

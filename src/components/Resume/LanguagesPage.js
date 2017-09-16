@@ -86,9 +86,13 @@ const LanguagesPage = (props) => {
       selectedPage="/resume/languages/"
     >
       <header>
-        <H2>
-          <FormattedMessage id="resume.languages" />
-        </H2>
+        <FormattedMessage id="resume.languages">
+          {(txt) => (
+            <H2>
+              {txt}
+            </H2>
+          )}
+        </FormattedMessage>
       </header>
       <Ul>
         {
@@ -98,11 +102,15 @@ const LanguagesPage = (props) => {
                 {getFlag(lang.key)}
                 <Figcaption>
                   <Name>{lang.name[props.intl.locale]}</Name>
-                  <Level level={lang.level}>
-                    <FormattedMessage 
-                      id={'resume.languages.level.' + lang.level}
-                    />
-                  </Level>
+                  <FormattedMessage
+                    id={'resume.languages.level.' + lang.level}
+                  >
+                    {(txt) => (
+                      <Level level={lang.level}>
+                        {txt}
+                      </Level>
+                    )}
+                  </FormattedMessage>
                 </Figcaption>
               </figure>
             </Li>

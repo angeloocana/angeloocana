@@ -29,7 +29,7 @@ const Li = styled.li`
       font-size: ${theme.scale(0)};
       background-color: ${theme.colors.black};      
     `
-}
+  }
 }
 
   a:hover {
@@ -63,9 +63,13 @@ const Ul = styled.ul`
 const Page = ({ label, link, selected }) => {
   return (
     <Li selected={selected}>
-      <Link to={link}>
-        <FormattedMessage id={label} />
-      </Link>
+      <FormattedMessage id={label}>
+        {(txt) => (
+          <Link to={link}>
+            {txt}
+          </Link>
+        )}
+      </FormattedMessage>
     </Li>
   );
 };
@@ -85,11 +89,11 @@ const getMenu = (menu, selectedPage, langKey) =>
 
 const Header = styled.header`
   margin-bottom: -${({ theme }) => theme.scale(4)};
-`;
 
-const H1 = styled.h1`
-  text-align: center;
-  font-size: ${({ theme }) => theme.scale(1)};
+  h1 {
+    text-align: center;
+    font-size: ${({ theme }) => theme.scale(1)};
+  }
 `;
 
 const ResumeContainer = (props) => {
@@ -98,9 +102,7 @@ const ResumeContainer = (props) => {
   return (
     <section>
       <Header>
-        <H1>
-          <FormattedMessage id="resume" />
-        </H1>
+        <FormattedMessage id="resume" tagName="h1" />
       </Header>
       {props.children}
       <footer>

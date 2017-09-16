@@ -46,9 +46,13 @@ const CheckboxList = ({ i18n, items, check, checkAll }) => {
   return (
     <fieldset>
       <legend>
-        <InvisibleSpan>
-          <FormattedMessage id={i18n.title} />
-        </InvisibleSpan>
+        <FormattedMessage id={i18n.title}>
+          {(txt) => (
+            <InvisibleSpan>
+              {txt}
+            </InvisibleSpan>
+          )}
+        </FormattedMessage>
       </legend>
       <Ul>
         <li>

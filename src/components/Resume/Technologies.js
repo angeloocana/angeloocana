@@ -18,17 +18,25 @@ const Technologies = ({ technologies }) => {
   const noTechnologies = technologies && technologies.length > 0
     ? null
     : (
-      <Error>
-        <FormattedMessage id="resume.technologies.noTechnologies" />
-      </Error>
+      <FormattedMessage id="resume.technologies.noTechnologies">
+        {(txt) => (
+          <Error>
+            {txt}
+          </Error>
+        )}
+      </FormattedMessage>
     );
 
   return (
     <section>
       <header>
-        <H2>
-          <FormattedMessage id="resume.technologies" />
-        </H2>
+        <FormattedMessage id="resume.technologies">
+          {(txt) => (
+            <H2>
+              {txt}
+            </H2>
+          )}
+        </FormattedMessage>
       </header>
       <Ul>
         {

@@ -14,9 +14,13 @@ const JobsAndClientsPage = (props) => {
       selectedPage="/resume/jobs-and-clients/"
     >
       <header>
-        <H2>
-          <FormattedMessage id="resume.jobsAndClients" />
-        </H2>
+        <FormattedMessage id="resume.jobsAndClients">
+          {(txt) => (
+            <H2>
+              {txt}
+            </H2>
+          )}
+        </FormattedMessage>
       </header>
       <ul>
         {

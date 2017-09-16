@@ -17,9 +17,13 @@ const Educations = ({ educations, langKey }) => {
   return (
     <section>
       <header>
-        <H2>
-          <FormattedMessage id="resume.educations" />
-        </H2>
+        <FormattedMessage id="resume.educations">
+          {(txt) => (
+            <H2>
+              {txt}
+            </H2>
+          )}
+        </FormattedMessage>
       </header>
       <Ul>
         {
