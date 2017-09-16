@@ -73,7 +73,7 @@ const Selects = styled.div`
   }
 `;
 
-class TechnologiesPage extends React.Component {
+class TechnologiesPage extends React.PureComponent {
   constructor(props) {
     super(props);
 

@@ -3,7 +3,7 @@ import PropTypes from 'proptypes';
 import ReactDisqusComments from 'react-disqus-comments';
 import styled from 'styled-components';
 
-class Comments extends React.Component {
+class Comments extends React.PureComponent {
   static propTypes = {
     shortname: PropTypes.string,
     identifier: PropTypes.string,

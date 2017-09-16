@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'proptypes';
 import theme from './themes/theme.js';
 
-class Html extends React.Component {
+class Html extends React.PureComponent {
   static propTypes = {
     headComponents: PropTypes.array,
     body: PropTypes.string,

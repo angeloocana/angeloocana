@@ -1,6 +1,6 @@
 import React from 'react';
 
-class FourOFour extends React.Component {
+class FourOFour extends React.PureComponent {
   render() {
     return (
       <div>

@@ -15,7 +15,7 @@ export const addAll = (items) =>
     value: ''
   }].concat(items);
 
-class Select extends React.Component {
+class Select extends React.PureComponent {
 
   onChange = (event) => {
     this.props.onChange(event.target.value);

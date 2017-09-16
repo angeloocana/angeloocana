@@ -42,7 +42,7 @@ const Input = styled.input`
     appearance: none;
 `;
 
-class Checkbox extends React.Component {
+class Checkbox extends React.PureComponent {
   static propTypes = {
     label: PropTypes.string,
     value: PropTypes.any,

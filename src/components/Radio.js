@@ -46,7 +46,7 @@ const Input = styled.input`
     appearance: none;
 `;
 
-class Radio extends React.Component {
+class Radio extends React.PureComponent {
   static propTypes = {
     label: PropTypes.string,
     value: PropTypes.any,

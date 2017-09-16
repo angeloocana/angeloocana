@@ -104,7 +104,7 @@ const Ul = styled.ul`
     opacity: ${props => props.isOpen ? 1 : 0};
 `;
 
-class Menu extends React.Component {
+class Menu extends React.PureComponent {
   constructor(props) {
     super(props);
 
