@@ -3,7 +3,6 @@ import PropTypes from 'proptypes';
 import graphql from 'graphql';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
-import { siteMetadata as allSiteMetadata } from '../../gatsby-config';
 import styled, { ThemeProvider } from 'styled-components';
 import theme from '../themes/theme';
 import {getMessages} from '../data/messages';
@@ -75,7 +74,7 @@ const Wrapper = (props) => {
   const homeLink = `/${langKey}/`;
   const langsMenu = getLangs(langs, langKey, getUrlForLang(homeLink, url));
 
-  const siteMetadata = allSiteMetadata[langKey];
+  const {menu, author, sourceCodeLink} = props.data.site.siteMetadata;
 
   return (
     <ThemeProvider theme={theme}>
@@ -86,18 +85,19 @@ const Wrapper = (props) => {
         <Background>
           <BodyContainer>
             <Header
-              siteMetadata={siteMetadata}
               isHome={isHome}
               langs={langsMenu}
               homeLink={homeLink}
               url={url}
+              menu={menu}    
             />
             <main>
               {children()}
             </main>
             <Footer
               currentLangKey={langKey}
-              siteMetadata={siteMetadata}
+              author={author}
+              sourceCodeLink={sourceCodeLink}
             />
           </BodyContainer>
         </Background>
@@ -121,6 +121,18 @@ export const pageQuery = graphql`
         languages {
           defaultLangKey
           langs
+        }
+        author {
+          name
+          homeCity
+          email
+          defaultLink
+        }
+        sourceCodeLink
+        menu {
+          label
+          link
+          slug
         }
       }
     }

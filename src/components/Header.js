@@ -5,6 +5,7 @@ import Helmet from 'react-helmet';
 import Menu from './Menu';
 import styled from 'styled-components';
 import SelectLanguage from './SelectLanguage';
+import { FormattedMessage } from 'react-intl';
 
 const headerTheme = (props) =>
   props.isHome
@@ -26,25 +27,37 @@ const SubTitle = styled.p`
   margin: ${props => headerTheme(props).subTitle.margin};
 `;
 
-const Header = ({ siteMetadata, isHome, langs, homeLink, url }) => {
+const Header = ({ menu, isHome, langs, homeLink, url }) => {
   return (
     <header>
-      <Helmet
-        defaultTitle={siteMetadata.title}
-        titleTemplate={`%s | ${siteMetadata.title}`} 
-      />
+      <FormattedMessage id="title">
+        {(txt) => (
+          <Helmet
+            defaultTitle={txt}
+            titleTemplate={`%s | ${txt}`}
+          />
+        )}
+      </FormattedMessage>
       <SelectLanguage langs={langs} />
-      <Title to={homeLink} isHome={isHome}>
-        {siteMetadata.header.title}
-        <SubTitle isHome={isHome}>{siteMetadata.header.subTitle}</SubTitle>
-      </Title>
-      <Menu menu={siteMetadata.menu} url={url} />
+      <FormattedMessage id="header.title">
+        {(title) => (
+          <Title to={homeLink} isHome={isHome}>
+            {title}
+            <FormattedMessage id="header.subTitle">
+              {(subTitle) => (
+                <SubTitle isHome={isHome}>{subTitle}</SubTitle>
+              )}
+            </FormattedMessage>
+          </Title>
+        )}
+      </FormattedMessage>
+      <Menu menu={menu} url={url} />
     </header>
   );
 };
 
 Header.propTypes = {
-  siteMetadata: PropTypes.object,
+  menu: PropTypes.array.isRequired,
   isHome: PropTypes.bool,
   langs: PropTypes.array,
   homeLink: PropTypes.string,

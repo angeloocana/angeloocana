@@ -5,6 +5,7 @@ import { InvisibleSpan } from './Invisible';
 import styled from 'styled-components';
 import Link from 'gatsby-link';
 import { endsWith } from 'ramda';
+import { injectIntl, FormattedMessage } from 'react-intl';
 
 const CloseNav = styled.section`
   ${props => props.isOpen
@@ -93,6 +94,8 @@ const MenuLink = styled(Link)`
     }
 `;
 
+const MenuA = MenuLink.withComponent(styled.a``);
+
 const Ul = styled.ul`
     display: block;
     margin-top: ${props => props.theme.menu.ul.marginTop};
@@ -113,38 +116,41 @@ class Menu extends React.PureComponent {
     };
   }
 
-  static propTypes = {
-    menu: PropTypes.array,
-    url: PropTypes.string
-  }
-
   open = (event) => {
     this.setState({
       isOpen: !this.state.isOpen
     });
   }
 
-  getMenuItems = (isSelected, menu) => {
+  getMenuItems = (isSelected, menu, langKey) => {
     return menu.map(item => {
+      const slug = `/${langKey}${item.slug}`;
       return (
         <li>
-          <MenuLink
-            selected={isSelected(item.link)}
-            to={item.link}
-            onClick={this.open}
-          >
-            {item.label}
-          </MenuLink>
+          <FormattedMessage id={item.label}>
+            {(label) =>
+              item.link
+                ? (
+                  <MenuA target="_blank" href={item.link}>
+                    {label}
+                  </MenuA>
+                )
+                : (
+                  <MenuLink selected={isSelected(slug)} to={slug} onClick={this.open}>
+                    {label}
+                  </MenuLink>
+                )
+            }
+          </FormattedMessage>
         </li>
       );
     });
   }
 
   render() {
-    const {isOpen} = this.state;
-
+    const { isOpen } = this.state;
     const isSelected = endsWith(this.props.url);
-    const menuItems = this.getMenuItems(isSelected, this.props.menu);
+    const menuItems = this.getMenuItems(isSelected, this.props.menu, this.props.intl.locale);
 
     return (
       <section>
@@ -167,4 +173,10 @@ class Menu extends React.PureComponent {
   }
 };
 
-export default Menu;
+Menu.propTypes = {
+  menu: PropTypes.array.isRequired,
+  url: PropTypes.string.isRequired,
+  intl: PropTypes.object.isRequired
+};
+
+export default injectIntl(Menu);

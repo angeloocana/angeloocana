@@ -118,9 +118,7 @@ const getCreatedBy = (author) => {
   };
 };
 
-const Footer = ({ siteMetadata, currentLangKey }) => {
-  const { author, sourceCodeLink } = siteMetadata;
-
+const Footer = ({ author, sourceCodeLink, currentLangKey }) => {
   return (
     <footer>
       {getCreatedBy(author)[currentLangKey]}
@@ -134,7 +132,8 @@ const Footer = ({ siteMetadata, currentLangKey }) => {
 };
 
 Footer.propTypes = {
-  siteMetadata: PropTypes.object,
+  author: PropTypes.object.isRequired,
+  sourceCodeLink: PropTypes.string.isRequired,
   currentLangKey: PropTypes.string
 };
 

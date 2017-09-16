@@ -1,4 +1,11 @@
 module.exports = {
+  'title': `Ângelo Ocanã Développement et formation d'applications Web`,
+  'header.title': 'Ângelo Ocanã',
+  'header.subTitle': `Développement et formation d'applications Web`,
+
+  'home': 'Accueil',
+  'about': 'À propos de moi',
+
   'all': 'Tous',
 
   'posts': 'Articles',
@@ -6,12 +13,11 @@ module.exports = {
   'posts.seeMore': `Voir d'autres messages intéressants >>`,
 
   'tags': 'Étiquettes',
+  'tags.allTagsLink': 'Parcourir tous les tags',
   'tags.nPostsTaggedWith': `{nPosts, number} {nPosts, plural,
       one {article}
       other {articles}
     } avec l'étiquette`,
-
-  'tags.allTagsLink': 'Parcourir tous les tags',
 
   'contact': 'Contact',
 
@@ -43,5 +49,7 @@ module.exports = {
 
   'resume.filters': 'Filtres',
   'resume.filters.year': 'Année',
-  'resume.filters.tag': 'Tag'
+  'resume.filters.tag': 'Tag',
+
+  'sourceCode': 'Code source'
 };

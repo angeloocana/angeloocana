@@ -1,4 +1,11 @@
 module.exports = {
+  'title': 'Ângelo Ocanã Desenvolvimento de Web Apps e Treinamentos',
+  'header.title': 'Ângelo Ocanã',
+  'header.subTitle': 'Desenvolvimento de Web Apps e Treinamentos',
+
+  'home': 'Início',
+  'about': 'Sobre mim',
+
   'all': 'Todos',
 
   'posts': 'Posts',
@@ -42,5 +49,7 @@ module.exports = {
 
   'resume.filters': 'Filtros',
   'resume.filters.year': `Ano`,
-  'resume.filters.tag': `Tag`
+  'resume.filters.tag': `Tag`,
+
+  'sourceCode': 'Código fonte'
 };

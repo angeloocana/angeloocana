@@ -1,38 +1,8 @@
-const pt = require('./src/data/siteMetadata.pt');
-const fr = require('./src/data/siteMetadata.fr');
-const en = require('./src/data/siteMetadata.en');
-const resume = require('./src/data/resume');
-const languages = require('./src/data/languages');
+const siteMetadata = require('./src/data/siteMetadata');
 const {getJobUrl} = require('./src/data/resume/getJobUrl');
 
 module.exports = {
-  siteMetadata: {
-    siteUrl: 'https://angeloocana.com',
-    languages,
-    pt,
-    en,
-    fr,
-    resume,
-    contact: [
-      {
-        type: 'email',
-        value: 'angeloocana@gmail.com',
-        link: 'mailto:angeloocana@gmail.com'
-      },
-      {
-        type: 'phone',
-        value: '(613) 720-9572',
-        country: 'ca',
-        link: 'tel:(613) 720-9572'
-      },
-      {
-        type: 'phone',
-        value: '+55 11 99572-9944',
-        country: 'br',
-        link: 'tel:+55 11 99572-9944'
-      }
-    ]
-  },
+  siteMetadata,
   plugins: [
     {
       resolve: 'gatsby-source-filesystem',
