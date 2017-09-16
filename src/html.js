@@ -1,6 +1,5 @@
 import React from 'react';
 import PropTypes from 'proptypes';
-import theme from './themes/theme.js';
 
 class Html extends React.PureComponent {
   static propTypes = {
@@ -54,7 +53,7 @@ class Html extends React.PureComponent {
           <link href="https://fonts.googleapis.com/css?family=Cambo" rel="stylesheet" />
           <link href="/css/prism-coy.css" rel="stylesheet" />
         </head>
-        <body style={{ margin: 0, padding: 0, backgroundColor: theme.bg, color: theme.color }}>
+        <body style={{ margin: 0, padding: 0 }}>
           <div
             id="___gatsby"
             dangerouslySetInnerHTML={{ __html: this.props.body }}
