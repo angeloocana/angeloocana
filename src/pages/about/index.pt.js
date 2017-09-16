@@ -2,7 +2,6 @@ import React from 'react';
 import AboutMe from './_index';
 
 const i18n = {
-  title: 'Sobre mim',
   description: (
     <p>
       Oi! Eu sou o Ângelo! Desenvolvedor Full-Stack desde 2007. <br />

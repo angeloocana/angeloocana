@@ -2,7 +2,6 @@ import React from 'react';
 import AboutMe from './_index';
 
 const i18n = {
-  title: 'About me',
   description: (
     <p>
       Hi! I am Ângelo, a Freelance Full-Stack Developer with a Global mindset since 2007. <br />

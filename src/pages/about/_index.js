@@ -5,9 +5,10 @@ import { getAuthor } from '../../data/authors';
 import { getStructuredDataForAuthor } from '../../structuredData';
 import BigFirstLetter from '../../components/BigFirstLetter';
 import styled from 'styled-components';
+import { FormattedMessage } from 'react-intl';
 
 const Header = styled.header`
-  padding: 0 0 ${({theme}) => theme.scale(2)} 0;
+  padding: 0 0 ${({ theme }) => theme.scale(2)} 0;
 `;
 
 const AboutMe = (props) => {
@@ -24,9 +25,13 @@ const AboutMe = (props) => {
         dangerouslySetInnerHTML={{ __html: structuredData }}
       />
       <Header>
-        <H1>
-          {props.i18n.title}
-        </H1>
+        <FormattedMessage id="about">
+          {(txt) => (
+            <H1>
+              {txt}
+            </H1>
+          )}
+        </FormattedMessage>
       </Header>
       {props.i18n.description}
     </BigFirstLetter>
@@ -35,7 +40,6 @@ const AboutMe = (props) => {
 
 AboutMe.propTypes = {
   i18n: PropTypes.shape({
-    title: PropTypes.string.isRequired,
     description: PropTypes.object.isRequired,
     descriptionForGoogle: PropTypes.string.isRequired,
   }).isRequired
