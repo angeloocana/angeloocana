@@ -23,7 +23,7 @@ const Posts = (props) => {
     <section className="post-list">
       <header>
         <Link to={`/${props.langKey}/blog/`}>
-          <FormattedMessage id="posts">
+          <FormattedMessage id={props.title || 'posts'}>
             {(txt) => (
               <H2>{txt}</H2>
             )}
@@ -39,7 +39,8 @@ const Posts = (props) => {
 Posts.propTypes = {
   posts: PropTypes.array.isRequired,
   langKey: PropTypes.string.isRequired,
-  showBtnMorePosts: PropTypes.bool
+  showBtnMorePosts: PropTypes.bool,
+  title: PropTypes.string
 };
 
 export default Posts;

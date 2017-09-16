@@ -9,7 +9,7 @@ module.exports = {
   'all': 'All',
 
   'posts': 'Posts',
-
+  'posts.readNext': 'Read Next',
   'posts.seeMore': 'See more interesting posts >>',
 
   'tags': 'Tags',

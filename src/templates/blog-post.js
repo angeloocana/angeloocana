@@ -9,7 +9,6 @@ import { getStructuredData } from '../structuredData';
 import CleanTime from '../components/Time';
 import Comments from '../components/Comments';
 import Posts from '../components/Posts';
-import { getI18nBase } from 'ptz-i18n';
 
 const Time = styled(CleanTime)`
   text-align: center;
@@ -185,33 +184,11 @@ const getYoutube = (markdownRemark) => {
     : null;
 };
 
-const getI18n = getI18nBase({
-  'en': {
-    readNext: {
-      title: 'Read Next',
-      btnMorePostsMsg: 'See more interesting posts >>',
-    }
-  },
-  'pt': {
-    readNext: {
-      title: 'Mais posts',
-      btnMorePostsMsg: 'Ver mais posts interessantes >>'
-    }
-  },
-  'fr': {
-    readNext: {
-      title: 'Lisez la suite',
-      btnMorePostsMsg: `Voir d'autres messages intéressants >>`,
-    }
-  }
-});
-
 const BlogPostRoute = (props) => {
   const { markdownRemark } = props.data;
   const { langKey } = props.pathContext;
   const youtube = getYoutube(markdownRemark);
   const structuredData = getStructuredData(markdownRemark);
-  const i18n = getI18n(langKey);
   const url = `https://angeloocana.com${markdownRemark.fields.slug}`;
 
   const tags = (
@@ -254,9 +231,9 @@ const BlogPostRoute = (props) => {
       {tags}
       <Posts
         posts={markdownRemark.fields.readNextPosts}
-        i18n={i18n.readNext}
         langKey={langKey}
         showBtnMorePosts
+        title="posts.readNext"
       />
     </Post>
   );

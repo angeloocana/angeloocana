@@ -9,8 +9,8 @@ module.exports = {
   'all': 'Todos',
 
   'posts': 'Posts',
-
-  'posts.seeMore': 'Ver mais posts interessantes >>',
+  'posts.readNext': 'Mais posts',
+  'posts.seeMore': 'Ver mais posts interessantes >>',  
 
   'tags': 'Tags',
   'tags.allTagsLink': 'Ver todas as tags',
