@@ -1,5 +1,5 @@
 import React from 'react';
-import Index from '../components/Index';
+import Index from '../components/IndexPage';
 import graphql from 'graphql';
 import { i18n } from './index.en';
 

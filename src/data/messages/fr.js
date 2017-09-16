@@ -1,11 +1,17 @@
 module.exports = {
   'all': 'Tous',
 
+  'posts': 'Articles',
+
+  'posts.seeMore': `Voir d'autres messages intéressants >>`,
+
   'contact': 'Contact',
 
   'resume': `Résumé`,
 
   'resume.technologies': 'Les technologies',
+
+  'resume.technologies.seeMore': `Voir toutes les technologies +`,
 
   'resume.technologies.noTechnologies': `0 Enseignants. Sélectionnez les autres années.`,
 

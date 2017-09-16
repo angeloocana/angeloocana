@@ -6,6 +6,7 @@ import Welcome from './Welcome';
 import BtnLink from './BtnLink';
 import Technologies from './Resume/Technologies';
 import { take } from 'ramda';
+import { FormattedMessage } from 'react-intl';
 
 const Index = (props) => {
   const posts = props.data.allMarkdownRemark.edges.map(p => p.node);
@@ -19,13 +20,17 @@ const Index = (props) => {
       <Technologies
         technologies={technologies}
       />
-      <BtnLink to={`/${langKey}/resume/`}>
-        {props.i18n.btnResumeMsg}
-      </BtnLink>
+      <FormattedMessage id="resume.technologies.seeMore">
+        {(txt) => (
+          <BtnLink to={`/${langKey}/resume/`}>
+            {txt}
+          </BtnLink>
+        )}
+      </FormattedMessage>
       <Posts
         posts={posts}
-        i18n={props.i18n.posts}
         langKey={langKey}
+        showBtnMorePosts
       />
     </div>
   );
@@ -33,11 +38,7 @@ const Index = (props) => {
 
 Index.propTypes = {
   data: PropTypes.object.isRequired,
-  pathContext: PropTypes.object.isRequired,
-  i18n: PropTypes.shape({
-    btnResumeMsg: PropTypes.string.isRequired,
-    posts: PropTypes.object.isRequired
-  })
+  pathContext: PropTypes.object.isRequired
 };
 
 export default Index;

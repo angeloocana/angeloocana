@@ -268,6 +268,7 @@ const BlogPostRoute = (props) => {
         posts={markdownRemark.fields.readNextPosts}
         i18n={i18n.readNext}
         langKey={langKey}
+        showBtnMorePosts
       />
     </Post>
   );

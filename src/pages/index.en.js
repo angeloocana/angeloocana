@@ -1,19 +1,8 @@
 import React from 'react';
-import Index from '../components/Index';
+import Index from '../components/IndexPage';
 import graphql from 'graphql';
 
-export const i18n = {
-  posts: {
-    title: 'Posts',
-    btnMorePostsMsg: 'See more interesting posts >>',
-  },
-  btnResumeMsg: 'See all technologies +'
-};
-
-export default (props) => <Index
-  {...props}
-  i18n={i18n}
-/>;
+export default (props) => <Index {...props} />;
 
 export const pageQuery = graphql`
   query IndexEnQuery {
