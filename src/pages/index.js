@@ -1,12 +1,8 @@
 import React from 'react';
 import Index from '../components/IndexPage';
 import graphql from 'graphql';
-import { i18n } from './index.en';
 
-export default (props) => <Index
-  {...props}
-  i18n={i18n}
-/>;
+export default (props) => <Index {...props} />;
 
 export const pageQuery = graphql`
   query IndexQuery {
