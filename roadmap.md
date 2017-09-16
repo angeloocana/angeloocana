@@ -29,10 +29,12 @@
 
 ## Working
 - Resume: Add jobs and clients.
-- Resume: divide in tabs.
+- Resume: add breadcrumb.
+- Resume: add projects.
 - Fix header size when url not ends with /
 
 ## Done
+- Resume: divide in tabs.
 - About me.
 - Fix events error old iphone and old android.
 - Resume: Filter year by year.
