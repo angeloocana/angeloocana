@@ -1,6 +1,6 @@
 ---
 title: Learn English links
-date: '2017-09-02'
+date: '2017-09-16'
 layout: post
 draft: false
 tags:
@@ -52,5 +52,8 @@ For developers is extremely important, It is the 'official' language for coding.
 
 ## Links
 
-- "thr" (three/through) pronunciation
-    https://www.youtube.com/watch?v=K-7G4g6OSrU
+### "thr" (three/through) pronunciation
+[!["thr" (three/through) pronunciation](https://img.youtube.com/vi/K-7G4g6OSrU/0.jpg)](https://www.youtube.com/watch?v=K-7G4g6OSrU)
+
+### English Pronunciation - Th & S
+[![English Pronunciation - Th & S](https://img.youtube.com/vi/LTIGndXwCXk/0.jpg)](https://www.youtube.com/watch?v=LTIGndXwCXk)
