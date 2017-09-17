@@ -57,3 +57,6 @@ Para desenvolvedores é extremamente importante, é a lingua 'oficial' da progra
 
 ### English Pronunciation - Th & S
 [![English Pronunciation - Th & S](https://img.youtube.com/vi/LTIGndXwCXk/0.jpg)](https://www.youtube.com/watch?v=LTIGndXwCXk)
+
+### When NOT to use 'to' in English - Grammar
+[![When NOT to use 'to' in English - Grammar](https://img.youtube.com/vi/E4OkbPN4z7o/0.jpg)](https://www.youtube.com/watch?v=E4OkbPN4z7o)
