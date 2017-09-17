@@ -24,8 +24,6 @@ const getBreadCrumb = (langKey) => [
 ];
 
 const Job = ({ job, intl }) => {
-  console.log('job', job);
-
   return (
     <section>
       <Header>
