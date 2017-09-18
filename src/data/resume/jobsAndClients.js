@@ -1,6 +1,6 @@
 const { technologies } = require('./technologies');
 const R = require('ramda');
-const {getArray} = require('./getArray');
+const { getArray } = require('./getArray');
 const { range, thisYear } = require('./time');
 
 const t = technologies;
@@ -18,7 +18,7 @@ const jobsAndClients = {
       'pt': 'Desenvolvi sistemas e sites para: Envio de SMS, Academias, E-commerce, Sistes Institucionais, entre outros.'
     },
     projects: [
-      {        
+      {
         name: 'angeloocana.com',
         slug: '/angeloocana/v2/react/',
         years: range(2017, thisYear),
@@ -67,7 +67,6 @@ const jobsAndClients = {
           t.vscode,
           t.visualStudio,
           t.jasmine,
-          t.tslint,
           t.mongodb,
           t.azure
         ],
@@ -98,7 +97,6 @@ const jobsAndClients = {
           t.vscode,
           t.visualStudio,
           t.jasmine,
-          t.tslint,
           t.mongodb,
           t.azure,
           t.d3
@@ -130,7 +128,6 @@ const jobsAndClients = {
           t.vscode,
           t.visualStudio,
           t.jasmine,
-          t.tslint,
           t.mongodb,
           t.azure
         ],
@@ -159,7 +156,6 @@ const jobsAndClients = {
           t.vscode,
           t.visualStudio,
           t.jasmine,
-          t.tslint,
           t.azure
         ],
         clients: [
@@ -304,10 +300,10 @@ const jobsAndClients = {
           }
         ]
       },
-      { 
+      {
         name: 'FRP Instalações',
         slug: '/frp/',
-        years: range(2008, 2008),        
+        years: range(2008, 2008),
         description: '',
         link: '',
         technologies: [
@@ -371,23 +367,6 @@ const jobsAndClients = {
     img: 'pol.png',
     link: 'http://pol.com.br',
     needWhiteBg: true,
-    technologies: [
-      t.cSharp,
-      t.html,
-      t.css,
-      t.js,
-      t.jquery,
-      t.netMvc,
-      t.postgres,
-      t.webForms,
-      t.wcf,
-      t.sqlServer,
-      t.visualStudio,
-      t.lucene,
-      t.rabbitmq,
-      t.structureMap,
-      t.entityFramework
-    ],
     description: `POL (Prêmios Online), plataforma de e-commerce para resgate de produtos / serviços através da pontuação adquirida na apuração das metas e resultados. Integração com parceiros B2W, Magazine Luiza, Walmart, Casas Bahia, FastShop, entre outros.
         
         Criação de Engine de busca utilizando Lucene.
@@ -427,6 +406,23 @@ const jobsAndClients = {
             name: 'FastShop',
             link: ''
           }
+        ],
+        technologies: [
+          t.cSharp,
+          t.html,
+          t.css,
+          t.js,
+          t.jquery,
+          t.netMvc,
+          t.postgres,
+          t.webForms,
+          t.wcf,
+          t.sqlServer,
+          t.visualStudio,
+          t.lucene,
+          t.rabbitmq,
+          t.structureMap,
+          t.entityFramework
         ]
       }
     ]

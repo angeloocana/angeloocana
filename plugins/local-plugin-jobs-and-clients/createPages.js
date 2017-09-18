@@ -1,13 +1,18 @@
 const defaultOptions = require('./defaultOptions');
-const { forEach, reduce, concat } = require('ramda');
+const { forEach, reduce, concat, pick } = require('ramda');
 const path = require('path');
+
+const getJobPropsForProjectPage = pick([
+  'name', 'slug'
+]);
 
 const reduceJobProjects = (getJobUrl, langKey, job) => reduce((pages, project) => {
   const projectPage = {
     path: getJobUrl(langKey, job.slug, project.slug),
     type: 'project',
     context: {
-      project
+      project,
+      job: getJobPropsForProjectPage(job)
     }
   };
 

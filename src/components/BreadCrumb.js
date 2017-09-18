@@ -16,7 +16,7 @@ const Li = styled.li`
 const BreadCrumbItem = ({ link, label }) => {
   return (
     <Li>
-      <FormattedMessage id={label}>
+      <FormattedMessage id={label} defaultMessage={label}>
         {(txt) => (
           <Link to={link}>
             {txt}

@@ -1,14 +1,10 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-// import Job from '../../../components/Resume/Job';
+import ProjectPage from '../components/Resume/ProjectPage';
 
 const ProjectRoute = (props) => {
-  const { project } = props.pathContext;
-  return (
-    <div>
-      {project.name}
-    </div>
-  );
+  const { job, project } = props.pathContext;
+  return (<ProjectPage job={job} project={project} />);
 };
 
 ProjectRoute.propTypes = {
