@@ -2,17 +2,17 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import Job from '../components/Resume/Job';
 
-const JobsAndClientsRoute = (props) => {
+const JobRoute = (props) => {
   const {job} = props.pathContext;
   return (
     <Job job={job} />
   );
 };
 
-JobsAndClientsRoute.propTypes = {
+JobRoute.propTypes = {
   pathContext: PropTypes.shape({
     job: PropTypes.object.isRequired
   }).isRequired
 };
 
-export default JobsAndClientsRoute;
+export default JobRoute;

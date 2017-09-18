@@ -2,13 +2,31 @@ const defaultOptions = require('./defaultOptions');
 const { forEach, reduce, concat } = require('ramda');
 const path = require('path');
 
-const reduceJobs = (getJobUrl, langKey) => reduce((pages, job) =>
-  concat(pages, [{
+const reduceJobProjects = (getJobUrl, langKey, job) => reduce((pages, project) => {
+  const projectPage = {
+    path: getJobUrl(langKey, job.slug, project.slug),
+    type: 'project',
+    context: {
+      project
+    }
+  };
+
+  return concat(pages, [projectPage]);
+});
+
+const reduceJobs = (getJobUrl, langKey) => reduce((pages, job) => {
+  const jobPage = {
     path: getJobUrl(langKey, job.slug),
+    type: 'job',
     context: {
       job
-    }
-  }]));
+    },
+  };
+  
+  const projectsPages = reduceJobProjects(getJobUrl, langKey, job)([], job.projects);
+
+  return [...pages, jobPage, ...projectsPages];
+});
 
 const reduceLangs = (getJobUrl, jobsAndClients) => reduce((pages, langKey) =>
   reduceJobs(getJobUrl, langKey)(pages, jobsAndClients), []);
@@ -24,10 +42,10 @@ const getPages = (getJobUrl, jobsAndClients, langs) => {
   return reduceLangs(getJobUrl, jobsAndClients)(langs);
 };
 
-const createPageForEach = (createPage, component) => forEach(({path, context}) => {
+const createPageForEach = (createPage, components) => forEach(({ path, context, type }) => {
   createPage({
     path,
-    component,
+    component: components[type],
     context
   });
 });
@@ -40,7 +58,10 @@ const createPages = ({ graphql, boundActionCreators }, pluginOptions) => {
   };
 
   return new Promise((resolve, reject) => {
-    const component = path.resolve(options.component);
+    const components = {
+      'job': path.resolve(options.jobComponent),
+      'project': path.resolve(options.projectComponent)
+    };
 
     graphql(options.createPagesQuery).then(result => {
       try {
@@ -54,7 +75,7 @@ const createPages = ({ graphql, boundActionCreators }, pluginOptions) => {
 
         const pages = getPages(options.getJobUrl, jobsAndClients, langs);
 
-        createPageForEach(createPage, component)(pages);
+        createPageForEach(createPage, components)(pages);
 
         resolve();
 

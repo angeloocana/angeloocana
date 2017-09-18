@@ -1,6 +1,7 @@
 const { technologies } = require('./technologies');
 const R = require('ramda');
 const {getArray} = require('./getArray');
+const { range, thisYear } = require('./time');
 
 const t = technologies;
 
@@ -17,8 +18,10 @@ const jobsAndClients = {
       'pt': 'Desenvolvi sistemas e sites para: Envio de SMS, Academias, E-commerce, Sistes Institucionais, entre outros.'
     },
     projects: [
-      {
+      {        
         name: 'angeloocana.com',
+        slug: '/angeloocana/v2/react/',
+        years: range(2017, thisYear),
         description: '',
         link: 'https://angeloocana.com',
         technologies: [
@@ -46,6 +49,8 @@ const jobsAndClients = {
       },
       {
         name: 'Staffgeist',
+        slug: '/staffgeist/',
+        years: range(2015, 2016),
         description: '',
         link: '',
         technologies: [
@@ -75,6 +80,8 @@ const jobsAndClients = {
       },
       {
         name: 'Hive',
+        slug: '/hive/novo-territorio/',
+        years: range(2016, 2016),
         description: '',
         link: '',
         technologies: [
@@ -105,6 +112,8 @@ const jobsAndClients = {
       },
       {
         name: 'Jump Over Jump',
+        slug: '/jump-over-jump/v1/',
+        years: range(2014, 2015),
         description: '',
         link: '',
         technologies: [
@@ -134,6 +143,8 @@ const jobsAndClients = {
       },
       {
         name: 'angeloocana.com.br',
+        slug: '/angeloocana/v1/angular/',
+        years: range(2014, 2015),
         description: '',
         link: '',
         technologies: [
@@ -160,6 +171,8 @@ const jobsAndClients = {
       },
       {
         name: 'Emporio Viña Real',
+        slug: '/emporio-vina-real/',
+        years: range(2017, 2017),
         description: '',
         link: '',
         technologies: [
@@ -177,6 +190,8 @@ const jobsAndClients = {
       },
       {
         name: 'APM',
+        slug: '/apm/',
+        years: range(2017, 2017),
         description: '',
         link: '',
         technologies: [
@@ -204,6 +219,8 @@ const jobsAndClients = {
       },
       {
         name: 'SMS BBM Brasil',
+        slug: '/sms-bbm-brasil/',
+        years: range(2009, 2010),
         description: '',
         link: '',
         technologies: [
@@ -226,7 +243,9 @@ const jobsAndClients = {
         ]
       },
       {
-        name: 'INNOVATIVE',
+        name: 'Innovative',
+        slug: '/innovative/',
+        years: range(2015, 2015),
         description: '',
         link: '',
         technologies: [
@@ -237,7 +256,7 @@ const jobsAndClients = {
         ],
         clients: [
           {
-            name: 'INNOVATIVE',
+            name: 'Innovative',
             link: ''
           },
           {
@@ -248,6 +267,8 @@ const jobsAndClients = {
       },
       {
         name: 'Igreja Cristã de Alphaville',
+        slug: '/ica-igreja-crista-de-alphaville/',
+        years: range(2007, 2008),
         description: '',
         link: '',
         technologies: [
@@ -269,6 +290,8 @@ const jobsAndClients = {
       },
       {
         name: 'Igreja Cristã de Maia',
+        slug: '/igreja-crista-de-maia/',
+        years: range(2007, 2008),
         description: '',
         link: '',
         technologies: [
@@ -281,8 +304,10 @@ const jobsAndClients = {
           }
         ]
       },
-      {
-        name: 'FRP',
+      { 
+        name: 'FRP Instalações',
+        slug: '/frp/',
+        years: range(2008, 2008),        
         description: '',
         link: '',
         technologies: [
@@ -315,6 +340,8 @@ const jobsAndClients = {
       //   },
       {
         name: 'Cadastro e Acesso de alunos',
+        slug: '/academia-corpus-santana/',
+        years: range(2008, 2008),
         description: '',
         link: '',
         technologies: [
@@ -370,7 +397,9 @@ const jobsAndClients = {
         Banco de Dados: SQL Server (Gerenciamento, Criação de Querys, Stored Procedures, Functions, Views e Jobs)`,
     projects: [
       {
-        name: '',
+        name: 'POL',
+        slug: '/pol-premios-online/',
+        years: range(2011, 2015),
         description: '',
         link: null,
         clients: [
@@ -427,7 +456,9 @@ const jobsAndClients = {
     description: `Desenvolvimento de sites para campanhas de incentivo, endomarketing e premiação online para os clientes Vivo|Telefonica, BASF, Net, Volkswagen, FMC, FTD, Sky, OI, BRF, Loreal, Johnson, Sony, Syngenta, Cury e Tenda. As campanhas possuíam uma base de participantes e os mesmos poderiam interagir entre si através de uma rede social, jogar, visualizar suas metas e resultados, feed de notícias, quiz, galeria de fotos, entre outras.`,
     projects: [
       {
-        name: '',
+        name: 'Campanhas de Incentivo',
+        slug: '/campanhas-de-incentivo/',
+        years: range(2011, 2015),
         description: 'Desenvolvimento de sites para campanhas de incentivo, endomarketing e premiação online para os clientes Vivo|Telefonica, BASF, Net, Volkswagen, FMC, FTD, Sky, OI, BRF, Loreal, Johnson, Sony, Syngenta, Cury e Tenda. As campanhas possuíam uma base de participantes e os mesmos poderiam interagir entre si através de uma rede social, jogar, visualizar suas metas e resultados, feed de notícias, quiz, galeria de fotos, entre outras.',
         link: null,
         clients: [
@@ -526,19 +557,7 @@ const jobsAndClients = {
     
     Principais Tecnologias: WCF, WPF, NET 3.5 utilizando linguagem C#, WebForms, Windows Forms, Windows Services,  EXT.Net
     Banco de Dados: SQL Server (Criação de Querys, Stored Procedures, Functions, Views e Jobs com alta performance para suportar a grande massa de dados )`,
-    projects: [
-      {
-        name: '',
-        description: '',
-        link: null,
-        clients: [
-          {
-            name: '',
-            link: ''
-          }
-        ]
-      }
-    ]
+    projects: []
   },
   'Media W': {
     slug: '/media-w/',
@@ -560,6 +579,8 @@ const jobsAndClients = {
     projects: [
       {
         name: 'PDV TED',
+        slug: '/pdv-ted/',
+        years: range(2010, 2010),
         description: 'software para automação comercial PDV TED das lojas "Cadê o Nenê", impressora fiscal e máquina de cartão Bematech',
         link: null,
         clients: [
@@ -606,6 +627,8 @@ const jobsAndClients = {
     projects: [
       {
         name: 'PriManager',
+        slug: '/primanager/',
+        years: range(2008, 2010),
         description: 'Sistema de Gerenciamento de Obras',
         link: 'http://www.sistemapri.com.br/en/primanager.html',
         clients: [
@@ -617,6 +640,8 @@ const jobsAndClients = {
       },
       {
         name: 'FDE',
+        slug: '/fde/',
+        years: range(2008, 2010),
         description: 'Sistema para gerenciamento de infra-estrutura das escolas do Estado de São Paulo',
         link: 'http://www.fde.sp.gov.br',
         clients: [
@@ -629,6 +654,8 @@ const jobsAndClients = {
       {
         name: 'Mapa de Obras',
         description: '',
+        slug: '/primanager/',
+        years: range(2009, 2009),
         link: 'https://www.aeseletropaulo.com.br',
         clients: [
           {
@@ -639,6 +666,8 @@ const jobsAndClients = {
       },
       {
         name: 'ERP / CRM',
+        slug: '/erp-crm/',
+        years: range(2009, 2010),
         description: 'ERP / CRM para controle de todas as operações da empresa: fluxo de caixa, cadastro e acompanhamento de relacionamento com clientes e fornecedores, entre outros módulos.',
         link: null,
         clients: []

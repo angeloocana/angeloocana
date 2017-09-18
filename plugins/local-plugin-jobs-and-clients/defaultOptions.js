@@ -1,5 +1,6 @@
 module.exports = {
-  component: 'src/templates/jobsAndClients.js',
+  jobComponent: 'src/templates/resume-job.js',
+  projectComponent: 'src/templates/resume-project.js',
   createPagesQuery: `
   {
     site {
@@ -21,6 +22,8 @@ module.exports = {
             }
             projects {
               name
+              slug
+              years
               description
               link
               technologies {
