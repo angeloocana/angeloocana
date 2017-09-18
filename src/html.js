@@ -57,6 +57,9 @@ class Html extends React.PureComponent {
           <div
             id="___gatsby"
             dangerouslySetInnerHTML={{ __html: this.props.body }}
+            style={{
+              height: '100%'
+            }}
           />
           {this.props.postBodyComponents}
         </body>

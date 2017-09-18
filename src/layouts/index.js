@@ -49,7 +49,7 @@ const Background = styled.div`
   right: 0;
   left: 0;
   bottom: 0;
-  overflow: hidden;
+  min-height: 100%;
 `;
 
 const BodyContainer = styled.div`
