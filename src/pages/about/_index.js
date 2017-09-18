@@ -1,5 +1,5 @@
 import React from 'react';
-import PropTypes from 'proptypes';
+import PropTypes from 'prop-types';
 import H1 from '../../components/H1';
 import { getAuthor } from '../../data/authors';
 import { getStructuredDataForAuthor } from '../../structuredData';

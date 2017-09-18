@@ -1,5 +1,5 @@
 import React from 'react';
-import PropTypes from 'proptypes';
+import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import Checkbox from './Checkbox';
 import { FormattedMessage } from 'react-intl';

@@ -1,5 +1,5 @@
 import React from 'react';
-import PropTypes from 'proptypes';
+import PropTypes from 'prop-types';
 import EmailIcon from 'react-icons/lib/md/email';
 import PhoneIcon from 'react-icons/lib/md/phone-android';
 import H1 from './H1';

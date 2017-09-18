@@ -1,5 +1,5 @@
 import React from 'react';
-import PropTypes from 'proptypes';
+import PropTypes from 'prop-types';
 import MenuIcon from 'react-icons/lib/fa/bars';
 import { InvisibleSpan } from './Invisible';
 import styled from 'styled-components';

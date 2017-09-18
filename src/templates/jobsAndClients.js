@@ -1,5 +1,5 @@
 import React from 'react';
-import PropTypes from 'proptypes';
+import PropTypes from 'prop-types';
 import Job from '../components/Resume/Job';
 
 const JobsAndClientsRoute = (props) => {

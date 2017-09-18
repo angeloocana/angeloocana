@@ -1,5 +1,5 @@
 import React from 'react';
-import PropTypes from 'proptypes';
+import PropTypes from 'prop-types';
 import Posts from './Posts';
 import SocialLinks from './SocialLinks';
 import Welcome from './Welcome';

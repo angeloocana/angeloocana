@@ -1,5 +1,5 @@
 import React from 'react';
-import PropTypes from 'proptypes';
+import PropTypes from 'prop-types';
 import Br from './flags/Br';
 import Ca from './flags/Ca';
 import Fr from './flags/Fr';

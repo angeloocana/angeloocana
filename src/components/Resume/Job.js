@@ -1,5 +1,5 @@
 import React from 'react';
-import PropTypes from 'proptypes';
+import PropTypes from 'prop-types';
 import H1 from '../H1';
 import BreadCrumb from '../BreadCrumb';
 import { injectIntl } from 'react-intl';

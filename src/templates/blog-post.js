@@ -1,5 +1,5 @@
 import React from 'react';
-import PropTypes from 'proptypes';
+import PropTypes from 'prop-types';
 import graphql from 'graphql';
 import Helmet from 'react-helmet';
 import styled from 'styled-components';

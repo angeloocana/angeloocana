@@ -1,5 +1,5 @@
 import React from 'react';
-import PropTypes from 'proptypes';
+import PropTypes from 'prop-types';
 import { FormattedDate, FormattedMessage } from 'react-intl';
 import styled from 'styled-components';
 import CalendarNoStyle from 'react-icons/lib/fa/calendar';

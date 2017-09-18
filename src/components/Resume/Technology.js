@@ -1,5 +1,5 @@
 import React from 'react';
-import PropTypes from 'proptypes';
+import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import { head, last } from 'ramda';
 import { FormattedMessage } from 'react-intl';
