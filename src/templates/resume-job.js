@@ -1,11 +1,11 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import Job from '../components/Resume/Job';
+import JobPage from '../components/Resume/JobPage';
 
 const JobRoute = (props) => {
   const {job} = props.pathContext;
   return (
-    <Job job={job} />
+    <JobPage job={job} />
   );
 };
 
