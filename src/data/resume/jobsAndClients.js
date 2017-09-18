@@ -677,11 +677,18 @@ const getAllProjectsTech = R.reduce((techs, project) => {
     .filter(t => t);
 });
 
-const concatProjectTechs = R.map(job => ({
-  ...job,
-  technologies: getAllProjectsTech(job.technologies, job.projects)
-}));
+const setTechnologies = R.assoc('technologies');
+
+const concatProjectTechs = R.map(job => {
+  const techs = getAllProjectsTech(job.technologies, job.projects);
+  return setTechnologies(techs, job);
+});
+
+const getJobsAndClients = R.pipe(
+  getArray,
+  concatProjectTechs
+);
 
 module.exports = {
-  jobsAndClients: concatProjectTechs(getArray(jobsAndClients))
+  jobsAndClients: getJobsAndClients(jobsAndClients)
 };

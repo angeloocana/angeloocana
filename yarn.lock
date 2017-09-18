@@ -8255,7 +8255,7 @@ ptz-assert@^1.6.8:
     assert "^1.4.1"
     ptz-log "^1.0.0"
 
-ptz-fp@^1.2.0:
+ptz-fp@^1.0.1, ptz-fp@^1.2.0:
   version "1.2.0"
   resolved "https://registry.yarnpkg.com/ptz-fp/-/ptz-fp-1.2.0.tgz#1bbdf9455b741eb6abf23ca6e5d6784baddaa9a7"
   dependencies:
@@ -8275,7 +8275,7 @@ ptz-i18n@^0.1.0, ptz-i18n@^0.1.2:
   dependencies:
     ramda "^0.24.1"
 
-ptz-log@^1.0.0:
+ptz-log@^1.0.0, ptz-log@^1.1.0:
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/ptz-log/-/ptz-log-1.1.0.tgz#a5f81680da30e491e49c6a6022ec4972506d473b"
   dependencies:
@@ -8286,6 +8286,15 @@ ptz-math@^1.1.0:
   resolved "https://registry.yarnpkg.com/ptz-math/-/ptz-math-1.1.0.tgz#ad8107f9974ce61b9988cf80a0583227496ad8db"
   dependencies:
     ptz-log "^1.0.0"
+
+ptz-validations@^3.0.1:
+  version "3.0.1"
+  resolved "https://registry.yarnpkg.com/ptz-validations/-/ptz-validations-3.0.1.tgz#2dde5ee3669b41baf3704fc952d1d7fb5b427218"
+  dependencies:
+    ptz-fp "^1.0.1"
+    ptz-log "^1.1.0"
+    ramda "^0.24.1"
+    shortid "^2.2.8"
 
 public-encrypt@^4.0.0:
   version "4.0.0"
@@ -9361,7 +9370,7 @@ shellwords@^0.1.0:
   version "0.1.1"
   resolved "https://registry.yarnpkg.com/shellwords/-/shellwords-0.1.1.tgz#d6b9181c1a48d397324c84871efbcfc73fc0654b"
 
-shortid@^2.2.6:
+shortid@^2.2.6, shortid@^2.2.8:
   version "2.2.8"
   resolved "https://registry.yarnpkg.com/shortid/-/shortid-2.2.8.tgz#033b117d6a2e975804f6f0969dbe7d3d0b355131"
 
