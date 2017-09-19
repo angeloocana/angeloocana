@@ -24,15 +24,32 @@ const getBreadCrumb = (langKey, job) => [
   }
 ];
 
+const Dl = styled.dl`
+  margin-top: 1rem;
+
+  dt, dd {
+    display: inline-block;
+  }
+
+  dt: {
+  }
+
+  dt:after {
+    content: ': ';
+    margin-right: ${({theme}) => theme.scale(-2)};
+  }
+`;
+
 const getLink = (project) => project.link
   ? (
-    <div>
-      <FormattedMessage id="resume.project.link" tagName="label" />
-      {': '}
-      <A href={project.link} target="_blank">
-        {project.link}
-      </A>
-    </div>
+    <Dl>
+      <FormattedMessage id="resume.project.link" tagName="dt" />
+      <dd>
+        <A href={project.link} target="_blank">
+          {project.link}
+        </A>
+      </dd>
+    </Dl>
   )
   : null;
 
@@ -46,19 +63,16 @@ const getYears = (years) => {
     ? firstYear
     : `${firstYear}/${lastYear}`;
 
-  return (
-    <div>
+  return [
+    <Dl>
       <FormattedMessage
         id="resume.project.years"
-        tagName="label"
+        tagName="dt"
         values={{ nYears: getNYears(years) }}
       />
-      {': '}
-      <span>
-        {txt}
-      </span>
-    </div>
-  );
+      <dd>{txt}</dd>
+    </Dl>
+  ];
 };
 
 const getTechnologies = (project) =>

@@ -54,9 +54,7 @@ const Technologies = ({ technologies }) => {
 };
 
 Technologies.propTypes = {
-  technologies: PropTypes.arrayOf({
-    name: PropTypes.string.isRequired
-  }).isRequired
+  technologies: PropTypes.array.isRequired
 };
 
 export default Technologies;

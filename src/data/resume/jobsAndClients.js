@@ -52,7 +52,7 @@ const jobsAndClients = {
         slug: '/staffgeist/',
         years: range(2015, 2016),
         description: '',
-        link: '',
+        link: 'http://staffgeist.com',
         technologies: [
           t.angular,
           t.ionic,
@@ -82,7 +82,7 @@ const jobsAndClients = {
         slug: '/hive/novo-territorio/',
         years: range(2016, 2016),
         description: '',
-        link: '',
+        link: 'http://novoterritorio.azurewebsites.net/en-us/signIn',
         technologies: [
           t.angular,
           t.ionic,
@@ -112,7 +112,7 @@ const jobsAndClients = {
         slug: '/jump-over-jump/v1/',
         years: range(2014, 2015),
         description: '',
-        link: '',
+        link: 'http://jumpoverjump.com',
         technologies: [
           t.angular,
           t.ionic,
@@ -142,7 +142,7 @@ const jobsAndClients = {
         slug: '/angeloocana/v1/angular/',
         years: range(2014, 2015),
         description: '',
-        link: '',
+        link: 'http://angeloocana.com.br/',
         technologies: [
           t.angular,
           t.cSharp,
@@ -169,7 +169,7 @@ const jobsAndClients = {
         slug: '/emporio-vina-real/',
         years: range(2017, 2017),
         description: '',
-        link: '',
+        link: 'https://www.emporiovinareal.com.br/',
         technologies: [
           t.html,
           t.css,
@@ -188,7 +188,7 @@ const jobsAndClients = {
         slug: '/apm/',
         years: range(2017, 2017),
         description: '',
-        link: '',
+        link: 'http://associacaopaulistamedicina.org.br/',
         technologies: [
           t.cSharp,
           t.html,
@@ -242,7 +242,7 @@ const jobsAndClients = {
         slug: '/innovative/',
         years: range(2015, 2015),
         description: '',
-        link: '',
+        link: 'http://www.innovative.com.br',
         technologies: [
           t.html,
           t.css,
