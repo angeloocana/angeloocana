@@ -19,7 +19,7 @@ const jobsAndClients = {
     },
     projects: [
       {
-        name: 'angeloocana.com',
+        name: 'angeloocana .com v2',
         slug: '/angeloocana/v2/react/',
         years: range(2017, thisYear),
         description: '',
@@ -98,8 +98,7 @@ const jobsAndClients = {
           t.visualStudio,
           t.jasmine,
           t.mongodb,
-          t.azure,
-          t.d3
+          t.azure
         ],
         clients: [
           {
@@ -139,7 +138,7 @@ const jobsAndClients = {
         ]
       },
       {
-        name: 'angeloocana.com.br',
+        name: 'angeloocana .com.br v1',
         slug: '/angeloocana/v1/angular/',
         years: range(2014, 2015),
         description: '',
@@ -347,7 +346,7 @@ const jobsAndClients = {
           t.js,
           t.jquery,
           t.mySql,
-          t.dreamweaver
+          t.dreamWeaver
         ],
         clients: [
           {

@@ -10,7 +10,7 @@ module.exports = {
 
   'posts': 'Posts',
   'posts.readNext': 'Mais posts',
-  'posts.seeMore': 'Ver mais posts interessantes >>',  
+  'posts.seeMore': 'Ver mais posts interessantes >>',
 
   'tags': 'Tags',
   'tags.allTagsLink': 'Ver todas as tags',
@@ -35,6 +35,9 @@ module.exports = {
 
   'resume.technologies.yearsMsg': `{nYears, number} {nYears, plural, one {ano} other {anos} }`,
 
+  'resume.project.link': 'Link',
+  'resume.project.years': `{nYears, plural, one {Ano} other {Anos} }`,
+  
   'resume.educations': 'Educação',
 
   'resume.languages': 'Idiomas',

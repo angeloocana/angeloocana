@@ -35,6 +35,9 @@ module.exports = {
 
   'resume.technologies.yearsMsg': `{nYears, number} {nYears, plural, one {year} other {years} }`,
 
+  'resume.project.link': 'Link',
+  'resume.project.years': `{nYears, plural, one {Year} other {Years} }`,
+
   'resume.educations': 'Education',
 
   'resume.languages': 'Languages',

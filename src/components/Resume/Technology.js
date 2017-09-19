@@ -61,6 +61,9 @@ const getNYears = (years) => head(years) - last(years) + 1;
 
 const Technology = (props) => {
   const { name, link, needWhiteBg, level, years, img } = props;
+
+  const nYears = getNYears(years);
+
   return (
     <Li>
       <A href={link} target="_blank">
@@ -81,7 +84,7 @@ const Technology = (props) => {
             </FormattedMessage>
             <FormattedMessage
               id="resume.technologies.yearsMsg"
-              values={{ nYears: getNYears(years) }}
+              values={{ nYears }}
             />
           </figcaption>
         </figure>

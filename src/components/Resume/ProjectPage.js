@@ -6,6 +6,8 @@ import { injectIntl, FormattedMessage } from 'react-intl';
 import styled from 'styled-components';
 import Technologies from './Technologies';
 import Helmet from 'react-helmet';
+import A from '../A';
+import { head, last } from 'ramda';
 
 const Header = styled.header`
   padding-bottom: ${({ theme }) => theme.scale(1)};
@@ -26,10 +28,50 @@ const getBreadCrumb = (langKey, job) => [
   }
 ];
 
+const getLink = (project) => project.link
+  ? (
+    <div>
+      <FormattedMessage id="resume.project.link" tagName="label" />
+      {': '}
+      <A href={project.link} target="_blank">
+        {project.link}
+      </A>
+    </div>
+  )
+  : null;
+
+const getNYears = (years) => head(years) - last(years) + 1;
+
+const getYears = (years) => {
+  const firstYear = head(years);
+  const lastYear = last(years);
+
+  const txt = firstYear === lastYear
+    ? firstYear
+    : `${firstYear}/${lastYear}`;
+
+  return (
+    <div>
+      <FormattedMessage
+        id="resume.project.years"
+        tagName="label"
+        values={{ nYears: getNYears(years) }}
+      />
+      {': '}
+      <span>
+        {txt}
+      </span>
+    </div>
+  );
+};
+
+const getTechnologies = (project) =>
+  project.technologies
+    ? (<Technologies technologies={project.technologies} />)
+    : null;
+
 const ProjectPage = ({ project, job, intl }) => {
   const description = project.description;
-  console.log('project: ', project);
-  console.log('job', job);
 
   return (
     <section>
@@ -47,7 +89,9 @@ const ProjectPage = ({ project, job, intl }) => {
         />
         <H1>{project.name}</H1>
       </Header>
-      <Technologies technologies={project.technologies} />
+      {getLink(project)}
+      {getYears(project.years)}
+      {getTechnologies(project)}
     </section>
   );
 };
