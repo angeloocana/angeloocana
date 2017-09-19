@@ -4,18 +4,27 @@ import Link from './Link';
 import { FormattedMessage } from 'react-intl';
 import styled from 'styled-components';
 
-const Li = styled.li`
-  display: inline;
-  padding-right: 1rem;
+const Ul = styled.ul`
+  margin-top: -1rem;
 
-  a:after{
-    content: ' > '
+  li {
+    display: inline;
+    padding-right: 1rem;
+
+    a {
+      padding-top: 1rem;
+      display: inline-block;
+    }
+
+    a:after{
+      content: ' > '
+    }
   }
 `;
 
 const BreadCrumbItem = ({ link, label }) => {
   return (
-    <Li>
+    <li>
       <FormattedMessage id={label} defaultMessage={label}>
         {(txt) => (
           <Link to={link}>
@@ -23,7 +32,7 @@ const BreadCrumbItem = ({ link, label }) => {
           </Link>
         )}
       </FormattedMessage>
-    </Li>
+    </li>
   );
 };
 
@@ -34,7 +43,7 @@ BreadCrumbItem.propTypes = {
 
 const BreadCrumb = ({ items }) => {
   return (
-    <ul>
+    <Ul>
       {
         items.map(item => (
           <BreadCrumbItem
@@ -42,7 +51,7 @@ const BreadCrumb = ({ items }) => {
           />
         ))
       }
-    </ul>
+    </Ul>
   );
 };
 

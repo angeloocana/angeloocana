@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import H1 from '../H1';
-import BreadCrumb from '../BreadCrumb';
+import ResumeContainer from './ResumeContainer';
 import { injectIntl, FormattedMessage } from 'react-intl';
 import styled from 'styled-components';
 import Technologies from './Technologies';
@@ -14,10 +14,6 @@ const Header = styled.header`
 `;
 
 const getBreadCrumb = (langKey, job) => [
-  {
-    link: `/${langKey}/resume/`,
-    label: 'resume'
-  },
   {
     link: `/${langKey}/resume/jobs-and-clients/`,
     label: 'resume.jobsAndClients'
@@ -70,11 +66,17 @@ const getTechnologies = (project) =>
     ? (<Technologies technologies={project.technologies} />)
     : null;
 
-const ProjectPage = ({ project, job, intl }) => {
+const ProjectPage = (props) => {
+  const { job, project } = props.pathContext;
+  const { menu } = props.data.site.siteMetadata.resume;
   const description = project.description;
 
   return (
-    <section>
+    <ResumeContainer
+      menu={menu}
+      selectedPage="/resume/jobs-and-clients/"
+      breadCrumb={getBreadCrumb(props.intl.locale, job)}
+    >
       <FormattedMessage id="resume">
         {(resume) => (
           <Helmet
@@ -84,29 +86,29 @@ const ProjectPage = ({ project, job, intl }) => {
         )}
       </FormattedMessage>
       <Header>
-        <BreadCrumb
-          items={getBreadCrumb(intl.locale, job)}
-        />
         <H1>{project.name}</H1>
       </Header>
       {getLink(project)}
       {getYears(project.years)}
       {getTechnologies(project)}
-    </section>
+    </ResumeContainer>
   );
 };
 
 ProjectPage.propTypes = {
-  project: PropTypes.shape({
-    name: PropTypes.string.isRequired,
-    slug: PropTypes.string.isRequired,
-    technologies: PropTypes.array.isRequired
-  }),
-  job: PropTypes.shape({
-    name: PropTypes.string.isRequired,
-    slug: PropTypes.string.isRequired
-  }),
-  intl: PropTypes.object.isRequired
+  intl: PropTypes.object.isRequired,
+  pathContext: PropTypes.shape({
+    project: PropTypes.shape({
+      name: PropTypes.string.isRequired,
+      slug: PropTypes.string.isRequired,
+      technologies: PropTypes.array.isRequired
+    }).isRequired,
+    job: PropTypes.shape({
+      name: PropTypes.string.isRequired,
+      slug: PropTypes.string.isRequired
+    }).isRequired,
+  }).isRequired,
+  data: PropTypes.object.isRequired
 };
 
 export default injectIntl(ProjectPage);

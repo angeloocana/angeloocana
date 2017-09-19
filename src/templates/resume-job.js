@@ -1,18 +1,22 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import JobPage from '../components/Resume/JobPage';
+import graphql from 'graphql';
 
-const JobRoute = (props) => {
-  const {job} = props.pathContext;
-  return (
-    <JobPage job={job} />
-  );
-};
-
-JobRoute.propTypes = {
-  pathContext: PropTypes.shape({
-    job: PropTypes.object.isRequired
-  }).isRequired
-};
+const JobRoute = (props) => (<JobPage {...props} />);
 
 export default JobRoute;
+
+export const pageQuery = graphql`
+  query ResumeJob {
+    site {
+      siteMetadata {
+        resume {
+          menu {
+            label
+            link
+          }        
+        }
+      }
+    }
+  }
+`;

@@ -1,16 +1,22 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import ProjectPage from '../components/Resume/ProjectPage';
+import graphql from 'graphql';
 
-const ProjectRoute = (props) => {
-  const { job, project } = props.pathContext;
-  return (<ProjectPage job={job} project={project} />);
-};
-
-ProjectRoute.propTypes = {
-  pathContext: PropTypes.shape({
-    project: PropTypes.object.isRequired
-  }).isRequired
-};
+const ProjectRoute = (props) => (<ProjectPage {...props} />);
 
 export default ProjectRoute;
+
+export const pageQuery = graphql`
+  query ResumeJobProject {
+    site {
+      siteMetadata {
+        resume {
+          menu {
+            label
+            link
+          }        
+        }
+      }
+    }
+  }
+`;

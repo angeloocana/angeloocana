@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import Link from '../Link';
 import styled from 'styled-components';
 import { FormattedMessage, injectIntl } from 'react-intl';
+import BreadCrumb from '../BreadCrumb';
 
 const Li = styled.li`
   a {
@@ -87,23 +88,23 @@ const getMenu = (menu, selectedPage, langKey) =>
     selected: props.link === selectedPage
   }));
 
-const Header = styled.header`
-  margin-bottom: -${({ theme }) => theme.scale(4)};
-
-  h1 {
-    text-align: center;
-    font-size: ${({ theme }) => theme.scale(1)};
-  }
-`;
+const getBreadCrumb = (langKey, items = []) => [
+  {
+    link: `/${langKey}/resume/`,
+    label: 'resume'
+  },
+  ...items
+];
 
 const ResumeContainer = (props) => {
-  const menu = getMenu(props.menu, props.selectedPage, props.intl.locale);
+  const langKey = props.intl.locale;
+  const menu = getMenu(props.menu, props.selectedPage, langKey);
 
   return (
     <section>
-      <Header>
-        <FormattedMessage id="resume" tagName="h1" />
-      </Header>
+      <BreadCrumb
+        items={getBreadCrumb(langKey, props.breadCrumb)}
+      />
       {props.children}
       <footer>
         <Ul>
@@ -118,7 +119,8 @@ ResumeContainer.propTypes = {
   menu: PropTypes.array.isRequired,
   selectedPage: PropTypes.string.isRequired,
   intl: PropTypes.object.isRequired,
-  children: PropTypes.any
+  children: PropTypes.any,
+  breadCrumb: PropTypes.array
 };
 
 export default injectIntl(ResumeContainer);
