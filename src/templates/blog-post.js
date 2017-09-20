@@ -160,6 +160,10 @@ const Content = styled.section`
   blockquote cite:before {
     content: "\\2014 \\2009";
   }
+
+  img {
+    max-width: 100%;
+  }
 `;
 
 const Iframe = styled.iframe`

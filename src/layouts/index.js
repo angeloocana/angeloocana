@@ -50,6 +50,7 @@ const Background = styled.div`
   left: 0;
   bottom: 0;
   min-height: 100%;
+  overflow-x: hidden;
 `;
 
 const BodyContainer = styled.div`
