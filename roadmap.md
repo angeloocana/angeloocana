@@ -32,6 +32,9 @@
 - Resume: add breadcrumb.
 - Resume: add projects.
 - Fix header size when url not ends with /
+- Replace 'Tags' to 'Post Tags'
+- Add pdf resume to about me, link to contact
+- Add resume sub items.
 
 ## Done
 - Resume: divide in tabs.
