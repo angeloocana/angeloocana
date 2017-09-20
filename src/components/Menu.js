@@ -44,7 +44,7 @@ const Nav = styled.nav`
     : ''};
 
   @media (min-width: ${props => props.theme.maxWidth}) {
-    right: calc(-50% + -28rem);
+    right: calc(-50% + -29rem);
   }
 `;
 

@@ -27,9 +27,31 @@ const SubTitle = styled.p`
   margin: ${props => headerTheme(props).subTitle.margin};
 `;
 
+const Wrapper = styled.header`
+
+  ${({theme, isHome}) => isHome
+    ? ``
+    : `
+      @media (min-width: 40rem) {  
+      
+        display: flex;
+        justify-content: space-between;
+    
+        .title {
+          padding-top: ${theme.scale(2)};
+          order: 0;          
+        }
+    
+        .select-languages{
+          order: 1;          
+        }    
+      }
+  `}  
+`;
+
 const Header = ({ menu, isHome, langs, homeLink, url }) => {
   return (
-    <header>
+    <Wrapper isHome={isHome}>
       <FormattedMessage id="title">
         {(txt) => (
           <Helmet
@@ -38,10 +60,10 @@ const Header = ({ menu, isHome, langs, homeLink, url }) => {
           />
         )}
       </FormattedMessage>
-      <SelectLanguage langs={langs} />
+      <SelectLanguage langs={langs} className="select-languages" />
       <FormattedMessage id="header.title">
         {(title) => (
-          <Title to={homeLink} isHome={isHome}>
+          <Title to={homeLink} isHome={isHome} className="title">
             {title}
             <FormattedMessage id="header.subTitle">
               {(subTitle) => (
@@ -52,7 +74,7 @@ const Header = ({ menu, isHome, langs, homeLink, url }) => {
         )}
       </FormattedMessage>
       <Menu menu={menu} url={url} />
-    </header>
+    </Wrapper>
   );
 };
 

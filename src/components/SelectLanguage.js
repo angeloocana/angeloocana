@@ -8,7 +8,7 @@ import styled from 'styled-components';
 import Link from 'gatsby-link';
 
 const Nav = styled.nav`
-
+  margin-right: ${({ theme }) => theme.scale(8)};
 `;
 
 const Ul = styled.ul`
@@ -41,8 +41,8 @@ const getIcon = langKey => {
   }
 };
 
-const SelectLanguage = ({ langs }) => {
-  const links = langs.map(lang =>
+const SelectLanguage = (props) => {
+  const links = props.langs.map(lang =>
     <Link to={lang.link}>
       <Li selected={lang.selected}>
         {getIcon(lang.langKey)}
@@ -51,7 +51,7 @@ const SelectLanguage = ({ langs }) => {
   );
 
   return (
-    <Nav>
+    <Nav {...props}>
       <header>
         <InvisibleSpan>Select your language:</InvisibleSpan>
       </header>

@@ -102,7 +102,7 @@ const theme = {
     label: {
       width: scale(3),
       height: scale(3),
-      fontSize: scale(3)
+      fontSize: scale(3.2)
     },
     a: {
       fontSize: scale(1),
