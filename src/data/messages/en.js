@@ -12,7 +12,7 @@ module.exports = {
   'posts.readNext': 'Read Next',
   'posts.seeMore': 'See more interesting posts >>',
 
-  'tags': 'Tags',
+  'tags': 'Post Tags',
   'tags.allTagsLink': 'Browse all tags',
   'tags.nPostsTaggedWith': `{nPosts, number} {nPosts, plural,
       one {post}
