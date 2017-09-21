@@ -1,11 +1,11 @@
 ---
-title: 10 tips to Start using Github and Command line
+title: 10 conseils pour commencer à utiliser Github et la ligne de commande
 date: '2017-09-21'
 layout: post
 draft: false
 tags:
     - Git
-    - version control
+    - contrôle de version
 structuredData:
   alternativeHeadline: ...  
   locationCreated: Ottawa CA
@@ -47,38 +47,40 @@ structuredData:
   video: ...
 ---
 
-Do NOT lose your files any more! Keep track of the history change, save to the cloud and be safe.
-Here your are going to learn simple tips to become a **NINJA** using **Github** and the **command line**.
+Ne perdez plus vos fichiers! Gardez une trace du changement d'historique, enregistrez le nuage et soyez en sécurité.
 
-### 1. Go to [github.com](https://github.com).
-  **Sign In** or **Sign Up**.
 
-### 2. Click the button **Start a project** in the home page.
-  - Choose a Repository Name, the URL for your project will be 
+Ici, vous apprendrez des conseils simples pour devenir un **NINJA** en utilisant **Github** et **la ligne de commande**.
+
+### 1. Aller à [github.com](https://github.com).
+  **Sign In** or **Sign Up** (Connectez-vous ou inscrivez-vous).
+
+### 2. Cliquez sur le bouton **Start a project** dans la page d'accueil.
+  - Choisissez un nom de dépôt, l'URL de votre projet sera
   github.com/USER-NAME/REPOSITORY-NAME
-  - Click the button **Create repository**
+  - Cliquez sur le bouton **Create repository**
 
-  Congratulations! Your repository is ready to receive the files that you will never lose anymore.
+  Toutes nos félicitations! Votre dépôt est prêt à recevoir les fichiers que vous ne perdrez plus.
 
 
-### 3. Install Git (If you don't have it).
+### 3. Installez Git (si vous ne l'avez pas).
   - Arch linux: `pacman -S git`
-  - Windows: Download and install https://git-for-windows.github.io/
-  - Mac: Go to App Store and Install **XCode**
+  - Windows: Télécharger et installer https://git-for-windows.github.io/
+  - Mac: Aller à l'App Store et à installer **XCode**
 
 
-### 4. Go to your folder and add files
+### 4. Accédez à votre dossier et ajoutez des fichiers
 
-Open the terminal or command line tool available on your system.
+Ouvrez le terminal ou l'outil de ligne de commande disponible sur votre système.
 
-Type the commands bellow to go to the folder where you want your files to live in:
+Tapez les commandes ci-dessous pour accéder au dossier dans lequel vous souhaitez que vos fichiers vivent:
 
- - `ls` or `dir` list the files and directories.
- - `cd FOLDER_NAME` open the folder.
- - `cd ..` go up 1 folder level.
+ - `ls` ou `dir` liste les fichiers et les répertoires.
+ - `cd FOLDER_NAME` ouvrez le dossier.
+ - `cd ..` monter 1 niveau de dossier.
 
 
-Clone the repository to your PC:
+Cloner le dépôt sur votre PC:
 ```bash
     git clone https://github.com/YOUR_USER_NAME/REPOSITORY_NAME
 ```
@@ -87,37 +89,36 @@ Clone the repository to your PC:
     cd REPOSITORY_NAME
 ```
 
-uhuhuh Now Save or Add any file you want to the folder.
+uhuhuh Maintenant, enregistrez ou Ajoutez un fichier que vous voulez sur le dossier.
 
 
-### 5. See the changes:
+### 5. Voir les changements:
 ```bash
     git status
 ```
 
-### 6. Add the changes to commit:
+### 6. Ajouter les modifications à commettre:
 ```bash
     git add .
-```
-  Don't forget the dot **.**
+```  
+  N'oubliez pas le point **.**
 
-### 7. Create the commit
+### 7. Créer le commit
 ```bash
     git commit -m 'What did I... '
 ```
-  Write a short message saying what you have changed, Try to keep a good history log.
+  Écrivez un court message indiquant ce que vous avez modifié, essayez de conserver un bon journal d'historique.
 
-### 8. Publish! Save your files and changes to the cloud.
+### 8. Publier! Enregistrez vos fichiers et modifiez le nuage.
 ```bash
     git push
 ```
 
-### 9. Keep your local version update:
+### 9. Conservez la mise à jour de votre version locale:
 ```bash
     git pull
 ```
 
-### 10. Go sleep better knowing that your files are safe.
+### 10. Allez dormir mieux en sachant que vos fichiers sont sécurisés.
 
-
-Want to learn more advanced stuff? [Click here to become a NINJA](https://angeloocana.com/en/blog/git/git-setup/).
+Vous voulez apprendre des choses plus avancées? [Cliquez ici pour devenir NINJA](https://angeloocana.com/en/blog/git/git-setup/).

@@ -47,8 +47,8 @@ structuredData:
   video: ...
 ---
 
-Do NOT lose your files any more! Keep track of the history change, save to the cloud and be safe.
-Here your are going to learn simple tips to become a **NINJA** using **Github** and the **command line**.
+Do NOT lose your files anymore! Keep track of the history change, save to the cloud and be safe.
+Here you are going to learn simple tips to become a **NINJA** using **Github** and the **command line**.
 
 ### 1. Go to [github.com](https://github.com).
   **Sign In** or **Sign Up**.
