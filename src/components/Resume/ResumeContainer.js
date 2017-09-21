@@ -4,6 +4,7 @@ import Link from '../Link';
 import styled from 'styled-components';
 import { FormattedMessage, injectIntl } from 'react-intl';
 import BreadCrumb from '../BreadCrumb';
+import ResumeDownloadPDF from './ResumeDownloadPDF';
 
 const Li = styled.li`
   a {
@@ -105,6 +106,7 @@ const ResumeContainer = (props) => {
       <BreadCrumb
         items={getBreadCrumb(langKey, props.breadCrumb)}
       />
+      <ResumeDownloadPDF />
       {props.children}
       <footer>
         <Ul>

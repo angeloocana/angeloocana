@@ -101,7 +101,7 @@ const Contact = (props) => {
       </header>
       <Ul>
         {contactList}
-      </Ul>
+      </Ul>      
     </section>
   );
 };

@@ -20,6 +20,10 @@ const menu = [
   {
     label: 'resume.languages',
     link: '/resume/languages/'
+  },
+  {
+    label: 'about',
+    link: '/about/'
   }
 ];
 

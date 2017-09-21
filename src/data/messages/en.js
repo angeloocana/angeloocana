@@ -23,6 +23,8 @@ module.exports = {
 
   'resume': `Curriculum`,
 
+  'resume.downloadPdf': 'Download CV',
+
   'resume.technologies': 'Technologies',
 
   'resume.technologies.seeMore': 'See all technologies +',

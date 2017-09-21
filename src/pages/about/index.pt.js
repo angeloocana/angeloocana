@@ -1,5 +1,6 @@
 import React from 'react';
-import AboutMe from './_index';
+import AboutMe from '../../components/AboutPage';
+import graphql from 'graphql';
 
 const i18n = {
   description: (
@@ -17,3 +18,19 @@ const i18n = {
 };
 
 export default (props) => <AboutMe i18n={i18n} {...props} />;
+
+export const pageQuery = graphql`
+  query AboutPt {
+    site {
+      siteMetadata {
+        resume {
+          menu {
+            label
+            link
+          }        
+        }
+      }
+    }
+  }
+`;
+
