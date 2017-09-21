@@ -5,7 +5,8 @@ import { FormattedMessage } from 'react-intl';
 import styled from 'styled-components';
 
 const Ul = styled.ul`
-  margin-top: -1rem;
+  margin: -1rem 0 1rem 0;
+  display: inline-block;
 
   li {
     display: inline;

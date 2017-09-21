@@ -5,13 +5,14 @@ import PdfIcon from 'react-icons/lib/md/picture-as-pdf';
 import styled from 'styled-components';
 
 const Wrapper = styled.div`
-  display: block;
-  padding: ${({ theme }) => theme.scale(3)} 0 0 0;
-  font-size: ${({ theme }) => theme.scale(1)};
+  display: inline-block;
+  float: right;
+  padding: 0 0 0 0;
+  font-size: ${({ theme }) => theme.scale(0)};
 
   svg {
-    padding: 0 ${({ theme }) => theme.scale(-6)} 0 0;
-    font-size: ${({ theme }) => theme.scale(2)};
+    padding: 0 ${({ theme }) => theme.scale(-10)} 0 0;
+    font-size: ${({ theme }) => theme.scale(1)};
     margin-top: -${({ theme }) => theme.scale(-6)};
   }
 `;
