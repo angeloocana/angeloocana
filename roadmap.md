@@ -1,7 +1,6 @@
 # RoadMap
 
 ## To do
-- Hire me.
 - Search.
 - Test offline.
 - Test speed (2017-07-25 B B).
@@ -12,31 +11,31 @@
 - Test google search.
 - Fix font Victor's phone.
 - Fix firefox first big letter.
-- Fix react intl locales (Remove moment).
-- Breadcrumb.
 - Rewrite footer (simplify) - better align.
 - Add social links to menu.
-- Add pluralsight bonus http://referral.pluralsight.com/mQcW67u
 - Rewrite welcome (simplify).
 - E-mail subscription.
 - Add rich cards for google.
 - Add AMP.
-- Fix dns.
+- Fix ssl older phones.
 - Add tags section to home.
 - Add images.
 - Optically align objects.
-- fix pages with duplicate title tags
+
 
 ## Working
-- Resume: Add jobs and clients.
-- Resume: add breadcrumb.
 - Resume: add projects.
 - Fix header size when url not ends with /
-- Replace 'Tags' to 'Post Tags'
-- Add pdf resume to about me, link to contact
-- Add resume sub items.
+- Add resume sub items to the menu.
+- fix pages with duplicate title tags
+- Add pluralsight bonus http://referral.pluralsight.com/mQcW67u
 
 ## Done
+- Fix react intl locales (Remove moment).
+- Add pdf resume to about me, link to contact
+- Replace 'Tags' to 'Post Tags'
+- Resume: add breadcrumb.
+- Resume: Add jobs and clients.
 - Resume: divide in tabs.
 - About me.
 - Fix events error old iphone and old android.
