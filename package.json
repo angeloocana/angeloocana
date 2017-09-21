@@ -19,7 +19,7 @@
     "start": "npm run develop",
     "lint": "./node_modules/.bin/eslint --fix --ext .js,.jsx --ignore-pattern public .",
     "build": "rm -rf public/*.html && gatsby build",
-    "predeploy": "npm run lint && npm run build",
+    "predeploy": "npm run lint && npm run build && rm ./public/*.js.map",
     "deploy": "surge public/ --domain angeloocana.surge.sh",
     "deploy:prod": "npm run predeploy && surge public/ https://angeloocana.com",
     "develop": "gatsby develop",
