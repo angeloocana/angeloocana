@@ -5,6 +5,7 @@ import Link from 'gatsby-link';
 import styled from 'styled-components';
 import PostList from '../components/PostList';
 import { FormattedMessage } from 'react-intl';
+import Helmet from 'react-helmet';
 
 const Header = styled.header`
   text-align: center;
@@ -17,7 +18,7 @@ const TagName = styled.span`
   text-align: center;
 `;
 
-const AllTagsLink = styled(Link)`
+const AllTagsLink = styled(Link) `
   text-align: center;
   padding: ${({ theme }) => theme.scale(1)} 0;
   font-weight: bold;
@@ -52,6 +53,14 @@ const TagRoute = ({ data, pathContext }) => {
   return (
     <section>
       <Header>
+        <FormattedMessage id="tags">
+          {(txt) => (
+            <Helmet
+              title={`${pathContext.tag} | ${txt}`}
+              meta={[{ name: 'description', content: txt }]}
+            />
+          )}
+        </FormattedMessage>
         <FormattedMessage
           id="tags.nPostsTaggedWith"
           values={{ nPosts: data.allMarkdownRemark.totalCount }}

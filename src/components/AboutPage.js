@@ -7,6 +7,7 @@ import BigFirstLetter from './BigFirstLetter';
 import styled from 'styled-components';
 import { FormattedMessage } from 'react-intl';
 import ResumeContainer from './Resume/ResumeContainer';
+import Helmet from 'react-helmet';
 
 const Header = styled.header`
   padding: 0 0 ${({ theme }) => theme.scale(2)} 0;
@@ -16,7 +17,7 @@ const AboutPage = (props) => {
   const author = getAuthor('angeloocana');
 
   author.description = props.i18n.descriptionForGoogle;
-  const {menu} = props.data.site.siteMetadata.resume;
+  const { menu } = props.data.site.siteMetadata.resume;
 
   const structuredData = getStructuredDataForAuthor(author);
 
@@ -27,17 +28,21 @@ const AboutPage = (props) => {
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: structuredData }}
         />
-        <Header>
-          <FormattedMessage id="about">
-            {(txt) => (
+        <FormattedMessage id="about">
+          {(txt) => (
+            <Header>
+              <Helmet
+                title={txt}
+                meta={[{ name: 'description', content: txt }]}
+              />
               <H1>
                 {txt}
               </H1>
-            )}
-          </FormattedMessage>
-        </Header>
+            </Header>
+          )}
+        </FormattedMessage>
         {props.i18n.description}
-      </BigFirstLetter>      
+      </BigFirstLetter>
     </ResumeContainer>
   );
 };

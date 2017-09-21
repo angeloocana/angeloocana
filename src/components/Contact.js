@@ -8,6 +8,7 @@ import Br from './flags/Br';
 import Ca from './flags/Ca';
 import A from './A';
 import { FormattedMessage } from 'react-intl';
+import Helmet from 'react-helmet';
 
 const getCountry = (country) => {
   switch (country) {
@@ -90,18 +91,23 @@ const Contact = (props) => {
 
   return (
     <section>
-      <header>
-        <FormattedMessage id="contact">
-          {(txt) => (
+      <FormattedMessage id="contact">
+        {(txt) => (
+          <header>
+            <Helmet
+              title={txt}
+              meta={[{ name: 'description', content: txt }]}
+            />
             <H1>
               {txt}
             </H1>
-          )}
-        </FormattedMessage>
-      </header>
+          </header>
+        )}
+      </FormattedMessage>
+
       <Ul>
         {contactList}
-      </Ul>      
+      </Ul>
     </section>
   );
 };

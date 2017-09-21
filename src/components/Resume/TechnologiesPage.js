@@ -15,6 +15,7 @@ import {
 } from 'ramda';
 import styled from 'styled-components';
 import { FormattedMessage } from 'react-intl';
+import Helmet from 'react-helmet';
 
 const getUniqList = (technologies, prop) => {
   return uniq(technologies.reduce((years, tech) => {
@@ -117,15 +118,19 @@ class TechnologiesPage extends React.PureComponent {
         selectedPage="/resume/"
       >
         <Filters>
-          <legend>
-            <FormattedMessage id="resume.technologies">
-              {(txt) => (
+          <FormattedMessage id="resume.technologies">
+            {(txt) => (
+              <legend>
+                <Helmet
+                  title={txt}
+                  meta={[{ name: 'description', content: txt }]}
+                />
                 <InvisibleSpan>
                   {txt}
                 </InvisibleSpan>
-              )}
-            </FormattedMessage>
-          </legend>
+              </legend>
+            )}
+          </FormattedMessage>
           <Selects>
             <Select
               items={years}

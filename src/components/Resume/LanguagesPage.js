@@ -8,6 +8,7 @@ import Ca from '../flags/Ca';
 import Fr from '../flags/Fr';
 import Br from '../flags/Br';
 import Es from '../flags/Es';
+import Helmet from 'react-helmet';
 
 const getFlag = (langKey) => {
   switch (langKey) {
@@ -85,15 +86,19 @@ const LanguagesPage = (props) => {
       menu={menu}
       selectedPage="/resume/languages/"
     >
-      <header>
-        <FormattedMessage id="resume.languages">
-          {(txt) => (
+      <FormattedMessage id="resume.languages">
+        {(txt) => (
+          <header>
+            <Helmet
+              title={txt}
+              meta={[{ name: 'description', content: txt }]}
+            />
             <H2>
               {txt}
             </H2>
-          )}
-        </FormattedMessage>
-      </header>
+          </header>
+        )}
+      </FormattedMessage>
       <Ul>
         {
           languages.map(lang => (

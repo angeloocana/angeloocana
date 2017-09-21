@@ -4,6 +4,7 @@ import styled from 'styled-components';
 import H2 from '../H2';
 import Education from './Education';
 import { FormattedMessage } from 'react-intl';
+import Helmet from 'react-helmet';
 
 const Ul = styled.ul`
   display: flex;
@@ -16,15 +17,20 @@ const Ul = styled.ul`
 const Educations = ({ educations, langKey }) => {
   return (
     <section>
-      <header>
-        <FormattedMessage id="resume.educations">
-          {(txt) => (
+
+      <FormattedMessage id="resume.educations">
+        {(txt) => (
+          <header>
+            <Helmet
+              title={txt}
+              meta={[{ name: 'description', content: txt }]}
+            />
             <H2>
               {txt}
             </H2>
-          )}
-        </FormattedMessage>
-      </header>
+          </header>
+        )}
+      </FormattedMessage>
       <Ul>
         {
           educations.map((education, i) =>
