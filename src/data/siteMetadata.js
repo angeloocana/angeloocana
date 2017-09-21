@@ -15,7 +15,16 @@ module.exports = {
     {label: 'posts', slug: '/blog/'},
     {label: 'tags', slug: '/tags/'},
     {label: 'about', slug: '/about/'},
-    {label: 'resume', slug: '/resume/'},
+    {
+      label: 'resume', 
+      slug: '/resume/',
+      items: [
+        {label: 'resume.technologies', slug: '/resume/technologies/'},
+        {label: 'resume.jobsAndClients', slug: '/resume/jobsAndClients/'},
+        {label: 'resume.educations', slug: '/resume/education'},
+        {label: 'resume.languages', slug: '/resume/languages'}
+      ]
+    },
     {label: 'sourceCode', link: 'https://github.com/angeloocana/angeloocana'},
     {label: 'contact', slug: '/contact/'}
   ],  

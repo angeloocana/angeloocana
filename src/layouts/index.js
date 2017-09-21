@@ -134,6 +134,10 @@ export const pageQuery = graphql`
           label
           link
           slug
+          items{
+            label
+            slug
+          }
         }
       }
     }
