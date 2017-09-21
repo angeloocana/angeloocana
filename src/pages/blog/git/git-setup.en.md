@@ -8,7 +8,7 @@ tags:
   - version control
 ---
 
-Have you losed hours of work?
+Have you loosed hours of work?
 
 ## Enable Auto Complete while typing git commands on terminal
 

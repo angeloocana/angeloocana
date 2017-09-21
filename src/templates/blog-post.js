@@ -114,11 +114,19 @@ const Content = styled.section`
   ul, ol {
     margin:${props => props.theme.blog.post.content.ul.margin};
     padding:${props => props.theme.blog.post.content.ul.padding};
-    font-size:${props => props.theme.blog.post.content.ul.fontSize};
+    font-size:${props => props.theme.blog.post.content.ul.fontSize};    
   }
 
   ul {
     list-style: disc;
+  }
+
+  ol {
+    list-style: decimal;
+  }
+
+  ol li {
+    padding-top: 1rem;
   }
 
   blockquote {
