@@ -67,7 +67,7 @@ Here your are going to learn simple tips to become a **NINJA** using **Github** 
   - Mac: Go to App Store and Install **XCode**
 
 
-### 4. Time to become a command line **HERO**
+### 4. Go to your folder and add files
 
 Open the terminal or command line tool available on your system.
 
