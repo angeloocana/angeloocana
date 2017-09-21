@@ -4,7 +4,7 @@ import styled from 'styled-components';
 import Link from 'gatsby-link';
 import { FormattedMessage } from 'react-intl';
 
-const MenuLink = styled(Link) `
+const MenuLink = styled(Link)`
     font-size: ${props => props.theme.menu.a.fontSize};
     padding-bottom: ${props => props.theme.menu.a.paddingBottom};
     display: block;

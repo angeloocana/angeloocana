@@ -4,7 +4,7 @@ date: '2017-09-21'
 layout: post
 draft: false
 tags:
-    - git
+    - Git
     - version control
 structuredData:
   alternativeHeadline: ...  
@@ -119,3 +119,5 @@ uhuhuh Now Save or Add any file you want to the folder.
 
 ### 10. Go sleep better knowing that your files are safe.
 
+
+Want to learn more advanced stuff? [Click here to become a NINJA](https://angeloocana.com/en/blog/git/git-setup/).
