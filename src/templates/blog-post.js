@@ -125,7 +125,7 @@ const Content = styled.section`
     list-style: decimal;
   }
 
-  ol li {
+  li {
     padding-top: 1rem;
   }
 
