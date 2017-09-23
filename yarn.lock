@@ -3970,13 +3970,11 @@ gatsby-plugin-i18n-tags@^0.0.2:
     graphql "^0.11.1"
     ptz-i18n "^0.0.6"
 
-gatsby-plugin-i18n@^0.1.1:
-  version "0.1.1"
-  resolved "https://registry.yarnpkg.com/gatsby-plugin-i18n/-/gatsby-plugin-i18n-0.1.1.tgz#f0a0b61d2b1e8fab5514d0ffd8e5e28909e91909"
+gatsby-plugin-i18n@^0.2.0:
+  version "0.2.0"
+  resolved "https://registry.yarnpkg.com/gatsby-plugin-i18n/-/gatsby-plugin-i18n-0.2.0.tgz#09b1d2ca121d88b0a1543edf33d75108a12c7e06"
   dependencies:
-    bluebird "^3.5.0"
     graphql "^0.11.1"
-    ptz-i18n "^0.0.6"
 
 gatsby-plugin-manifest@^1.0.1:
   version "1.0.7"

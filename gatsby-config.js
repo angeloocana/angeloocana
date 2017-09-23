@@ -1,5 +1,5 @@
 const siteMetadata = require('./src/data/siteMetadata');
-const {getJobUrl} = require('./src/data/resume/getJobUrl');
+const { getJobUrl } = require('./src/data/resume/getJobUrl');
 
 module.exports = {
   siteMetadata,
@@ -68,14 +68,30 @@ module.exports = {
     {
       resolve: 'gatsby-plugin-i18n',
       options: {
-        postPage: 'src/templates/blog-post.js',
         langKeyForNull: 'any',
-        langKeyDefault: 'en'
+        langKeyDefault: 'en',
+        markdownRemark: {
+          postPage: 'src/templates/blog-post.js',
+          query: `
+          {
+              allMarkdownRemark {
+                  edges {
+                  node {
+                      fields {
+                      slug,
+                      langKey
+                      }
+                  }
+                  }
+              }
+          }
+          `
+        }
       }
     },
     {
       resolve: 'gatsby-plugin-i18n-tags',
-      options: { // Default options
+      options: { // Default options        
         tagPage: 'src/templates/tag-page.js',
         tagsUrl: '/tags/',
         langKeyForNull: 'any'
