@@ -19,6 +19,34 @@ const jobsAndClients = {
     },
     projects: [
       {
+        name: 'Tic Tac Toe AI',
+        slug: '/angeloocana/tic-tac-toe-ai/',
+        years: range(2017, 2017),
+        description: '',
+        link: 'https://tic-tac-toe-ai.surge.sh',
+        technologies: [
+          t.react,
+          t.gatsby,
+          t.graphql,          
+          t.styledComponents,
+          t.nodejs,
+          t.html,
+          t.css,
+          t.js,
+          t.vscode,
+          t.jest,
+          t.eslint,
+          t.babel,
+          t.surge
+        ],
+        clients: [
+          {
+            name: '',
+            link: ''
+          }
+        ]
+      },
+      {
         name: 'angeloocana .com v2',
         slug: '/angeloocana/v2/react/',
         years: range(2017, thisYear),
