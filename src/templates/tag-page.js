@@ -18,7 +18,7 @@ const TagName = styled.span`
   text-align: center;
 `;
 
-const AllTagsLink = styled(Link) `
+const AllTagsLink = styled(Link)`
   text-align: center;
   padding: ${({ theme }) => theme.scale(1)} 0;
   font-weight: bold;

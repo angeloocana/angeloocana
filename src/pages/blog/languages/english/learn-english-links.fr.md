@@ -52,6 +52,9 @@ Pour les développeurs est extrêmement important, c'est le langage 'officiel' p
 
 ## Links
 
+### Todo mundo ainda comete esse erro de inglês | QUICK TIP #11
+[![Todo mundo ainda comete esse erro de inglês | QUICK TIP #11](https://img.youtube.com/vi/9qqPJgKoRtg/0.jpg)](https://www.youtube.com/watch?v=9qqPJgKoRtg)
+
 ### "thr" (three/through) pronunciation
 [!["thr" (three/through) pronunciation](https://img.youtube.com/vi/K-7G4g6OSrU/0.jpg)](https://www.youtube.com/watch?v=K-7G4g6OSrU)
 
