@@ -20,6 +20,7 @@
 - Fix ssl older phones.
 - Add tags section to home.
 - Add images.
+- Add share to social media btns.
 - Optically align objects.
 
 
@@ -29,6 +30,7 @@
 - Add resume sub items to the menu.
 - fix pages with duplicate title tags
 - Add pluralsight bonus http://referral.pluralsight.com/mQcW67u
+
 
 ## Done
 - Fix react intl locales (Remove moment).
