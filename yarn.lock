@@ -3970,9 +3970,9 @@ gatsby-plugin-i18n-tags@^0.0.2:
     graphql "^0.11.1"
     ptz-i18n "^0.0.6"
 
-gatsby-plugin-i18n@^0.3.0:
-  version "0.3.0"
-  resolved "https://registry.yarnpkg.com/gatsby-plugin-i18n/-/gatsby-plugin-i18n-0.3.0.tgz#b0fa72ef19652c56bebf27fa890c55b1af6e6527"
+gatsby-plugin-i18n@^0.3.1:
+  version "0.3.1"
+  resolved "https://registry.yarnpkg.com/gatsby-plugin-i18n/-/gatsby-plugin-i18n-0.3.1.tgz#4891d71ed847c0d3c661cbde4b0e3a2c5f6b9d51"
   dependencies:
     graphql "^0.11.1"
 
