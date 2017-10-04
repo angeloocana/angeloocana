@@ -70,6 +70,7 @@ module.exports = {
       options: {
         langKeyForNull: 'any',
         langKeyDefault: 'en',
+        useLangKeyLayout: true,
         markdownRemark: {
           postPage: 'src/templates/blog-post.js',
           query: `
