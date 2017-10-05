@@ -3,7 +3,7 @@
 ## To do
 - Search.
 - Test offline.
-- Test speed (2017-07-25 B B).
+- Test speed (2017-10-04 B B).
 - Clean dependencies.
 - Search for cambo in npm, if not available add it.
 - Find new theme for code examples.
