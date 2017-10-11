@@ -33,6 +33,7 @@
 
 
 ## Done
+- Fix google 404 pages with surge redirect.
 - Fix react intl locales (Remove moment).
 - Add pdf resume to about me, link to contact
 - Replace 'Tags' to 'Post Tags'
