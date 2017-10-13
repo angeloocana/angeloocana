@@ -1,6 +1,6 @@
 const { technologies } = require('./technologies');
 const { languages } = require('./languages');
-const { jobsAndClients } = require('./jobsAndClients');
+const { jobsAndClients, games } = require('./jobsAndClients');
 const { educations } = require('./educations');
 const {getArray} = require('./getArray');
 
@@ -30,6 +30,7 @@ const menu = [
 module.exports = {
   technologies: getArray(technologies),
   educations: getArray(educations),
+  games,
   jobsAndClients,
   languages: getArray(languages),
   menu

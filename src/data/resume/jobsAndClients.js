@@ -21,13 +21,15 @@ const jobsAndClients = {
       {
         name: 'Tic Tac Toe AI',
         slug: '/angeloocana/tic-tac-toe-ai/',
+        img: 'tic-tac-toe-ai.jpg',
+        isGame: true,
         years: range(2017, 2017),
         description: '',
         link: 'https://tic-tac-toe-ai.surge.sh',
         technologies: [
           t.react,
           t.gatsby,
-          t.graphql,          
+          t.graphql,
           t.styledComponents,
           t.nodejs,
           t.html,
@@ -138,6 +140,8 @@ const jobsAndClients = {
       {
         name: 'Jump Over Jump',
         slug: '/jump-over-jump/v1/',
+        isGame: true,
+        img: 'jump-over-jump.png',
         years: range(2014, 2015),
         description: '',
         link: 'http://jumpoverjump.com',
@@ -716,6 +720,21 @@ const getJobsAndClients = R.pipe(
   concatProjectTechs
 );
 
+const reduceProjectGames = R.reduce((games, project) =>
+  project.isGame
+    ? games.concat(project)
+    : games);
+
+const reduceJobGames = R.reduce((games, job) =>
+  reduceProjectGames(games, job.projects)
+  , []);
+
+const getGames = R.pipe(
+  getArray,
+  reduceJobGames
+);
+
 module.exports = {
-  jobsAndClients: getJobsAndClients(jobsAndClients)
+  jobsAndClients: getJobsAndClients(jobsAndClients),
+  games: getGames(jobsAndClients)
 };

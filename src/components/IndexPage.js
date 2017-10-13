@@ -5,12 +5,14 @@ import SocialLinks from './SocialLinks';
 import Welcome from './Welcome';
 import BtnLink from './BtnLink';
 import Technologies from './Resume/Technologies';
+import Games from './Resume/Games';
 import { take } from 'ramda';
 import { FormattedMessage } from 'react-intl';
 
 const Index = (props) => {
   const posts = props.data.allMarkdownRemark.edges.map(p => p.node);
   const { langKey } = props.pathContext;
+  console.log(props.data.site.siteMetadata.resume);
   const technologies = take(6, props.data.site.siteMetadata.resume.technologies);
 
   return (
@@ -27,6 +29,7 @@ const Index = (props) => {
           </BtnLink>
         )}
       </FormattedMessage>
+      <Games games={props.data.site.siteMetadata.resume.games} />
       <Posts
         posts={posts}
         langKey={langKey}

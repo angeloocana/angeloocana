@@ -1,4 +1,4 @@
-import { jobsAndClients } from './jobsAndClients';
+import { jobsAndClients, games } from './jobsAndClients';
 import R from 'ramda';
 import * as assert from 'ptz-assert';
 
@@ -32,5 +32,9 @@ describe('data jobsAndClients', () => {
     const errors = reduceJobs([], jobsAndClients);
 
     assert.deepEqual(errors, []);
+  });
+
+  it('2 Games', () => {
+    assert.equal(games.length, 2, 'Did u add a new game? Just update the test');
   });
 });

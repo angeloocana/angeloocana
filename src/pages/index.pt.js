@@ -38,6 +38,11 @@ export const pageQuery = graphql`
             years,
             img
           }
+          games{
+            name,
+            link,
+            img
+          }
         }
       }
     }

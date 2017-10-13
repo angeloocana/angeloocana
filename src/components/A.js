@@ -4,7 +4,7 @@ const A = styled.a`
     font-family: ${props => props.theme.a.fontFamily};
     color: ${props => props.theme.a.color};
     text-decoration: ${props => props.theme.a.textDecoration};
-    cursor: hover;
+    cursor: pointer;
     transition: 0.3s;
 
     &:hover {

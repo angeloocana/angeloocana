@@ -42,6 +42,8 @@ module.exports = {
   
   'resume.educations': 'Educação',
 
+  'resume.games': 'Jogos',
+
   'resume.languages': 'Idiomas',
   'resume.languages.level.native': 'Nativo',
   'resume.languages.level.fluent': 'Fluente',
