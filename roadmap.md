@@ -24,7 +24,6 @@
 
 
 ## Working
-- Remove angeloocana.surge.sh from google.
 - Clean redirect page /.
 - Add images.
 - Add share to social media btns.
@@ -37,6 +36,7 @@
 
 
 ## Done
+- Remove angeloocana.surge.sh from google.
 - fix pages with duplicate title tags
 - Fix google 404 pages with surge redirect.
 - Fix react intl locales (Remove moment).
