@@ -8273,9 +8273,9 @@ ptz-i18n@^0.1.0:
   dependencies:
     ramda "^0.24.1"
 
-ptz-i18n@^0.2.0:
-  version "0.2.0"
-  resolved "https://registry.yarnpkg.com/ptz-i18n/-/ptz-i18n-0.2.0.tgz#24cca431d09f6090be3b113e611df66369b16b4a"
+ptz-i18n@^0.2.2:
+  version "0.2.2"
+  resolved "https://registry.yarnpkg.com/ptz-i18n/-/ptz-i18n-0.2.2.tgz#9611a57d495c7c77389ea55ecc21f1311e2b6280"
   dependencies:
     ramda "^0.24.1"
 

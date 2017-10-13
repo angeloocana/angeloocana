@@ -15,10 +15,6 @@ class RedirectIndex extends React.PureComponent {
   }
 }
 
-RedirectIndex.propTypes = {
-
-};
-
 export default RedirectIndex;
 
 export const pageQuery = graphql`

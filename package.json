@@ -63,7 +63,7 @@
     "prop-types": "^15.5.10",
     "ptz-assert": "^1.6.8",
     "ptz-fp": "^1.2.0",
-    "ptz-i18n": "^0.2.0",
+    "ptz-i18n": "^0.2.2",
     "ptz-math": "^1.1.0",
     "ptz-validations": "^3.0.1",
     "ramda": "^0.24.1",
