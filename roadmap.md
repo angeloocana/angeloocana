@@ -19,20 +19,25 @@
 - Add AMP.
 - Fix ssl older phones.
 - Add tags section to home.
-- Add images.
-- Add share to social media btns.
 - Optically align objects.
+- Resume: improve projects page.
 
 
 ## Working
-- Resume: add projects.
+- Remove angeloocana.surge.sh from google.
+- Clean redirect page /.
+- Add images.
+- Add share to social media btns.
+- Add games page and section to home.
+- Remove angeloocana.com.br from resume.
+- Add tic tac toe to resume.
 - Fix header size when url not ends with /
 - Add resume sub items to the menu.
-- fix pages with duplicate title tags
 - Add pluralsight bonus http://referral.pluralsight.com/mQcW67u
 
 
 ## Done
+- fix pages with duplicate title tags
 - Fix google 404 pages with surge redirect.
 - Fix react intl locales (Remove moment).
 - Add pdf resume to about me, link to contact
