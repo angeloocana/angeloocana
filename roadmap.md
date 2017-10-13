@@ -24,12 +24,12 @@
 
 
 ## Working
-- Clean redirect page /.
-- Add images.
-- Add share to social media btns.
-- Add games page and section to home.
 - Remove angeloocana.com.br from resume.
 - Add tic tac toe to resume.
+- Clean redirect page /.
+- Add games page and section to home.
+- Add images.
+- Add share to social media btns.
 - Fix header size when url not ends with /
 - Add resume sub items to the menu.
 - Add pluralsight bonus http://referral.pluralsight.com/mQcW67u
