@@ -7,7 +7,6 @@
 - Clean dependencies.
 - Search for cambo in npm, if not available add it.
 - Find new theme for code examples.
-- Try to get browser lang, when no lang in the url.
 - Test google search.
 - Fix font Victor's phone.
 - Fix firefox first big letter.
@@ -24,9 +23,6 @@
 
 
 ## Working
-- Remove angeloocana.com.br from resume.
-- Add tic tac toe to resume.
-- Clean redirect page /.
 - Add games page and section to home.
 - Add images.
 - Add share to social media btns.
@@ -36,6 +32,10 @@
 
 
 ## Done
+- Try to get browser lang, when no lang in the url.
+- Remove angeloocana.com.br from resume.
+- Add tic tac toe to resume.
+- Clean redirect page /.
 - Remove angeloocana.surge.sh from google.
 - fix pages with duplicate title tags
 - Fix google 404 pages with surge redirect.
