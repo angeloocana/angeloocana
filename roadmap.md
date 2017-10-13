@@ -23,8 +23,6 @@
 
 
 ## Working
-- pre filter top technologies home page.
-- Add games page and section to home.
 - Add images.
 - Add share to social media btns.
 - Fix header size when url not ends with /
@@ -33,6 +31,8 @@
 
 
 ## Done
+- pre filter top technologies home page.
+- Add games to home.
 - Try to get browser lang, when no lang in the url.
 - Remove angeloocana.com.br from resume.
 - Add tic tac toe to resume.

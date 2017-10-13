@@ -31,7 +31,7 @@ export const pageQuery = graphql`
     site{
       siteMetadata{
         resume{
-          technologies{
+          pinnedTechnologies{
             name,
             tags,
             level,

@@ -19,6 +19,7 @@ const tags = {
 
 const technologies = {
   js: {
+    pinned: true,
     name: 'Javascript',
     years: range(2007, thisYear),
     tags: [tags.frontEnd, tags.backEnd],
@@ -27,6 +28,7 @@ const technologies = {
     link: 'https://en.wikipedia.org/wiki/JavaScript'
   },
   nodejs: {
+    pinned: true,
     name: 'NodeJs',
     years: range(2015, thisYear),
     tags: [tags.backEnd],
@@ -35,6 +37,7 @@ const technologies = {
     link: 'https://nodejs.org'
   },
   react: {
+    pinned: true,
     name: 'React',
     years: range(2016, thisYear),
     tags: [tags.frontEnd],
@@ -43,6 +46,7 @@ const technologies = {
     link: 'https://facebook.github.io/react/'
   },
   graphql: {
+    pinned: true,
     name: 'GraphQL',
     years: range(2016, thisYear),
     tags: [tags.backEnd],
@@ -51,6 +55,7 @@ const technologies = {
     link: 'http://graphql.org/'
   },
   mongodb: {
+    pinned: true,
     name: 'MongoDB',
     years: range(2015, thisYear),
     tags: [tags.db, tags.backEnd],
@@ -59,6 +64,7 @@ const technologies = {
     link: 'https://www.mongodb.com/'
   },
   gatsby: {
+    pinned: true,    
     name: 'Gatsby',
     years: range(2017, thisYear),
     tags: [tags.frontEnd],
@@ -66,7 +72,7 @@ const technologies = {
     img: 'gatsby.svg',
     link: 'https://www.gatsbyjs.org/'
   },
-  docker: {
+  docker: {    
     name: 'Docker',
     years: range(2017, thisYear),
     tags: [tags.backEnd],
