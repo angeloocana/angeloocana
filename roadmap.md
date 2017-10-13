@@ -23,6 +23,7 @@
 
 
 ## Working
+- pre filter top technologies home page.
 - Add games page and section to home.
 - Add images.
 - Add share to social media btns.
