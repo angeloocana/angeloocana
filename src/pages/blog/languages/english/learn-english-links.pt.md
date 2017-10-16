@@ -1,6 +1,6 @@
 ---
 title: Aprenda Inglês (Links)
-date: '2017-09-18'
+date: '2017-10-16'
 layout: post
 draft: false
 tags:
@@ -47,10 +47,14 @@ structuredData:
   video: ...
 ---
 
-Abra um novo mundo de conhecimento e oportunidades ao falar inglês, esse idioma global.
-Para desenvolvedores é extremamente importante, é a lingua 'oficial' da programação.
+Testes, pronuncia correta, dicas e muito mais. Aprenda e contribua para essa coleção de conteúdo gratuito para aprender Inglês. (Novos links semanalmente!)
+
 
 ## Links
+  - [Teste seu nível de ingles (com respostas)](http://www.englishjet.com/english_courses_files/test_level_answers.asp)
+
+
+## Vídeos
 
 ### Todo mundo ainda comete esse erro de inglês | QUICK TIP #11
 [![Todo mundo ainda comete esse erro de inglês | QUICK TIP #11](https://img.youtube.com/vi/9qqPJgKoRtg/0.jpg)](https://www.youtube.com/watch?v=9qqPJgKoRtg)

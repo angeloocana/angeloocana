@@ -1,6 +1,6 @@
 ---
 title: Apprendre l'anglais (liens)
-date: '2017-09-18'
+date: '2017-10-16'
 layout: post
 draft: false
 tags:
@@ -47,10 +47,12 @@ structuredData:
   video: ...
 ---
 
-Ouvrez un tout nouveau monde de connaissances et de possibilités en parlant l'anglais, cette langue globale.
-Pour les développeurs est extrêmement important, c'est le langage 'officiel' pour le codage.
+Tests, prononciation correcte, conseils et plus encore. Apprenez et contribuez à cette collection de contenu gratuit pour apprendre l'anglais. (Nouveaux liens hebdomadaires!)
 
 ## Links
+  - [Testez votre index en anglais (avec des réponses)](http://www.englishjet.com/english_courses_files/test_level_answers.asp)
+
+## Vidéos
 
 ### Todo mundo ainda comete esse erro de inglês | QUICK TIP #11
 [![Todo mundo ainda comete esse erro de inglês | QUICK TIP #11](https://img.youtube.com/vi/9qqPJgKoRtg/0.jpg)](https://www.youtube.com/watch?v=9qqPJgKoRtg)

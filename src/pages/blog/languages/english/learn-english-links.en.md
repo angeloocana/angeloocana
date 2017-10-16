@@ -1,6 +1,6 @@
 ---
 title: Learn English links
-date: '2017-09-18'
+date: '2017-10-16'
 layout: post
 draft: false
 tags:
@@ -47,10 +47,13 @@ structuredData:
   video: ...
 ---
 
-Open a whole new world of knowledge and opportunities by speaking English, this global language.
-For developers is extremely important, It is the 'official' language for coding.
+Tests, correct pronunciation, tips and more. Learn and contribute to this collection of free content to learn English. (New links weekly!)
+
 
 ## Links
+  - [Level Test & answers](http://www.englishjet.com/english_courses_files/test_level_answers.asp)
+
+## Videos
 
 ### Todo mundo ainda comete esse erro de inglês | QUICK TIP #11
 [![Todo mundo ainda comete esse erro de inglês | QUICK TIP #11](https://img.youtube.com/vi/9qqPJgKoRtg/0.jpg)](https://www.youtube.com/watch?v=9qqPJgKoRtg)
