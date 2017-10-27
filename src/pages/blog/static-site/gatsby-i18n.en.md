@@ -53,40 +53,70 @@ Learn how to create a modern i18n (multi language) web site or blog using javasc
 
 - [First: Why I use Gatsby?](#first-why-i-use-gatsby)
 - [Second: Why i18n?](#second-why-i18n)
+- [Create the Project](#create-the-project)
+- [Add gatsby-plugin-i18n](#add-gatsby-plugin-i18n)
+- [Create pages](#create-pages)
+- [Create menu](#create-menu)
+- [Redirect to user language](#redirect-to-user-language)
+- [Add Blog and Markdown](#add-blog-and-markdown)
+- [Add Read Next](#add-read-next)
 
-
-# First: Why I use Gatsby?
+## First: Why I use Gatsby?
 
 From
 <a href="https://www.gatsbyjs.org/" target="_blank">
 Gatsby website:
 </a>
 
-## Scale to the entire internet
+### Scale to the entire internet
 
 Gatsby.js builds the fastest possible website. Instead of waiting to generate pages when requested, pre-build pages and lift them into a global cloud of servers — ready to be delivered instantly to your users wherever they are.
 
-## Modern web tech without the headache
+### Modern web tech without the headache
 
 Enjoy the power of the latest web technologies – React.js , Webpack , modern JavaScript and CSS and more — all setup and waiting for you to start building.
 
 
-## Static Progressive Web Apps
+### Static Progressive Web Apps
 
 Gatsby.js is a static PWA (Progressive Web App) generator. You get code and data splitting out-of-the-box. Gatsby loads only the critical HTML, CSS, data, and JavaScript so your site loads as fast as possible. Once loaded, Gatsby prefetches resources for other pages so clicking around the site feels incredibly fast.
 
-## Bring your own data
+### Bring your own data
 
 Gatsby’s rich data plugin ecosystem lets you build sites with the data you want — from one or many sources: Pull data from headless CMSs, SaaS services, APIs, databases, your file system & more directly into your pages using GraphQL .
 
 
-# Second: Why i18n?
+## Second: Why i18n?
 
 i18n is the global term used to describe multi language sites, blogs, programs, ...etc.
 
-> Trusted me: Always start a project multi language, even if you are using just one language.
+> Trusted me, Always start a project multi language, even if you are using just one language.
 
 It's almost impossible to add i18n to any project already done without a completely rewrite.
 
 One big advantage is that you get all you texts centralized, if you change one msg, it is going to be changed every where, you don't need to search all your application looking for that text.
+
+> Build your application thinking in the future and world wide.
+
+Let's start coding!
+
+## Create the Project
+
+
+## Add gatsby-plugin-i18n
+
+
+## Create pages
+
+
+## Create menu
+
+
+## Redirect to user language
+
+
+## Add Blog and Markdown
+
+
+## Add Read Next
 
