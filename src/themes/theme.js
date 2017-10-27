@@ -200,15 +200,15 @@ const theme = {
           color: colors.white,
           fontSize: scale(1),
           borderRadius: '0.2rem',
-          margin: `${scale(-4)} 0`,
-          padding: `${scale(-4)}`,
+          margin: `0`,
+          padding: `${scale(-8)} ${scale(-4)}`,
           backgroundColor: colors.gray,
         },
         highlight: {
           backgroundColor: colors.gray,
           borderRadius: '0.2rem',
           margin: `${scale(0)} 0`,
-          padding: `${scale(0)}`,
+          padding: `0 0 0 0.5rem`,
           code: {
             color: colors.white
           }
