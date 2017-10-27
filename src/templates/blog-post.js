@@ -34,7 +34,7 @@ const H1 = styled.h1`
 const Content = styled.section`
   margin: 0 0 ${({ theme }) => theme.scale(6)} 0;
 
-  code {
+  p > code {
     color: ${props => props.theme.blog.post.content.code.color};
     font-size: ${props => props.theme.blog.post.content.code.fontSize};
     margin: ${props => props.theme.blog.post.content.code.margin};
