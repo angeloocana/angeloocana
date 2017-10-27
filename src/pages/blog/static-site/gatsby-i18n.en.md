@@ -53,6 +53,7 @@ Learn how to create a modern i18n (multi language) web site or blog using javasc
 
 - [First: Why I use Gatsby?](#first-why-i-use-gatsby)
 - [Second: Why i18n?](#second-why-i18n)
+- [Install Gatsby cli](#install-gatsby-cli)
 - [Create the Project](#create-the-project)
 - [Add gatsby-plugin-i18n](#add-gatsby-plugin-i18n)
 - [Create pages](#create-pages)
@@ -100,14 +101,107 @@ One big advantage is that you get all you texts centralized, if you change one m
 
 Let's start coding!
 
-## Create the Project
+
+## Install Gatsby cli
+
+To start you need [npm](https://www.npmjs.com/get-npm) and [yarn](https://yarnpkg.com/lang/en/docs/install/) installed.
+
+You don't really need **yarn**, you can just work with **npm**, but I think **yarn** is faster and less buggy.
+
+```bash
+  yarn add gatsby-cli --global
+```
+
+[More info from Gatsby docs](https://www.gatsbyjs.org/docs/)
+
+
+## Create The Project
+
+Open the console in the folder where your project is going to live, and run the command bellow.
+
+```bash
+  gatsby new my-i18n-site
+```
+Replace **my-i18n-site** with your project name.
+
+To run the project, go to your new project folder and execute in the console:
+
+```bash
+  gatsby develop
+```
+
+Open your browser at `http://localhost:8000/`
+If you can see a page, congratulations! It's everything alright. =D
+
+Navigate throw the code, make some changes and see the browser automatically reloading the page with the new changes.
 
 
 ## Add gatsby-plugin-i18n
 
+Checkout and **like** the github page for [gatsby-plugin-i18n](https://github.com/angeloocana/gatsby-plugin-i18n)
+
+Add the plugin to your project:
+```bash
+  yarn add gatsby-plugin-i18n
+```
+
+Now open the file `gatsby-config.js` and add the code bellow to the end:
+
+```js
+plugins: [
+  // Others plugins...,
+  {
+      resolve: 'gatsby-plugin-i18n',
+      options: {        
+        langKeyDefault: 'en',
+        useLangKeyLayout: false
+      }
+    }
+]
+```
+
 
 ## Create pages
 
+Now lets create one home page for English and another for Portuguese.
+
+English: `src/pages/index.en.js`
+```js
+  import React from 'react'
+  import Link from 'gatsby-link'
+
+  const IndexPage = () => (
+    <div>
+      <h1>en Home</h1>
+      <Link to="/pt/">pt</Link>
+    </div>
+  )
+
+  export default IndexPage
+```
+
+Portuguese: `src/pages/index.pt.js`
+```js
+  import React from 'react'
+  import Link from 'gatsby-link'
+
+  const IndexPage = () => (
+    <div>
+      <h1>pt Home</h1>
+      <Link to="/en/">en</Link>
+    </div>
+  )
+
+  export default IndexPage
+```
+
+Run the project `gatsby develop` and you can see the pages at:
+
+English: http://localhost:8000/en/
+
+Portuguese: http://localhost:8000/pt/
+
+I think you got how it works, just add **.lanKey**.js to the name of the file and the url will be /**langKey**/...
 
 ## Create menu
 

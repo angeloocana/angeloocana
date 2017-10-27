@@ -197,8 +197,12 @@ const theme = {
       },
       content: {
         code: {
-          color: colors.yellow,
-          fontSize: scale(1)
+          color: colors.white,
+          fontSize: scale(1),
+          borderRadius: '0.2rem',
+          margin: `${scale(-4)} 0`,
+          padding: `${scale(-4)}`,
+          backgroundColor: colors.gray,
         },
         highlight: {
           backgroundColor: colors.gray,

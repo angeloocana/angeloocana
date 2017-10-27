@@ -37,6 +37,10 @@ const Content = styled.section`
   code {
     color: ${props => props.theme.blog.post.content.code.color};
     font-size: ${props => props.theme.blog.post.content.code.fontSize};
+    margin: ${props => props.theme.blog.post.content.code.margin};
+    padding: ${props => props.theme.blog.post.content.code.padding};
+    background-color: ${props => props.theme.blog.post.content.code.backgroundColor};
+    border-radius: ${props => props.theme.blog.post.content.code.borderRadius};
   }
 
   .gatsby-highlight{
