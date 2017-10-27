@@ -51,7 +51,7 @@ structuredData:
 
 Learn how to create a modern i18n (multi language) web site or blog using javascript, react and graphql. It'll be easy, you are going to love Gatsby.
 
-- [First: Why I use Gatsby?](#first-why-i-use-gatsby)
+- [First: Why Gatsby?](#first-why-gatsby)
 - [Second: Why i18n?](#second-why-i18n)
 - [Install Gatsby cli](#install-gatsby-cli)
 - [Create the Project](#create-the-project)
@@ -62,7 +62,7 @@ Learn how to create a modern i18n (multi language) web site or blog using javasc
 - [Add Blog and Markdown](#add-blog-and-markdown)
 - [Add Read Next](#add-read-next)
 
-## First: Why I use Gatsby?
+## First: Why Gatsby?
 
 From
 <a href="https://www.gatsbyjs.org/" target="_blank">
@@ -89,13 +89,13 @@ Gatsby’s rich data plugin ecosystem lets you build sites with the data you wan
 
 ## Second: Why i18n?
 
-i18n is the global term used to describe multi language sites, blogs, programs, ...etc.
+i18n is the global term used to describe multi language sites, blogs, programs, and so on.
 
-> Trusted me, Always start a project multi language, even if you are using just one language.
+> Trust me, You should always start a multi language project, even if you are using just one language.
 
 It's almost impossible to add i18n to any project already done without a completely rewrite.
 
-One big advantage is that you get all you texts centralized, if you change one msg, it is going to be changed every where, you don't need to search all your application looking for that text.
+One big advantage is that you get all you texts centralized, if you change one msg, it is going to be changed every where, you don't need to search all your application looking for that msg.
 
 > Build your application thinking in the future and world wide.
 
@@ -138,7 +138,7 @@ Navigate throw the code, make some changes and see the browser automatically rel
 
 ## Add gatsby-plugin-i18n
 
-Checkout and **like** the github page for [gatsby-plugin-i18n](https://github.com/angeloocana/gatsby-plugin-i18n)
+Checkout [gatsby-plugin-i18n](https://github.com/angeloocana/gatsby-plugin-i18n) github page and **like** it if you like. =D
 
 Add the plugin to your project:
 ```bash
