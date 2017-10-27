@@ -4,8 +4,7 @@ date: '2017-06-23'
 layout: post
 draft: false
 tags:
-  - js
-  - javascript
+  - JavaScript
   - ES6
   - ES2015
 ---
