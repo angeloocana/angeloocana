@@ -9,6 +9,7 @@ import { getStructuredData } from '../structuredData';
 import CleanTime from '../components/Time';
 import Comments from '../components/Comments';
 import Posts from '../components/Posts';
+import AnchorJS from 'anchor-js';
 
 const Time = styled(CleanTime)`
   text-align: center;
@@ -196,60 +197,68 @@ const getYoutube = (markdownRemark) => {
     : null;
 };
 
-const BlogPostRoute = (props) => {
-  const { markdownRemark } = props.data;
-  const { langKey } = props.pathContext;
-  const youtube = getYoutube(markdownRemark);
-  const structuredData = getStructuredData(markdownRemark);
-  const url = `https://angeloocana.com${markdownRemark.fields.slug}`;
+class BlogPostRoute extends React.PureComponent {
 
-  const tags = (
-    <Tags tags={markdownRemark.fields.tagSlugs} />
-  );
+  componentDidMount(){
+    const anchors = new AnchorJS();
+    anchors.add('h1, h2');
+  }
 
-  return (
-    <Post>
-      <Helmet
-        title={`${markdownRemark.frontmatter.title}`}
-        meta={[{ name: 'description', content: markdownRemark.excerpt }]}
-      />
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: structuredData }}
-      />
-      <header>
-        <H1>
-          {markdownRemark.frontmatter.title}
-        </H1>
-        <Time
-          pubdate
-          date={markdownRemark.frontmatter.date}
-          langKey={langKey}
+  render(){
+    const { markdownRemark } = this.props.data;
+    const { langKey } = this.props.pathContext;
+    const youtube = getYoutube(markdownRemark);
+    const structuredData = getStructuredData(markdownRemark);
+    const url = `https://angeloocana.com${markdownRemark.fields.slug}`;
+  
+    const tags = (
+      <Tags tags={markdownRemark.fields.tagSlugs} />
+    );
+  
+    return (
+      <Post>
+        <Helmet
+          title={`${markdownRemark.frontmatter.title}`}
+          meta={[{ name: 'description', content: markdownRemark.excerpt }]}
         />
-      </header>
-      <EditBtn
-        fileAbsolutePath={markdownRemark.fileAbsolutePath}
-        currentLangKey={langKey}
-      />
-      {tags}
-      {youtube}
-      <Content dangerouslySetInnerHTML={{ __html: markdownRemark.html }} />
-      <Comments
-        shortname="angeloocana-com"
-        identifier={markdownRemark.fields.slug}
-        title={markdownRemark.frontmatter.title}
-        url={url}
-      />
-      {tags}
-      <Posts
-        posts={markdownRemark.fields.readNextPosts}
-        langKey={langKey}
-        showBtnMorePosts
-        title="posts.readNext"
-      />
-    </Post>
-  );
-};
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: structuredData }}
+        />
+        <header>
+          <H1>
+            {markdownRemark.frontmatter.title}
+          </H1>
+          <Time
+            pubdate
+            date={markdownRemark.frontmatter.date}
+            langKey={langKey}
+          />
+        </header>
+        <EditBtn
+          fileAbsolutePath={markdownRemark.fileAbsolutePath}
+          currentLangKey={langKey}
+        />
+        {tags}
+        {youtube}
+        <Content dangerouslySetInnerHTML={{ __html: markdownRemark.html }} />
+        <Comments
+          shortname="angeloocana-com"
+          identifier={markdownRemark.fields.slug}
+          title={markdownRemark.frontmatter.title}
+          url={url}
+        />
+        {tags}
+        <Posts
+          posts={markdownRemark.fields.readNextPosts}
+          langKey={langKey}
+          showBtnMorePosts
+          title="posts.readNext"
+        />
+      </Post>
+    );
+  }
+}
 
 BlogPostRoute.propTypes = {
   data: PropTypes.object,

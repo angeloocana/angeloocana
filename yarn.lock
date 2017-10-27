@@ -114,6 +114,10 @@ ammo@1.x.x:
     boom "2.x.x"
     hoek "2.x.x"
 
+anchor-js@^4.1.0:
+  version "4.1.0"
+  resolved "https://registry.yarnpkg.com/anchor-js/-/anchor-js-4.1.0.tgz#0a8d904cf5e46b2a9601fe062b95fbf022242f53"
+
 ansi-align@^1.1.0:
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/ansi-align/-/ansi-align-1.1.0.tgz#2f0c1658829739add5ebb15e6b0c6e3423f016ba"

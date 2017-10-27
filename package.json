@@ -4,6 +4,7 @@
   "version": "1.0.0",
   "author": "Angelo Ocana <angeloocana@gmail.com>",
   "dependencies": {
+    "anchor-js": "^4.1.0",
     "gatsby": "^1.9.36",
     "gatsby-link": "^1.6.5",
     "gatsby-plugin-react-helmet": "^1.0.1",
