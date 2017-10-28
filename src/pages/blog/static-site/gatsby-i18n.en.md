@@ -1,5 +1,5 @@
 ---
-title: Create a multi language Gatsby Site or Blog
+title: Create a multi-language Gatsby Site or Blog
 date: '2017-10-27'
 layout: post
 draft: false
@@ -14,7 +14,7 @@ structuredData:
   dateModified: '2017-10-27'
   datePublished: '2017-10-27'  
   locationCreated: Ottawa CA
-  alternativeHeadline: Hot to create a multi language Gatsby web site or blog with react and graphql
+  alternativeHeadline: Hot to create a multi-language Gatsby web site or blog with react and graphql
   type: TechArticle
   dependencies: Basic Javascript and React
   proficiencyLevel: Beginner
@@ -49,7 +49,7 @@ structuredData:
   video: ...
 ---
 
-Learn how to create a modern i18n (multi language) web site or blog using javascript, react and graphql. It'll be easy, you are going to love Gatsby.
+Learn how to create a modern i18n (multi-language) website or blog using javascript, react and GraphQl. It'll be easy, you are going to love Gatsby.
 
 - [First: Why Gatsby?](#first-why-gatsby)
 - [Second: Why i18n?](#second-why-i18n)
@@ -75,7 +75,7 @@ Gatsby.js builds the fastest possible website. Instead of waiting to generate pa
 
 ### Modern web tech without the headache
 
-Enjoy the power of the latest web technologies – React.js , Webpack , modern JavaScript and CSS and more — all setup and waiting for you to start building.
+Enjoy the power of the latest web technologies – React.js, Webpack, modern JavaScript and CSS and more — all setup and waiting for you to start building.
 
 
 ### Static Progressive Web Apps
@@ -89,15 +89,15 @@ Gatsby’s rich data plugin ecosystem lets you build sites with the data you wan
 
 ## Second: Why i18n?
 
-i18n is the global term used to describe multi language sites, blogs, programs, and so on.
+i18n is the global term used to describe multi-language sites, blogs, programs, and so on.
 
-> Trust me, You should always start a multi language project, even if you are using just one language.
+It's almost impossible to add i18n to any project already done without a complete rewrite.
 
-It's almost impossible to add i18n to any project already done without a completely rewrite.
+> Trust me, You should always start a multi-language project, even if you are using just one language.
 
-One big advantage is that you get all you texts centralized, if you change one msg, it is going to be changed every where, you don't need to search all your application looking for that msg.
+You will have all your texts centralized. If you change one msg, it is going to be changed everywhere, you don't need to search all your site looking for that msg.
 
-> Build your application thinking in the future and world wide.
+> Build your application thinking in the future and worldwide.
 
 Let's start coding!
 
@@ -117,7 +117,7 @@ You don't really need **yarn**, you can just work with **npm**, but I think **ya
 
 ## Create The Project
 
-Open the console in the folder where your project is going to live, and run the command bellow.
+Open the console in the folder where your project is going to live and run the command below.
 
 ```bash
   gatsby new my-i18n-site
@@ -133,19 +133,19 @@ To run the project, go to your new project folder and execute in the console:
 Open your browser at `http://localhost:8000/`
 If you can see a page, congratulations! It's everything alright. =D
 
-Navigate throw the code, make some changes and see the browser automatically reloading the page with the new changes.
+Navigate throw the code, make some changes and see the browser automatically reloading the page with the new changes. Isn't it awesome?
 
 
 ## Add gatsby-plugin-i18n
 
-Checkout [gatsby-plugin-i18n](https://github.com/angeloocana/gatsby-plugin-i18n) github page and **like** it if you like. =D
+Checkout [gatsby-plugin-i18n](https://github.com/angeloocana/gatsby-plugin-i18n) Github page and **like** it if you like. =D
 
 Add the plugin to your project:
 ```bash
   yarn add gatsby-plugin-i18n
 ```
 
-Now open the file `gatsby-config.js` and add the code bellow to the end:
+Now open the file `gatsby-config.js` and add the code below to the end:
 
 ```js
 plugins: [
@@ -163,7 +163,7 @@ plugins: [
 
 ## Create pages
 
-Now lets create one home page for English and another for Portuguese.
+Now let's create one home page for English and another for Portuguese.
 
 English: `src/pages/index.en.js`
 ```js
@@ -201,7 +201,7 @@ English: http://localhost:8000/en/
 
 Portuguese: http://localhost:8000/pt/
 
-I think you got how it works, just add **.lanKey**.js to the name of the file and the url will be /**langKey**/...
+I think you got how it works, just add **.lanKey**.js to the name of the file and the URL will be /**langKey**/...
 
 ## Create menu
 
