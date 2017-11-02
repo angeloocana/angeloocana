@@ -19,6 +19,7 @@ const Time = styled(CleanTime)`
   color: ${props => props.theme.blog.post.header.time.color};
   width: 100%;
   display: block;
+  padding-top: 1rem;
 `;
 
 const Post = styled.article`
