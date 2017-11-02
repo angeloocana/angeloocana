@@ -205,10 +205,10 @@ const theme = {
           backgroundColor: colors.gray,
         },
         highlight: {
-          backgroundColor: colors.gray,
+          backgroundColor: null,
           borderRadius: '0.2rem',
-          margin: `${scale(0)} 0`,
-          padding: `0 0 0 0.5rem`,
+          margin: `${scale(0)} -50rem`,
+          padding: `0 50rem`,
           code: {
             color: colors.white
           }

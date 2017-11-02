@@ -56,6 +56,11 @@ const Content = styled.section`
     code {
       color: ${props => props.theme.blog.post.content.highlight.code.color};
     }
+
+    pre{
+      width: 100%;
+      border: 2px solid ${props => props.theme.colors.white};
+    }
   }
 
   a{
