@@ -1,2 +1,0 @@
-webpackJsonp([0x9d73e811863b],{"./node_modules/json-loader/index.js!./.cache/json/pt-tags-fontes.json":function(t,a){t.exports={data:{allMarkdownRemark:{totalCount:1,edges:[{node:{frontmatter:{title:"Instalar fonts no Arch linux",date:"2017-07-31"},fields:{slug:"/pt/blog/linux/arch/install-fonts/",langKey:"pt"},excerpt:"Mova o arquivo das suas fontes para a pasta "}}]}},pathContext:{tag:"Fontes",langKey:"pt"}}}});
-//# sourceMappingURL=path---pt-tags-fontes-87c459d8e435fd23aacc.js.map

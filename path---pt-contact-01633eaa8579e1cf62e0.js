@@ -1,2 +1,0 @@
-webpackJsonp([0x816af3da24c4],{"./node_modules/json-loader/index.js!./.cache/json/pt-contact.json":function(n,o){n.exports={pathContext:{slug:"/pt/contact/",langKey:"pt"}}}});
-//# sourceMappingURL=path---pt-contact-01633eaa8579e1cf62e0.js.map

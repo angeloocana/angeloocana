@@ -1,2 +1,0 @@
-webpackJsonp([0x5f5bda9f4f0c],{"./node_modules/json-loader/index.js!./.cache/json/pt-blog-linux-arch-install-arch-linux-wifi-xfce-4.json":function(n,a){n.exports={pathContext:{path:"/pt/blog/linux/arch/install-arch-linux-wifi-xfce4/",langKey:"pt"}}}});
-//# sourceMappingURL=path---pt-blog-linux-arch-install-arch-linux-wifi-xfce-4-99c814b523935b769023.js.map

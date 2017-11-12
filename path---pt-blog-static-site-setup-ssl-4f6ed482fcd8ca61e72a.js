@@ -1,2 +1,0 @@
-webpackJsonp([27452778959004],{"./node_modules/json-loader/index.js!./.cache/json/pt-blog-static-site-setup-ssl.json":function(s,t){s.exports={pathContext:{path:"/pt/blog/static-site/setup-ssl/",langKey:"pt"}}}});
-//# sourceMappingURL=path---pt-blog-static-site-setup-ssl-4f6ed482fcd8ca61e72a.js.map

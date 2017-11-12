@@ -1,2 +1,0 @@
-webpackJsonp([20592446488864],{"./node_modules/json-loader/index.js!./.cache/json/tutoriais-dica-rapida-2-por-um-mundo-melhor.json":function(o,a){o.exports={pathContext:{path:"/Tutoriais/DicaRapida_2_Por_Um_Mundo_Melhor/",langKey:"any"}}}});
-//# sourceMappingURL=path---tutoriais-dica-rapida-2-por-um-mundo-melhor-18e3069441f8c54913ae.js.map

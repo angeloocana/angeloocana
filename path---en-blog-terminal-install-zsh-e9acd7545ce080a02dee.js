@@ -1,2 +1,0 @@
-webpackJsonp([0x69353557f267],{"./node_modules/json-loader/index.js!./.cache/json/en-blog-terminal-install-zsh.json":function(n,e){n.exports={pathContext:{path:"/en/blog/terminal/install-zsh/",langKey:"en"}}}});
-//# sourceMappingURL=path---en-blog-terminal-install-zsh-e9acd7545ce080a02dee.js.map

@@ -1,2 +1,0 @@
-webpackJsonp([57942736901028],{"./node_modules/json-loader/index.js!./.cache/json/pt-resume-education.json":function(e,n){e.exports={pathContext:{slug:"/pt/resume/education/",langKey:"pt"}}}});
-//# sourceMappingURL=path---pt-resume-education-18a297db6b59d97d14b5.js.map

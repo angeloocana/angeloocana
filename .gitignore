@@ -1,0 +1,11 @@
+*.swp
+node_modules/
+.DS_Store
+.sass-cache/
+temp.coffee
+deploy.db
+assets/sass/bower_components/
+.build/
+public/
+.intermediate-representation/
+.cache/

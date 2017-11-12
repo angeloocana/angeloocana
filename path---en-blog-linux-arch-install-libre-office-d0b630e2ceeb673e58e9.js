@@ -1,2 +1,0 @@
-webpackJsonp([0x5d13e7170899],{"./node_modules/json-loader/index.js!./.cache/json/en-blog-linux-arch-install-libre-office.json":function(e,n){e.exports={pathContext:{path:"/en/blog/linux/arch/install-libre-office/",langKey:"en"}}}});
-//# sourceMappingURL=path---en-blog-linux-arch-install-libre-office-d0b630e2ceeb673e58e9.js.map

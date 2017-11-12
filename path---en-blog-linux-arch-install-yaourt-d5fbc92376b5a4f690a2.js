@@ -1,2 +1,0 @@
-webpackJsonp([0xd67888f29297],{"./node_modules/json-loader/index.js!./.cache/json/en-blog-linux-arch-install-yaourt.json":function(n,o){n.exports={pathContext:{path:"/en/blog/linux/arch/install-yaourt/",langKey:"en"}}}});
-//# sourceMappingURL=path---en-blog-linux-arch-install-yaourt-d5fbc92376b5a4f690a2.js.map

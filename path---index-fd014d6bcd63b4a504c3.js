@@ -1,2 +1,0 @@
-webpackJsonp([0x81b8806e4260],{"./node_modules/json-loader/index.js!./.cache/json/index.json":function(e,n){e.exports={data:{site:{siteMetadata:{languages:{defaultLangKey:"en",langs:["en","fr","pt"]}}}},pathContext:{slug:"/",langKey:"en"}}}});
-//# sourceMappingURL=path---index-fd014d6bcd63b4a504c3.js.map

@@ -1,2 +1,0 @@
-webpackJsonp([0x9131cf993f9b],{"./node_modules/json-loader/index.js!./.cache/json/fr-contact.json":function(a,n){a.exports={data:{site:{siteMetadata:{contact:[{type:"email",value:"angeloocana@gmail.com",country:null,link:"mailto:angeloocana@gmail.com"},{type:"phone",value:"(613) 720-9572",country:"ca",link:"tel:(613) 720-9572"},{type:"phone",value:"+55 11 99572-9944",country:"br",link:"tel:+55 11 99572-9944"}]}}},pathContext:{slug:"/fr/contact/",langKey:"fr"}}}});
-//# sourceMappingURL=path---fr-contact-77e12cc18021dc5554e0.js.map

@@ -1,2 +1,0 @@
-webpackJsonp([0xcf6332a9f04f],{"./node_modules/json-loader/index.js!./.cache/json/pt-about.json":function(o,n){o.exports={pathContext:{slug:"/pt/about/",langKey:"pt"}}}});
-//# sourceMappingURL=path---pt-about-1161fe5de97d131f4446.js.map

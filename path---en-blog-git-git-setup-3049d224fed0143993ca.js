@@ -1,2 +1,0 @@
-webpackJsonp([0x7b0a88e387eb],{"./node_modules/json-loader/index.js!./.cache/json/en-blog-git-git-setup.json":function(e,n){e.exports={pathContext:{path:"/en/blog/git/git-setup/",langKey:"en"}}}});
-//# sourceMappingURL=path---en-blog-git-git-setup-3049d224fed0143993ca.js.map

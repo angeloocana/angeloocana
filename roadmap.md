@@ -1,0 +1,120 @@
+# RoadMap
+
+## To do
+- Search.
+- Test offline.
+- Test speed (2017-10-04 B B).
+- Clean dependencies.
+- Search for cambo in npm, if not available add it.
+- Find new theme for code examples.
+- Test google search.
+- Fix font Victor's phone.
+- Fix firefox first big letter.
+- Rewrite footer (simplify) - better align.
+- Add social links to menu.
+- Rewrite welcome (simplify).
+- E-mail subscription.
+- Add rich cards for google.
+- Add AMP.
+- Fix ssl older phones.
+- Add tags section to home.
+- Optically align objects.
+- Resume: improve projects page.
+
+
+## Working
+- Add images.
+- Add share to social media btns.
+- Fix header size when url not ends with /
+- Add resume sub items to the menu.
+- Add pluralsight bonus http://referral.pluralsight.com/mQcW67u
+
+
+## Done
+- pre filter top technologies home page.
+- Add games to home.
+- Try to get browser lang, when no lang in the url.
+- Remove angeloocana.com.br from resume.
+- Add tic tac toe to resume.
+- Clean redirect page /.
+- Remove angeloocana.surge.sh from google.
+- fix pages with duplicate title tags
+- Fix google 404 pages with surge redirect.
+- Fix react intl locales (Remove moment).
+- Add pdf resume to about me, link to contact
+- Replace 'Tags' to 'Post Tags'
+- Resume: add breadcrumb.
+- Resume: Add jobs and clients.
+- Resume: divide in tabs.
+- About me.
+- Fix events error old iphone and old android.
+- Resume: Filter year by year.
+- Contact page.
+- create gatsby-plugins-i18n-tags
+- create gatsby-plugins-i18n-readNext
+- Add site to bing (yahoo).
+- Add post suggestions.
+- i18n tags.
+- Fix readNext.
+- Resume: Add Education.
+- Resume: Add filter by tag.
+- Resume: Add filter by year.
+- Resume.
+- Add options to i18n module.
+- ssl post: Change error to block quote.
+- footer: change `HERE` color to yellow and remove display block.
+- post page: Add padding to tags list and centralize items.
+- Add comments.
+- Localize dates.
+- Add structured data for google, see webmasters.
+- close menu after click.
+- Update tags layout.
+- Menu.
+- Old pages.
+- Update US flag for Canada.
+- All Tags page: divide list into columns
+- Use post-list style from home in tags page.
+- Remove redirect to https.
+- Index blog tags.
+- Fix css on page loading.
+- Create gatsby-plugin-i18n.
+- Fix tags name and link.
+- Setup ssl.
+- Increase code font size.
+- Post Pages & Pagination.
+- Create sitemap.
+- Test google analytics.
+- Fix select new lang for pages without lang
+- Fix tests and npm start.
+- Movies.
+- Vim help commands.
+- Menu.
+- Edit btn, send to github
+- Post make first letter book style.
+- Style post page.
+- Remove path from .md files then add lang and path to graphql.
+- translate welcome.
+- filter posts by language.
+- translate header and footer...
+- Test travis.
+- Setup Tests with Jest.
+- Multi language Menu.
+- Big title for home and small title other pages.
+- Add reset css.
+- Migrate Old Style to styled components.
+- Favicon.
+- Index blog links.
+- Publish to purge.
+- Fix post pages.
+- Click outside menu to close.
+- Social network.
+- Header.
+- Footer.
+- Add resetCss.
+- Remove SASS.
+- Add styled components.
+- Add SASS.
+- Remover Typography.
+- Gravatar.
+- Copy blog posts.
+- Setup Gatsby v1 with Graphql.

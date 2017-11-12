@@ -1,2 +1,0 @@
-webpackJsonp([64612972685044],{"./node_modules/json-loader/index.js!./.cache/json/en-tags-ssl.json":function(e,s){e.exports={data:{allMarkdownRemark:{totalCount:1,edges:[{node:{frontmatter:{title:"How to setup ssl https:// for your site",date:"2017-08-30"},fields:{slug:"/en/blog/static-site/setup-ssl/",langKey:"en"},excerpt:"How to setup https / ssl for surge.sh and ssl.com, It was hard to grab all the pieces,\nSo I hope I can help who is in trouble. You can..."}}]}},pathContext:{tag:"ssl",langKey:"en"}}}});
-//# sourceMappingURL=path---en-tags-ssl-af338d59bde4d7830be8.js.map

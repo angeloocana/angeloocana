@@ -1,2 +1,0 @@
-webpackJsonp([0x746e2527d230],{"./node_modules/json-loader/index.js!./.cache/json/pt-resume-languages.json":function(e,n){e.exports={pathContext:{slug:"/pt/resume/languages/",langKey:"pt"}}}});
-//# sourceMappingURL=path---pt-resume-languages-aed07ab4c77d186bc17e.js.map
