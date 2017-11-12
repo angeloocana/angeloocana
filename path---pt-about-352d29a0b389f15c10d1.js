@@ -1,0 +1,2 @@
+webpackJsonp([0xcf6332a9f04f],{"./node_modules/json-loader/index.js!./.cache/json/pt-about.json":function(e,a){e.exports={data:{site:{siteMetadata:{resume:{menu:[{label:"resume.technologies",link:"/resume/"},{label:"resume.jobsAndClients",link:"/resume/jobs-and-clients/"},{label:"resume.educations",link:"/resume/education/"},{label:"resume.languages",link:"/resume/languages/"},{label:"about",link:"/about/"}]}}}},pathContext:{slug:"/pt/about/",langKey:"pt"}}}});
+//# sourceMappingURL=path---pt-about-352d29a0b389f15c10d1.js.map

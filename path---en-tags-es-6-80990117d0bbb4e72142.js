@@ -1,0 +1,2 @@
+webpackJsonp([50056773835089],{"./node_modules/json-loader/index.js!./.cache/json/en-tags-es-6.json":function(e,t){e.exports={data:{allMarkdownRemark:{totalCount:1,edges:[{node:{frontmatter:{title:"JS Spred Operator Examples",date:"2017-06-23"},fields:{slug:"/en/blog/js/spred-operator/",langKey:"en"},excerpt:""}}]}},pathContext:{tag:"ES6",langKey:"en"}}}});
+//# sourceMappingURL=path---en-tags-es-6-80990117d0bbb4e72142.js.map

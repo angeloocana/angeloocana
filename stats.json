@@ -1,0 +1,1236 @@
+{
+  "assetsByChunkName": {
+    "path---en-resume-jobs-and-clients-freelancer-staffgeist": [
+      "path---en-resume-jobs-and-clients-freelancer-staffgeist-b98d48ae2aa751dc6043.js",
+      "path---en-resume-jobs-and-clients-freelancer-staffgeist-b98d48ae2aa751dc6043.js.map"
+    ],
+    "path---fr-resume-jobs-and-clients-pol": [
+      "path---fr-resume-jobs-and-clients-pol-17dd2b64998d539f9acb.js",
+      "path---fr-resume-jobs-and-clients-pol-17dd2b64998d539f9acb.js.map"
+    ],
+    "path---en-blog-linux-arch-install-arch-linux-wifi-xfce-4": [
+      "path---en-blog-linux-arch-install-arch-linux-wifi-xfce-4-f2d64543f1ba0e68d895.js",
+      "path---en-blog-linux-arch-install-arch-linux-wifi-xfce-4-f2d64543f1ba0e68d895.js.map"
+    ],
+    "path---fr-tags-zsh": [
+      "path---fr-tags-zsh-31640ef4f720fd4356f9.js",
+      "path---fr-tags-zsh-31640ef4f720fd4356f9.js.map"
+    ],
+    "component---src-pages-resume-languages-index-pt-js": [
+      "component---src-pages-resume-languages-index-pt-js-7acf4340f40d088565d6.js",
+      "component---src-pages-resume-languages-index-pt-js-7acf4340f40d088565d6.js.map"
+    ],
+    "path---pt": [
+      "path---pt-d12e918018b35d159778.js",
+      "path---pt-d12e918018b35d159778.js.map"
+    ],
+    "component---src-pages-blog-en-js": [
+      "component---src-pages-blog-en-js-4456df779ca4af9ebf04.js",
+      "component---src-pages-blog-en-js-4456df779ca4af9ebf04.js.map"
+    ],
+    "path---pt-resume-jobs-and-clients-upgrade-consultoria-primanager": [
+      "path---pt-resume-jobs-and-clients-upgrade-consultoria-primanager-11d83ac192e9bceda734.js",
+      "path---pt-resume-jobs-and-clients-upgrade-consultoria-primanager-11d83ac192e9bceda734.js.map"
+    ],
+    "path---en-blog-linux-arch-backup-android-files": [
+      "path---en-blog-linux-arch-backup-android-files-2e245d65ed47dda47228.js",
+      "path---en-blog-linux-arch-backup-android-files-2e245d65ed47dda47228.js.map"
+    ],
+    "path---pt-resume-jobs-and-clients-upgrade-consultoria-fde": [
+      "path---pt-resume-jobs-and-clients-upgrade-consultoria-fde-c90a1a60a0a67326b802.js",
+      "path---pt-resume-jobs-and-clients-upgrade-consultoria-fde-c90a1a60a0a67326b802.js.map"
+    ],
+    "path---pt-tags-ssl": [
+      "path---pt-tags-ssl-69b628e0faefddb4b6c2.js",
+      "path---pt-tags-ssl-69b628e0faefddb4b6c2.js.map"
+    ],
+    "path---en-tags-english": [
+      "path---en-tags-english-10d1fbff034862e2079e.js",
+      "path---en-tags-english-10d1fbff034862e2079e.js.map"
+    ],
+    "path---en-tags-language": [
+      "path---en-tags-language-c1e83d1b73b59f74949a.js",
+      "path---en-tags-language-c1e83d1b73b59f74949a.js.map"
+    ],
+    "component---src-pages-contact-index-pt-js": [
+      "component---src-pages-contact-index-pt-js-d9bb241f3d26be06bda1.js",
+      "component---src-pages-contact-index-pt-js-d9bb241f3d26be06bda1.js.map"
+    ],
+    "component---src-templates-resume-job-js": [
+      "component---src-templates-resume-job-js-d1e3ea34f069facfa742.js",
+      "component---src-templates-resume-job-js-d1e3ea34f069facfa742.js.map"
+    ],
+    "path---pt-blog-git-git-setup": [
+      "path---pt-blog-git-git-setup-6d6c48497d9250c389c6.js",
+      "path---pt-blog-git-git-setup-6d6c48497d9250c389c6.js.map"
+    ],
+    "path---fr-resume-jobs-and-clients-upgrade-consultoria-primanager": [
+      "path---fr-resume-jobs-and-clients-upgrade-consultoria-primanager-11d83ac192e9bceda734.js",
+      "path---fr-resume-jobs-and-clients-upgrade-consultoria-primanager-11d83ac192e9bceda734.js.map"
+    ],
+    "path---en-resume-jobs-and-clients-upgrade-consultoria": [
+      "path---en-resume-jobs-and-clients-upgrade-consultoria-38990d9ee962569883e4.js",
+      "path---en-resume-jobs-and-clients-upgrade-consultoria-38990d9ee962569883e4.js.map"
+    ],
+    "path---en-resume-jobs-and-clients-media-w-pdv-ted": [
+      "path---en-resume-jobs-and-clients-media-w-pdv-ted-59b64942ec2b70cea90a.js",
+      "path---en-resume-jobs-and-clients-media-w-pdv-ted-59b64942ec2b70cea90a.js.map"
+    ],
+    "path---tutoriais-dica-rapida-2-por-um-mundo-melhor": [
+      "path---tutoriais-dica-rapida-2-por-um-mundo-melhor-3c672f7fc8abc637b092.js",
+      "path---tutoriais-dica-rapida-2-por-um-mundo-melhor-3c672f7fc8abc637b092.js.map"
+    ],
+    "component---src-layouts-fr-js": [
+      "component---src-layouts-fr-js-a5eba75dcb529a3c2109.js",
+      "component---src-layouts-fr-js-a5eba75dcb529a3c2109.js.map"
+    ],
+    "component---src-pages-resume-jobs-and-clients-index-fr-js": [
+      "component---src-pages-resume-jobs-and-clients-index-fr-js-a23fe2b75cdcff0e1e4a.js",
+      "component---src-pages-resume-jobs-and-clients-index-fr-js-a23fe2b75cdcff0e1e4a.js.map"
+    ],
+    "path---fr-blog": [
+      "path---fr-blog-782891257a118b7063f0.js",
+      "path---fr-blog-782891257a118b7063f0.js.map"
+    ],
+    "path---en-resume-jobs-and-clients-freelancer-hive-novo-territorio": [
+      "path---en-resume-jobs-and-clients-freelancer-hive-novo-territorio-28ce576cc7a41ca846cd.js",
+      "path---en-resume-jobs-and-clients-freelancer-hive-novo-territorio-28ce576cc7a41ca846cd.js.map"
+    ],
+    "path---en-resume-jobs-and-clients-empresario-cobranca": [
+      "path---en-resume-jobs-and-clients-empresario-cobranca-9ac3bd52f91dbfbe5c88.js",
+      "path---en-resume-jobs-and-clients-empresario-cobranca-9ac3bd52f91dbfbe5c88.js.map"
+    ],
+    "path---fr-resume-jobs-and-clients-upgrade-consultoria": [
+      "path---fr-resume-jobs-and-clients-upgrade-consultoria-38990d9ee962569883e4.js",
+      "path---fr-resume-jobs-and-clients-upgrade-consultoria-38990d9ee962569883e4.js.map"
+    ],
+    "path---fr-resume-jobs-and-clients-freelancer-innovative": [
+      "path---fr-resume-jobs-and-clients-freelancer-innovative-5e7e31fe6c85114d4140.js",
+      "path---fr-resume-jobs-and-clients-freelancer-innovative-5e7e31fe6c85114d4140.js.map"
+    ],
+    "path---pt-tags-libre-office": [
+      "path---pt-tags-libre-office-8e7142e12e69fdced0bc.js",
+      "path---pt-tags-libre-office-8e7142e12e69fdced0bc.js.map"
+    ],
+    "component---src-layouts-pt-js": [
+      "component---src-layouts-pt-js-a9c5aa8deffb3f4dca78.js",
+      "component---src-layouts-pt-js-a9c5aa8deffb3f4dca78.js.map"
+    ],
+    "path---pt-blog-static-site-setup-ssl": [
+      "path---pt-blog-static-site-setup-ssl-a6b6edd1a8e3449ef4e9.js",
+      "path---pt-blog-static-site-setup-ssl-a6b6edd1a8e3449ef4e9.js.map"
+    ],
+    "path---pt-blog-linux-arch-backup-android-files": [
+      "path---pt-blog-linux-arch-backup-android-files-339adde73b94be382015.js",
+      "path---pt-blog-linux-arch-backup-android-files-339adde73b94be382015.js.map"
+    ],
+    "path---fr-blog-git-10-tips-to-start-using-github-and-cmd": [
+      "path---fr-blog-git-10-tips-to-start-using-github-and-cmd-3576cf9aafdd9f5d0898.js",
+      "path---fr-blog-git-10-tips-to-start-using-github-and-cmd-3576cf9aafdd9f5d0898.js.map"
+    ],
+    "path---pt-blog-terminal-install-zsh": [
+      "path---pt-blog-terminal-install-zsh-811460eca6b06cd9217b.js",
+      "path---pt-blog-terminal-install-zsh-811460eca6b06cd9217b.js.map"
+    ],
+    "path---fr-tags-es-2015": [
+      "path---fr-tags-es-2015-1659b99a4764af1ac65a.js",
+      "path---fr-tags-es-2015-1659b99a4764af1ac65a.js.map"
+    ],
+    "component---src-pages-tags-index-fr-js": [
+      "component---src-pages-tags-index-fr-js-3b48cd40d3d2e55ec9c2.js",
+      "component---src-pages-tags-index-fr-js-3b48cd40d3d2e55ec9c2.js.map"
+    ],
+    "path---en-resume-jobs-and-clients-freelancer": [
+      "path---en-resume-jobs-and-clients-freelancer-bd06ed6f2844976d9a57.js",
+      "path---en-resume-jobs-and-clients-freelancer-bd06ed6f2844976d9a57.js.map"
+    ],
+    "path---pt-blog-linux-arch-install-libre-office": [
+      "path---pt-blog-linux-arch-install-libre-office-3033616f28ba1b5d6df9.js",
+      "path---pt-blog-linux-arch-install-libre-office-3033616f28ba1b5d6df9.js.map"
+    ],
+    "component---src-pages-contact-index-en-js": [
+      "component---src-pages-contact-index-en-js-d9bb241f3d26be06bda1.js",
+      "component---src-pages-contact-index-en-js-d9bb241f3d26be06bda1.js.map"
+    ],
+    "path---pt-tags-versionamento-de-arquivos": [
+      "path---pt-tags-versionamento-de-arquivos-1c8b5c22f5ad88a3d51e.js",
+      "path---pt-tags-versionamento-de-arquivos-1c8b5c22f5ad88a3d51e.js.map"
+    ],
+    "path---fr-resume-jobs-and-clients": [
+      "path---fr-resume-jobs-and-clients-b65cf4e96a5b308bf680.js",
+      "path---fr-resume-jobs-and-clients-b65cf4e96a5b308bf680.js.map"
+    ],
+    "path---fr-tags-office": [
+      "path---fr-tags-office-0df1a9d0409ea24d8a8e.js",
+      "path---fr-tags-office-0df1a9d0409ea24d8a8e.js.map"
+    ],
+    "component---src-layouts-en-js": [
+      "component---src-layouts-en-js-58b44dc25937c6c4c6c8.js",
+      "component---src-layouts-en-js-58b44dc25937c6c4c6c8.js.map"
+    ],
+    "path---fr-tags-npm": [
+      "path---fr-tags-npm-4aa6fa088128a157b926.js",
+      "path---fr-tags-npm-4aa6fa088128a157b926.js.map"
+    ],
+    "component---src-pages-index-js": [
+      "component---src-pages-index-js-484d0a4b931eb724f233.js",
+      "component---src-pages-index-js-484d0a4b931eb724f233.js.map"
+    ],
+    "path---en-resume-jobs-and-clients-freelancer-ica-igreja-crista-de-alphaville": [
+      "path---en-resume-jobs-and-clients-freelancer-ica-igreja-crista-de-alphaville-34e0eb0a3edd13eeed7b.js",
+      "path---en-resume-jobs-and-clients-freelancer-ica-igreja-crista-de-alphaville-34e0eb0a3edd13eeed7b.js.map"
+    ],
+    "path---fr-blog-languages-english-learn-english-links": [
+      "path---fr-blog-languages-english-learn-english-links-ac5db29e2625a8777449.js",
+      "path---fr-blog-languages-english-learn-english-links-ac5db29e2625a8777449.js.map"
+    ],
+    "component---src-pages-index-pt-js": [
+      "component---src-pages-index-pt-js-c0760f086d112530f9b5.js",
+      "component---src-pages-index-pt-js-c0760f086d112530f9b5.js.map"
+    ],
+    "path---fr-blog-js-spred-operator": [
+      "path---fr-blog-js-spred-operator-98f6f326fe10da0ff11b.js",
+      "path---fr-blog-js-spred-operator-98f6f326fe10da0ff11b.js.map"
+    ],
+    "path---fr-resume-jobs-and-clients-freelancer-angeloocana-tic-tac-toe-ai": [
+      "path---fr-resume-jobs-and-clients-freelancer-angeloocana-tic-tac-toe-ai-7db77076a2f82e63318e.js",
+      "path---fr-resume-jobs-and-clients-freelancer-angeloocana-tic-tac-toe-ai-7db77076a2f82e63318e.js.map"
+    ],
+    "path---en-tags": [
+      "path---en-tags-075035380c770f3bd44a.js",
+      "path---en-tags-075035380c770f3bd44a.js.map"
+    ],
+    "path---en-contact": [
+      "path---en-contact-9cfc944da8994830512d.js",
+      "path---en-contact-9cfc944da8994830512d.js.map"
+    ],
+    "path---pt-tags-text-editor": [
+      "path---pt-tags-text-editor-4f9984ed2feeb6a1e177.js",
+      "path---pt-tags-text-editor-4f9984ed2feeb6a1e177.js.map"
+    ],
+    "path---en-blog-linux-arch-install-fonts": [
+      "path---en-blog-linux-arch-install-fonts-147b6a9b6699b943bb47.js",
+      "path---en-blog-linux-arch-install-fonts-147b6a9b6699b943bb47.js.map"
+    ],
+    "path---en-tags-text-editor": [
+      "path---en-tags-text-editor-6a96190a61844b5568ff.js",
+      "path---en-tags-text-editor-6a96190a61844b5568ff.js.map"
+    ],
+    "path---fr-resume-jobs-and-clients-freelancer-jump-over-jump-v-1": [
+      "path---fr-resume-jobs-and-clients-freelancer-jump-over-jump-v-1-d2778edb61d2cb00d897.js",
+      "path---fr-resume-jobs-and-clients-freelancer-jump-over-jump-v-1-d2778edb61d2cb00d897.js.map"
+    ],
+    "component---src-pages-resume-index-pt-js": [
+      "component---src-pages-resume-index-pt-js-8cb7a23b09d0fa0c1a9c.js",
+      "component---src-pages-resume-index-pt-js-8cb7a23b09d0fa0c1a9c.js.map"
+    ],
+    "path---pt-resume-jobs-and-clients-pol": [
+      "path---pt-resume-jobs-and-clients-pol-17dd2b64998d539f9acb.js",
+      "path---pt-resume-jobs-and-clients-pol-17dd2b64998d539f9acb.js.map"
+    ],
+    "path---fr-tags-text-editor": [
+      "path---fr-tags-text-editor-245650876fbcdbeb6e7c.js",
+      "path---fr-tags-text-editor-245650876fbcdbeb6e7c.js.map"
+    ],
+    "path---en-tags-es-6": [
+      "path---en-tags-es-6-80990117d0bbb4e72142.js",
+      "path---en-tags-es-6-80990117d0bbb4e72142.js.map"
+    ],
+    "path---en-blog": [
+      "path---en-blog-20859335041f91a6d343.js",
+      "path---en-blog-20859335041f91a6d343.js.map"
+    ],
+    "path---fr-blog-static-site-setup-ssl": [
+      "path---fr-blog-static-site-setup-ssl-130ea6f541b1ea334a48.js",
+      "path---fr-blog-static-site-setup-ssl-130ea6f541b1ea334a48.js.map"
+    ],
+    "path---fr-blog-linux-arch-setup-nodejs-env": [
+      "path---fr-blog-linux-arch-setup-nodejs-env-1444e5e7b58410ce3ad4.js",
+      "path---fr-blog-linux-arch-setup-nodejs-env-1444e5e7b58410ce3ad4.js.map"
+    ],
+    "path---pt-tags-office": [
+      "path---pt-tags-office-1fb3a1ac0e537ab72072.js",
+      "path---pt-tags-office-1fb3a1ac0e537ab72072.js.map"
+    ],
+    "path---fr-tags-extraire-des-fichiers": [
+      "path---fr-tags-extraire-des-fichiers-07c81da811afbba7e139.js",
+      "path---fr-tags-extraire-des-fichiers-07c81da811afbba7e139.js.map"
+    ],
+    "path---pt-resume-jobs-and-clients-freelancer-frp": [
+      "path---pt-resume-jobs-and-clients-freelancer-frp-4cbdfc4a68bd79d5e8a5.js",
+      "path---pt-resume-jobs-and-clients-freelancer-frp-4cbdfc4a68bd79d5e8a5.js.map"
+    ],
+    "component---src-pages-index-fr-js": [
+      "component---src-pages-index-fr-js-c0760f086d112530f9b5.js",
+      "component---src-pages-index-fr-js-c0760f086d112530f9b5.js.map"
+    ],
+    "path---pt-resume-education": [
+      "path---pt-resume-education-6d1a73d3da0065711ca0.js",
+      "path---pt-resume-education-6d1a73d3da0065711ca0.js.map"
+    ],
+    "path---fr-tags-ssl": [
+      "path---fr-tags-ssl-d70ebc10c02f00ece421.js",
+      "path---fr-tags-ssl-d70ebc10c02f00ece421.js.map"
+    ],
+    "path---pt-resume-jobs-and-clients-empresario-cobranca": [
+      "path---pt-resume-jobs-and-clients-empresario-cobranca-9ac3bd52f91dbfbe5c88.js",
+      "path---pt-resume-jobs-and-clients-empresario-cobranca-9ac3bd52f91dbfbe5c88.js.map"
+    ],
+    "path---pt-tags-idioma": [
+      "path---pt-tags-idioma-4ec5e9908ae9aa5c8ade.js",
+      "path---pt-tags-idioma-4ec5e9908ae9aa5c8ade.js.map"
+    ],
+    "path---": [
+      "path----54f093a2f112777d95ec.js",
+      "path----54f093a2f112777d95ec.js.map"
+    ],
+    "path---en-tags-command-line": [
+      "path---en-tags-command-line-e7d2805651242a4a600f.js",
+      "path---en-tags-command-line-e7d2805651242a4a600f.js.map"
+    ],
+    "path---fr-blog-linux-arch-install-arch-linux-wifi-xfce-4": [
+      "path---fr-blog-linux-arch-install-arch-linux-wifi-xfce-4-39d02e6425b328e8e3d5.js",
+      "path---fr-blog-linux-arch-install-arch-linux-wifi-xfce-4-39d02e6425b328e8e3d5.js.map"
+    ],
+    "path---en-about": [
+      "path---en-about-c0f0e03bfb127788677b.js",
+      "path---en-about-c0f0e03bfb127788677b.js.map"
+    ],
+    "path---en-tags-ssl": [
+      "path---en-tags-ssl-af338d59bde4d7830be8.js",
+      "path---en-tags-ssl-af338d59bde4d7830be8.js.map"
+    ],
+    "path---en-tags-java-script": [
+      "path---en-tags-java-script-0c26282aafe18d77835a.js",
+      "path---en-tags-java-script-0c26282aafe18d77835a.js.map"
+    ],
+    "path---fr-resume-jobs-and-clients-freelancer-igreja-crista-de-maia": [
+      "path---fr-resume-jobs-and-clients-freelancer-igreja-crista-de-maia-32ae794221ef31b42bf5.js",
+      "path---fr-resume-jobs-and-clients-freelancer-igreja-crista-de-maia-32ae794221ef31b42bf5.js.map"
+    ],
+    "component---src-pages-about-index-fr-js": [
+      "component---src-pages-about-index-fr-js-597375bca691c553b3c2.js",
+      "component---src-pages-about-index-fr-js-597375bca691c553b3c2.js.map"
+    ],
+    "path---en-resume-jobs-and-clients": [
+      "path---en-resume-jobs-and-clients-1b1a9a25b0a12642ff50.js",
+      "path---en-resume-jobs-and-clients-1b1a9a25b0a12642ff50.js.map"
+    ],
+    "path---pt-blog-linux-arch-setup-nodejs-env": [
+      "path---pt-blog-linux-arch-setup-nodejs-env-f5d36f8bd7af87b2d45c.js",
+      "path---pt-blog-linux-arch-setup-nodejs-env-f5d36f8bd7af87b2d45c.js.map"
+    ],
+    "path---pt-resume-jobs-and-clients-upgrade-consultoria-erp-crm": [
+      "path---pt-resume-jobs-and-clients-upgrade-consultoria-erp-crm-737479fa4ce5cfd6d536.js",
+      "path---pt-resume-jobs-and-clients-upgrade-consultoria-erp-crm-737479fa4ce5cfd6d536.js.map"
+    ],
+    "path---en-tags-terminal": [
+      "path---en-tags-terminal-781b52a9b040a56b2759.js",
+      "path---en-tags-terminal-781b52a9b040a56b2759.js.map"
+    ],
+    "path---en-resume-jobs-and-clients-pol": [
+      "path---en-resume-jobs-and-clients-pol-17dd2b64998d539f9acb.js",
+      "path---en-resume-jobs-and-clients-pol-17dd2b64998d539f9acb.js.map"
+    ],
+    "path---pt-resume-jobs-and-clients-freelancer-staffgeist": [
+      "path---pt-resume-jobs-and-clients-freelancer-staffgeist-b98d48ae2aa751dc6043.js",
+      "path---pt-resume-jobs-and-clients-freelancer-staffgeist-b98d48ae2aa751dc6043.js.map"
+    ],
+    "path---en-tags-functional-programming": [
+      "path---en-tags-functional-programming-51bf90fc039f0a4b2e19.js",
+      "path---en-tags-functional-programming-51bf90fc039f0a4b2e19.js.map"
+    ],
+    "path---en-tags-linux": [
+      "path---en-tags-linux-89e14adb7c4983f2f4ec.js",
+      "path---en-tags-linux-89e14adb7c4983f2f4ec.js.map"
+    ],
+    "component---src-templates-tag-page-js": [
+      "component---src-templates-tag-page-js-269cd5ca06d484376cf4.js",
+      "component---src-templates-tag-page-js-269cd5ca06d484376cf4.js.map"
+    ],
+    "path---pt-blog-linux-arch-extract-files": [
+      "path---pt-blog-linux-arch-extract-files-9daf6ef30aba0bc2f9b9.js",
+      "path---pt-blog-linux-arch-extract-files-9daf6ef30aba0bc2f9b9.js.map"
+    ],
+    "path---tutoriais-projeto-completo-c-sharp-mvc-migrations-structure-map-ddd-tdd-parte-5-repositories": [
+      "path---tutoriais-projeto-completo-c-sharp-mvc-migrations-structure-map-ddd-tdd-parte-5-repositories-e2ef1b746403dc0ccab0.js",
+      "path---tutoriais-projeto-completo-c-sharp-mvc-migrations-structure-map-ddd-tdd-parte-5-repositories-e2ef1b746403dc0ccab0.js.map"
+    ],
+    "path---pt-resume-jobs-and-clients-freelancer-emporio-vina-real": [
+      "path---pt-resume-jobs-and-clients-freelancer-emporio-vina-real-47455a8d593d158dcbaa.js",
+      "path---pt-resume-jobs-and-clients-freelancer-emporio-vina-real-47455a8d593d158dcbaa.js.map"
+    ],
+    "path---fr-resume-jobs-and-clients-media-w": [
+      "path---fr-resume-jobs-and-clients-media-w-6fa501f5cf08e750fb84.js",
+      "path---fr-resume-jobs-and-clients-media-w-6fa501f5cf08e750fb84.js.map"
+    ],
+    "path---pt-tags-gatsby": [
+      "path---pt-tags-gatsby-58b1addc8c7d421b1d04.js",
+      "path---pt-tags-gatsby-58b1addc8c7d421b1d04.js.map"
+    ],
+    "path---pt-blog-git-10-tips-to-start-using-github-and-cmd": [
+      "path---pt-blog-git-10-tips-to-start-using-github-and-cmd-7f0193085732ccbc79d3.js",
+      "path---pt-blog-git-10-tips-to-start-using-github-and-cmd-7f0193085732ccbc79d3.js.map"
+    ],
+    "component---src-pages-resume-education-index-en-js": [
+      "component---src-pages-resume-education-index-en-js-7e69788dd9427d97fef8.js",
+      "component---src-pages-resume-education-index-en-js-7e69788dd9427d97fef8.js.map"
+    ],
+    "path---en-tags-es-2015": [
+      "path---en-tags-es-2015-df72413c14b0ef3454aa.js",
+      "path---en-tags-es-2015-df72413c14b0ef3454aa.js.map"
+    ],
+    "path---fr-resume-jobs-and-clients-freelancer-hive-novo-territorio": [
+      "path---fr-resume-jobs-and-clients-freelancer-hive-novo-territorio-28ce576cc7a41ca846cd.js",
+      "path---fr-resume-jobs-and-clients-freelancer-hive-novo-territorio-28ce576cc7a41ca846cd.js.map"
+    ],
+    "path---en-tags-git": [
+      "path---en-tags-git-b0b2dafb49dd935725fb.js",
+      "path---en-tags-git-b0b2dafb49dd935725fb.js.map"
+    ],
+    "path---pt-blog-languages-french-french-movies": [
+      "path---pt-blog-languages-french-french-movies-4151def0c96a3f24d683.js",
+      "path---pt-blog-languages-french-french-movies-4151def0c96a3f24d683.js.map"
+    ],
+    "path---pt-tags-extrair-arquivos": [
+      "path---pt-tags-extrair-arquivos-82e440b021de0f345139.js",
+      "path---pt-tags-extrair-arquivos-82e440b021de0f345139.js.map"
+    ],
+    "path---fr-resume-jobs-and-clients-freelancer-sms-bbm-brasil": [
+      "path---fr-resume-jobs-and-clients-freelancer-sms-bbm-brasil-247b8383f115b61f5673.js",
+      "path---fr-resume-jobs-and-clients-freelancer-sms-bbm-brasil-247b8383f115b61f5673.js.map"
+    ],
+    "path---fr-tags-excel": [
+      "path---fr-tags-excel-9b7ff8c044570c98b82f.js",
+      "path---fr-tags-excel-9b7ff8c044570c98b82f.js.map"
+    ],
+    "path---en-tags-office": [
+      "path---en-tags-office-9034291d415238d7c03b.js",
+      "path---en-tags-office-9034291d415238d7c03b.js.map"
+    ],
+    "path---tutoriais-projeto-completo-c-sharp-mvc-migrations-structure-map-ddd-tdd-parte-4-enity-frame-work-migrations": [
+      "path---tutoriais-projeto-completo-c-sharp-mvc-migrations-structure-map-ddd-tdd-parte-4-enity-frame-work-migrations-36ee0f2b965ca780ae76.js",
+      "path---tutoriais-projeto-completo-c-sharp-mvc-migrations-structure-map-ddd-tdd-parte-4-enity-frame-work-migrations-36ee0f2b965ca780ae76.js.map"
+    ],
+    "path---en-resume-jobs-and-clients-media-w": [
+      "path---en-resume-jobs-and-clients-media-w-6fa501f5cf08e750fb84.js",
+      "path---en-resume-jobs-and-clients-media-w-6fa501f5cf08e750fb84.js.map"
+    ],
+    "path---en-tags-gatsby": [
+      "path---en-tags-gatsby-9a4828d174b7f58907cb.js",
+      "path---en-tags-gatsby-9a4828d174b7f58907cb.js.map"
+    ],
+    "path---fr-about": [
+      "path---fr-about-a3fbdcc5d9bc255b5c7e.js",
+      "path---fr-about-a3fbdcc5d9bc255b5c7e.js.map"
+    ],
+    "path---pt-resume-jobs-and-clients-freelancer-angeloocana-v-1-angular": [
+      "path---pt-resume-jobs-and-clients-freelancer-angeloocana-v-1-angular-e0d1e08c86f1460528d2.js",
+      "path---pt-resume-jobs-and-clients-freelancer-angeloocana-v-1-angular-e0d1e08c86f1460528d2.js.map"
+    ],
+    "path---fr-tags": [
+      "path---fr-tags-abc4c2f0c7921e0d3cad.js",
+      "path---fr-tags-abc4c2f0c7921e0d3cad.js.map"
+    ],
+    "path---pt-resume-jobs-and-clients-freelancer-jump-over-jump-v-1": [
+      "path---pt-resume-jobs-and-clients-freelancer-jump-over-jump-v-1-d2778edb61d2cb00d897.js",
+      "path---pt-resume-jobs-and-clients-freelancer-jump-over-jump-v-1-d2778edb61d2cb00d897.js.map"
+    ],
+    "path---pt-resume-jobs-and-clients-freelancer-innovative": [
+      "path---pt-resume-jobs-and-clients-freelancer-innovative-5e7e31fe6c85114d4140.js",
+      "path---pt-resume-jobs-and-clients-freelancer-innovative-5e7e31fe6c85114d4140.js.map"
+    ],
+    "path---tutoriais-projeto-completo-c-sharp-mvc-migrations-structure-map-ddd-tdd-parte-2": [
+      "path---tutoriais-projeto-completo-c-sharp-mvc-migrations-structure-map-ddd-tdd-parte-2-7af1b2181314638ffc70.js",
+      "path---tutoriais-projeto-completo-c-sharp-mvc-migrations-structure-map-ddd-tdd-parte-2-7af1b2181314638ffc70.js.map"
+    ],
+    "component---node-modules-gatsby-plugin-offline-app-shell-js": [
+      "component---node-modules-gatsby-plugin-offline-app-shell-js-5c4c5a0f7af9dc69d6d7.js",
+      "component---node-modules-gatsby-plugin-offline-app-shell-js-5c4c5a0f7af9dc69d6d7.js.map"
+    ],
+    "path---en-resume": [
+      "path---en-resume-5069daff8c49cd75570b.js",
+      "path---en-resume-5069daff8c49cd75570b.js.map"
+    ],
+    "path---en-blog-linux-arch-install-libre-office": [
+      "path---en-blog-linux-arch-install-libre-office-19581784585c53f2d8a0.js",
+      "path---en-blog-linux-arch-install-libre-office-19581784585c53f2d8a0.js.map"
+    ],
+    "path---pt-blog-languages-french-learn-french-links": [
+      "path---pt-blog-languages-french-learn-french-links-430d153a2dda24837a77.js",
+      "path---pt-blog-languages-french-learn-french-links-430d153a2dda24837a77.js.map"
+    ],
+    "path---fr-tags-vs-code": [
+      "path---fr-tags-vs-code-a3be427e158fa580b420.js",
+      "path---fr-tags-vs-code-a3be427e158fa580b420.js.map"
+    ],
+    "path---fr-resume-jobs-and-clients-total-on-demand": [
+      "path---fr-resume-jobs-and-clients-total-on-demand-788fdceb8c721524d0e5.js",
+      "path---fr-resume-jobs-and-clients-total-on-demand-788fdceb8c721524d0e5.js.map"
+    ],
+    "path---pt-blog-linux-arch-install-arch-linux-wifi-xfce-4": [
+      "path---pt-blog-linux-arch-install-arch-linux-wifi-xfce-4-1f59225ee6109f7ce9b6.js",
+      "path---pt-blog-linux-arch-install-arch-linux-wifi-xfce-4-1f59225ee6109f7ce9b6.js.map"
+    ],
+    "path---fr-resume-jobs-and-clients-freelancer-staffgeist": [
+      "path---fr-resume-jobs-and-clients-freelancer-staffgeist-b98d48ae2aa751dc6043.js",
+      "path---fr-resume-jobs-and-clients-freelancer-staffgeist-b98d48ae2aa751dc6043.js.map"
+    ],
+    "path---pt-tags": [
+      "path---pt-tags-af1e26e8d2cb487b6d02.js",
+      "path---pt-tags-af1e26e8d2cb487b6d02.js.map"
+    ],
+    "component---src-templates-blog-post-js": [
+      "component---src-templates-blog-post-js-9d7de0ef6bff3c89dd14.js",
+      "component---src-templates-blog-post-js-9d7de0ef6bff3c89dd14.js.map"
+    ],
+    "path---pt-resume-jobs-and-clients-freelancer-academia-corpus-santana": [
+      "path---pt-resume-jobs-and-clients-freelancer-academia-corpus-santana-415320ef3098f94f7929.js",
+      "path---pt-resume-jobs-and-clients-freelancer-academia-corpus-santana-415320ef3098f94f7929.js.map"
+    ],
+    "path---pt-blog-linux-arch-install-yaourt": [
+      "path---pt-blog-linux-arch-install-yaourt-ff2c2f07a3e41a7c2e2f.js",
+      "path---pt-blog-linux-arch-install-yaourt-ff2c2f07a3e41a7c2e2f.js.map"
+    ],
+    "path---pt-tags-ingles": [
+      "path---pt-tags-ingles-5a769e0043f015b7cb65.js",
+      "path---pt-tags-ingles-5a769e0043f015b7cb65.js.map"
+    ],
+    "component---src-layouts-index-js": [
+      "component---src-layouts-index-js-2d3e94b7622aeaff25be.js",
+      "component---src-layouts-index-js-2d3e94b7622aeaff25be.js.map"
+    ],
+    "path---en-resume-languages": [
+      "path---en-resume-languages-7af367fcfd1169a091ba.js",
+      "path---en-resume-languages-7af367fcfd1169a091ba.js.map"
+    ],
+    "component---src-pages-resume-index-fr-js": [
+      "component---src-pages-resume-index-fr-js-8cb7a23b09d0fa0c1a9c.js",
+      "component---src-pages-resume-index-fr-js-8cb7a23b09d0fa0c1a9c.js.map"
+    ],
+    "path---en-blog-terminal-install-zsh": [
+      "path---en-blog-terminal-install-zsh-c4ebe609b79298c301e7.js",
+      "path---en-blog-terminal-install-zsh-c4ebe609b79298c301e7.js.map"
+    ],
+    "path---pt-tags-word": [
+      "path---pt-tags-word-fe07c952964caa7f1047.js",
+      "path---pt-tags-word-fe07c952964caa7f1047.js.map"
+    ],
+    "path---fr-blog-git-git-setup": [
+      "path---fr-blog-git-git-setup-52bb16a0e6a34cffb9a5.js",
+      "path---fr-blog-git-git-setup-52bb16a0e6a34cffb9a5.js.map"
+    ],
+    "path---pt-tags-vs-code": [
+      "path---pt-tags-vs-code-89386dbe811120da6bfd.js",
+      "path---pt-tags-vs-code-89386dbe811120da6bfd.js.map"
+    ],
+    "path---pt-resume-jobs-and-clients-upgrade-consultoria": [
+      "path---pt-resume-jobs-and-clients-upgrade-consultoria-38990d9ee962569883e4.js",
+      "path---pt-resume-jobs-and-clients-upgrade-consultoria-38990d9ee962569883e4.js.map"
+    ],
+    "path---en-tags-word": [
+      "path---en-tags-word-ad224b10ebf5322a6405.js",
+      "path---en-tags-word-ad224b10ebf5322a6405.js.map"
+    ],
+    "path---pt-tags-programacao-funcional": [
+      "path---pt-tags-programacao-funcional-d45cab4626ac5cd92a74.js",
+      "path---pt-tags-programacao-funcional-d45cab4626ac5cd92a74.js.map"
+    ],
+    "path---fr-tags-arch": [
+      "path---fr-tags-arch-e070a784684fbb4e4bf2.js",
+      "path---fr-tags-arch-e070a784684fbb4e4bf2.js.map"
+    ],
+    "path---pt-resume-jobs-and-clients-media-w": [
+      "path---pt-resume-jobs-and-clients-media-w-6fa501f5cf08e750fb84.js",
+      "path---pt-resume-jobs-and-clients-media-w-6fa501f5cf08e750fb84.js.map"
+    ],
+    "path---pt-blog-js-spred-operator": [
+      "path---pt-blog-js-spred-operator-6b6c993b7911aee88183.js",
+      "path---pt-blog-js-spred-operator-6b6c993b7911aee88183.js.map"
+    ],
+    "path---fr-blog-languages-french-french-movies": [
+      "path---fr-blog-languages-french-french-movies-382904367e6d20a24709.js",
+      "path---fr-blog-languages-french-french-movies-382904367e6d20a24709.js.map"
+    ],
+    "path---pt-tags-frances": [
+      "path---pt-tags-frances-a2f3263ac54e0cc33ece.js",
+      "path---pt-tags-frances-a2f3263ac54e0cc33ece.js.map"
+    ],
+    "path---en-tags-libre-office": [
+      "path---en-tags-libre-office-555d42ed2112ef065c9b.js",
+      "path---en-tags-libre-office-555d42ed2112ef065c9b.js.map"
+    ],
+    "path---fr-blog-linux-arch-fix-enospc-error": [
+      "path---fr-blog-linux-arch-fix-enospc-error-9fc4cb740686b91c384d.js",
+      "path---fr-blog-linux-arch-fix-enospc-error-9fc4cb740686b91c384d.js.map"
+    ],
+    "path---pt-resume-languages": [
+      "path---pt-resume-languages-c748ac7c08f0af23d4d7.js",
+      "path---pt-resume-languages-c748ac7c08f0af23d4d7.js.map"
+    ],
+    "component---src-pages-about-index-en-js": [
+      "component---src-pages-about-index-en-js-2a58ec2ffe2b77037cf3.js",
+      "component---src-pages-about-index-en-js-2a58ec2ffe2b77037cf3.js.map"
+    ],
+    "path---en-resume-jobs-and-clients-freelancer-emporio-vina-real": [
+      "path---en-resume-jobs-and-clients-freelancer-emporio-vina-real-47455a8d593d158dcbaa.js",
+      "path---en-resume-jobs-and-clients-freelancer-emporio-vina-real-47455a8d593d158dcbaa.js.map"
+    ],
+    "path---fr": [
+      "path---fr-1e763d12b69823c66746.js",
+      "path---fr-1e763d12b69823c66746.js.map"
+    ],
+    "path---tutoriais-projeto-completo-c-sharp-mvc-migrations-structure-map-ddd-tdd-parte-1": [
+      "path---tutoriais-projeto-completo-c-sharp-mvc-migrations-structure-map-ddd-tdd-parte-1-0d234fbe74f4afa4451a.js",
+      "path---tutoriais-projeto-completo-c-sharp-mvc-migrations-structure-map-ddd-tdd-parte-1-0d234fbe74f4afa4451a.js.map"
+    ],
+    "path---en-tags-ssl-com": [
+      "path---en-tags-ssl-com-963314075aa4de665c3d.js",
+      "path---en-tags-ssl-com-963314075aa4de665c3d.js.map"
+    ],
+    "component---src-pages-blog-pt-js": [
+      "component---src-pages-blog-pt-js-4456df779ca4af9ebf04.js",
+      "component---src-pages-blog-pt-js-4456df779ca4af9ebf04.js.map"
+    ],
+    "path---pt-blog": [
+      "path---pt-blog-e1fe5523d2714fdaa506.js",
+      "path---pt-blog-e1fe5523d2714fdaa506.js.map"
+    ],
+    "path---en-blog-git-git-setup": [
+      "path---en-blog-git-git-setup-576c29deb41db422245f.js",
+      "path---en-blog-git-git-setup-576c29deb41db422245f.js.map"
+    ],
+    "path---fr-resume-jobs-and-clients-freelancer-frp": [
+      "path---fr-resume-jobs-and-clients-freelancer-frp-4cbdfc4a68bd79d5e8a5.js",
+      "path---fr-resume-jobs-and-clients-freelancer-frp-4cbdfc4a68bd79d5e8a5.js.map"
+    ],
+    "path---fr-tags-java-script": [
+      "path---fr-tags-java-script-7e5bd24371d54d3df743.js",
+      "path---fr-tags-java-script-7e5bd24371d54d3df743.js.map"
+    ],
+    "path---en-resume-jobs-and-clients-total-on-demand": [
+      "path---en-resume-jobs-and-clients-total-on-demand-788fdceb8c721524d0e5.js",
+      "path---en-resume-jobs-and-clients-total-on-demand-788fdceb8c721524d0e5.js.map"
+    ],
+    "path---en-tags-vs-code": [
+      "path---en-tags-vs-code-16e8bda231dfe670a5a8.js",
+      "path---en-tags-vs-code-16e8bda231dfe670a5a8.js.map"
+    ],
+    "path---en-tags-npm": [
+      "path---en-tags-npm-38dd7e4538f5c4583087.js",
+      "path---en-tags-npm-38dd7e4538f5c4583087.js.map"
+    ],
+    "path---fr-resume-jobs-and-clients-media-w-pdv-ted": [
+      "path---fr-resume-jobs-and-clients-media-w-pdv-ted-59b64942ec2b70cea90a.js",
+      "path---fr-resume-jobs-and-clients-media-w-pdv-ted-59b64942ec2b70cea90a.js.map"
+    ],
+    "path---fr-tags-terminal": [
+      "path---fr-tags-terminal-3345062b4074d72c4797.js",
+      "path---fr-tags-terminal-3345062b4074d72c4797.js.map"
+    ],
+    "path---pt-tags-surge-sh": [
+      "path---pt-tags-surge-sh-da4ccacb82706e5ce3f1.js",
+      "path---pt-tags-surge-sh-da4ccacb82706e5ce3f1.js.map"
+    ],
+    "path---tutoriais-projeto-completo-c-sharp-mvc-migrations-structure-map-ddd-tdd-parte-6-app": [
+      "path---tutoriais-projeto-completo-c-sharp-mvc-migrations-structure-map-ddd-tdd-parte-6-app-085e34442065d015fee3.js",
+      "path---tutoriais-projeto-completo-c-sharp-mvc-migrations-structure-map-ddd-tdd-parte-6-app-085e34442065d015fee3.js.map"
+    ],
+    "path---fr-blog-linux-arch-install-libre-office": [
+      "path---fr-blog-linux-arch-install-libre-office-d3c5c255f30a3d88b875.js",
+      "path---fr-blog-linux-arch-install-libre-office-d3c5c255f30a3d88b875.js.map"
+    ],
+    "path---fr-resume": [
+      "path---fr-resume-5f990fedbea45309eb43.js",
+      "path---fr-resume-5f990fedbea45309eb43.js.map"
+    ],
+    "component---src-pages-resume-languages-index-fr-js": [
+      "component---src-pages-resume-languages-index-fr-js-7acf4340f40d088565d6.js",
+      "component---src-pages-resume-languages-index-fr-js-7acf4340f40d088565d6.js.map"
+    ],
+    "path---pt-resume-jobs-and-clients-freelancer-ica-igreja-crista-de-alphaville": [
+      "path---pt-resume-jobs-and-clients-freelancer-ica-igreja-crista-de-alphaville-34e0eb0a3edd13eeed7b.js",
+      "path---pt-resume-jobs-and-clients-freelancer-ica-igreja-crista-de-alphaville-34e0eb0a3edd13eeed7b.js.map"
+    ],
+    "path---fr-resume-jobs-and-clients-freelancer-ica-igreja-crista-de-alphaville": [
+      "path---fr-resume-jobs-and-clients-freelancer-ica-igreja-crista-de-alphaville-34e0eb0a3edd13eeed7b.js",
+      "path---fr-resume-jobs-and-clients-freelancer-ica-igreja-crista-de-alphaville-34e0eb0a3edd13eeed7b.js.map"
+    ],
+    "path---pt-tags-terminal": [
+      "path---pt-tags-terminal-2bba8b2f596d697695fe.js",
+      "path---pt-tags-terminal-2bba8b2f596d697695fe.js.map"
+    ],
+    "path---pt-contact": [
+      "path---pt-contact-f7070eabce2e735278f5.js",
+      "path---pt-contact-f7070eabce2e735278f5.js.map"
+    ],
+    "path---index": [
+      "path---index-fd014d6bcd63b4a504c3.js",
+      "path---index-fd014d6bcd63b4a504c3.js.map"
+    ],
+    "path---en-tags-android": [
+      "path---en-tags-android-53bf634e31bdfe698aab.js",
+      "path---en-tags-android-53bf634e31bdfe698aab.js.map"
+    ],
+    "component---src-pages-resume-languages-index-en-js": [
+      "component---src-pages-resume-languages-index-en-js-7acf4340f40d088565d6.js",
+      "component---src-pages-resume-languages-index-en-js-7acf4340f40d088565d6.js.map"
+    ],
+    "path---pt-tags-zsh": [
+      "path---pt-tags-zsh-83c85408c2d9159639b2.js",
+      "path---pt-tags-zsh-83c85408c2d9159639b2.js.map"
+    ],
+    "path---en-resume-jobs-and-clients-upgrade-consultoria-erp-crm": [
+      "path---en-resume-jobs-and-clients-upgrade-consultoria-erp-crm-737479fa4ce5cfd6d536.js",
+      "path---en-resume-jobs-and-clients-upgrade-consultoria-erp-crm-737479fa4ce5cfd6d536.js.map"
+    ],
+    "path---en-blog-static-site-setup-ssl": [
+      "path---en-blog-static-site-setup-ssl-3320acd25d2734cf171a.js",
+      "path---en-blog-static-site-setup-ssl-3320acd25d2734cf171a.js.map"
+    ],
+    "path---pt-tags-es-2015": [
+      "path---pt-tags-es-2015-f4dc37aa3a307f38b9d4.js",
+      "path---pt-tags-es-2015-f4dc37aa3a307f38b9d4.js.map"
+    ],
+    "component---src-pages-resume-education-index-pt-js": [
+      "component---src-pages-resume-education-index-pt-js-7e69788dd9427d97fef8.js",
+      "component---src-pages-resume-education-index-pt-js-7e69788dd9427d97fef8.js.map"
+    ],
+    "component---src-pages-resume-education-index-fr-js": [
+      "component---src-pages-resume-education-index-fr-js-7e69788dd9427d97fef8.js",
+      "component---src-pages-resume-education-index-fr-js-7e69788dd9427d97fef8.js.map"
+    ],
+    "path---pt-tags-controle-de-versoes": [
+      "path---pt-tags-controle-de-versoes-a8541d771e7f79925dcd.js",
+      "path---pt-tags-controle-de-versoes-a8541d771e7f79925dcd.js.map"
+    ],
+    "path---en-resume-jobs-and-clients-pol-pol-premios-online": [
+      "path---en-resume-jobs-and-clients-pol-pol-premios-online-a0fa76bd07343bd5c4c4.js",
+      "path---en-resume-jobs-and-clients-pol-pol-premios-online-a0fa76bd07343bd5c4c4.js.map"
+    ],
+    "path---pt-tags-dev-env": [
+      "path---pt-tags-dev-env-31e66e1c243b1986a161.js",
+      "path---pt-tags-dev-env-31e66e1c243b1986a161.js.map"
+    ],
+    "path---fr-tags-node-js": [
+      "path---fr-tags-node-js-500775a3a03b5335d438.js",
+      "path---fr-tags-node-js-500775a3a03b5335d438.js.map"
+    ],
+    "path---pt-tags-node-js": [
+      "path---pt-tags-node-js-abb77f4afd6d941626a5.js",
+      "path---pt-tags-node-js-abb77f4afd6d941626a5.js.map"
+    ],
+    "path---fr-tags-gatsby": [
+      "path---fr-tags-gatsby-f284ad47537f1c8c9f93.js",
+      "path---fr-tags-gatsby-f284ad47537f1c8c9f93.js.map"
+    ],
+    "path---en-resume-jobs-and-clients-total-on-demand-campanhas-de-incentivo": [
+      "path---en-resume-jobs-and-clients-total-on-demand-campanhas-de-incentivo-f59b8aa41e68c38d4895.js",
+      "path---en-resume-jobs-and-clients-total-on-demand-campanhas-de-incentivo-f59b8aa41e68c38d4895.js.map"
+    ],
+    "path---en-resume-jobs-and-clients-freelancer-apm": [
+      "path---en-resume-jobs-and-clients-freelancer-apm-93bb80781268e9858dcd.js",
+      "path---en-resume-jobs-and-clients-freelancer-apm-93bb80781268e9858dcd.js.map"
+    ],
+    "path---fr-contact": [
+      "path---fr-contact-77e12cc18021dc5554e0.js",
+      "path---fr-contact-77e12cc18021dc5554e0.js.map"
+    ],
+    "path---fr-resume-jobs-and-clients-freelancer-academia-corpus-santana": [
+      "path---fr-resume-jobs-and-clients-freelancer-academia-corpus-santana-415320ef3098f94f7929.js",
+      "path---fr-resume-jobs-and-clients-freelancer-academia-corpus-santana-415320ef3098f94f7929.js.map"
+    ],
+    "path---fr-tags-programmation-fonctionnelle": [
+      "path---fr-tags-programmation-fonctionnelle-f80ac7ff9e52432183b3.js",
+      "path---fr-tags-programmation-fonctionnelle-f80ac7ff9e52432183b3.js.map"
+    ],
+    "path---pt-resume-jobs-and-clients-freelancer-angeloocana-tic-tac-toe-ai": [
+      "path---pt-resume-jobs-and-clients-freelancer-angeloocana-tic-tac-toe-ai-7db77076a2f82e63318e.js",
+      "path---pt-resume-jobs-and-clients-freelancer-angeloocana-tic-tac-toe-ai-7db77076a2f82e63318e.js.map"
+    ],
+    "component---src-pages-404-js": [
+      "component---src-pages-404-js-dc9f224893f64128dfb4.js",
+      "component---src-pages-404-js-dc9f224893f64128dfb4.js.map"
+    ],
+    "component---src-pages-resume-jobs-and-clients-index-en-js": [
+      "component---src-pages-resume-jobs-and-clients-index-en-js-a23fe2b75cdcff0e1e4a.js",
+      "component---src-pages-resume-jobs-and-clients-index-en-js-a23fe2b75cdcff0e1e4a.js.map"
+    ],
+    "path---fr-blog-terminal-install-zsh": [
+      "path---fr-blog-terminal-install-zsh-34242c00fd69030a3cfb.js",
+      "path---fr-blog-terminal-install-zsh-34242c00fd69030a3cfb.js.map"
+    ],
+    "path---fr-tags-https": [
+      "path---fr-tags-https-881841d2a0e46b6a4ce2.js",
+      "path---fr-tags-https-881841d2a0e46b6a4ce2.js.map"
+    ],
+    "path---pt-resume-jobs-and-clients-freelancer-sms-bbm-brasil": [
+      "path---pt-resume-jobs-and-clients-freelancer-sms-bbm-brasil-247b8383f115b61f5673.js",
+      "path---pt-resume-jobs-and-clients-freelancer-sms-bbm-brasil-247b8383f115b61f5673.js.map"
+    ],
+    "commons": [
+      "commons-2b5d686714a15a3ef904.js",
+      "build-js-styles.css",
+      "commons-2b5d686714a15a3ef904.js.map",
+      "build-js-styles.css.map"
+    ],
+    "path---pt-tags-npm": [
+      "path---pt-tags-npm-7af11179e1b070e44624.js",
+      "path---pt-tags-npm-7af11179e1b070e44624.js.map"
+    ],
+    "path---fr-blog-linux-arch-install-fonts": [
+      "path---fr-blog-linux-arch-install-fonts-c12e473a418997efd941.js",
+      "path---fr-blog-linux-arch-install-fonts-c12e473a418997efd941.js.map"
+    ],
+    "path---pt-tags-es-6": [
+      "path---pt-tags-es-6-a90dd95ea2a411387f0c.js",
+      "path---pt-tags-es-6-a90dd95ea2a411387f0c.js.map"
+    ],
+    "path---fr-resume-jobs-and-clients-freelancer-emporio-vina-real": [
+      "path---fr-resume-jobs-and-clients-freelancer-emporio-vina-real-47455a8d593d158dcbaa.js",
+      "path---fr-resume-jobs-and-clients-freelancer-emporio-vina-real-47455a8d593d158dcbaa.js.map"
+    ],
+    "path---en-tags-extract-files": [
+      "path---en-tags-extract-files-2eb89955b2733d311c40.js",
+      "path---en-tags-extract-files-2eb89955b2733d311c40.js.map"
+    ],
+    "path---tutoriais-dica-rapida-1-melhorar-performance-mvc": [
+      "path---tutoriais-dica-rapida-1-melhorar-performance-mvc-39fa2aacc7d79e2029f9.js",
+      "path---tutoriais-dica-rapida-1-melhorar-performance-mvc-39fa2aacc7d79e2029f9.js.map"
+    ],
+    "path---pt-tags-fontes": [
+      "path---pt-tags-fontes-87c459d8e435fd23aacc.js",
+      "path---pt-tags-fontes-87c459d8e435fd23aacc.js.map"
+    ],
+    "component---src-pages-index-en-js": [
+      "component---src-pages-index-en-js-c0760f086d112530f9b5.js",
+      "component---src-pages-index-en-js-c0760f086d112530f9b5.js.map"
+    ],
+    "path---en-blog-vim-vim-help-commands": [
+      "path---en-blog-vim-vim-help-commands-088af9973a4bfa228f9a.js",
+      "path---en-blog-vim-vim-help-commands-088af9973a4bfa228f9a.js.map"
+    ],
+    "path---en-blog-git-10-tips-to-start-using-github-and-cmd": [
+      "path---en-blog-git-10-tips-to-start-using-github-and-cmd-ed231b60c075e9fc0228.js",
+      "path---en-blog-git-10-tips-to-start-using-github-and-cmd-ed231b60c075e9fc0228.js.map"
+    ],
+    "path---fr-resume-languages": [
+      "path---fr-resume-languages-89ad44e2b1fea6a5ae59.js",
+      "path---fr-resume-languages-89ad44e2b1fea6a5ae59.js.map"
+    ],
+    "path---fr-resume-jobs-and-clients-freelancer-angeloocana-v-1-angular": [
+      "path---fr-resume-jobs-and-clients-freelancer-angeloocana-v-1-angular-e0d1e08c86f1460528d2.js",
+      "path---fr-resume-jobs-and-clients-freelancer-angeloocana-v-1-angular-e0d1e08c86f1460528d2.js.map"
+    ],
+    "path---pt-blog-linux-arch-install-fonts": [
+      "path---pt-blog-linux-arch-install-fonts-1031552870587b697195.js",
+      "path---pt-blog-linux-arch-install-fonts-1031552870587b697195.js.map"
+    ],
+    "path---fr-blog-linux-arch-extract-files": [
+      "path---fr-blog-linux-arch-extract-files-0d589dc184d939d3af10.js",
+      "path---fr-blog-linux-arch-extract-files-0d589dc184d939d3af10.js.map"
+    ],
+    "path---fr-tags-anglais": [
+      "path---fr-tags-anglais-09e13cecd2fa90d1db51.js",
+      "path---fr-tags-anglais-09e13cecd2fa90d1db51.js.map"
+    ],
+    "path---fr-tags-controle-de-version": [
+      "path---fr-tags-controle-de-version-092f2e16945bc754c891.js",
+      "path---fr-tags-controle-de-version-092f2e16945bc754c891.js.map"
+    ],
+    "path---fr-resume-jobs-and-clients-empresario-cobranca": [
+      "path---fr-resume-jobs-and-clients-empresario-cobranca-9ac3bd52f91dbfbe5c88.js",
+      "path---fr-resume-jobs-and-clients-empresario-cobranca-9ac3bd52f91dbfbe5c88.js.map"
+    ],
+    "path---tutoriais-projeto-completo-c-sharp-mvc-migrations-structure-map-ddd-tdd-parte-3-entities": [
+      "path---tutoriais-projeto-completo-c-sharp-mvc-migrations-structure-map-ddd-tdd-parte-3-entities-0c74bbc05cb57eaacd03.js",
+      "path---tutoriais-projeto-completo-c-sharp-mvc-migrations-structure-map-ddd-tdd-parte-3-entities-0c74bbc05cb57eaacd03.js.map"
+    ],
+    "component---src-layouts-any-js": [
+      "component---src-layouts-any-js-79bef3be6ddfe4942829.js",
+      "component---src-layouts-any-js-79bef3be6ddfe4942829.js.map"
+    ],
+    "path---pt-tags-java-script": [
+      "path---pt-tags-java-script-a6a794a3a50a011d467d.js",
+      "path---pt-tags-java-script-a6a794a3a50a011d467d.js.map"
+    ],
+    "path---any-tags-c": [
+      "path---any-tags-c-206f81ede8439eb76c1d.js",
+      "path---any-tags-c-206f81ede8439eb76c1d.js.map"
+    ],
+    "path---en-blog-linux-arch-setup-nodejs-env": [
+      "path---en-blog-linux-arch-setup-nodejs-env-df9e1505024a8fad4496.js",
+      "path---en-blog-linux-arch-setup-nodejs-env-df9e1505024a8fad4496.js.map"
+    ],
+    "path---pt-blog-functional-programming-examples": [
+      "path---pt-blog-functional-programming-examples-7db06070f8cda51147c8.js",
+      "path---pt-blog-functional-programming-examples-7db06070f8cda51147c8.js.map"
+    ],
+    "path---pt-blog-linux-arch-fix-enospc-error": [
+      "path---pt-blog-linux-arch-fix-enospc-error-0910c760ff084e450276.js",
+      "path---pt-blog-linux-arch-fix-enospc-error-0910c760ff084e450276.js.map"
+    ],
+    "path---fr-blog-languages-french-learn-french-links": [
+      "path---fr-blog-languages-french-learn-french-links-61204fdc279ff99cfdb6.js",
+      "path---fr-blog-languages-french-learn-french-links-61204fdc279ff99cfdb6.js.map"
+    ],
+    "path---en-resume-jobs-and-clients-freelancer-frp": [
+      "path---en-resume-jobs-and-clients-freelancer-frp-4cbdfc4a68bd79d5e8a5.js",
+      "path---en-resume-jobs-and-clients-freelancer-frp-4cbdfc4a68bd79d5e8a5.js.map"
+    ],
+    "component---src-pages-blog-fr-js": [
+      "component---src-pages-blog-fr-js-4456df779ca4af9ebf04.js",
+      "component---src-pages-blog-fr-js-4456df779ca4af9ebf04.js.map"
+    ],
+    "path---pt-blog-languages-english-learn-english-links": [
+      "path---pt-blog-languages-english-learn-english-links-845dc79b3232cabe098f.js",
+      "path---pt-blog-languages-english-learn-english-links-845dc79b3232cabe098f.js.map"
+    ],
+    "path---any-tags-net": [
+      "path---any-tags-net-decd3665d4fd0e9bbfae.js",
+      "path---any-tags-net-decd3665d4fd0e9bbfae.js.map"
+    ],
+    "path---fr-resume-jobs-and-clients-pol-pol-premios-online": [
+      "path---fr-resume-jobs-and-clients-pol-pol-premios-online-a0fa76bd07343bd5c4c4.js",
+      "path---fr-resume-jobs-and-clients-pol-pol-premios-online-a0fa76bd07343bd5c4c4.js.map"
+    ],
+    "path---fr-tags-git": [
+      "path---fr-tags-git-697e7aa283dc7884a8f2.js",
+      "path---fr-tags-git-697e7aa283dc7884a8f2.js.map"
+    ],
+    "path---pt-tags-ssl-com": [
+      "path---pt-tags-ssl-com-1dd1ce2a046c62f898d3.js",
+      "path---pt-tags-ssl-com-1dd1ce2a046c62f898d3.js.map"
+    ],
+    "component---src-pages-tags-index-pt-js": [
+      "component---src-pages-tags-index-pt-js-3b48cd40d3d2e55ec9c2.js",
+      "component---src-pages-tags-index-pt-js-3b48cd40d3d2e55ec9c2.js.map"
+    ],
+    "path---pt-resume": [
+      "path---pt-resume-692c4d4dc24e6e537cb1.js",
+      "path---pt-resume-692c4d4dc24e6e537cb1.js.map"
+    ],
+    "path---en-blog-languages-french-learn-french-links": [
+      "path---en-blog-languages-french-learn-french-links-b9203869b2c337ac92e9.js",
+      "path---en-blog-languages-french-learn-french-links-b9203869b2c337ac92e9.js.map"
+    ],
+    "path---pt-resume-jobs-and-clients-freelancer-angeloocana-v-2-react": [
+      "path---pt-resume-jobs-and-clients-freelancer-angeloocana-v-2-react-45d919f987987bca3954.js",
+      "path---pt-resume-jobs-and-clients-freelancer-angeloocana-v-2-react-45d919f987987bca3954.js.map"
+    ],
+    "path---en-tags-excel": [
+      "path---en-tags-excel-b0b79576b44ad7f2e87b.js",
+      "path---en-tags-excel-b0b79576b44ad7f2e87b.js.map"
+    ],
+    "component---src-pages-resume-jobs-and-clients-index-pt-js": [
+      "component---src-pages-resume-jobs-and-clients-index-pt-js-a23fe2b75cdcff0e1e4a.js",
+      "component---src-pages-resume-jobs-and-clients-index-pt-js-a23fe2b75cdcff0e1e4a.js.map"
+    ],
+    "path---offline-plugin-app-shell-fallback": [
+      "path---offline-plugin-app-shell-fallback-a0e39f21c11f6a62c5ab.js",
+      "path---offline-plugin-app-shell-fallback-a0e39f21c11f6a62c5ab.js.map"
+    ],
+    "path---fr-tags-surge-sh": [
+      "path---fr-tags-surge-sh-5e18508e9d44dba9ba1d.js",
+      "path---fr-tags-surge-sh-5e18508e9d44dba9ba1d.js.map"
+    ],
+    "path---fr-tags-la-langue": [
+      "path---fr-tags-la-langue-320ad2a8de2b1c220c08.js",
+      "path---fr-tags-la-langue-320ad2a8de2b1c220c08.js.map"
+    ],
+    "path---en-tags-arch": [
+      "path---en-tags-arch-35c149b83aabd41629aa.js",
+      "path---en-tags-arch-35c149b83aabd41629aa.js.map"
+    ],
+    "path---fr-resume-jobs-and-clients-upgrade-consultoria-fde": [
+      "path---fr-resume-jobs-and-clients-upgrade-consultoria-fde-c90a1a60a0a67326b802.js",
+      "path---fr-resume-jobs-and-clients-upgrade-consultoria-fde-c90a1a60a0a67326b802.js.map"
+    ],
+    "path---fr-tags-command-line": [
+      "path---fr-tags-command-line-73cc070d62af372122e3.js",
+      "path---fr-tags-command-line-73cc070d62af372122e3.js.map"
+    ],
+    "path---fr-resume-jobs-and-clients-freelancer": [
+      "path---fr-resume-jobs-and-clients-freelancer-bd06ed6f2844976d9a57.js",
+      "path---fr-resume-jobs-and-clients-freelancer-bd06ed6f2844976d9a57.js.map"
+    ],
+    "path---en-blog-languages-french-french-movies": [
+      "path---en-blog-languages-french-french-movies-97938433e0dc8027fed5.js",
+      "path---en-blog-languages-french-french-movies-97938433e0dc8027fed5.js.map"
+    ],
+    "path---fr-tags-libre-office": [
+      "path---fr-tags-libre-office-c312b4586d15e3568c60.js",
+      "path---fr-tags-libre-office-c312b4586d15e3568c60.js.map"
+    ],
+    "path---pt-tags-https": [
+      "path---pt-tags-https-d1263cac5f65661dbd91.js",
+      "path---pt-tags-https-d1263cac5f65661dbd91.js.map"
+    ],
+    "component---src-pages-contact-index-fr-js": [
+      "component---src-pages-contact-index-fr-js-d9bb241f3d26be06bda1.js",
+      "component---src-pages-contact-index-fr-js-d9bb241f3d26be06bda1.js.map"
+    ],
+    "path---en-resume-education": [
+      "path---en-resume-education-3995f9b52372c7e3942c.js",
+      "path---en-resume-education-3995f9b52372c7e3942c.js.map"
+    ],
+    "path---pt-resume-jobs-and-clients-media-w-pdv-ted": [
+      "path---pt-resume-jobs-and-clients-media-w-pdv-ted-59b64942ec2b70cea90a.js",
+      "path---pt-resume-jobs-and-clients-media-w-pdv-ted-59b64942ec2b70cea90a.js.map"
+    ],
+    "path---fr-tags-word": [
+      "path---fr-tags-word-52212340a99d58fad8bd.js",
+      "path---fr-tags-word-52212340a99d58fad8bd.js.map"
+    ],
+    "path---en-tags-dev-env": [
+      "path---en-tags-dev-env-019ae21d37926e91dedc.js",
+      "path---en-tags-dev-env-019ae21d37926e91dedc.js.map"
+    ],
+    "path---en-tags-node-js": [
+      "path---en-tags-node-js-cf4ae55a49ab8f270c60.js",
+      "path---en-tags-node-js-cf4ae55a49ab8f270c60.js.map"
+    ],
+    "path---fr-resume-jobs-and-clients-upgrade-consultoria-erp-crm": [
+      "path---fr-resume-jobs-and-clients-upgrade-consultoria-erp-crm-737479fa4ce5cfd6d536.js",
+      "path---fr-resume-jobs-and-clients-upgrade-consultoria-erp-crm-737479fa4ce5cfd6d536.js.map"
+    ],
+    "path---pt-resume-jobs-and-clients-pol-pol-premios-online": [
+      "path---pt-resume-jobs-and-clients-pol-pol-premios-online-a0fa76bd07343bd5c4c4.js",
+      "path---pt-resume-jobs-and-clients-pol-pol-premios-online-a0fa76bd07343bd5c4c4.js.map"
+    ],
+    "path---en-blog-languages-english-learn-english-links": [
+      "path---en-blog-languages-english-learn-english-links-8b939efdbe71b3f76e3f.js",
+      "path---en-blog-languages-english-learn-english-links-8b939efdbe71b3f76e3f.js.map"
+    ],
+    "path---pt-about": [
+      "path---pt-about-352d29a0b389f15c10d1.js",
+      "path---pt-about-352d29a0b389f15c10d1.js.map"
+    ],
+    "component---src-pages-tags-index-en-js": [
+      "component---src-pages-tags-index-en-js-3b48cd40d3d2e55ec9c2.js",
+      "component---src-pages-tags-index-en-js-3b48cd40d3d2e55ec9c2.js.map"
+    ],
+    "path---pt-resume-jobs-and-clients": [
+      "path---pt-resume-jobs-and-clients-7611ce92818d30356c8f.js",
+      "path---pt-resume-jobs-and-clients-7611ce92818d30356c8f.js.map"
+    ],
+    "path---en-resume-jobs-and-clients-freelancer-angeloocana-v-1-angular": [
+      "path---en-resume-jobs-and-clients-freelancer-angeloocana-v-1-angular-e0d1e08c86f1460528d2.js",
+      "path---en-resume-jobs-and-clients-freelancer-angeloocana-v-1-angular-e0d1e08c86f1460528d2.js.map"
+    ],
+    "app": [
+      "app-d907fd807d40605b3f4d.js",
+      "build-js-styles.css",
+      "app-d907fd807d40605b3f4d.js.map",
+      "build-js-styles.css.map"
+    ],
+    "path---en-resume-jobs-and-clients-freelancer-academia-corpus-santana": [
+      "path---en-resume-jobs-and-clients-freelancer-academia-corpus-santana-415320ef3098f94f7929.js",
+      "path---en-resume-jobs-and-clients-freelancer-academia-corpus-santana-415320ef3098f94f7929.js.map"
+    ],
+    "path---en-blog-linux-arch-install-yaourt": [
+      "path---en-blog-linux-arch-install-yaourt-76f03774be8b343e03c9.js",
+      "path---en-blog-linux-arch-install-yaourt-76f03774be8b343e03c9.js.map"
+    ],
+    "path---fr-blog-functional-programming-examples": [
+      "path---fr-blog-functional-programming-examples-a9bdac446d23fd00e069.js",
+      "path---fr-blog-functional-programming-examples-a9bdac446d23fd00e069.js.map"
+    ],
+    "component---src-templates-resume-project-js": [
+      "component---src-templates-resume-project-js-d9d47d25b1bcfc2a1df1.js",
+      "component---src-templates-resume-project-js-d9d47d25b1bcfc2a1df1.js.map"
+    ],
+    "path---fr-tags-ssl-com": [
+      "path---fr-tags-ssl-com-0e4eb0f47d5a0039e35a.js",
+      "path---fr-tags-ssl-com-0e4eb0f47d5a0039e35a.js.map"
+    ],
+    "path---pt-tags-arch": [
+      "path---pt-tags-arch-8ab7bf060082eebbff74.js",
+      "path---pt-tags-arch-8ab7bf060082eebbff74.js.map"
+    ],
+    "path---en-blog-js-spred-operator": [
+      "path---en-blog-js-spred-operator-5cd7a0c24233670607c3.js",
+      "path---en-blog-js-spred-operator-5cd7a0c24233670607c3.js.map"
+    ],
+    "path---fr-resume-jobs-and-clients-freelancer-angeloocana-v-2-react": [
+      "path---fr-resume-jobs-and-clients-freelancer-angeloocana-v-2-react-45d919f987987bca3954.js",
+      "path---fr-resume-jobs-and-clients-freelancer-angeloocana-v-2-react-45d919f987987bca3954.js.map"
+    ],
+    "path---en-resume-jobs-and-clients-freelancer-sms-bbm-brasil": [
+      "path---en-resume-jobs-and-clients-freelancer-sms-bbm-brasil-247b8383f115b61f5673.js",
+      "path---en-resume-jobs-and-clients-freelancer-sms-bbm-brasil-247b8383f115b61f5673.js.map"
+    ],
+    "path---pt-tags-excel": [
+      "path---pt-tags-excel-9bba3dc07853866ea39e.js",
+      "path---pt-tags-excel-9bba3dc07853866ea39e.js.map"
+    ],
+    "path---pt-resume-jobs-and-clients-freelancer-igreja-crista-de-maia": [
+      "path---pt-resume-jobs-and-clients-freelancer-igreja-crista-de-maia-32ae794221ef31b42bf5.js",
+      "path---pt-resume-jobs-and-clients-freelancer-igreja-crista-de-maia-32ae794221ef31b42bf5.js.map"
+    ],
+    "path---en-resume-jobs-and-clients-freelancer-igreja-crista-de-maia": [
+      "path---en-resume-jobs-and-clients-freelancer-igreja-crista-de-maia-32ae794221ef31b42bf5.js",
+      "path---en-resume-jobs-and-clients-freelancer-igreja-crista-de-maia-32ae794221ef31b42bf5.js.map"
+    ],
+    "path---pt-resume-jobs-and-clients-total-on-demand": [
+      "path---pt-resume-jobs-and-clients-total-on-demand-788fdceb8c721524d0e5.js",
+      "path---pt-resume-jobs-and-clients-total-on-demand-788fdceb8c721524d0e5.js.map"
+    ],
+    "path---en-resume-jobs-and-clients-upgrade-consultoria-fde": [
+      "path---en-resume-jobs-and-clients-upgrade-consultoria-fde-c90a1a60a0a67326b802.js",
+      "path---en-resume-jobs-and-clients-upgrade-consultoria-fde-c90a1a60a0a67326b802.js.map"
+    ],
+    "path---en-resume-jobs-and-clients-freelancer-jump-over-jump-v-1": [
+      "path---en-resume-jobs-and-clients-freelancer-jump-over-jump-v-1-d2778edb61d2cb00d897.js",
+      "path---en-resume-jobs-and-clients-freelancer-jump-over-jump-v-1-d2778edb61d2cb00d897.js.map"
+    ],
+    "path---pt-resume-jobs-and-clients-freelancer-hive-novo-territorio": [
+      "path---pt-resume-jobs-and-clients-freelancer-hive-novo-territorio-28ce576cc7a41ca846cd.js",
+      "path---pt-resume-jobs-and-clients-freelancer-hive-novo-territorio-28ce576cc7a41ca846cd.js.map"
+    ],
+    "path---en-blog-linux-arch-extract-files": [
+      "path---en-blog-linux-arch-extract-files-6eea3c064e6b4990ef1e.js",
+      "path---en-blog-linux-arch-extract-files-6eea3c064e6b4990ef1e.js.map"
+    ],
+    "path---en-tags-version-control": [
+      "path---en-tags-version-control-f85ed86d03edfefa8d2f.js",
+      "path---en-tags-version-control-f85ed86d03edfefa8d2f.js.map"
+    ],
+    "path---fr-resume-jobs-and-clients-total-on-demand-campanhas-de-incentivo": [
+      "path---fr-resume-jobs-and-clients-total-on-demand-campanhas-de-incentivo-f59b8aa41e68c38d4895.js",
+      "path---fr-resume-jobs-and-clients-total-on-demand-campanhas-de-incentivo-f59b8aa41e68c38d4895.js.map"
+    ],
+    "path---fr-tags-es-6": [
+      "path---fr-tags-es-6-49f1b26544f232f2d2bb.js",
+      "path---fr-tags-es-6-49f1b26544f232f2d2bb.js.map"
+    ],
+    "path---en-tags-zsh": [
+      "path---en-tags-zsh-8e3f5195364c0526c793.js",
+      "path---en-tags-zsh-8e3f5195364c0526c793.js.map"
+    ],
+    "path---fr-tags-dev-env": [
+      "path---fr-tags-dev-env-888629221407140464de.js",
+      "path---fr-tags-dev-env-888629221407140464de.js.map"
+    ],
+    "path---en-tags-https": [
+      "path---en-tags-https-ebeb039e9f0291739690.js",
+      "path---en-tags-https-ebeb039e9f0291739690.js.map"
+    ],
+    "path---en": [
+      "path---en-53681d87a3472e70c0cc.js",
+      "path---en-53681d87a3472e70c0cc.js.map"
+    ],
+    "path---404": [
+      "path---404-9afb230f4d1be55068f6.js",
+      "path---404-9afb230f4d1be55068f6.js.map"
+    ],
+    "path---fr-resume-jobs-and-clients-freelancer-apm": [
+      "path---fr-resume-jobs-and-clients-freelancer-apm-93bb80781268e9858dcd.js",
+      "path---fr-resume-jobs-and-clients-freelancer-apm-93bb80781268e9858dcd.js.map"
+    ],
+    "path---en-tags-surge-sh": [
+      "path---en-tags-surge-sh-b7d8086546a9b6e9bbd8.js",
+      "path---en-tags-surge-sh-b7d8086546a9b6e9bbd8.js.map"
+    ],
+    "component---src-pages-about-index-pt-js": [
+      "component---src-pages-about-index-pt-js-0f89a87e0e4a4acf4c0c.js",
+      "component---src-pages-about-index-pt-js-0f89a87e0e4a4acf4c0c.js.map"
+    ],
+    "component---src-pages-resume-index-en-js": [
+      "component---src-pages-resume-index-en-js-8cb7a23b09d0fa0c1a9c.js",
+      "component---src-pages-resume-index-en-js-8cb7a23b09d0fa0c1a9c.js.map"
+    ],
+    "path---fr-resume-education": [
+      "path---fr-resume-education-7af6f94ff91674ca760e.js",
+      "path---fr-resume-education-7af6f94ff91674ca760e.js.map"
+    ],
+    "path---pt-tags-android": [
+      "path---pt-tags-android-7a8d478616d8480dfa99.js",
+      "path---pt-tags-android-7a8d478616d8480dfa99.js.map"
+    ],
+    "path---fr-blog-linux-arch-install-yaourt": [
+      "path---fr-blog-linux-arch-install-yaourt-b695aba3ad5a82876e6d.js",
+      "path---fr-blog-linux-arch-install-yaourt-b695aba3ad5a82876e6d.js.map"
+    ],
+    "path---fr-blog-vim-vim-help-commands": [
+      "path---fr-blog-vim-vim-help-commands-2a52cf5ec77da192a56d.js",
+      "path---fr-blog-vim-vim-help-commands-2a52cf5ec77da192a56d.js.map"
+    ],
+    "path---pt-resume-jobs-and-clients-freelancer-apm": [
+      "path---pt-resume-jobs-and-clients-freelancer-apm-93bb80781268e9858dcd.js",
+      "path---pt-resume-jobs-and-clients-freelancer-apm-93bb80781268e9858dcd.js.map"
+    ],
+    "path---en-tags-french": [
+      "path---en-tags-french-b56a03621b2045a08427.js",
+      "path---en-tags-french-b56a03621b2045a08427.js.map"
+    ],
+    "path---pt-tags-linha-de-commando": [
+      "path---pt-tags-linha-de-commando-1f7127a3699a5f1e58e2.js",
+      "path---pt-tags-linha-de-commando-1f7127a3699a5f1e58e2.js.map"
+    ],
+    "path---pt-tags-git": [
+      "path---pt-tags-git-e7dd6512697987b45eea.js",
+      "path---pt-tags-git-e7dd6512697987b45eea.js.map"
+    ],
+    "path---fr-blog-linux-arch-backup-android-files": [
+      "path---fr-blog-linux-arch-backup-android-files-d944b057d23ace0570e5.js",
+      "path---fr-blog-linux-arch-backup-android-files-d944b057d23ace0570e5.js.map"
+    ],
+    "path---fr-tags-android": [
+      "path---fr-tags-android-1b10c1c84693f225c172.js",
+      "path---fr-tags-android-1b10c1c84693f225c172.js.map"
+    ],
+    "path---en-resume-jobs-and-clients-upgrade-consultoria-primanager": [
+      "path---en-resume-jobs-and-clients-upgrade-consultoria-primanager-11d83ac192e9bceda734.js",
+      "path---en-resume-jobs-and-clients-upgrade-consultoria-primanager-11d83ac192e9bceda734.js.map"
+    ],
+    "path---pt-resume-jobs-and-clients-freelancer": [
+      "path---pt-resume-jobs-and-clients-freelancer-bd06ed6f2844976d9a57.js",
+      "path---pt-resume-jobs-and-clients-freelancer-bd06ed6f2844976d9a57.js.map"
+    ],
+    "path---pt-blog-vim-vim-help-commands": [
+      "path---pt-blog-vim-vim-help-commands-fcad3a10ad177881a643.js",
+      "path---pt-blog-vim-vim-help-commands-fcad3a10ad177881a643.js.map"
+    ],
+    "path---en-resume-jobs-and-clients-freelancer-angeloocana-v-2-react": [
+      "path---en-resume-jobs-and-clients-freelancer-angeloocana-v-2-react-45d919f987987bca3954.js",
+      "path---en-resume-jobs-and-clients-freelancer-angeloocana-v-2-react-45d919f987987bca3954.js.map"
+    ],
+    "path---en-blog-linux-arch-fix-enospc-error": [
+      "path---en-blog-linux-arch-fix-enospc-error-8ccaf78d5ea36591b9eb.js",
+      "path---en-blog-linux-arch-fix-enospc-error-8ccaf78d5ea36591b9eb.js.map"
+    ],
+    "path---fr-tags-francais": [
+      "path---fr-tags-francais-a2dbca8fbe8769ef9f85.js",
+      "path---fr-tags-francais-a2dbca8fbe8769ef9f85.js.map"
+    ],
+    "path---pt-tags-linux": [
+      "path---pt-tags-linux-c17313253790ccdb1ed0.js",
+      "path---pt-tags-linux-c17313253790ccdb1ed0.js.map"
+    ],
+    "path---pt-resume-jobs-and-clients-total-on-demand-campanhas-de-incentivo": [
+      "path---pt-resume-jobs-and-clients-total-on-demand-campanhas-de-incentivo-f59b8aa41e68c38d4895.js",
+      "path---pt-resume-jobs-and-clients-total-on-demand-campanhas-de-incentivo-f59b8aa41e68c38d4895.js.map"
+    ],
+    "path---en-blog-functional-programming-examples": [
+      "path---en-blog-functional-programming-examples-d19e10712e15c5dfb924.js",
+      "path---en-blog-functional-programming-examples-d19e10712e15c5dfb924.js.map"
+    ],
+    "path---en-resume-jobs-and-clients-freelancer-angeloocana-tic-tac-toe-ai": [
+      "path---en-resume-jobs-and-clients-freelancer-angeloocana-tic-tac-toe-ai-7db77076a2f82e63318e.js",
+      "path---en-resume-jobs-and-clients-freelancer-angeloocana-tic-tac-toe-ai-7db77076a2f82e63318e.js.map"
+    ],
+    "path---en-resume-jobs-and-clients-freelancer-innovative": [
+      "path---en-resume-jobs-and-clients-freelancer-innovative-5e7e31fe6c85114d4140.js",
+      "path---en-resume-jobs-and-clients-freelancer-innovative-5e7e31fe6c85114d4140.js.map"
+    ],
+    "path---fr-tags-linux": [
+      "path---fr-tags-linux-d6d22d2206f6a162aa9a.js",
+      "path---fr-tags-linux-d6d22d2206f6a162aa9a.js.map"
+    ],
+    "path---pt-tags-idiomas": [
+      "path---pt-tags-idiomas-1c116d9fe389743d0c2d.js",
+      "path---pt-tags-idiomas-1c116d9fe389743d0c2d.js.map"
+    ]
+  }
+}

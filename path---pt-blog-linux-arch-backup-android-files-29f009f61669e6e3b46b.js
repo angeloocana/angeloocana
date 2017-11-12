@@ -1,0 +1,2 @@
+webpackJsonp([27581280475609],{"./node_modules/json-loader/index.js!./.cache/json/pt-blog-linux-arch-backup-android-files.json":function(n,o){n.exports={pathContext:{path:"/pt/blog/linux/arch/backup-android-files/",langKey:"pt"}}}});
+//# sourceMappingURL=path---pt-blog-linux-arch-backup-android-files-29f009f61669e6e3b46b.js.map

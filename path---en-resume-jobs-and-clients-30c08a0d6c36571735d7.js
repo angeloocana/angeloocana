@@ -1,0 +1,2 @@
+webpackJsonp([67975216461070],{"./node_modules/json-loader/index.js!./.cache/json/en-resume-jobs-and-clients.json":function(e,n){e.exports={pathContext:{slug:"/en/resume/jobs-and-clients/",langKey:"en"}}}});
+//# sourceMappingURL=path---en-resume-jobs-and-clients-30c08a0d6c36571735d7.js.map

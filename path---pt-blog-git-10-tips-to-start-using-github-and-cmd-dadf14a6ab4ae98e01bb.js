@@ -1,0 +1,2 @@
+webpackJsonp([81920017387371],{"./node_modules/json-loader/index.js!./.cache/json/pt-blog-git-10-tips-to-start-using-github-and-cmd.json":function(t,n){t.exports={pathContext:{path:"/pt/blog/git/10-tips-to-start-using-github-and-cmd/",langKey:"pt"}}}});
+//# sourceMappingURL=path---pt-blog-git-10-tips-to-start-using-github-and-cmd-dadf14a6ab4ae98e01bb.js.map

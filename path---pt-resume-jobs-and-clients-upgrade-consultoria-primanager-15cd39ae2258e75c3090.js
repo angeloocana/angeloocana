@@ -1,0 +1,2 @@
+webpackJsonp([7087653138100],{"./node_modules/json-loader/index.js!./.cache/json/pt-resume-jobs-and-clients-upgrade-consultoria-primanager.json":function(e,o){e.exports={pathContext:{project:{name:"Mapa de Obras",slug:"/primanager/",years:["2009"],description:"",link:"https://www.aeseletropaulo.com.br",technologies:null},job:{name:"Upgrade Consultoria",slug:"/upgrade-consultoria/"}}}}});
+//# sourceMappingURL=path---pt-resume-jobs-and-clients-upgrade-consultoria-primanager-15cd39ae2258e75c3090.js.map

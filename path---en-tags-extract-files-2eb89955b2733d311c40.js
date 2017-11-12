@@ -1,0 +1,2 @@
+webpackJsonp([0x9d160076b416],{"./node_modules/json-loader/index.js!./.cache/json/en-tags-extract-files.json":function(t,e){t.exports={data:{allMarkdownRemark:{totalCount:1,edges:[{node:{frontmatter:{title:"Extract Files in Arch linux",date:"2017-07-31"},fields:{slug:"/en/blog/linux/arch/extract-files/",langKey:"en"},excerpt:"Extract .rar Extract .zip Install unzip Extract file"}}]}},pathContext:{tag:"Extract files",langKey:"en"}}}});
+//# sourceMappingURL=path---en-tags-extract-files-2eb89955b2733d311c40.js.map
