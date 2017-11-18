@@ -6,11 +6,15 @@ import { navigateTo } from "gatsby-link";
 class RedirectIndex extends React.PureComponent {
   constructor(args) {
     super(args);
-    const { langs, defaultLangKey } = args.data.site.siteMetadata.languages;
-    const langKey = getUserLangKey(langs, defaultLangKey);
-    const homeUrl = `/${langKey}/`;
 
-    navigateTo(homeUrl);
+    // Skip build, Browsers only
+    if(typeof window !== 'undefined'){
+      const { langs, defaultLangKey } = args.data.site.siteMetadata.languages;
+      const langKey = getUserLangKey(langs, defaultLangKey);
+      const homeUrl = `/${langKey}/`;
+
+      navigateTo(homeUrl);
+    }
   }
 
   render() {
