@@ -1,12 +1,16 @@
 import React from 'react';
 import graphql from 'graphql';
-import { redirectToHome } from 'ptz-i18n';
+import { getUserLangKey } from 'ptz-i18n';
+import { navigateTo } from "gatsby-link";
 
 class RedirectIndex extends React.PureComponent {
   constructor(args) {
     super(args);
     const { langs, defaultLangKey } = args.data.site.siteMetadata.languages;
-    redirectToHome(langs, defaultLangKey);
+    const langKey = getUserLangKey(langs, defaultLangKey);
+    const homeUrl = `/${langKey}/`;
+
+    navigateTo(homeUrl);
   }
 
   render() {
@@ -28,3 +32,4 @@ export const pageQuery = graphql`
     }
   }
 `;
+
