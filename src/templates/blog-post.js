@@ -10,7 +10,6 @@ import CleanTime from '../components/Time';
 import Comments from '../components/Comments';
 import Posts from '../components/Posts';
 import AnchorJS from 'anchor-js';
-import '../../static/css/prism-atom-dark.css';
 
 const Time = styled(CleanTime)`
   text-align: center;

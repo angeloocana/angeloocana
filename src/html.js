@@ -51,7 +51,7 @@ class Html extends React.PureComponent {
           <meta name="theme-color" content="#ffffff" />
           <link href="/css/reset.css" rel="stylesheet" />
           <link href="https://fonts.googleapis.com/css?family=Cambo" rel="stylesheet" />
-          {/* <link href="/css/prism-atom-dark.css" rel="stylesheet" /> */}
+          <link href="/css/prism-atom-dark.css" rel="stylesheet" />
         </head>
         <body style={{ margin: 0, padding: 0 }}>
           <div
