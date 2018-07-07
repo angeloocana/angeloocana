@@ -6,16 +6,48 @@ const { range, thisYear } = require('./time');
 const t = technologies;
 
 const jobsAndClients = {
+  'Kinaxis': {
+    slug: '/kinaxis/',
+    date: {
+      start: '2018-06-11',
+      end: null,
+    },
+    img: '',
+    link: 'https://www.kinaxis.com',
+    description: {
+      'pt': '',
+      'en': '',
+    },
+    technologies: [
+      t.js,
+      t.cSharp,
+      t.react,
+      t.angular,
+      t.typeScript,
+      t.jasmine,
+      t.jest,
+      t.sass,
+      t.nodejs,
+      t.webpack,
+      t.gulp,
+      t.vscode,
+      t.visualStudio,
+      t.azure,
+      t.netMvc,
+    ],
+    projects: [],
+  },
   'Freelancer': {
     slug: '/freelancer/',
     date: {
       start: '2007-02-01',
-      end: null
+      end: '2018-06-10',
     },
     img: '',
     link: 'https://angeloocana.com',
     description: {
-      'pt': 'Desenvolvi sistemas e sites para: Envio de SMS, Academias, E-commerce, Sistes Institucionais, entre outros.'
+      'pt': 'Desenvolvi sistemas e sites para: Envio de SMS, Academias, E-commerce, Sistes Institucionais, entre outros.',
+      'en': '',
     },
     projects: [
       {

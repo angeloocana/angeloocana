@@ -38,9 +38,9 @@ module.exports = {
     },
     {
       type: 'phone',
-      value: '(613) 720-9572',
+      value: '(613) 558-9571',
       country: 'ca',
-      link: 'tel:(613) 720-9572'
+      link: 'tel:(613) 558-9571'
     },
     {
       type: 'phone',

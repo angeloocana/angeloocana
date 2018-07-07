@@ -318,6 +318,14 @@ const technologies = {
   //   img: 'd3.png',
   //   link: 'https://d3js.org/'
   // },
+  sass: {
+    name: 'SASS',
+    years: range(2014, thisYear),
+    tags: [tags.frontEnd],
+    level: levels.expert,
+    img: 'sass.svg',
+    link: 'https://sass-lang.com/',
+  },
   styledComponents: {
     name: 'Styled Components',
     years: range(2017, thisYear),
