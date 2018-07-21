@@ -34,7 +34,7 @@ Have fun!
 
 ## Show particions
 ```
-fdisk -l
+    fldisk -l
 ```
 
 ## Create Partitions
@@ -136,9 +136,6 @@ enable sudo for users, uncomment %wheel ALL=(ALL) ALL
     exit
 ```
 ```bash
-     umount /mnt/home
-```
-```bash
     umount /mnt
 ```
 ```bash
@@ -151,7 +148,7 @@ Remove the pendrive running the arch image and start your machine to continue th
     sudo pacman -Syu
 ```
 ```bash
-    sudo pacman -S xorg xorg-server
+    sudo pacman -S xorg
 ```
 ```bash
     sudo pacman -S xfce4 xfce4-goodies
@@ -199,27 +196,6 @@ Synchronize date time, maybe you have to restart to see the changes:
 ## Vim
 ```bash
     sudo pacman -S vim
-```
-
-## Yaourt
-Yaourt contains the community packages.
-
-For pacman always use sudo, for yaourt never!!!
-
-Open the file below for editing:
-```bash
-    sudo vim /etc/pacman.conf
-```
-Add to the bottom:
-```conf
-    [archlinuxfr]
-    SigLevel = Never
-    Server = http://repo.archlinux.fr/$arch
-```
-
-Install yaourt
-```bash
-    sudo pacman -Sy yaourt
 ```
 
 # Wifi
