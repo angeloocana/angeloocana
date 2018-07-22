@@ -150,6 +150,10 @@ Remove the pendrive running the arch image and start your machine to continue th
 ```bash
     sudo pacman -S xorg
 ```
+Install some fonts 
+```bash
+    sudo pacman -S ttf-dejavu ttf-liberation ttf-droid
+```
 ```bash
     sudo pacman -S xfce4 xfce4-goodies
 ```
@@ -219,6 +223,12 @@ Start Network Manager:
 ```
 
 # Troubleshooting
+
+## Poweroff taking too long
+Open the file /etc/systemd/system.conf and update the line bellow:
+```bash
+    DefaultTimeoutStopSec=10s
+```
 
 ## Fix audio
 ```bash
