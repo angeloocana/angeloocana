@@ -10,7 +10,7 @@ tags:
 
 Redux-saga + the Yield keyword are the most powerful tool I've ever seen in the JavaScript world to manage side-effects (API calls, DBs, log, ...)
 
-I created this content for a presentation at Kinaxis, where I'm working right now.
+I created this content for a [presentation](https://angeloocana.com/redux-saga-presentation.html) at Kinaxis, where I'm working right now.
 
 I hope you can learn new things and improve the reasonability of your code. =D
 
