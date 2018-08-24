@@ -33,7 +33,9 @@ I hope you can learn new things and improve the reasonability of your code. =D
 
 - Makes your code more reasonable
 
-- Easy to test
+- Easy to test (no mocks)
+
+- No circular dependencies
 
 - Ideal for common real-world applications
 
@@ -129,7 +131,7 @@ Code tends to grow vertically with additional "then" calls
 ```
 Code meant to be executed after call resolves can be placed on next line, as with synchronous code
 
-No additional scoped required
+No additional scope required
 
 Code is always compact
 
@@ -141,9 +143,9 @@ Code is always compact
     // Execution resumes here. No code can run before all promises resolutions.
 ```
 
-# Advantages and Disadvantages to Yield
+# Yield
 
-## Advantages of yield
+## Advantages
 
 - Significantly fewer lines of code
 
@@ -151,14 +153,12 @@ Code is always compact
 
 - Easiest to read quickly, reason about
 
-- Avoids circular dependency
-
 - Easier to debug
 
 - Execution stops on unhandled error
 
 
-## Disadvantages of yield
+## Disadvantages
 
 - Only works inside Generator Functions
 
@@ -210,7 +210,7 @@ function* logEachSecond() {
 
 # Effects
 
-functions that returns a plain JavaScript object and does not perform any execution.
+functions that return a plain JavaScript object and do not perform any execution.
 
 - The execution is performed by the middleware during the Iteration process.
 
@@ -301,7 +301,7 @@ function* watchActions() {
 
 ## race
 
-Returns when the first yield returns.
+returns when the first yield returns.
 
 ```js
 
@@ -319,7 +319,7 @@ waits all yield to return.
 
 ## throttle
 
-Throttle ensures that the Saga will take at most one action during each period of specified time. 
+ensures that the Saga will take at most one action during each period of specified time. 
 
 ```js
 function* handleInput(input) {
@@ -334,7 +334,7 @@ function* watchInput() {
 
 ## take
 
-Take waits until it gets the desired action.
+waits until it gets the desired action.
 
 ```js
 import { put, take, call } from "redux-saga/effects";
@@ -366,7 +366,7 @@ function* queueActions() {
 
 ## actionChannel
 
-Creates a queue of actions, you don't lose any action and you can process one by one.
+creates a queue of actions, you don't lose any action and you can process one by one.
 
 ```js
 import { actionChannel, take, call } from "redux-saga/effects";

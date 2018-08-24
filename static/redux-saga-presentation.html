@@ -46,7 +46,9 @@ class: center, middle
 
 - Makes your code more reasonable
 
-- Easy to test
+- Easy to test (no mocks)
+
+- No circular dependencies
 
 - Ideal for common real-world applications
 
@@ -86,7 +88,7 @@ class: center, middle
 
 ---
 
-## Async example with callbacks
+# Async example with callbacks
 
 ```js
     api.call(URL, function callback(data){
@@ -98,7 +100,7 @@ class: center, middle
 
 ---
 
-## Async example with callbacks x3
+# Async example with callbacks x3
 
 Code tends to drift to the right with more nested callbacks. (Callback hell)
 
@@ -116,7 +118,7 @@ Code tends to drift to the right with more nested callbacks. (Callback hell)
 
 ---
 
-## Async example with callbacks x5
+# Async example with callbacks x5
 
 Code tends to drift to the right with more nested callbacks. (Callback hell)
 
@@ -140,7 +142,7 @@ Code tends to drift to the right with more nested callbacks. (Callback hell)
 
 ---
 
-## Async example with promises
+# Async example with promises
 
 ```js
 
@@ -154,7 +156,7 @@ Code tends to drift to the right with more nested callbacks. (Callback hell)
 
 ---
 
-## Async example with promises x3
+# Async example with promises x3
 
 Code tends to grow vertically with additional "then" calls
 
@@ -176,7 +178,7 @@ Code tends to grow vertically with additional "then" calls
 
 ---
 
-## Async example with yield
+# Async example with yield
 
 
 ```js
@@ -186,11 +188,11 @@ Code tends to grow vertically with additional "then" calls
 ```
 Code meant to be executed after call resolves can be placed on next line, as with synchronous code
 
-No additional scoped required
+No additional scope required
 
 ---
 
-## Async example with yield x3
+# Async example with yield x3
 
 Code is always compact
 
@@ -204,9 +206,9 @@ Code is always compact
 
 ---
 
-# Advantages and Disadvantages to Yield
+# Yield
 
-## Advantages of yield
+## Advantages
 
 - Significantly fewer lines of code
 
@@ -214,14 +216,12 @@ Code is always compact
 
 - Easiest to read quickly, reason about
 
-- Avoids circular dependency
-
 - Easier to debug
 
 - Execution stops on unhandled error
 
 
-## Disadvantages of yield
+## Disadvantages
 
 - Only works inside Generator Functions
 
@@ -276,7 +276,7 @@ function* logEachSecond() {
 
 # Effects
 
-functions that returns a plain JavaScript object and does not perform any execution.
+functions that return a plain JavaScript object and do not perform any execution.
 
 - The execution is performed by the middleware during the Iteration process.
 
@@ -284,7 +284,7 @@ functions that returns a plain JavaScript object and does not perform any execut
 
 ---
 
-## select, call and put
+# select, call and put
 
 select: gets a value from the store
 
@@ -308,7 +308,7 @@ function getWorksheet(worksheetId) {
 
 ---
 
-### Handle errors with Try Catch
+# Handle errors with Try Catch
 
 ```js
 import { select, call, put } from "redux-saga/effects";
@@ -340,7 +340,7 @@ function getWorksheet(worksheetId) {
 
 ---
 
-## takeEvery
+# takeEvery
 
 starts a saga for all dispatched actions.
 
@@ -358,7 +358,7 @@ function* watchActions() {
 
 ---
 
-## takeLatest
+# takeLatest
 
 cancels the current Saga if it is running and starts the latest dispatched action.
 
@@ -376,9 +376,9 @@ function* watchActions() {
 
 ---
 
-## race
+# race
 
-Returns when the first yield returns.
+returns when the first yield returns.
 
 ```js
 
@@ -386,7 +386,7 @@ Returns when the first yield returns.
 
 ---
 
-## all
+# all
 
 waits all yields to return.
 
@@ -396,9 +396,9 @@ waits all yields to return.
 
 ---
 
-## throttle
+# throttle
 
-Throttle ensures that the Saga will take at most one action during each period of specified time. 
+ensures that the Saga will take at most one action during each period of specified time. 
 
 ```js
 function* handleInput(input) {
@@ -412,9 +412,9 @@ function* watchInput() {
 
 ---
 
-## take
+# take
 
-Take waits until it gets the desired action.
+waits until it gets the desired action.
 
 ```js
 import { put, take, call } from "redux-saga/effects";
@@ -432,9 +432,9 @@ function* removeUser(user) {
 
 ---
 
-## take in a loop
+# take in a loop
 
-Take waits until it gets the desired action.
+waits until it gets the desired action.
 
 ```js
 import { actionChannel, take, call } from "redux-saga/effects";
@@ -451,9 +451,9 @@ function* queueActions() {
 
 ---
 
-## actionChannel
+# actionChannel
 
-Creates a queue of actions, you don't lose any action and you can process one by one.
+creates a queue of actions, you don't lose any action and you can process one by one.
 
 ```js
 import { actionChannel, take, call } from "redux-saga/effects";
@@ -473,6 +473,7 @@ function* queueActions() {
 ---
 
 # The end
+
 ## Thank you!!!
 
 ### References + Learn more
