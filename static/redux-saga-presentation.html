@@ -98,7 +98,7 @@ class: center, middle
 
 ---
 
-## Async example with callbacks
+## Async example with callbacks x3
 
 Code tends to drift to the right with more nested callbacks. (Callback hell)
 
@@ -107,6 +107,30 @@ Code tends to drift to the right with more nested callbacks. (Callback hell)
         api.call(URL_B, function callback(dataB){
             api.call(URL_C, function callback(dataC){
                 // ...
+            });
+        });
+    });
+
+    // code outside callbacks runs before callbacks resolutions
+```
+
+---
+
+## Async example with callbacks x5
+
+Code tends to drift to the right with more nested callbacks. (Callback hell)
+
+```js
+    api.call(URL_A, function callback(dataA){
+        api.call(URL_B, function callback(dataB){
+            api.call(URL_C, function callback(dataC){
+                api.call(URL_D, function callback(dataD){
+                    api.call(URL_E, function callback(dataE){
+                        api.call(URL_F, function callback(dataF){
+                            // ...
+                        });
+                    });
+                });
             });
         });
     });
@@ -130,7 +154,7 @@ Code tends to drift to the right with more nested callbacks. (Callback hell)
 
 ---
 
-## Async example with promises
+## Async example with promises x3
 
 Code tends to grow vertically with additional "then" calls
 
@@ -160,11 +184,13 @@ Code tends to grow vertically with additional "then" calls
 
     // Execution resumes here. No code can run before promise resolution.
 ```
-Code meant to be executed after call resolves can be placed on next line, as with synchronous code (no additional scoped required)
+Code meant to be executed after call resolves can be placed on next line, as with synchronous code
+
+No additional scoped required
 
 ---
 
-## Async example with yield
+## Async example with yield x3
 
 Code is always compact
 
@@ -296,6 +322,7 @@ function getWorksheet(worksheetId) {
         const data = yield call(api.getWorksheet, { worksheetId, filters });
 
         yield put(actions.setWorksheet(data));
+
     } catch (error) {
         yield put(actions.logError(error));
     }

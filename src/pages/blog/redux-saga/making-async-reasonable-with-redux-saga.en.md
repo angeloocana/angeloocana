@@ -127,7 +127,9 @@ Code tends to grow vertically with additional "then" calls
 
     // Execution resumes here. No code can run before promise resolution.
 ```
-Code meant to be executed after call resolves can be placed on next line, as with synchronous code (no additional scoped required)
+Code meant to be executed after call resolves can be placed on next line, as with synchronous code
+
+No additional scoped required
 
 Code is always compact
 
