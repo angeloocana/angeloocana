@@ -214,22 +214,19 @@ Code is always compact
 - Can "yield" multiple values
 
 ```js
-    function getValue(a, b) {
-        //...
-        return a + b;
+function* generateId() {
+    var id = 0;
+    
+    while(true) {
+        id = id + 1;
+        yield id;
     }
+}
 
-    const data = getValue(1, 2);
-```
-
-```js
-    function* getValue(a, b) {
-        //...
-        return a + b;
-    }
-
-    const gen = getValue();
-    const data = gen.next(1, 2).value;
+const gen = generateId();
+gen.next().value; // 1
+gen.next().value; // 2
+gen.next().value; // 3
 ```
 
 ---
