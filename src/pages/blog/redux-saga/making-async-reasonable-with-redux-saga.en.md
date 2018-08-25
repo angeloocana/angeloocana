@@ -301,19 +301,39 @@ function* watchActions() {
 
 ## race
 
-returns when the first yield returns.
+Sometimes we start multiple tasks in parallel but we don't want to wait for all of them, we just need to get the winner.
 
 ```js
+import { race, take, put } from 'redux-saga/effects'
+import { delay } from 'redux-saga'
 
+function* fetchPostsWithTimeout() {
+  const {posts, timeout} = yield race({
+    posts: call(fetchApi, '/posts'),
+    timeout: call(delay, 1000)
+  })
+
+  if (posts)
+    put({type: 'POSTS_RECEIVED', posts})
+  else
+    put({type: 'TIMEOUT_ERROR'})
+}
 ```
-
 
 ## all
 
-waits all yield to return.
+waits all calls to return.
 
 ```js
+import api from '../api';
+import { all, call } from `redux-saga/effects`;
 
+function* mySaga() {
+  const [customers, products] = yield all([
+    call(api.fetchCustomers),
+    call(api.fetchProducts)
+  ]);
+}
 ```
 
 
