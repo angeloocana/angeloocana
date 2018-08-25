@@ -227,7 +227,7 @@ put: dispatches one action to the store
 
 ```js
 import { select, call, put } from "redux-saga/effects";
-import * as actions from "../actions";
+import actions from "../actions";
 import api from "../api";
 
 function getWorksheet(worksheetId) {
@@ -239,17 +239,43 @@ function getWorksheet(worksheetId) {
 }
 ```
 
-TODO: Test example
+## How to test?
 
 ```js
+function* signIn(user) {
+    const result = yield call(api.signIn, user);
 
+    if(result.ok) {
+        yield put(actions.setAuthUser(result));
+    } else {
+        yield put(actions.alertError(result));
+    }
+}
+```
+```js
+beforeEach(() => {
+    gen = signIn();
+
+    expect(gen.next(user).value)
+        .toEqual(call(api.signIn, user));
+});
+
+test("signIn ok", () => {
+    expect(gen.next(resultOk).value)
+        .toEqual(put(actions.setAuthUser(resultOK)));
+});
+
+test("signIn error", () => {
+    expect(gen.next(resultError).value)
+        .toEqual(put(actions.alertError(resultError)));
+});
 ```
 
 ### Handle errors with Try Catch
 
 ```js
 import { select, call, put } from "redux-saga/effects";
-import * as actions from "../actions";
+import actions from "../actions";
 import api from "../api";
 
 function getWorksheet(worksheetId) {
