@@ -147,9 +147,9 @@ Code is always compact
 
 ## Advantages
 
-- Significantly fewer lines of code
+- Fewer lines of code
 
-- Significantly less indentation (avoids "callback hell")
+- Less indentation (avoids "callback hell")
 
 - Easiest to read quickly, reason about
 
@@ -430,11 +430,9 @@ function* queueActions() {
 ```
 
 
-# The end
+# Thank you!!!
 
-## Thank you!!!
-
-### References + Learn more
+# References + Learn more
 
 - Redux Saga https://app.pluralsight.com/library/courses/redux-saga
 
