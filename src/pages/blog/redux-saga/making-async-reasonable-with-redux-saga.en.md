@@ -241,6 +241,8 @@ function getWorksheet(worksheetId) {
 
 ## How to test?
 
+No mocks!
+
 ```js
 function* signIn(user) {
     const result = yield call(api.signIn, user);
@@ -254,9 +256,9 @@ function* signIn(user) {
 ```
 ```js
 beforeEach(() => {
-    gen = signIn();
+    gen = signIn(user);
 
-    expect(gen.next(user).value)
+    expect(gen.next().value)
         .toEqual(call(api.signIn, user));
 });
 
@@ -269,6 +271,25 @@ test("signIn error", () => {
     expect(gen.next(resultError).value)
         .toEqual(put(actions.alertError(resultError)));
 });
+```
+
+## Effects are objects
+
+That is why there is no mocks.
+
+```js
+call(api.signIn, user);
+```
+Output:
+```js
+{ 
+    '@@redux-saga/IO': true,
+    CALL: { 
+        context: null, 
+        fn: [Function: signIn], 
+        args: [ [Object] ] 
+    }
+}
 ```
 
 ### Handle errors with Try Catch
