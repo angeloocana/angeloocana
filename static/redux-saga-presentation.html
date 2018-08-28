@@ -308,23 +308,25 @@ function getWorksheet(worksheetId) {
 
 ---
 
-# Handle errors with Try Catch
+# TODO: Add today example
+
+---
+
+## Effects are objects
+
+That is why there is no mocks.
 
 ```js
-import { select, call, put } from "redux-saga/effects";
-import actions from "../actions";
-import api from "../api";
-
-function getWorksheet(worksheetId) {
-    try{
-        const filters = yield select(state => state.filters[worksheetId]);
-
-        const data = yield call(api.getWorksheet, { worksheetId, filters });
-
-        yield put(actions.setWorksheet(data));
-
-    } catch (error) {
-        yield put(actions.logError(error));
+call(api.signIn, user);
+```
+Output:
+```js
+{ 
+    '@@redux-saga/IO': true,
+    CALL: { 
+        context: null, 
+        fn: [Function: signIn], 
+        args: [ [Object] ] 
     }
 }
 ```
@@ -365,21 +367,23 @@ test("signIn error", () => {
 
 ---
 
-## Effects are objects
-
-That is why there is no mocks.
+# Handle errors with Try Catch
 
 ```js
-call(api.signIn, user);
-```
-Output:
-```js
-{ 
-    '@@redux-saga/IO': true,
-    CALL: { 
-        context: null, 
-        fn: [Function: signIn], 
-        args: [ [Object] ] 
+import { select, call, put } from "redux-saga/effects";
+import actions from "../actions";
+import api from "../api";
+
+function getWorksheet(worksheetId) {
+    try{
+        const filters = yield select(state => state.filters[worksheetId]);
+
+        const data = yield call(api.getWorksheet, { worksheetId, filters });
+
+        yield put(actions.setWorksheet(data));
+
+    } catch (error) {
+        yield put(actions.logError(error));
     }
 }
 ```
@@ -431,15 +435,15 @@ import { race, take, put } from 'redux-saga/effects'
 import { delay } from 'redux-saga'
 
 function* fetchPostsWithTimeout() {
-  const {posts, timeout} = yield race({
-    posts: call(fetchApi, '/posts'),
-    timeout: call(delay, 1000)
-  })
+  const [posts, timeout] = yield race([
+    call(fetchApi, '/posts'),
+    call(delay, 1000)
+  ]);
 
   if (posts)
-    put({type: 'POSTS_RECEIVED', posts})
+    put({type: 'POSTS_RECEIVED', posts});
   else
-    put({type: 'TIMEOUT_ERROR'})
+    put({type: 'TIMEOUT_ERROR'});
 }
 ```
 

@@ -239,6 +239,27 @@ function getWorksheet(worksheetId) {
 }
 ```
 
+
+## Effects are objects
+
+That is why there is no mocks.
+
+```js
+call(api.signIn, user);
+```
+Output:
+```js
+{ 
+    '@@redux-saga/IO': true,
+    CALL: { 
+        context: null, 
+        fn: [Function: signIn], 
+        args: [ [Object] ] 
+    }
+}
+```
+
+
 ## How to test?
 
 No mocks!
@@ -273,24 +294,6 @@ test("signIn error", () => {
 });
 ```
 
-## Effects are objects
-
-That is why there is no mocks.
-
-```js
-call(api.signIn, user);
-```
-Output:
-```js
-{ 
-    '@@redux-saga/IO': true,
-    CALL: { 
-        context: null, 
-        fn: [Function: signIn], 
-        args: [ [Object] ] 
-    }
-}
-```
 
 ### Handle errors with Try Catch
 
@@ -355,15 +358,15 @@ import { race, take, put } from 'redux-saga/effects'
 import { delay } from 'redux-saga'
 
 function* fetchPostsWithTimeout() {
-  const {posts, timeout} = yield race({
-    posts: call(fetchApi, '/posts'),
-    timeout: call(delay, 1000)
-  })
+  const [posts, timeout] = yield race([
+    call(fetchApi, '/posts'),
+    call(delay, 1000)
+  ]);
 
   if (posts)
-    put({type: 'POSTS_RECEIVED', posts})
+    put({type: 'POSTS_RECEIVED', posts});
   else
-    put({type: 'TIMEOUT_ERROR'})
+    put({type: 'TIMEOUT_ERROR'});
 }
 ```
 
