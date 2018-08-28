@@ -298,9 +298,9 @@ import actions from "../actions";
 import api from "../api";
 
 function* getWorksheet(worksheetId) {
-    const filters = yield select(state => state.filters[worksheetId]);
+    const settings = yield select(state => state.settings[worksheetId]);
 
-    const data = yield call(api.getWorksheet, { worksheetId, filters });
+    const data = yield call(api.getWorksheet, { worksheetId, settings });
 
     yield put(actions.setWorksheet(data));
 }
@@ -321,14 +321,14 @@ export class GetWorksheetEffect implements IEffect {
 		if (action.type === GET_WORKSHEET) {
 			const { worksheetId } = action.payload;
 
-			this.storeService.selectFn(state => state.filters[worksheetId])
+			this.storeService.selectFn(state => state.settings[worksheetId])
 				.take(1)
-				.subscribe(filters => {
-                    this.api.getWorksheet({ worksheetId, filters })
-                        .subscribe((data) => {
-						    dispatcher.dispatch(actions.setWorksheet(data));
-					    });
-				});
+				.switchMap(settings => {
+                    return this.api.getWorksheet({ worksheetId, settings });
+                })
+                .subscribe((data) => {
+                    dispatcher.dispatch(actions.setWorksheet(data));
+                });
 		}
 	}
 }
@@ -401,9 +401,9 @@ import api from "../api";
 
 function* getWorksheet(worksheetId) {
     try{
-        const filters = yield select(state => state.filters[worksheetId]);
+        const settings = yield select(state => state.settings[worksheetId]);
 
-        const data = yield call(api.getWorksheet, { worksheetId, filters });
+        const data = yield call(api.getWorksheet, { worksheetId, settings });
 
         yield put(actions.setWorksheet(data));
 

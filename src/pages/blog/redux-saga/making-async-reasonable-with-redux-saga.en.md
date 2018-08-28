@@ -231,9 +231,9 @@ import actions from "../actions";
 import api from "../api";
 
 function* getWorksheet(worksheetId) {
-    const filters = yield select(state => state.filters[worksheetId]);
+    const settings = yield select(state => state.settings[worksheetId]);
 
-    const data = yield call(api.getWorksheet, { worksheetId, filters });
+    const data = yield call(api.getWorksheet, { worksheetId, settings });
 
     yield put(actions.setWorksheet(data));
 }
@@ -304,9 +304,9 @@ import api from "../api";
 
 function* getWorksheet(worksheetId) {
     try{
-        const filters = yield select(state => state.filters[worksheetId]);
+        const settings = yield select(state => state.settings[worksheetId]);
 
-        const data = yield call(api.getWorksheet, { worksheetId, filters });
+        const data = yield call(api.getWorksheet, { worksheetId, settings });
 
         yield put(actions.setWorksheet(data));
     } catch (error) {
