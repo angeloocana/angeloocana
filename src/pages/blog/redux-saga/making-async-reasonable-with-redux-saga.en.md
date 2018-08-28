@@ -22,7 +22,7 @@ I hope you can learn new things and improve the reasonability of your code. =D
 
 - What is Yield?
 
-- Callbacks x Promises x Yield
+- Callbacks vs. Promises vs. Yield
 
 - Effects
 
@@ -66,7 +66,7 @@ I hope you can learn new things and improve the reasonability of your code. =D
 - Works with promises and condenses code surrounding them
 
 
-# Callbacks x Promises x Yield
+# Callbacks vs. Promises vs. Yield
 
 ## Async example with callbacks
 
