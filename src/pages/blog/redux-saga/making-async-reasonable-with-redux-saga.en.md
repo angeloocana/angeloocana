@@ -230,7 +230,7 @@ import { select, call, put } from "redux-saga/effects";
 import actions from "../actions";
 import api from "../api";
 
-function getWorksheet(worksheetId) {
+function* getWorksheet(worksheetId) {
     const filters = yield select(state => state.filters[worksheetId]);
 
     const data = yield call(api.getWorksheet, { worksheetId, filters });
@@ -302,7 +302,7 @@ import { select, call, put } from "redux-saga/effects";
 import actions from "../actions";
 import api from "../api";
 
-function getWorksheet(worksheetId) {
+function* getWorksheet(worksheetId) {
     try{
         const filters = yield select(state => state.filters[worksheetId]);
 

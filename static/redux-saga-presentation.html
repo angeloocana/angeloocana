@@ -297,7 +297,7 @@ import { select, call, put } from "redux-saga/effects";
 import actions from "../actions";
 import api from "../api";
 
-function getWorksheet(worksheetId) {
+function* getWorksheet(worksheetId) {
     const filters = yield select(state => state.filters[worksheetId]);
 
     const data = yield call(api.getWorksheet, { worksheetId, filters });
@@ -308,7 +308,32 @@ function getWorksheet(worksheetId) {
 
 ---
 
-# TODO: Add today example
+# without select, call and put
+
+How we do it today
+
+```js
+export class GetWorksheetEffect implements IEffect {
+	static $inject = [StoreServiceName, ApiServiceName];
+	constructor(private storeService: StoreService, private api: ApiService) { }
+
+	handle(dispatcher: IDispatcher, action: Action): void {
+		if (action.type === GET_WORKSHEET) {
+			const { worksheetId } = action.payload;
+
+			this.storeService.selectFn(state => state.filters[worksheetId])
+				.take(1)
+				.subscribe(filters => {
+                    this.api.getWorksheet({ worksheetId, filters })
+                        .subscribe((data) => {
+						    dispatcher.dispatch(actions.setWorksheet(data));
+					    });
+				});
+		}
+	}
+}
+
+```
 
 ---
 
@@ -374,7 +399,7 @@ import { select, call, put } from "redux-saga/effects";
 import actions from "../actions";
 import api from "../api";
 
-function getWorksheet(worksheetId) {
+function* getWorksheet(worksheetId) {
     try{
         const filters = yield select(state => state.filters[worksheetId]);
 
