@@ -57,7 +57,7 @@ class: center, middle
 
 - Works on both client and server
 
-- Large and growing contributing user base
+- Large and growing contributing user base <img style="" src="https://angeloocana.com/imgs/redux-saga-stars.png" alt="redux-saga github stars" title="redux-saga github stars" />
 
 ---
 
@@ -313,7 +313,7 @@ function* getWorksheet(worksheetId) {
 
 # without select, call and put
 
-How we do it today
+How we do it today using observables:
 
 ```js
 export class GetWorksheetEffect implements IEffect {
@@ -336,6 +336,31 @@ export class GetWorksheetEffect implements IEffect {
 	}
 }
 
+```
+
+---
+
+# redux-saga vs. observables
+
+How we do it today using observables:
+
+```js
+    this.storeService.selectFn(state => state.settings[worksheetId])
+        .take(1)
+        .switchMap(settings => {
+            return this.api.getWorksheet({ worksheetId, settings });
+        })
+        .subscribe((data) => {
+            dispatcher.dispatch(actions.setWorksheet(data));
+        });
+```
+How would you do with redux-saga:
+```js
+const settings = yield select(state => state.settings[worksheetId]);
+
+const data = yield call(api.getWorksheet, { worksheetId, settings });
+
+yield put(actions.setWorksheet(data));
 ```
 
 ---
