@@ -73,7 +73,7 @@ I hope you can learn new things and improve the reasonability of your code. =D
 ## Async example with callbacks
 
 ```js
-    api.call(URL, function callback(data){
+    api.get(URL, function callback(data){
         // code execution resumes here
     });
 
@@ -83,9 +83,9 @@ I hope you can learn new things and improve the reasonability of your code. =D
 Code tends to drift to the right with more nested callbacks. (Callback hell)
 
 ```js
-    api.call(URL_A, function callback(dataA){
-        api.call(URL_B, function callback(dataB){
-            api.call(URL_C, function callback(dataC){
+    api.get(URL_A, function callback(dataA){
+        api.get(URL_B, function callback(dataB){
+            api.get(URL_C, function callback(dataC){
                 // ...
             });
         });
@@ -98,7 +98,7 @@ Code tends to drift to the right with more nested callbacks. (Callback hell)
 
 ```js
 
-    api.call(URL)
+    api.get(URL)
     .then(data => {
         // code execution resumes here
     });
@@ -110,12 +110,12 @@ Code tends to grow vertically with additional "then" calls
 
 ```js
 
-    api.call(URL_A)
+    api.get(URL_A)
     .then(dataA => {
-        return api.call(URL_B);
+        return api.get(URL_B);
     })
     .then(dataB => {
-        return api.call(URL_C);
+        return api.get(URL_C);
     })
     .then(dataC => {
         // ...
@@ -127,7 +127,7 @@ Code tends to grow vertically with additional "then" calls
 ## Async example with yield
 
 ```js
-    const data = yield api.call(URL);
+    const data = yield api.get(URL);
 
     // Execution resumes here. No code can run before promise resolution.
 ```
@@ -138,9 +138,9 @@ No additional scope required
 Code is always compact
 
 ```js
-    const dataA = yield api.call(URL_A);
-    const dataB = yield api.call(URL_B);
-    const dataC = yield api.call(URL_C);
+    const dataA = yield api.get(URL_A);
+    const dataB = yield api.get(URL_B);
+    const dataC = yield api.get(URL_C);
 
     // Execution resumes here. No code can run before all promises resolutions.
 ```
@@ -319,7 +319,7 @@ function* getWorksheet(worksheetId) {
 
 ## takeEvery
 
-starts a saga for all dispatched actions.
+starts a new saga for each dispatched action.
 
 ```js
 import { takeEvery } from "redux-saga/effects";
@@ -422,11 +422,13 @@ function* removeUser(user) {
 }
 ```
 
+take in a loop
+
 ```js
 import { actionChannel, take, call } from "redux-saga/effects";
 import api from "../api";
 
-function* queueActions() {
+function* logErrors() {
     while(true) {
         const action = yield take("LOG_ERROR");
         yield call(api.log, action);
@@ -444,7 +446,7 @@ creates a queue of actions, you don't lose any action and you can process one by
 import { actionChannel, take, call } from "redux-saga/effects";
 import api from "../api";
 
-function* queueActions() {
+function* logErrors() {
     const channel = yield actionChannel("LOG_ERROR");
 
     while(true) {
