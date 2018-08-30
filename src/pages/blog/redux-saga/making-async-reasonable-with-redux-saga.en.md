@@ -8,7 +8,7 @@ tags:
   - ES6
 ---
 
-<img style="max-width: 50%" alt="Redux Saga Logo" src="https://angeloocana.com/imgs/Redux-Saga-Logo-Landscape.png" title="Redux saga logo" />
+<img style="max-width: 100%; display: block; margin: 3rem auto;" alt="Redux Saga Logo" src="https://angeloocana.com/imgs/Redux-Saga-Logo-Landscape.png" title="Redux saga logo" />
 
 Redux-saga + the Yield keyword are the most powerful tool I've ever seen in the JavaScript world to manage side-effects (API calls, DBs, log, ...)
 

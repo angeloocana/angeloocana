@@ -354,7 +354,9 @@ How we do it today using observables:
             dispatcher.dispatch(actions.setWorksheet(data));
         });
 ```
-How would you do with redux-saga:
+
+How you would do it with redux-saga:
+
 ```js
 const settings = yield select(state => state.settings[worksheetId]);
 
