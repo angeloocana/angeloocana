@@ -57,7 +57,7 @@ const technologies = {
   mongodb: {
     pinned: true,
     name: 'MongoDB',
-    years: range(2015, thisYear),
+    years: range(2015, 2017),
     tags: [tags.db, tags.backEnd],
     level: levels.proficient,
     img: 'mongodb.svg',
@@ -117,7 +117,7 @@ const technologies = {
   },
   jasmine: {
     name: 'Jasmine',
-    years: range(2015, 2016),
+    years: range(2015, thisYear),
     tags: [tags.frontEnd],
     level: levels.proficient,
     img: 'jasmine.svg',
@@ -181,7 +181,7 @@ const technologies = {
   },
   cordova: {
     name: 'Cordova',
-    years: range(2015, thisYear),
+    years: range(2015, 2017),
     tags: [tags.frontEnd, tags.mobile],
     level: levels.proficient,
     needWhiteBg: true,
@@ -215,7 +215,7 @@ const technologies = {
   },
   surge: {
     name: 'Surge',
-    years: range(2017, thisYear),
+    years: range(2017, 2017),
     tags: [tags.cloud],
     level: levels.proficient,
     img: 'surge.svg',
@@ -223,7 +223,7 @@ const technologies = {
   },
   cSharp: {
     name: 'C#',
-    years: range(2008, 2016),
+    years: range(2008, thisYear),
     tags: [tags.backEnd],
     level: levels.expert,
     img: 'csharp.svg',
@@ -231,7 +231,7 @@ const technologies = {
   },
   netMvc: {
     name: '.net MVC',
-    years: range(2010, 2016),
+    years: range(2010, thisYear),
     tags: [tags.frontEnd, tags.backEnd],
     level: levels.expert,
     img: 'asp_net_mvc.svg',
@@ -370,7 +370,7 @@ const technologies = {
   },
   visualStudio: {
     name: 'visual studio',
-    years: range(2007, 2016),
+    years: range(2007, thisYear),
     tags: [tags.textEditor],
     level: levels.expert,
     img: 'vs.svg',
@@ -386,7 +386,7 @@ const technologies = {
   },
   jquery: {
     name: 'JQuery',
-    years: range(2008, thisYear),
+    years: range(2008, 2017),
     tags: [tags.frontEnd],
     level: levels.expert,
     img: 'jquery.svg',
@@ -427,7 +427,7 @@ const technologies = {
   },
   postgres: {
     name: 'PostgreSQL',
-    years: range(2014, 2015),
+    years: range(2014, thisYear),
     tags: [tags.db, tags.backEnd],
     level: levels.proficient,
     img: 'postgresql.svg',
