@@ -164,8 +164,8 @@ const technologies = {
     link: 'https://code.visualstudio.com/'
   },
   angular: {
-    name: 'Angular',
-    years: range(2014, 2016),
+    name: 'AngularJS',
+    years: range(2014, thisYear),
     tags: [tags.frontEnd],
     level: levels.expert,
     img: 'angular.svg',
