@@ -115,7 +115,9 @@ ProjectPage.propTypes = {
     project: PropTypes.shape({
       name: PropTypes.string.isRequired,
       slug: PropTypes.string.isRequired,
-      technologies: PropTypes.array.isRequired
+      technologies: PropTypes.array.isRequired,
+      description: PropTypes.string,
+      years: PropTypes.array
     }).isRequired,
     job: PropTypes.shape({
       name: PropTypes.string.isRequired,

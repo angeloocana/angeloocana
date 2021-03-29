@@ -78,7 +78,9 @@ MenuItem.propTypes = {
   item: PropTypes.shape({
     slug: PropTypes.string,
     link: PropTypes.string,
-    selected: PropTypes.bool
+    selected: PropTypes.bool,
+    label: PropTypes.string,
+    items: PropTypes.arrays
   }).isRequired
 };
 

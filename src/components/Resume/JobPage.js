@@ -59,7 +59,14 @@ Job.propTypes = {
   intl: PropTypes.object.isRequired,
   pathContext: PropTypes.shape({
     job: PropTypes.shape({
-      name: PropTypes.string
+      name: PropTypes.string,
+      description: PropTypes.string,
+      date: PropTypes.shape({
+        start: PropTypes.string,
+        end: PropTypes.string
+      }),
+      projects: PropTypes.array,
+      technologies: PropTypes.array
     })
   }).isRequired,
   data: PropTypes.object.isRequired
