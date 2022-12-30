@@ -5,7 +5,7 @@
   "author": "Angelo Ocana <angeloocana@gmail.com>",
   "dependencies": {
     "anchor-js": "^4.1.0",
-    "gatsby": "^1.9.36",
+    "gatsby": "^5.3.3",
     "gatsby-link": "^1.6.5",
     "gatsby-plugin-i18n": "^0.4.1",
     "gatsby-plugin-i18n-readnext": "^0.0.4",
