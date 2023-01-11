@@ -55,7 +55,7 @@
     "gatsby-remark-responsive-image": "^1.0.0-alpha13-alpha.435e0178",
     "gatsby-remark-smartypants": "^1.4.1",
     "gatsby-source-filesystem": "^1.4.1",
-    "gatsby-transformer-remark": "^1.6.3",
+    "gatsby-transformer-remark": "^5.25.1",
     "gatsby-transformer-sharp": "^1.6.0",
     "gh-pages": "^1.0.0",
     "intl": "^1.2.5",
