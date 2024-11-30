@@ -32,9 +32,9 @@ Have fun!
     loadkeys br-abnt2
 ```
 
-## Show particions
+## Show partitions
 ```
-    fldisk -l
+    fdisk -l
 ```
 
 ## Create Partitions
