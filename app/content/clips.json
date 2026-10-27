@@ -128,7 +128,7 @@
    "pt": "Trenó ao entardecer"
   },
   "star": 0,
-  "rejected": false,
+  "rejected": true,
   "score": 1
  },
  {
@@ -975,7 +975,7 @@
    "pt": "Entrando devagar na piscina de gelo"
   },
   "star": 0,
-  "rejected": false,
+  "rejected": true,
   "score": 3
  },
  {
@@ -1547,7 +1547,7 @@
    "pt": "Nadando na raia de gelo"
   },
   "star": 0,
-  "rejected": false,
+  "rejected": true,
   "score": 4
  }
 ]
