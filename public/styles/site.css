@@ -164,7 +164,7 @@ html:not(.js-rails) .rail-arrow { display: none; }
 .clip::after { content: ''; position: absolute; inset: 0; background: linear-gradient(to top, rgb(0 0 0 / 0.82), transparent 38%); pointer-events: none; }
 .clip-copy { position: absolute; z-index: 2; left: 0; right: 0; bottom: 0; display: grid; gap: 0.35rem; padding: 1rem 1.1rem 1.15rem; }
 .clip-cat { font: 600 0.6rem/1 var(--sans); letter-spacing: 0.22em; text-transform: uppercase; color: #f4d28e; }
-.clip-label { font: 400 clamp(1.15rem, 1rem + 0.4vw, 1.4rem)/1.15 var(--serif); }
+.clip-label { font: 400 clamp(1.15rem, 1rem + 0.4vw, 1.4rem)/1.15 var(--serif); display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
 @media (hover: hover) { .clip:hover .clip-video { transform: scale(1.05); } }
 
 /* ---------- intro slides: the first card of every other row ---------- */
