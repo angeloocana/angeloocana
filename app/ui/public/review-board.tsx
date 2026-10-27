@@ -51,11 +51,20 @@ export const ReviewBoard = clientEntry(import.meta.url, function ReviewBoard(han
       let card = target.closest<HTMLElement>('.rv')
       if (card && target.matches('select[data-act="cat"]')) save(card, { cat: (target as HTMLSelectElement).value })
       // captions and feedback save when the field loses focus (or on Enter for captions)
-      if (card && target.matches('input[data-field]')) {
-        let value = (field: string) => card.querySelector<HTMLInputElement>(`input[data-field="${field}"]`)!.value
+      if (card && target.matches('[data-field="en"], [data-field="pt"]')) {
+        let value = (field: string) => card.querySelector<HTMLTextAreaElement>(`[data-field="${field}"]`)!.value
         save(card, { label: { en: value('en'), pt: value('pt') } })
       }
       if (card && target.matches('textarea[data-field="note"]')) save(card, { note: (target as HTMLTextAreaElement).value })
+    }, { signal })
+
+    // Enter in a caption saves it (captions are one line, even though the box wraps to show it all)
+    document.addEventListener('keydown', (event) => {
+      let target = event.target as HTMLElement
+      if (event.key === 'Enter' && target.matches('.rv-caption textarea')) {
+        event.preventDefault()
+        target.blur()
+      }
     }, { signal })
 
     // hover (or focus) a card to play it

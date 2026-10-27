@@ -80,8 +80,8 @@ export function ReviewPage() {
                   <li key={clip.id} class="rv" data-id={clip.id} data-star={String(clip.star)} data-rejected={String(clip.rejected)} data-caption-rejected={String(!!clip.captionRejected)}>
                     <video muted loop playsInline preload="none" poster={`/media/clips/${clip.id}.jpg`} src={`/media/clips/${clip.id}.mp4`} />
                     <div class="rv-info">
-                      <label class="rv-caption"><span>EN</span><input data-field="en" value={clip.label.en} maxLength={120} /></label>
-                      <label class="rv-caption"><span>PT</span><input data-field="pt" value={clip.label.pt} maxLength={120} /></label>
+                      <label class="rv-caption"><span>EN</span><textarea data-field="en" rows={1} maxLength={120} value={clip.label.en} /></label>
+                      <label class="rv-caption"><span>PT</span><textarea data-field="pt" rows={1} maxLength={120} value={clip.label.pt} /></label>
                       <small>score {clip.score}</small>
                     </div>
                     <div class="rv-actions">
