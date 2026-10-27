@@ -1,0 +1,5 @@
+# The site now deploys to Cloudflare (see wrangler.jsonc). Until angeloocana.com's DNS moves there,
+# skip every Netlify build so the old site keeps serving unchanged. Delete this file (and the Netlify
+# site) once the domain points at Cloudflare.
+[build]
+  ignore = "exit 0"

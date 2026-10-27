@@ -1,0 +1,15 @@
+// Cloudflare Workers static assets: the prerendered site in dist/ (npm run build), no server code.
+// Free plan, unlimited bandwidth. Deploy with `npm run deploy` (needs `npx wrangler login` once).
+{
+  "name": "angeloocana",
+  "compatibility_date": "2026-10-10",
+  "workers_dev": true,
+  "preview_urls": false,
+  "assets": {
+    "directory": "./dist",
+    "html_handling": "auto-trailing-slash",
+    "not_found_handling": "none"
+  }
+  // Going live: add "routes": [{ "pattern": "angeloocana.com", "custom_domain": true }]
+  // once the angeloocana.com DNS zone is on Cloudflare.
+}

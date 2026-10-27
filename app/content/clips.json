@@ -1,0 +1,1553 @@
+[
+ {
+  "id": "h-ice",
+  "cat": "ice",
+  "label": {
+   "en": "Blocks, butterfly and the club",
+   "pt": "Blocos, borboleta e o clube"
+  },
+  "star": 3,
+  "rejected": false,
+  "score": 5
+ },
+ {
+  "id": "h-iron",
+  "cat": "gym",
+  "label": {
+   "en": "First powerlifting meet",
+   "pt": "Primeira competição de powerlifting"
+  },
+  "star": 2,
+  "rejected": false,
+  "score": 5
+ },
+ {
+  "id": "h-wood",
+  "cat": "wood",
+  "label": {
+   "en": "The board-game table I built",
+   "pt": "A mesa de jogos que eu construí"
+  },
+  "star": 0,
+  "rejected": false,
+  "score": 4
+ },
+ {
+  "id": "h-trail",
+  "cat": "camping",
+  "label": {
+   "en": "Sunset in the lake",
+   "pt": "Pôr do sol no lago"
+  },
+  "star": 0,
+  "rejected": false,
+  "score": 4
+ },
+ {
+  "id": "c1d578eb4",
+  "cat": "snow",
+  "label": {
+   "en": "Snow angel in swim briefs",
+   "pt": "Anjo na neve de sunga"
+  },
+  "star": 0,
+  "rejected": false,
+  "score": 4
+ },
+ {
+  "id": "c1be3ccf5",
+  "cat": "gym",
+  "label": {
+   "en": "Pull-ups at park bar",
+   "pt": "Barra fixa no parque"
+  },
+  "star": 0,
+  "rejected": false,
+  "score": 3
+ },
+ {
+  "id": "c029cab66",
+  "cat": "gym",
+  "label": {
+   "en": "Dips at outdoor park",
+   "pt": "Paralelas no parque"
+  },
+  "star": 0,
+  "rejected": false,
+  "score": 3
+ },
+ {
+  "id": "cce66ff07",
+  "cat": "snow",
+  "label": {
+   "en": "Night sled down the hill",
+   "pt": "Trenó à noite morro abaixo"
+  },
+  "star": 0,
+  "rejected": false,
+  "score": 1
+ },
+ {
+  "id": "c601d3178",
+  "cat": "bike",
+  "label": {
+   "en": "Mountain bike trail descent",
+   "pt": "Descida de mountain bike"
+  },
+  "star": 0,
+  "rejected": true,
+  "score": 1
+ },
+ {
+  "id": "c03aa1b0c",
+  "cat": "ice",
+  "label": {
+   "en": "Sunset cold lake swim",
+   "pt": "Nado no lago gelado ao pôr do sol"
+  },
+  "star": 0,
+  "rejected": false,
+  "score": 4
+ },
+ {
+  "id": "c8560cfff",
+  "cat": "food",
+  "label": {
+   "en": "Burgers on snowy grill",
+   "pt": "Hambúrgueres na grelha com neve"
+  },
+  "star": 0,
+  "rejected": false,
+  "score": 3
+ },
+ {
+  "id": "c62bc7d59",
+  "cat": "snow",
+  "label": {
+   "en": "Sledding at dusk",
+   "pt": "Trenó ao entardecer"
+  },
+  "star": 0,
+  "rejected": false,
+  "score": 1
+ },
+ {
+  "id": "cbf228d6d",
+  "cat": "travel",
+  "label": {
+   "en": "Motorcycle start at night",
+   "pt": "Saindo de moto à noite"
+  },
+  "star": 0,
+  "rejected": false,
+  "score": 1
+ },
+ {
+  "id": "cb3c87384",
+  "cat": "music",
+  "label": {
+   "en": "Concert stage lights",
+   "pt": "Luzes do palco"
+  },
+  "star": 0,
+  "rejected": false,
+  "score": 2
+ },
+ {
+  "id": "c7ad2f569",
+  "cat": "music",
+  "label": {
+   "en": "Weezer live on stage",
+   "pt": "Weezer ao vivo"
+  },
+  "star": 0,
+  "rejected": false,
+  "score": 2
+ },
+ {
+  "id": "cee7352ef",
+  "cat": "ice",
+  "label": {
+   "en": "Cutting ice blocks on lake",
+   "pt": "Cortando blocos de gelo no lago"
+  },
+  "star": 0,
+  "rejected": false,
+  "score": 3
+ },
+ {
+  "id": "cf29cb9a8",
+  "cat": "nature",
+  "label": {
+   "en": "Garter snake on boardwalk",
+   "pt": "Cobra-liga na passarela"
+  },
+  "star": 0,
+  "rejected": false,
+  "score": 2
+ },
+ {
+  "id": "c4dce3bb2",
+  "cat": "food",
+  "label": {
+   "en": "Building a Brazilian hot dog",
+   "pt": "Montando um cachorro-quente brasileiro"
+  },
+  "star": 0,
+  "rejected": false,
+  "score": 2
+ },
+ {
+  "id": "c5d5d0b1e",
+  "cat": "ice",
+  "label": {
+   "en": "Walking out of icy lake",
+   "pt": "Saindo do lago gelado"
+  },
+  "star": 0,
+  "rejected": false,
+  "score": 4
+ },
+ {
+  "id": "c8b5651d5",
+  "cat": "gym",
+  "label": {
+   "en": "Dumbbell bench press",
+   "pt": "Supino com halteres"
+  },
+  "star": 0,
+  "rejected": false,
+  "score": 3
+ },
+ {
+  "id": "c072f6cd7",
+  "cat": "gym",
+  "label": {
+   "en": "Cable trap shrugs",
+   "pt": "Encolhimento no cabo"
+  },
+  "star": 0,
+  "rejected": false,
+  "score": 2
+ },
+ {
+  "id": "ce3bf7cda",
+  "cat": "gym",
+  "label": {
+   "en": "Deadlift in the gym",
+   "pt": "Levantamento terra na academia"
+  },
+  "star": 0,
+  "rejected": false,
+  "score": 3
+ },
+ {
+  "id": "cc6725fc4",
+  "cat": "wood",
+  "label": {
+   "en": "Handmade board game table",
+   "pt": "Mesa de jogos feita à mão"
+  },
+  "star": 0,
+  "rejected": false,
+  "score": 3
+ },
+ {
+  "id": "c7171dc87",
+  "cat": "food",
+  "label": {
+   "en": "Homemade feijoada spread",
+   "pt": "Feijoada caseira"
+  },
+  "star": 0,
+  "rejected": false,
+  "score": 2
+ },
+ {
+  "id": "cbc6fe53c",
+  "cat": "gym",
+  "label": {
+   "en": "Cable lateral raises",
+   "pt": "Elevação lateral no cabo"
+  },
+  "star": 0,
+  "rejected": false,
+  "score": 4
+ },
+ {
+  "id": "c5bf955eb",
+  "cat": "ice",
+  "label": {
+   "en": "Sunset cold lake swim",
+   "pt": "Nado no lago gelado ao pôr do sol"
+  },
+  "star": 0,
+  "rejected": false,
+  "score": 4
+ },
+ {
+  "id": "c16f5bfc2",
+  "cat": "gym",
+  "label": {
+   "en": "Pull-up bar backflip",
+   "pt": "Mortal na barra fixa"
+  },
+  "star": 0,
+  "rejected": false,
+  "score": 3
+ },
+ {
+  "id": "c942a4053",
+  "cat": "gym",
+  "label": {
+   "en": "Bouldering at climbing gym",
+   "pt": "Boulder na academia de escalada"
+  },
+  "star": 0,
+  "rejected": false,
+  "score": 4
+ },
+ {
+  "id": "c592c3dfb",
+  "cat": "ice",
+  "label": {
+   "en": "Sunny ice lane dip",
+   "pt": "Mergulho na raia de gelo ao sol"
+  },
+  "star": 0,
+  "rejected": false,
+  "score": 5
+ },
+ {
+  "id": "c808f5a23",
+  "cat": "travel",
+  "label": {
+   "en": "Times Square billboards",
+   "pt": "Telões da Times Square"
+  },
+  "star": 0,
+  "rejected": false,
+  "score": 2
+ },
+ {
+  "id": "cc992d593",
+  "cat": "nature",
+  "label": {
+   "en": "Strange light in night sky",
+   "pt": "Luz estranha no céu à noite"
+  },
+  "star": 0,
+  "rejected": true,
+  "score": 1
+ },
+ {
+  "id": "c21fe4e6d",
+  "cat": "nature",
+  "label": {
+   "en": "Penguins swimming at the zoo",
+   "pt": "Pinguins nadando no zoológico"
+  },
+  "star": 0,
+  "rejected": false,
+  "score": 2
+ },
+ {
+  "id": "c162a3081",
+  "cat": "snow",
+  "label": {
+   "en": "Tubing hill in the mountains",
+   "pt": "Boia na neve nas montanhas"
+  },
+  "star": 0,
+  "rejected": true,
+  "score": 1
+ },
+ {
+  "id": "c7ffa7714",
+  "cat": "snow",
+  "label": {
+   "en": "Tubing hill from the top",
+   "pt": "O morro de boia visto de cima"
+  },
+  "star": 0,
+  "rejected": true,
+  "score": 1
+ },
+ {
+  "id": "c119fd9a0",
+  "cat": "nature",
+  "label": {
+   "en": "Gorillas at the zoo",
+   "pt": "Gorilas no zoológico"
+  },
+  "star": 0,
+  "rejected": false,
+  "score": 1
+ },
+ {
+  "id": "c14e1c47f",
+  "cat": "food",
+  "label": {
+   "en": "Charcoal grill fire",
+   "pt": "Fogo na churrasqueira"
+  },
+  "star": 0,
+  "rejected": false,
+  "score": 3
+ },
+ {
+  "id": "c9504e353",
+  "cat": "food",
+  "label": {
+   "en": "Cassava and chicken on grill",
+   "pt": "Mandioca e frango na grelha"
+  },
+  "star": 0,
+  "rejected": false,
+  "score": 3
+ },
+ {
+  "id": "ccde02cbd",
+  "cat": "other",
+  "label": {
+   "en": "Bowling under neon lights",
+   "pt": "Boliche na luz neon"
+  },
+  "star": 0,
+  "rejected": false,
+  "score": 1
+ },
+ {
+  "id": "c6d6564a6",
+  "cat": "nature",
+  "label": {
+   "en": "Tree in a Brazilian garden",
+   "pt": "Árvore num jardim brasileiro"
+  },
+  "star": 0,
+  "rejected": true,
+  "score": 1
+ },
+ {
+  "id": "c1a187fde",
+  "cat": "travel",
+  "label": {
+   "en": "Horse cart on a Brazilian street",
+   "pt": "Carroça numa rua do Brasil"
+  },
+  "star": 0,
+  "rejected": true,
+  "score": 1
+ },
+ {
+  "id": "c449d3890",
+  "cat": "food",
+  "label": {
+   "en": "Ribs in the air fryer",
+   "pt": "Costela na air fryer"
+  },
+  "star": 0,
+  "rejected": false,
+  "score": 1
+ },
+ {
+  "id": "cb85a3d64",
+  "cat": "food",
+  "label": {
+   "en": "Ribs in the dutch oven",
+   "pt": "Costela na panela de ferro"
+  },
+  "star": 0,
+  "rejected": false,
+  "score": 3
+ },
+ {
+  "id": "cd2290f24",
+  "cat": "gym",
+  "label": {
+   "en": "Trampoline basketball dunk",
+   "pt": "Enterrada no trampolim"
+  },
+  "star": 0,
+  "rejected": false,
+  "score": 3
+ },
+ {
+  "id": "c7b5c8a73",
+  "cat": "food",
+  "label": {
+   "en": "Flipping ribs with tongs",
+   "pt": "Virando a costela"
+  },
+  "star": 0,
+  "rejected": false,
+  "score": 3
+ },
+ {
+  "id": "c2052aa56",
+  "cat": "nature",
+  "label": {
+   "en": "Contrail in the morning sky",
+   "pt": "Rastro de avião no céu da manhã"
+  },
+  "star": 0,
+  "rejected": true,
+  "score": 1
+ },
+ {
+  "id": "cc45f1a3c",
+  "cat": "snow",
+  "label": {
+   "en": "Measuring fresh snowfall",
+   "pt": "Medindo a neve que caiu"
+  },
+  "star": 0,
+  "rejected": true,
+  "score": 1
+ },
+ {
+  "id": "cd155b3e1",
+  "cat": "music",
+  "label": {
+   "en": "Guitar lullaby at night",
+   "pt": "Canção de ninar no violão"
+  },
+  "star": 0,
+  "rejected": true,
+  "score": 1
+ },
+ {
+  "id": "cc0108f30",
+  "cat": "ice",
+  "label": {
+   "en": "Windy plunge in river lane",
+   "pt": "Mergulho com vento na raia do rio"
+  },
+  "star": 0,
+  "rejected": false,
+  "score": 2
+ },
+ {
+  "id": "c943bc45e",
+  "cat": "gym",
+  "label": {
+   "en": "Rope climb at climbing gym",
+   "pt": "Subida na corda"
+  },
+  "star": 0,
+  "rejected": false,
+  "score": 4
+ },
+ {
+  "id": "c38bc0cec",
+  "cat": "gym",
+  "label": {
+   "en": "Deep barbell squats",
+   "pt": "Agachamento profundo"
+  },
+  "star": 0,
+  "rejected": false,
+  "score": 2
+ },
+ {
+  "id": "c5b9d376c",
+  "cat": "gym",
+  "label": {
+   "en": "Ninja course bar swing",
+   "pt": "Balanço na barra do circuito ninja"
+  },
+  "star": 0,
+  "rejected": false,
+  "score": 4
+ },
+ {
+  "id": "c3e23b4f3",
+  "cat": "gym",
+  "label": {
+   "en": "Low-angle leg exercise",
+   "pt": "Exercício de perna visto de baixo"
+  },
+  "star": 0,
+  "rejected": true,
+  "score": 1
+ },
+ {
+  "id": "c99419a49",
+  "cat": "food",
+  "label": {
+   "en": "Steaks on a snowy grill",
+   "pt": "Bifes na grelha com neve"
+  },
+  "star": 0,
+  "rejected": false,
+  "score": 2
+ },
+ {
+  "id": "c97d57c50",
+  "cat": "ice",
+  "label": {
+   "en": "Wading into icy lake",
+   "pt": "Entrando no lago gelado"
+  },
+  "star": 0,
+  "rejected": false,
+  "score": 2
+ },
+ {
+  "id": "c307d8e2b",
+  "cat": "ice",
+  "label": {
+   "en": "Plunge between ice blocks",
+   "pt": "Mergulho entre blocos de gelo"
+  },
+  "star": 0,
+  "rejected": false,
+  "score": 4
+ },
+ {
+  "id": "c55c24cf2",
+  "cat": "snow",
+  "label": {
+   "en": "Snow angel after shoveling",
+   "pt": "Anjo na neve depois de tirar neve"
+  },
+  "star": 0,
+  "rejected": false,
+  "score": 3
+ },
+ {
+  "id": "ca0ace608",
+  "cat": "ice",
+  "label": {
+   "en": "Swimming the hand-cut ice hole",
+   "pt": "Nadando no buraco aberto à mão"
+  },
+  "star": 0,
+  "rejected": false,
+  "score": 4
+ },
+ {
+  "id": "cd46adc4d",
+  "cat": "ice",
+  "label": {
+   "en": "Cold plunge by ice blocks",
+   "pt": "Banho gelado entre blocos"
+  },
+  "star": 0,
+  "rejected": false,
+  "score": 3
+ },
+ {
+  "id": "c3e63a41b",
+  "cat": "ice",
+  "label": {
+   "en": "Butterfly in the ice lane",
+   "pt": "Borboleta na raia de gelo"
+  },
+  "star": 0,
+  "rejected": true,
+  "score": 2
+ },
+ {
+  "id": "cf3d1d66f",
+  "cat": "gym",
+  "label": {
+   "en": "Leg day with red plates",
+   "pt": "Treino de perna com anilhas vermelhas"
+  },
+  "star": 0,
+  "rejected": false,
+  "score": 3
+ },
+ {
+  "id": "ccb757fde",
+  "cat": "ice",
+  "label": {
+   "en": "Entering the ice pool",
+   "pt": "Entrando na piscina de gelo"
+  },
+  "star": 0,
+  "rejected": false,
+  "score": 3
+ },
+ {
+  "id": "ca4c8da6b",
+  "cat": "ice",
+  "label": {
+   "en": "Sunset swim between ice walls",
+   "pt": "Nado ao pôr do sol entre paredes de gelo"
+  },
+  "star": 0,
+  "rejected": false,
+  "score": 5
+ },
+ {
+  "id": "c46a381bb",
+  "cat": "gym",
+  "label": {
+   "en": "Smith machine split squats",
+   "pt": "Agachamento búlgaro no Smith"
+  },
+  "star": 0,
+  "rejected": false,
+  "score": 3
+ },
+ {
+  "id": "cd2b81100",
+  "cat": "ice",
+  "label": {
+   "en": "Three laps of the ice lane",
+   "pt": "Três voltas na raia de gelo"
+  },
+  "star": 0,
+  "rejected": false,
+  "score": 4
+ },
+ {
+  "id": "c4ee006d5",
+  "cat": "ice",
+  "label": {
+   "en": "100m ice lane swim",
+   "pt": "100 m na raia de gelo"
+  },
+  "star": 0,
+  "rejected": false,
+  "score": 4
+ },
+ {
+  "id": "c5194dc95",
+  "cat": "ice",
+  "label": {
+   "en": "Butterfly without goggles",
+   "pt": "Borboleta sem óculos"
+  },
+  "star": 0,
+  "rejected": false,
+  "score": 4
+ },
+ {
+  "id": "c644bd180",
+  "cat": "gym",
+  "label": {
+   "en": "Heavy dumbbell rows",
+   "pt": "Remada pesada com halter"
+  },
+  "star": 0,
+  "rejected": false,
+  "score": 2
+ },
+ {
+  "id": "caaa62232",
+  "cat": "ice",
+  "label": {
+   "en": "Swimming past blue ice blocks",
+   "pt": "Nadando entre blocos de gelo azuis"
+  },
+  "star": 0,
+  "rejected": false,
+  "score": 4
+ },
+ {
+  "id": "cb436d50a",
+  "cat": "gym",
+  "label": {
+   "en": "T-bar rows in pink tank",
+   "pt": "Remada cavalinho de regata rosa"
+  },
+  "star": 0,
+  "rejected": false,
+  "score": 3
+ },
+ {
+  "id": "c081917e6",
+  "cat": "food",
+  "label": {
+   "en": "Rolling and slicing sushi",
+   "pt": "Enrolando e cortando sushi"
+  },
+  "star": 0,
+  "rejected": false,
+  "score": 2
+ },
+ {
+  "id": "c58fbd87b",
+  "cat": "gym",
+  "label": {
+   "en": "Old-school barbell rows",
+   "pt": "Remada curvada à moda antiga"
+  },
+  "star": 0,
+  "rejected": false,
+  "score": 3
+ },
+ {
+  "id": "c533e0691",
+  "cat": "gym",
+  "label": {
+   "en": "Deadlift and pistol squats",
+   "pt": "Terra e agachamento pistol"
+  },
+  "star": 0,
+  "rejected": false,
+  "score": 3
+ },
+ {
+  "id": "c70be5505",
+  "cat": "gym",
+  "label": {
+   "en": "Heavy leg press",
+   "pt": "Leg press pesado"
+  },
+  "star": 0,
+  "rejected": false,
+  "score": 2
+ },
+ {
+  "id": "c9399460f",
+  "cat": "gym",
+  "label": {
+   "en": "Tibia raise machine",
+   "pt": "Máquina de tibial"
+  },
+  "star": 0,
+  "rejected": true,
+  "score": 1
+ },
+ {
+  "id": "cf4546d44",
+  "cat": "gym",
+  "label": {
+   "en": "Leg and chest day in Brazil",
+   "pt": "Perna e peito no Brasil"
+  },
+  "star": 0,
+  "rejected": false,
+  "score": 3
+ },
+ {
+  "id": "cb1507f81",
+  "cat": "gym",
+  "label": {
+   "en": "Hotel gym leg press",
+   "pt": "Leg press na academia do hotel"
+  },
+  "star": 0,
+  "rejected": false,
+  "score": 2
+ },
+ {
+  "id": "c86deaac7",
+  "cat": "food",
+  "label": {
+   "en": "Slicing first brisket",
+   "pt": "Fatiando o primeiro brisket"
+  },
+  "star": 0,
+  "rejected": true,
+  "score": 2
+ },
+ {
+  "id": "c6c276625",
+  "cat": "gym",
+  "label": {
+   "en": "Upside-down bridge hold",
+   "pt": "Ponte de cabeça para baixo"
+  },
+  "star": 0,
+  "rejected": false,
+  "score": 1
+ },
+ {
+  "id": "c81e055d3",
+  "cat": "gym",
+  "label": {
+   "en": "Incline dumbbell press",
+   "pt": "Supino inclinado com halteres"
+  },
+  "star": 0,
+  "rejected": false,
+  "score": 3
+ },
+ {
+  "id": "c3988fb98",
+  "cat": "gym",
+  "label": {
+   "en": "Hack squat attempt",
+   "pt": "Tentativa no hack"
+  },
+  "star": 0,
+  "rejected": false,
+  "score": 2
+ },
+ {
+  "id": "cdc2e80c7",
+  "cat": "gym",
+  "label": {
+   "en": "Five-plate hack squat",
+   "pt": "Hack com cinco anilhas"
+  },
+  "star": 0,
+  "rejected": false,
+  "score": 2
+ },
+ {
+  "id": "c63eab009",
+  "cat": "gym",
+  "label": {
+   "en": "One-arm dumbbell row",
+   "pt": "Remada unilateral"
+  },
+  "star": 0,
+  "rejected": false,
+  "score": 2
+ },
+ {
+  "id": "cfc7dcda4",
+  "cat": "ice",
+  "label": {
+   "en": "Prepping for an ice swim",
+   "pt": "Preparando para nadar no gelo"
+  },
+  "star": 0,
+  "rejected": false,
+  "score": 2
+ },
+ {
+  "id": "c1096fcba",
+  "cat": "ice",
+  "label": {
+   "en": "First ice swim of season",
+   "pt": "Primeiro nado no gelo da temporada"
+  },
+  "star": 0,
+  "rejected": false,
+  "score": 4
+ },
+ {
+  "id": "c24261658",
+  "cat": "gym",
+  "label": {
+   "en": "Smith machine pistol squats",
+   "pt": "Agachamento pistol no Smith"
+  },
+  "star": 0,
+  "rejected": false,
+  "score": 3
+ },
+ {
+  "id": "cdc81b1b7",
+  "cat": "snow",
+  "label": {
+   "en": "Walking to gym in snowstorm",
+   "pt": "Indo para a academia na nevasca"
+  },
+  "star": 0,
+  "rejected": false,
+  "score": 3
+ },
+ {
+  "id": "c5eac99f4",
+  "cat": "gym",
+  "label": {
+   "en": "Heavy barbell back squat",
+   "pt": "Agachamento livre pesado"
+  },
+  "star": 0,
+  "rejected": false,
+  "score": 3
+ },
+ {
+  "id": "c46125b3e",
+  "cat": "ice",
+  "label": {
+   "en": "Swimming the ice pool",
+   "pt": "Nadando na piscina de gelo"
+  },
+  "star": 0,
+  "rejected": false,
+  "score": 3
+ },
+ {
+  "id": "c44c03a8c",
+  "cat": "ice",
+  "label": {
+   "en": "Easing into the ice pool",
+   "pt": "Entrando devagar na piscina de gelo"
+  },
+  "star": 0,
+  "rejected": false,
+  "score": 3
+ },
+ {
+  "id": "c657a7253",
+  "cat": "ice",
+  "label": {
+   "en": "Laps in the long ice pool",
+   "pt": "Voltas na piscina de gelo comprida"
+  },
+  "star": 0,
+  "rejected": false,
+  "score": 2
+ },
+ {
+  "id": "ca70f3582",
+  "cat": "ice",
+  "label": {
+   "en": "Dive into sunny ice lane",
+   "pt": "Mergulho na raia de gelo ensolarada"
+  },
+  "star": 0,
+  "rejected": false,
+  "score": 5
+ },
+ {
+  "id": "cc6de3bec",
+  "cat": "ice",
+  "label": {
+   "en": "Swim in reopened ice pool",
+   "pt": "Nado na piscina de gelo reaberta"
+  },
+  "star": 0,
+  "rejected": false,
+  "score": 2
+ },
+ {
+  "id": "cc74d1b60",
+  "cat": "ice",
+  "label": {
+   "en": "Butterfly on a sunny day",
+   "pt": "Borboleta num dia de sol"
+  },
+  "star": 0,
+  "rejected": true,
+  "score": 4
+ },
+ {
+  "id": "ccd398d3f",
+  "cat": "ice",
+  "label": {
+   "en": "Butterfly at minus twenty",
+   "pt": "Borboleta a −20 °C"
+  },
+  "star": 0,
+  "rejected": false,
+  "score": 5
+ },
+ {
+  "id": "ca94616f1",
+  "cat": "ice",
+  "label": {
+   "en": "Sunny ice pool dip",
+   "pt": "Mergulho ao sol na piscina de gelo"
+  },
+  "star": 0,
+  "rejected": false,
+  "score": 3
+ },
+ {
+  "id": "c4c83d942",
+  "cat": "ice",
+  "label": {
+   "en": "Windy day ice dive",
+   "pt": "Mergulho no gelo com vento"
+  },
+  "star": 0,
+  "rejected": false,
+  "score": 4
+ },
+ {
+  "id": "c0baf720e",
+  "cat": "gym",
+  "label": {
+   "en": "Squat in yellow tank",
+   "pt": "Agachamento de regata amarela"
+  },
+  "star": 0,
+  "rejected": false,
+  "score": 3
+ },
+ {
+  "id": "c50cd837e",
+  "cat": "gym",
+  "label": {
+   "en": "Ninja course monkey bars",
+   "pt": "Barras do circuito ninja"
+  },
+  "star": 0,
+  "rejected": false,
+  "score": 4
+ },
+ {
+  "id": "c2f100c33",
+  "cat": "nature",
+  "label": {
+   "en": "Deer grazing at forest edge",
+   "pt": "Cervo pastando na beira da floresta"
+  },
+  "star": 0,
+  "rejected": false,
+  "score": 2
+ },
+ {
+  "id": "c57944ecf",
+  "cat": "gym",
+  "label": {
+   "en": "Heavy squat in red tank",
+   "pt": "Agachamento pesado de regata vermelha"
+  },
+  "star": 0,
+  "rejected": false,
+  "score": 4
+ },
+ {
+  "id": "c01d58aac",
+  "cat": "ice",
+  "label": {
+   "en": "Climbing out of ice pool",
+   "pt": "Saindo da piscina de gelo"
+  },
+  "star": 0,
+  "rejected": false,
+  "score": 4
+ },
+ {
+  "id": "c5b61c279",
+  "cat": "ice",
+  "label": {
+   "en": "Cold plunge in ice hole",
+   "pt": "Banho gelado no buraco no gelo"
+  },
+  "star": 0,
+  "rejected": false,
+  "score": 3
+ },
+ {
+  "id": "c0f97ba75",
+  "cat": "ice",
+  "label": {
+   "en": "Butterfly in bright ice pool",
+   "pt": "Borboleta na piscina de gelo"
+  },
+  "star": 0,
+  "rejected": true,
+  "score": 3
+ },
+ {
+  "id": "cc8607714",
+  "cat": "ice",
+  "label": {
+   "en": "Swim at the frozen beach",
+   "pt": "Nado na praia congelada"
+  },
+  "star": 0,
+  "rejected": false,
+  "score": 3
+ },
+ {
+  "id": "c1b9a3047",
+  "cat": "ice",
+  "label": {
+   "en": "Ice lane swim, blue sky",
+   "pt": "Nado na raia de gelo, céu azul"
+  },
+  "star": 0,
+  "rejected": false,
+  "score": 5
+ },
+ {
+  "id": "ce8cf452a",
+  "cat": "gym",
+  "label": {
+   "en": "Deadlift at the meet",
+   "pt": "Levantamento terra na competição"
+  },
+  "star": 0,
+  "rejected": true,
+  "score": 5
+ },
+ {
+  "id": "ce2d6c8c3",
+  "cat": "food",
+  "label": {
+   "en": "Ketchup on Costco pizza",
+   "pt": "Ketchup na pizza da Costco"
+  },
+  "star": 0,
+  "rejected": false,
+  "score": 2
+ },
+ {
+  "id": "c5e59d000",
+  "cat": "nature",
+  "label": {
+   "en": "Blue-lit aquarium tank",
+   "pt": "Aquário na luz azul"
+  },
+  "star": 0,
+  "rejected": true,
+  "score": 1
+ },
+ {
+  "id": "c07bcb843",
+  "cat": "nature",
+  "label": {
+   "en": "Seahorse among coral",
+   "pt": "Cavalo-marinho entre corais"
+  },
+  "star": 0,
+  "rejected": false,
+  "score": 2
+ },
+ {
+  "id": "cd2f858a3",
+  "cat": "travel",
+  "label": {
+   "en": "Downtown view from window",
+   "pt": "O centro visto da janela"
+  },
+  "star": 0,
+  "rejected": true,
+  "score": 1
+ },
+ {
+  "id": "cbf141ced",
+  "cat": "nature",
+  "label": {
+   "en": "Sea anemones in aquarium",
+   "pt": "Anêmonas no aquário"
+  },
+  "star": 0,
+  "rejected": false,
+  "score": 2
+ },
+ {
+  "id": "c214db431",
+  "cat": "travel",
+  "label": {
+   "en": "City lights from glass elevator",
+   "pt": "Luzes da cidade do elevador de vidro"
+  },
+  "star": 0,
+  "rejected": true,
+  "score": 1
+ },
+ {
+  "id": "c47417a21",
+  "cat": "nature",
+  "label": {
+   "en": "Sand tiger shark gliding",
+   "pt": "Tubarão-touro deslizando"
+  },
+  "star": 0,
+  "rejected": false,
+  "score": 2
+ },
+ {
+  "id": "cb615a309",
+  "cat": "nature",
+  "label": {
+   "en": "Kelp forest aquarium tank",
+   "pt": "Floresta de algas no aquário"
+  },
+  "star": 0,
+  "rejected": false,
+  "score": 2
+ },
+ {
+  "id": "cd7609318",
+  "cat": "nature",
+  "label": {
+   "en": "Tropical fish over coral reef",
+   "pt": "Peixes tropicais no recife"
+  },
+  "star": 0,
+  "rejected": false,
+  "score": 2
+ },
+ {
+  "id": "cbb1ca253",
+  "cat": "nature",
+  "label": {
+   "en": "Fish in aquarium tank",
+   "pt": "Peixes no aquário"
+  },
+  "star": 0,
+  "rejected": false,
+  "score": 1
+ },
+ {
+  "id": "cd80caf78",
+  "cat": "travel",
+  "label": {
+   "en": "Toronto sunset from CN Tower",
+   "pt": "Pôr do sol de Toronto da CN Tower"
+  },
+  "star": 0,
+  "rejected": false,
+  "score": 2
+ },
+ {
+  "id": "c7937cd00",
+  "cat": "nature",
+  "label": {
+   "en": "Jellyfish under blue light",
+   "pt": "Águas-vivas na luz azul"
+  },
+  "star": 0,
+  "rejected": false,
+  "score": 2
+ },
+ {
+  "id": "c33846350",
+  "cat": "other",
+  "label": {
+   "en": "Dark elevator selfie",
+   "pt": "Selfie no elevador escuro"
+  },
+  "star": 0,
+  "rejected": true,
+  "score": 1
+ },
+ {
+  "id": "c2bad23e4",
+  "cat": "nature",
+  "label": {
+   "en": "Dark aquarium tank",
+   "pt": "Aquário escuro"
+  },
+  "star": 0,
+  "rejected": true,
+  "score": 1
+ },
+ {
+  "id": "c4c5bb046",
+  "cat": "nature",
+  "label": {
+   "en": "Stingrays gliding in aquarium",
+   "pt": "Arraias deslizando no aquário"
+  },
+  "star": 0,
+  "rejected": false,
+  "score": 2
+ },
+ {
+  "id": "cd60d2482",
+  "cat": "nature",
+  "label": {
+   "en": "Shark swimming overhead",
+   "pt": "Tubarão nadando por cima"
+  },
+  "star": 0,
+  "rejected": false,
+  "score": 2
+ },
+ {
+  "id": "cdb572d25",
+  "cat": "nature",
+  "label": {
+   "en": "Drifting jellyfish",
+   "pt": "Águas-vivas à deriva"
+  },
+  "star": 0,
+  "rejected": false,
+  "score": 2
+ },
+ {
+  "id": "c1f7f3b99",
+  "cat": "travel",
+  "label": {
+   "en": "Night city from glass elevator",
+   "pt": "A cidade à noite do elevador de vidro"
+  },
+  "star": 0,
+  "rejected": true,
+  "score": 1
+ },
+ {
+  "id": "cc7eb9d6d",
+  "cat": "travel",
+  "label": {
+   "en": "Waterfront skyline at dusk",
+   "pt": "Orla ao entardecer"
+  },
+  "star": 0,
+  "rejected": true,
+  "score": 1
+ },
+ {
+  "id": "cc9f9a0a2",
+  "cat": "ice",
+  "label": {
+   "en": "Getting into the frozen lake",
+   "pt": "Entrando no lago congelado"
+  },
+  "star": 0,
+  "rejected": false,
+  "score": 3
+ },
+ {
+  "id": "c622764b3",
+  "cat": "ice",
+  "label": {
+   "en": "Walking out onto lake ice",
+   "pt": "Caminhando sobre o lago congelado"
+  },
+  "star": 0,
+  "rejected": false,
+  "score": 3
+ },
+ {
+  "id": "cbe16a49f",
+  "cat": "ice",
+  "label": {
+   "en": "Swimming between ice floes",
+   "pt": "Nadando entre placas de gelo"
+  },
+  "star": 0,
+  "rejected": false,
+  "score": 2
+ },
+ {
+  "id": "c809b3d13",
+  "cat": "ice",
+  "label": {
+   "en": "Wading into icy lake",
+   "pt": "Entrando no lago gelado"
+  },
+  "star": 0,
+  "rejected": false,
+  "score": 3
+ },
+ {
+  "id": "c27456eb3",
+  "cat": "gym",
+  "label": {
+   "en": "Leg extensions at the gym",
+   "pt": "Cadeira extensora"
+  },
+  "star": 0,
+  "rejected": false,
+  "score": 2
+ },
+ {
+  "id": "c5486814e",
+  "cat": "food",
+  "label": {
+   "en": "Tortillas on the charcoal grill",
+   "pt": "Tortilhas na churrasqueira"
+  },
+  "star": 0,
+  "rejected": false,
+  "score": 3
+ },
+ {
+  "id": "ced07175d",
+  "cat": "food",
+  "label": {
+   "en": "Slicing grilled steak",
+   "pt": "Fatiando o bife grelhado"
+  },
+  "star": 0,
+  "rejected": false,
+  "score": 2
+ },
+ {
+  "id": "c5ce5a133",
+  "cat": "food",
+  "label": {
+   "en": "Firing up the grill in snow",
+   "pt": "Acendendo a churrasqueira na neve"
+  },
+  "star": 0,
+  "rejected": false,
+  "score": 2
+ },
+ {
+  "id": "ccae2f510",
+  "cat": "food",
+  "label": {
+   "en": "Sausages smoking on the grill",
+   "pt": "Linguiças defumando na grelha"
+  },
+  "star": 0,
+  "rejected": false,
+  "score": 3
+ },
+ {
+  "id": "c55074fe1",
+  "cat": "food",
+  "label": {
+   "en": "Steaks searing over charcoal",
+   "pt": "Bifes selando no carvão"
+  },
+  "star": 0,
+  "rejected": false,
+  "score": 3
+ },
+ {
+  "id": "c5f4eb936",
+  "cat": "gym",
+  "label": {
+   "en": "Deadlift reps",
+   "pt": "Repetições de levantamento terra"
+  },
+  "star": 0,
+  "rejected": false,
+  "score": 4
+ },
+ {
+  "id": "cc226933b",
+  "cat": "other",
+  "label": {
+   "en": "Glowing event wristband",
+   "pt": "Pulseira de evento brilhando"
+  },
+  "star": 0,
+  "rejected": true,
+  "score": 1
+ },
+ {
+  "id": "caf0adf75",
+  "cat": "gym",
+  "label": {
+   "en": "Barbell rows from floor",
+   "pt": "Remada com barra do chão"
+  },
+  "star": 0,
+  "rejected": false,
+  "score": 3
+ },
+ {
+  "id": "c05173719",
+  "cat": "gym",
+  "label": {
+   "en": "Heavy back squat",
+   "pt": "Agachamento livre pesado"
+  },
+  "star": 0,
+  "rejected": false,
+  "score": 4
+ },
+ {
+  "id": "c44c6face",
+  "cat": "ice",
+  "label": {
+   "en": "Hauling ice blocks on the lake",
+   "pt": "Puxando blocos de gelo no lago"
+  },
+  "star": 0,
+  "rejected": false,
+  "score": 4
+ },
+ {
+  "id": "cf8302b36",
+  "cat": "ice",
+  "label": {
+   "en": "Swimming the ice lane",
+   "pt": "Nadando na raia de gelo"
+  },
+  "star": 0,
+  "rejected": false,
+  "score": 4
+ }
+]

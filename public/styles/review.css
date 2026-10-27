@@ -1,0 +1,35 @@
+/* The local clip review page (/review). Not part of the public site. */
+*, *::before, *::after { box-sizing: border-box; }
+body.rv-page { margin: 0; background: #0b0b0b; color: #ece7df; font: 14px/1.45 system-ui, sans-serif; }
+.rv-page a { color: #e8b86a; }
+.rv-head { position: sticky; top: 0; z-index: 3; display: flex; justify-content: space-between; align-items: center; gap: 1rem; padding: 0.9rem 1.2rem; background: rgb(11 11 11 / 0.94); backdrop-filter: blur(10px); border-bottom: 1px solid #262626; }
+.rv-head h1 { margin: 0 0 0.2rem; font: 600 1.25rem/1.1 system-ui, sans-serif; }
+.rv-head p { margin: 0; color: #a8a196; }
+.rv-toggle { white-space: nowrap; color: #cfc8bc; }
+.rv-tabs { position: sticky; top: 4.6rem; z-index: 2; display: flex; gap: 0.35rem; flex-wrap: wrap; padding: 0.6rem 1.2rem; background: rgb(11 11 11 / 0.94); border-bottom: 1px solid #1d1d1d; }
+.rv-tabs a { padding: 0.35rem 0.75rem; border-radius: 999px; border: 1px solid #2a2a2a; color: #ece7df; text-decoration: none; }
+.rv-tabs span { color: #8f887d; margin-left: 0.3rem; }
+.rv-group { padding: 1.2rem; scroll-margin-top: 8rem; }
+.rv-group h2 { margin: 0 0 0.8rem; font: 600 1.05rem/1 system-ui, sans-serif; color: #e8b86a; }
+.rv-grid { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); gap: 0.8rem; }
+.rv { display: flex; flex-direction: column; background: #151515; border: 1px solid #262626; border-radius: 12px; overflow: hidden; transition: opacity 0.2s, border-color 0.2s; }
+.rv video { width: 100%; aspect-ratio: 9 / 16; object-fit: cover; background: #000; display: block; }
+.rv-info { padding: 0.5rem 0.6rem 0.2rem; display: grid; gap: 0.15rem; }
+.rv-info b { font-weight: 600; font-size: 0.82rem; }
+.rv-info small { color: #8f887d; font-size: 0.72rem; }
+.rv-actions { display: flex; flex-wrap: wrap; gap: 0.3rem; padding: 0.4rem 0.6rem 0.6rem; }
+.rv-actions button, .rv-actions select { font: inherit; font-size: 0.75rem; color: #ece7df; background: #1f1f1f; border: 1px solid #333; border-radius: 999px; padding: 0.25rem 0.55rem; cursor: pointer; }
+.rv-actions select { flex: 1; min-width: 0; }
+.rv-star span { color: #555; }
+.rv[data-star='1'] .rv-star span:nth-child(-n+1), .rv[data-star='2'] .rv-star span:nth-child(-n+2), .rv[data-star='3'] .rv-star span { color: #e8b86a; }
+.rv[data-star]:not([data-star='0']) { border-color: rgb(232 184 106 / 0.6); }
+.rv .if-rejected, .rv[data-rejected='true'] .if-live { display: none; }
+.rv[data-rejected='true'] .if-rejected { display: inline; }
+.rv[data-rejected='true'] { opacity: 0.4; }
+.rv[data-rejected='true']:hover { opacity: 0.85; }
+.rv-reject { border-color: #5a2a2a !important; }
+.rv[data-rejected='true'] .rv-reject { border-color: #2f5a2a !important; }
+.hide-rejected .rv[data-rejected='true'] { display: none; }
+.rv.is-saving { opacity: 0.6; }
+.rv.is-error { border-color: #c0392b; }
+.rv[data-moved]::after { content: 'Moved: reload to regroup'; display: block; padding: 0 0.6rem 0.5rem; color: #e8b86a; font-size: 0.7rem; }

@@ -1,11 +1,33 @@
-*.swp
 node_modules/
+tmp/
+dist/
 .DS_Store
-.sass-cache/
-temp.coffee
-deploy.db
-assets/sass/bower_components/
-.build/
-public/
-.intermediate-representation/
-.cache/
+
+# Secrets and local config. This repo is PUBLIC.
+.env
+.env.*
+!.env.example
+.dev.vars
+.wrangler/
+*.pem
+*.key
+*.crt
+*.csr
+*.p12
+*.pfx
+
+# Raw media and originals live in Cloudflare R2, never in git.
+media-originals/
+*.mp4
+*.mov
+*.m4v
+*.heic
+*.dng
+*.psd
+*.xcf
+
+# Local tooling config
+.claude/
+
+# Local-only media for the design prototypes (originals stay out of git)
+public/media/

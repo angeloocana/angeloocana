@@ -1,21 +1,29 @@
 # angeloocana.com
 
-[![Codacy Badge](https://api.codacy.com/project/badge/Grade/0b3a917c0cb9433cb12eec33b989c723)](https://www.codacy.com/app/angeloocana/angeloocana?utm_source=github.com&utm_medium=referral&utm_content=angeloocana/angeloocana&utm_campaign=badger)
-[![Build Status](https://travis-ci.org/angeloocana/angeloocana.svg)](https://travis-ci.org/angeloocana/angeloocana)
-[![codecov.io](http://codecov.io/github/angeloocana/angeloocana/coverage.svg)](http://codecov.io/github/angeloocana/angeloocana)
-[![Dependency Status](https://gemnasium.com/angeloocana/angeloocana.svg)](https://gemnasium.com/angeloocana/angeloocana)
-[![bitHound Score](https://www.bithound.io/github/gotwarlost/istanbul/badges/score.svg)](https://www.bithound.io/github/angeloocana/angeloocana)
-[![MIT license](http://img.shields.io/badge/license-MIT-brightgreen.svg)](http://opensource.org/licenses/MIT)
+Ângelo Ocanã's personal site: projects, career and hobbies, in English (`/`) and Portuguese (`/pt`).
+Built with Remix 3, prerendered to static files and hosted on Cloudflare.
 
-=> https://angeloocana.com
+## Where things live
 
-# Built with
+- `app/copy.ts`: every word on the page, English and Portuguese side by side.
+- `app/content/career.ts`: the jobs (each one has an optional `pt` block).
+- `app/content.ts`: email and social links.
+- `content/posts/`: blog posts in Markdown, kept as first published. `blog/x/y.en.md` is served at `/en/blog/x/y/`, `.pt.md` at `/pt/blog/x/y/`. Add a file to publish a post.
+- `app/content/clips.json`: the home row's video clips. Curate them at http://localhost:44100/review while `npm run dev` runs: reject a clip, star it (★★★ opens the row) or move it to another category. Only live clips are built.
+- `app/actions/home-page.tsx`: the page. `app/ui/public/` holds the small browser scripts (scroll scenes, career tabs, cursor).
+- `public/styles/`: the CSS. `public/media/`: screenshots and video loops (git-ignored, never committed).
 
-- Gatsby
-- React
-- Graphql
-- Nodejs
-- Styled Components
-- Eslint
-- Jest
-- Babel
+## Commands
+
+```sh
+npm i
+npm run dev        # http://localhost:44100, restarts on change
+npm test
+npm run typecheck
+npm run build      # prerender to dist/
+npm run preview    # build, then serve dist/ the way Cloudflare will
+npm run deploy     # build and publish to Cloudflare (run `npx wrangler login` first)
+```
+
+The repo is public: keep secrets, `.env` files, raw media and personal data out of commits.
+The pre-commit hook in `.githooks/` checks for them (`git config core.hooksPath .githooks`).
