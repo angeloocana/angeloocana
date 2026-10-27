@@ -147,7 +147,7 @@ export function HomePage(handle: Handle<{ lang: Lang }>) {
                 </video>
                 <div class="clip-copy" aria-hidden="true">
                   <p class="clip-cat">{names[clip.cat]}</p>
-                  <p class="clip-label">{clip.label[lang]}</p>
+                  {!clip.captionRejected && <p class="clip-label">{clip.label[lang]}</p>}
                 </div>
               </li>
             ))}

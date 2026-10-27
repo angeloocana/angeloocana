@@ -47,6 +47,8 @@ export type Clip = {
   rejected: boolean
   /** How strong it is as an opening clip, 1..5 (from the first review). */
   score: number
+  /** The caption was rejected on the review page: the card shows only its category. */
+  captionRejected?: boolean
 }
 
 const FILE = new URL('./clips.json', import.meta.url)

@@ -1,3 +1,5 @@
+import { existsSync, readFileSync, writeFileSync } from 'node:fs'
+
 import { Document } from './document.tsx'
 import { CATEGORIES, CATEGORY_NAMES, loadClips, saveClips, type Category, type Clip } from '../content/clips.ts'
 import { ReviewBoard } from '../ui/public/review-board.tsx'
@@ -8,15 +10,33 @@ import { ReviewBoard } from '../ui/public/review-board.tsx'
 
 export const reviewEnabled = () => process.env.NODE_ENV === 'development'
 
-/** POST /review with { id, star?, rejected?, cat? } */
+// Feedback notes stay on this machine: clip-feedback.json is git-ignored, so they never reach the public repo.
+const NOTES = 'clip-feedback.json'
+function loadNotes(): Record<string, string> {
+  return existsSync(NOTES) ? JSON.parse(readFileSync(NOTES, 'utf8')) : {}
+}
+
+/** POST /review with { id, star?, rejected?, cat?, label?, captionRejected?, note? } */
 export async function saveReview(request: Request) {
-  let body = (await request.json()) as Partial<Clip> & { id: string }
+  let body = (await request.json()) as Partial<Clip> & { id: string; note?: string }
   let clips = loadClips()
   let clip = clips.find((c) => c.id === body.id)
   if (!clip) return Response.json({ error: 'Unknown clip' }, { status: 404 })
   if (body.star !== undefined) clip.star = Math.max(0, Math.min(3, Math.round(Number(body.star) || 0)))
   if (body.rejected !== undefined) clip.rejected = Boolean(body.rejected)
   if (body.cat !== undefined && (CATEGORIES as readonly string[]).includes(body.cat)) clip.cat = body.cat as Category
+  if (body.captionRejected !== undefined) clip.captionRejected = Boolean(body.captionRejected) || undefined
+  if (body.label) {
+    let clean = (text: unknown, fallback: string) => (typeof text === 'string' && text.trim() ? text.trim().slice(0, 120) : fallback)
+    clip.label = { en: clean(body.label.en, clip.label.en), pt: clean(body.label.pt, clip.label.pt) }
+  }
+  if (body.note !== undefined) {
+    let notes = loadNotes()
+    let note = String(body.note).trim().slice(0, 2000)
+    if (note) notes[clip.id] = note
+    else delete notes[clip.id]
+    writeFileSync(NOTES, JSON.stringify(notes, null, 1) + '\n')
+  }
   saveClips(clips)
   return Response.json(clip)
 }
@@ -30,6 +50,7 @@ export function ReviewPage() {
       clips: clips.filter((c) => c.cat === cat).sort((a, b) => Number(a.rejected) - Number(b.rejected) || b.star - a.star || b.score - a.score),
     })).filter((g) => g.clips.length)
     let live = clips.filter((c) => !c.rejected).length
+    let notes = loadNotes()
     return (
       <Document title="Review clips" bodyClass="rv-page" fonts={null} styles={['/styles/review.css']}>
         <ReviewBoard />
@@ -38,7 +59,7 @@ export function ReviewPage() {
             <h1>Review clips</h1>
             <p>
               <b data-live>{live}</b> on the home page · {clips.length - live} rejected. Hover to play. <b>★</b> moves a clip to the front
-              (★★★ first). Changes save right away; <a href="/">open the home page</a> to see the order.
+              (★★★ first). Edit captions in place, reject a caption to hide it, or leave feedback for Claude. Changes save right away; <a href="/">open the home page</a> to see the order.
             </p>
           </div>
           <label class="rv-toggle"><input type="checkbox" data-hide-rejected /> Hide rejected</label>
@@ -56,18 +77,22 @@ export function ReviewPage() {
               <h2>{names[g.cat]}</h2>
               <ul class="rv-grid">
                 {g.clips.map((clip) => (
-                  <li key={clip.id} class="rv" data-id={clip.id} data-star={String(clip.star)} data-rejected={String(clip.rejected)}>
+                  <li key={clip.id} class="rv" data-id={clip.id} data-star={String(clip.star)} data-rejected={String(clip.rejected)} data-caption-rejected={String(!!clip.captionRejected)}>
                     <video muted loop playsInline preload="none" poster={`/media/clips/${clip.id}.jpg`} src={`/media/clips/${clip.id}.mp4`} />
                     <div class="rv-info">
-                      <b>{clip.label.en}</b>
-                      <small>{clip.label.pt} · score {clip.score}</small>
+                      <label class="rv-caption"><span>EN</span><input data-field="en" value={clip.label.en} maxLength={120} /></label>
+                      <label class="rv-caption"><span>PT</span><input data-field="pt" value={clip.label.pt} maxLength={120} /></label>
+                      <small>score {clip.score}</small>
                     </div>
                     <div class="rv-actions">
                       <button type="button" class="rv-star" data-act="star" title="Star: click to cycle ★ → ★★ → ★★★ → none">
                         <span>★</span><span>★</span><span>★</span>
                       </button>
                       <button type="button" class="rv-reject" data-act="reject">
-                        <span class="if-live">Reject</span><span class="if-rejected">Restore</span>
+                        <span class="if-live">Reject clip</span><span class="if-rejected">Restore clip</span>
+                      </button>
+                      <button type="button" class="rv-cap" data-act="caption" title="Hide this caption on the site (the card shows only its category)">
+                        <span class="if-cap-ok">Reject caption</span><span class="if-cap-off">Restore caption</span>
                       </button>
                       <select data-act="cat" aria-label="Category">
                         {CATEGORIES.map((cat) => (
@@ -75,6 +100,8 @@ export function ReviewPage() {
                         ))}
                       </select>
                     </div>
+                    <textarea class="rv-note" data-field="note" rows={2} placeholder="Feedback for Claude (only saved on this Mac)" value={notes[clip.id] ?? ''} />
+                    <p class="rv-saved" aria-live="polite" />
                   </li>
                 ))}
               </ul>

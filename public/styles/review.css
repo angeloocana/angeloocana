@@ -15,7 +15,16 @@ body.rv-page { margin: 0; background: #0b0b0b; color: #ece7df; font: 14px/1.45 s
 .rv { display: flex; flex-direction: column; background: #151515; border: 1px solid #262626; border-radius: 12px; overflow: hidden; transition: opacity 0.2s, border-color 0.2s; }
 .rv video { width: 100%; aspect-ratio: 9 / 16; object-fit: cover; background: #000; display: block; }
 .rv-info { padding: 0.5rem 0.6rem 0.2rem; display: grid; gap: 0.15rem; }
-.rv-info b { font-weight: 600; font-size: 0.82rem; }
+.rv-caption { display: grid; grid-template-columns: 1.6rem 1fr; align-items: center; gap: 0.3rem; }
+.rv-caption span { color: #8f887d; font-size: 0.66rem; font-weight: 600; }
+.rv-caption input, .rv-note { width: 100%; font: inherit; font-size: 0.78rem; color: #ece7df; background: #0f0f0f; border: 1px solid #2c2c2c; border-radius: 6px; padding: 0.3rem 0.4rem; }
+.rv-caption input:focus, .rv-note:focus { outline: none; border-color: #e8b86a; }
+.rv-note { display: block; width: calc(100% - 1.2rem); margin: 0 0.6rem 0.4rem; resize: vertical; min-height: 2.4rem; }
+.rv-saved { margin: 0 0.6rem 0.4rem; min-height: 1em; color: #7fc97a; font-size: 0.7rem; }
+.rv .if-cap-off, .rv[data-caption-rejected='true'] .if-cap-ok { display: none; }
+.rv[data-caption-rejected='true'] .if-cap-off { display: inline; }
+.rv[data-caption-rejected='true'] .rv-caption input { text-decoration: line-through; color: #8f887d; }
+.rv[data-caption-rejected='true'] .rv-cap { border-color: #5a2a2a; }
 .rv-info small { color: #8f887d; font-size: 0.72rem; }
 .rv-actions { display: flex; flex-wrap: wrap; gap: 0.3rem; padding: 0.4rem 0.6rem 0.6rem; }
 .rv-actions button, .rv-actions select { font: inherit; font-size: 0.75rem; color: #ece7df; background: #1f1f1f; border: 1px solid #333; border-radius: 999px; padding: 0.25rem 0.55rem; cursor: pointer; }

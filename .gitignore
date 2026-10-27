@@ -31,3 +31,6 @@ media-originals/
 
 # Local-only media for the design prototypes (originals stay out of git)
 public/media/
+
+# private notes from the local clip review page
+clip-feedback.json
