@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+Disallow: /review
+
+Sitemap: https://angeloocana.com/sitemap.xml

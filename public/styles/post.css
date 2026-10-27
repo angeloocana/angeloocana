@@ -1,0 +1,36 @@
+/* A single post: a calm reading column under the same menu as the home page. */
+.post-main { padding: clamp(6rem, 12vh, 8rem) var(--gut) clamp(3rem, 8vh, 6rem); }
+/* one column that never grows past the screen; long code scrolls inside its own box */
+.post { max-width: 44rem; margin: 0 auto; display: grid; grid-template-columns: minmax(0, 1fr); gap: 1.1rem; }
+.post-back { justify-self: start; display: inline-flex; gap: 0.5rem; align-items: center; color: var(--dim); text-decoration: none; font: 500 0.7rem/1 var(--sans); letter-spacing: 0.2em; text-transform: uppercase; transition: color 0.3s; }
+.post-back:hover { color: var(--amber); }
+.post-back span { transition: translate 0.4s var(--ease); }
+.post-back:hover span { translate: -4px 0; }
+.post h1 { font-size: clamp(2.4rem, 1.4rem + 3.6vw, 4.4rem); line-height: 1; letter-spacing: -0.015em; }
+.post-translation { justify-self: start; display: inline-flex; gap: 0.5rem; padding: 0.55rem 0.9rem; border-radius: 999px; border: 1px solid rgb(232 184 106 / 0.45); color: var(--amber); text-decoration: none; font: 500 0.78rem/1 var(--sans); transition: background 0.3s; }
+.post-translation:hover { background: rgb(232 184 106 / 0.1); }
+.post-video { margin: 0.6rem 0 0; display: grid; gap: 0.5rem; }
+.post-video iframe { width: 100%; aspect-ratio: 16 / 9; border: 0; border-radius: 16px; background: #000; }
+.post-video figcaption a { color: var(--dim); font-size: 0.85rem; }
+
+/* the post itself: the old Markdown, set for reading */
+.post-body { margin-top: 1rem; font: 300 1.1rem/1.8 var(--sans); color: #ddd6ca; overflow-wrap: anywhere; }
+.post-body > * + * { margin-top: 1.15em; }
+.post-body h2, .post-body h3, .post-body h4 { margin-top: 1.8em; font-family: var(--serif); font-weight: 400; color: var(--text); line-height: 1.15; }
+.post-body h2 { font-size: 2rem; }
+.post-body h3 { font-size: 1.55rem; }
+.post-body h4 { font-size: 1.25rem; }
+.post-body a { color: var(--amber); }
+.post-body strong { font-weight: 600; color: var(--text); }
+.post-body ul, .post-body ol { padding-left: 1.4rem; }
+.post-body ul { list-style: disc; }
+.post-body ol { list-style: decimal; }
+.post-body li + li { margin-top: 0.35em; }
+.post-body blockquote { margin-inline: 0; padding: 0.2rem 0 0.2rem 1.2rem; border-left: 2px solid var(--amber); color: #c9c2b6; font-family: var(--serif); font-size: 1.25rem; }
+.post-body code { font: 400 0.88em/1.5 ui-monospace, 'SF Mono', Menlo, monospace; padding: 0.15em 0.4em; border-radius: 6px; background: rgb(255 255 255 / 0.07); color: #f0e6d6; }
+.post-body pre { padding: 1.1rem 1.25rem; border-radius: 14px; border: 1px solid var(--line); background: #0f0f0f; overflow-x: auto; line-height: 1.6; }
+.post-body pre code { padding: 0; background: none; font-size: 0.85rem; color: #d9e8c8; }
+.post-body img { max-width: 100%; height: auto; border-radius: 12px; }
+.post-body table { width: 100%; border-collapse: collapse; font-size: 0.95rem; }
+.post-body th, .post-body td { padding: 0.5rem 0.6rem; border-bottom: 1px solid var(--line); text-align: left; }
+.post-body hr { border: 0; border-top: 1px solid var(--line); }
