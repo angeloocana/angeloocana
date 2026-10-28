@@ -20,7 +20,9 @@
 /* ---------- title intro ---------- */
 .cin-intro { position: fixed; inset: 0; z-index: 2000; display: grid; place-items: center; background: #000; pointer-events: none; animation: intro-out 0.9s ease 2.1s forwards; }
 .cin-intro p { display: grid; justify-items: center; gap: 0.6rem; }
-.cin-intro span { font: 400 clamp(2rem, 1rem + 4vw, 4rem)/1 var(--serif); letter-spacing: 0.02em; animation: intro-in 1.4s var(--ease) 0.2s both; }
+/* The blur filter clips to the box on iPhones, and line-height 1 leaves the Â's accent and the g's tail
+   outside it. The padding gives them room; the negative margin keeps the layout where it was. */
+.cin-intro span { font: 400 clamp(2rem, 1rem + 4vw, 4rem)/1 var(--serif); letter-spacing: 0.02em; padding-block: 0.2em; margin-block: -0.2em; animation: intro-in 1.4s var(--ease) 0.2s both; }
 .cin-intro em { font: 500 0.72rem/1 var(--sans); font-style: normal; letter-spacing: 0.5em; text-transform: uppercase; color: var(--amber); animation: intro-in 1.4s var(--ease) 0.7s both; }
 @keyframes intro-in { from { opacity: 0; letter-spacing: 0.3em; filter: blur(10px); } to { opacity: 1; filter: none; } }
 @keyframes intro-out { to { opacity: 0; visibility: hidden; } }
