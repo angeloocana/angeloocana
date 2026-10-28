@@ -131,21 +131,10 @@ export function HomePage(handle: Handle<{ lang: Lang }>) {
               <SocialLinks class="hi-links" t={t.links} />
             </li>
             {clips.map((clip, i) => (
-              <li key={clip.id} class="slide clip" data-cat={clip.cat} data-star={String(clip.star)} data-score={String(clip.score)} data-poster={clipUrl(clip.id, 'jpg')}>
-                {/* the first few posters load right away; the rest as they come near (rails.tsx) */}
-                <video
-                  class="clip-video"
-                  data-autoplay
-                  muted
-                  loop
-                  playsInline
-                  preload="none"
-                  poster={i < 6 ? clipUrl(clip.id, 'jpg') : undefined}
-                  data-lazy-poster={i < 6 ? undefined : clipUrl(clip.id, 'jpg')}
-                  aria-label={clip.label[lang]}
-                >
-                  <source src={clipUrl(clip.id, 'mp4')} type="video/mp4" />
-                </video>
+              <li key={clip.id} class="slide clip" data-cat={clip.cat} data-star={String(clip.star)} data-score={String(clip.score)} data-poster={clipUrl(clip.id, 'jpg')} data-video={clipUrl(clip.id, 'mp4')}>
+                {/* a still; rails.tsx adds the video player only while the clip is near the screen,
+                    because phones crash with a hundred video players on one page */}
+                <img class="clip-video" src={clipUrl(clip.id, 'jpg')} alt={clip.label[lang]} loading={i < 6 ? 'eager' : 'lazy'} decoding="async" width="540" height="960" />
                 <div class="clip-copy" aria-hidden="true">
                   <p class="clip-cat">{names[clip.cat]}</p>
                   {!clip.captionRejected && <p class="clip-label">{clip.label[lang]}</p>}
