@@ -119,7 +119,7 @@ await save(
 )
 await save(
   '_headers',
-  ['/media/*', '  Cache-Control: public, max-age=604800', '/assets/*', '  Cache-Control: public, max-age=31536000, immutable', ''].join('\n'),
+  ['/sw.js', '  Cache-Control: no-cache', '/media/*', '  Cache-Control: public, max-age=604800', '/assets/*', '  Cache-Control: public, max-age=31536000, immutable', ''].join('\n'),
 )
 
 console.log(`Built ${Object.keys(PAGES).length} pages, ${live.size} clips and ${seen.size} script files into ${OUT}/`)
