@@ -106,10 +106,12 @@ await save(
     '/fr/resume/* /#career 301',
     '/fr/about/ / 301',
     '/fr/contact/ /#contact 301',
-    '/offline-plugin-app-shell-fallback/ / 301',
     '',
   ].join('\n'),
 )
+// The old site's offline service worker answers page loads with this address. A redirect there makes
+// the browser show an error, so it gets the home page itself until those old workers are gone (see public/sw.js).
+await save('offline-plugin-app-shell-fallback/index.html', (await (await get('/')).text()))
 const SITE_ORIGIN = 'https://angeloocana.com'
 await save(
   'sitemap.xml',
