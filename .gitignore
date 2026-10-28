@@ -29,8 +29,8 @@ media-originals/
 # Local tooling config
 .claude/
 
-# Local-only media for the design prototypes (originals stay out of git)
+# Videos and screenshots live outside the repo (see app/content/media-dir.ts); never copy them here
 public/media/
 
-# private notes from the local clip review page
+# private notes from the local clip review page (now kept in the media folder)
 clip-feedback.json

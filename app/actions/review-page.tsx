@@ -1,7 +1,9 @@
 import { existsSync, readFileSync, writeFileSync } from 'node:fs'
+import { join } from 'node:path'
 
 import { Document } from './document.tsx'
 import { CATEGORIES, CATEGORY_NAMES, clipUrl, instagramUrl, loadClips, saveClips, type Category, type Clip } from '../content/clips.ts'
+import { MEDIA_DIR } from '../content/media-dir.ts'
 import { ReviewBoard } from '../ui/public/review-board.tsx'
 
 // Local-only page (npm run dev → /review) for curating the home row: every clip grouped by category.
@@ -10,8 +12,8 @@ import { ReviewBoard } from '../ui/public/review-board.tsx'
 
 export const reviewEnabled = () => process.env.NODE_ENV === 'development'
 
-// Feedback notes stay on this machine: clip-feedback.json is git-ignored, so they never reach the public repo.
-const NOTES = 'clip-feedback.json'
+// Feedback notes stay on this machine, in the shared media folder, so they never reach the public repo.
+const NOTES = join(MEDIA_DIR, 'clip-feedback.json')
 function loadNotes(): Record<string, string> {
   return existsSync(NOTES) ? JSON.parse(readFileSync(NOTES, 'utf8')) : {}
 }
