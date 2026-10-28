@@ -150,6 +150,8 @@ const en = {
     for: 'For',
     tech: 'Technologies',
     visit: 'Visit',
+    highlights: 'Highlights',
+    jump: 'Jump to a company',
   },
   posts: {
     kicker: 'Posts',
@@ -311,6 +313,8 @@ const pt: Copy = {
     for: 'Para',
     tech: 'Tecnologias',
     visit: 'Visitar',
+    highlights: 'Destaques',
+    jump: 'Ir para uma empresa',
   },
   posts: {
     kicker: 'Posts',

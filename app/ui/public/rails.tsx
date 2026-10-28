@@ -5,6 +5,7 @@ import type { Handle } from 'remix/component'
 // the arrow buttons or the keyboard) to see more inside one. For each [data-rail] this script:
 //   - drives the arrows ([data-rail-prev] / [data-rail-next]) and marks the row's start and end
 //   - lets a mouse drag the row (touch and trackpads scroll natively); a press on text selects it instead
+//   - slides the row to a card when a [data-rail-jump] link to it is clicked, and keeps that link lit
 //   - shuffles the home row's clips so hobbies take turns ([data-shuffle]); starred clips stay first
 //   - fades the row's backdrop ([data-rail-bg]) to the poster of the slide in view
 // It also plays [data-autoplay] videos only while they are on screen, highlights the menu link of the
@@ -65,6 +66,24 @@ export const Rails = clientEntry(import.meta.url, function Rails(handle: Handle)
         let dir = target.closest('[data-rail-next]') ? 1 : target.closest('[data-rail-prev]') ? -1 : 0
         if (dir) track.scrollBy({ left: dir * track.clientWidth * 0.8, behavior: reduced ? 'auto' : 'smooth' })
 
+        // a jump link ([data-rail-jump], like the career intro's list) slides the row to its card, page staying put
+        let jump = target.closest<HTMLAnchorElement>('a[data-rail-jump]')
+        let slide = jump && track.querySelector<HTMLElement>(`[id="${jump.hash.slice(1)}"]`)
+        if (slide) {
+          event.preventDefault()
+          // snapping is off for the trip: off screen the card is still shrunk by its slide-in animation,
+          // and the browser would line up with that smaller box, a few pixels short
+          track.classList.add('is-jumping')
+          let landed = () => track.classList.remove('is-jumping')
+          track.addEventListener('scrollend', landed, { once: true, signal })
+          setTimeout(landed, 1500)
+          let first = slides()[0]
+          track.scrollTo({ left: slide.offsetLeft - first.offsetLeft, behavior: reduced ? 'auto' : 'smooth' })
+          // the last one picked stays lit, so swiping back to the list shows where you were
+          for (let link of rail.querySelectorAll('a[data-rail-jump]')) link.toggleAttribute('data-picked', link === jump)
+          slide.tabIndex = -1
+          slide.focus({ preventScroll: true })
+        }
       }, { signal })
 
       // mouse drag (touch and trackpads already scroll sideways on their own)
@@ -140,6 +159,17 @@ export const Rails = clientEntry(import.meta.url, function Rails(handle: Handle)
     }, { rootMargin: '50% 200%' })
     for (let video of document.querySelectorAll<HTMLVideoElement>('video[data-lazy-poster]')) posters.observe(video)
     signal.addEventListener('abort', () => posters.disconnect())
+
+    // [data-reveal] lists (the career menu) roll in once, the first time a quarter of them is on screen.
+    let reveal = new IntersectionObserver((entries) => {
+      for (let { target, isIntersecting } of entries) {
+        if (!isIntersecting) continue
+        target.setAttribute('data-shown', '')
+        reveal.unobserve(target)
+      }
+    }, { threshold: 0.25 })
+    for (let list of document.querySelectorAll('[data-reveal]')) reveal.observe(list)
+    signal.addEventListener('abort', () => reveal.disconnect())
 
     // Videos play only while on screen, and never for reduced motion or data saver.
     let saveData = (navigator as Navigator & { connection?: { saveData?: boolean } }).connection?.saveData
