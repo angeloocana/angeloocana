@@ -68,7 +68,7 @@
   "cat": "snow",
   "label": {
    "en": "swimming in the snow + snow angel ❄️🏊‍♂️🥶👼🌨️",
-   "pt": "Anjo na neve de sunga"
+   "pt": "nadando na neve + anjo na neve ❄️🏊‍♂️🥶👼🌨️"
   },
   "star": 0,
   "rejected": false,
@@ -143,7 +143,7 @@
   "cat": "ice",
   "label": {
    "en": "Cold 🥶❄️",
-   "pt": "Nado no lago gelado ao pôr do sol"
+   "pt": "Frio 🥶❄️"
   },
   "star": 0,
   "rejected": false,
@@ -203,7 +203,7 @@
   "cat": "music",
   "label": {
    "en": "shopify summit - Roots, Weezer, Girltalk.",
-   "pt": "Luzes do palco"
+   "pt": "shopify summit - Roots, Weezer, Girltalk."
   },
   "star": 0,
   "rejected": false,
@@ -218,7 +218,7 @@
   "cat": "music",
   "label": {
    "en": "shopify summit - Roots, Weezer, Girltalk.",
-   "pt": "Weezer ao vivo"
+   "pt": "shopify summit - Roots, Weezer, Girltalk."
   },
   "star": 0,
   "rejected": false,
@@ -233,7 +233,7 @@
   "cat": "ice",
   "label": {
    "en": "lots of people today and I had the pleasure to help cut the ice 🔪🧊❄️🥶🏊‍♂️",
-   "pt": "Cortando blocos de gelo no lago"
+   "pt": "muita gente hoje e eu tive o prazer de ajudar a cortar o gelo 🔪🧊❄️🥶🏊‍♂️"
   },
   "star": 0,
   "rejected": false,
@@ -248,7 +248,7 @@
   "cat": "nature",
   "label": {
    "en": "meditation, snake and frog.",
-   "pt": "Cobra-liga na passarela"
+   "pt": "meditação, cobra e sapo."
   },
   "star": 0,
   "rejected": false,
@@ -263,7 +263,7 @@
   "cat": "food",
   "label": {
    "en": "Brazilian hot dog 😋🇧🇷🇨🇦",
-   "pt": "Montando um cachorro-quente brasileiro"
+   "pt": "Cachorro-quente brasileiro 😋🇧🇷🇨🇦"
   },
   "star": 0,
   "rejected": false,
@@ -278,7 +278,7 @@
   "cat": "ice",
   "label": {
    "en": "beautiful day to go to the beach 🏖️😍🥶❄️",
-   "pt": "Saindo do lago gelado"
+   "pt": "dia lindo pra ir à praia 🏖️😍🥶❄️"
   },
   "star": 0,
   "rejected": false,
@@ -353,7 +353,7 @@
   "cat": "food",
   "label": {
    "en": "Feijoada 😋",
-   "pt": "Feijoada caseira"
+   "pt": "Feijoada 😋"
   },
   "star": 0,
   "rejected": false,
@@ -367,8 +367,8 @@
   "id": "cbc6fe53c",
   "cat": "gym",
   "label": {
-   "en": "Cable lateral raises",
-   "pt": "1 year ago :D I'm almost recovered after the pandemic :/ 1 ano atras :D já estou quase recuperado depois da pandemia :/"
+   "en": "1 year ago :D I'm almost recovered after the pandemic :/",
+   "pt": "1 ano atras :D já estou quase recuperado depois da pandemia :/"
   },
   "star": 0,
   "rejected": false,
@@ -383,7 +383,7 @@
   "cat": "ice",
   "label": {
    "en": "Cold 🥶❄️",
-   "pt": "Nado no lago gelado ao pôr do sol"
+   "pt": "Frio 🥶❄️"
   },
   "star": 0,
   "rejected": false,
@@ -397,8 +397,8 @@
   "id": "c16f5bfc2",
   "cat": "gym",
   "label": {
-   "en": "Pull-up bar backflip",
-   "pt": "oh no 🤣"
+   "en": "oh no 🤣",
+   "pt": "ah não 🤣"
   },
   "star": 0,
   "rejected": false,
@@ -413,7 +413,7 @@
   "cat": "gym",
   "label": {
    "en": "First time climbing, it was fun 🤩, but painful 😅",
-   "pt": "Boulder na academia de escalada"
+   "pt": "Primeira vez escalando, foi divertido 🤩, mas dolorido 😅"
   },
   "star": 0,
   "rejected": false,
@@ -428,7 +428,7 @@
   "cat": "ice",
   "label": {
    "en": "Another sunny day at the frozen beach! ❄️🌅☀️🏊‍♂️",
-   "pt": "Mergulho na raia de gelo ao sol"
+   "pt": "Mais um dia de sol na praia congelada! ❄️🌅☀️🏊‍♂️"
   },
   "star": 0,
   "rejected": false,
@@ -443,7 +443,7 @@
   "cat": "travel",
   "label": {
    "en": "NYC",
-   "pt": "Telões da Times Square"
+   "pt": "NYC"
   },
   "star": 0,
   "rejected": false,
@@ -458,7 +458,7 @@
   "cat": "nature",
   "label": {
    "en": "What is this?",
-   "pt": "Luz estranha no céu à noite"
+   "pt": "O que é isso?"
   },
   "star": 0,
   "rejected": true,
@@ -473,7 +473,7 @@
   "cat": "nature",
   "label": {
    "en": "🐧🐧🐧 fight Calgary zoo",
-   "pt": "Pinguins nadando no zoológico"
+   "pt": "🐧🐧🐧 briga no zoológico de Calgary"
   },
   "star": 0,
   "rejected": false,
@@ -488,7 +488,7 @@
   "cat": "snow",
   "label": {
    "en": "Tubing",
-   "pt": "Boia na neve nas montanhas"
+   "pt": "Boia na neve"
   },
   "star": 0,
   "rejected": true,
@@ -503,7 +503,7 @@
   "cat": "snow",
   "label": {
    "en": "Tubing",
-   "pt": "O morro de boia visto de cima"
+   "pt": "Boia na neve"
   },
   "star": 0,
   "rejected": true,
@@ -518,7 +518,7 @@
   "cat": "nature",
   "label": {
    "en": "🐒🐒🐒 calgary zoo",
-   "pt": "Gorilas no zoológico"
+   "pt": "🐒🐒🐒 zoológico de Calgary"
   },
   "star": 0,
   "rejected": false,
@@ -532,8 +532,8 @@
   "id": "c14e1c47f",
   "cat": "food",
   "label": {
-   "en": "Charcoal grill fire",
-   "pt": "Fogo na churrasqueira"
+   "en": "🔥🔥🔥",
+   "pt": "🔥🔥🔥"
   },
   "star": 0,
   "rejected": false,
@@ -547,7 +547,7 @@
   "id": "c9504e353",
   "cat": "food",
   "label": {
-   "en": "Cassava and chicken on grill",
+   "en": "cassava and chicken thighs on the grill, will it turn out well?",
    "pt": "mandioca com coxa na churrasqueira, sera q vai dar bom?"
   },
   "star": 0,
@@ -563,7 +563,7 @@
   "cat": "other",
   "label": {
    "en": "bowling 🎳",
-   "pt": "Boliche na luz neon"
+   "pt": "boliche 🎳"
   },
   "star": 0,
   "rejected": false,
@@ -577,8 +577,8 @@
   "id": "c6d6564a6",
   "cat": "nature",
   "label": {
-   "en": "Tree in a Brazilian garden",
-   "pt": "Árvore num jardim brasileiro"
+   "en": "🐒🐒🐒",
+   "pt": "🐒🐒🐒"
   },
   "star": 0,
   "rejected": true,
@@ -592,8 +592,8 @@
   "id": "c1a187fde",
   "cat": "travel",
   "label": {
-   "en": "Horse cart on a Brazilian street",
-   "pt": "Carroça numa rua do Brasil"
+   "en": "🐎🇧🇷",
+   "pt": "🐎🇧🇷"
   },
   "star": 0,
   "rejected": true,
@@ -607,8 +607,8 @@
   "id": "c449d3890",
   "cat": "food",
   "label": {
-   "en": "Ribs in the air fryer",
-   "pt": "Costela na air fryer"
+   "en": "#ribs #airfryer",
+   "pt": "#ribs #airfryer"
   },
   "star": 0,
   "rejected": false,
@@ -622,8 +622,8 @@
   "id": "cb85a3d64",
   "cat": "food",
   "label": {
-   "en": "Ribs in the dutch oven",
-   "pt": "Costela na panela de ferro"
+   "en": "#ribs #dutchoven #bbq",
+   "pt": "#ribs #dutchoven #bbq"
   },
   "star": 0,
   "rejected": false,
@@ -637,8 +637,8 @@
   "id": "cd2290f24",
   "cat": "gym",
   "label": {
-   "en": "Trampoline basketball dunk",
-   "pt": "Enterrada no trampolim"
+   "en": "#basketball #trampoline",
+   "pt": "#basketball #trampoline"
   },
   "star": 0,
   "rejected": false,
@@ -652,8 +652,8 @@
   "id": "c7b5c8a73",
   "cat": "food",
   "label": {
-   "en": "Flipping ribs with tongs",
-   "pt": "Virando a costela"
+   "en": "#ribs",
+   "pt": "#ribs"
   },
   "star": 0,
   "rejected": false,
@@ -668,7 +668,7 @@
   "cat": "nature",
   "label": {
    "en": "Is this a Rocket ship? I saw it this morning while going to the gym.",
-   "pt": "Rastro de avião no céu da manhã"
+   "pt": "Isso é um foguete? Vi hoje de manhã indo pra academia."
   },
   "star": 0,
   "rejected": true,
@@ -683,7 +683,7 @@
   "cat": "snow",
   "label": {
    "en": "time to shovel, 20cm of snow today ❄️🥶",
-   "pt": "Medindo a neve que caiu"
+   "pt": "hora de tirar neve, 20cm de neve hoje ❄️🥶"
   },
   "star": 0,
   "rejected": true,
@@ -698,7 +698,7 @@
   "cat": "music",
   "label": {
    "en": "Playing Brahms Lullaby for my daughter go to sleep 💤😴🎶",
-   "pt": "Canção de ninar no violão"
+   "pt": "Tocando a Canção de Ninar de Brahms pra minha filha dormir 💤😴🎶"
   },
   "star": 0,
   "rejected": true,
@@ -713,7 +713,7 @@
   "cat": "ice",
   "label": {
    "en": "so windy today 🌬️🥶❄️",
-   "pt": "Mergulho com vento na raia do rio"
+   "pt": "ventando muito hoje 🌬️🥶❄️"
   },
   "star": 0,
   "rejected": false,
@@ -727,8 +727,8 @@
   "id": "c943bc45e",
   "cat": "gym",
   "label": {
-   "en": "Rope climb at climbing gym",
-   "pt": "Subida na corda"
+   "en": "🔝",
+   "pt": "🔝"
   },
   "star": 0,
   "rejected": false,
@@ -757,8 +757,8 @@
   "id": "c5b9d376c",
   "cat": "gym",
   "label": {
-   "en": "Ninja course bar swing",
-   "pt": "Balanço na barra do circuito ninja"
+   "en": "🧗🔝💪",
+   "pt": "🧗🔝💪"
   },
   "star": 0,
   "rejected": false,
@@ -788,7 +788,7 @@
   "cat": "food",
   "label": {
    "en": "first bbq of the snow season 🥶🔥🥩❄️",
-   "pt": "Bifes na grelha com neve"
+   "pt": "primeiro churrasco da temporada de neve 🥶🔥🥩❄️"
   },
   "star": 0,
   "rejected": false,
@@ -802,8 +802,8 @@
   "id": "c97d57c50",
   "cat": "ice",
   "label": {
-   "en": "8°, feels like -15°, wind 29 km/h, water moving fast... hardest cold plung of this season 🥶🏊‍♂️🧊",
-   "pt": "Entrando no lago gelado"
+   "en": "-8°, feels like -15°, wind 29 km/h, water moving fast... hardest cold plung of this season 🥶🏊‍♂️🧊",
+   "pt": "-8°, sensação de -15°, vento de 29 km/h, água correndo rápido... o mergulho gelado mais difícil da temporada 🥶🏊‍♂️🧊"
   },
   "star": 0,
   "rejected": false,
@@ -818,7 +818,7 @@
   "cat": "ice",
   "label": {
    "en": "ice to heal the pain",
-   "pt": "Mergulho entre blocos de gelo"
+   "pt": "gelo pra curar a dor"
   },
   "star": 0,
   "rejected": false,
@@ -833,7 +833,7 @@
   "cat": "snow",
   "label": {
    "en": "A refreshing snow angel 😇 and swim after shoveling for more than 1 hour",
-   "pt": "Anjo na neve depois de tirar neve"
+   "pt": "Um anjo na neve pra refrescar 😇 e um nado depois de mais de 1 hora tirando neve"
   },
   "star": 0,
   "rejected": false,
@@ -848,7 +848,7 @@
   "cat": "ice",
   "label": {
    "en": "Cutting ice is a lot of work 🥵 glad it worked out and now we have a long hole to swim ❤️",
-   "pt": "Nadando no buraco aberto à mão"
+   "pt": "Cortar gelo dá muito trabalho 🥵 ainda bem que deu certo e agora temos um buraco comprido pra nadar ❤️"
   },
   "star": 0,
   "rejected": false,
@@ -863,7 +863,7 @@
   "cat": "ice",
   "label": {
    "en": "Sawed +2 feet, 3 reps shoulder press 😅, failed butterfly swim (my head froze and I started drinking water and I couldn't stop it 🤦😅)",
-   "pt": "Banho gelado entre blocos"
+   "pt": "Serrei +60 cm, 3 reps de desenvolvimento 😅, borboleta que não deu certo (minha cabeça congelou, comecei a beber água e não conseguia parar 🤦😅)"
   },
   "star": 0,
   "rejected": false,
@@ -878,7 +878,7 @@
   "cat": "ice",
   "label": {
    "en": "Finally getting better at butterfly swimming in the cold 🙏😍🥶 it is hard to keep calm and control the breathing while the head is freezing 😅",
-   "pt": "Borboleta na raia de gelo"
+   "pt": "Finalmente melhorando no nado borboleta no frio 🙏😍🥶 é difícil manter a calma e controlar a respiração com a cabeça congelando 😅"
   },
   "star": 0,
   "rejected": true,
@@ -893,7 +893,7 @@
   "cat": "gym",
   "label": {
    "en": "leg workout 🔥🦵",
-   "pt": "Treino de perna com anilhas vermelhas"
+   "pt": "treino de perna 🔥🦵"
   },
   "star": 0,
   "rejected": false,
@@ -908,7 +908,7 @@
   "cat": "ice",
   "label": {
    "en": "best pool ever 😅🥶🏊‍♂️",
-   "pt": "Entrando na piscina de gelo"
+   "pt": "melhor piscina do mundo 😅🥶🏊‍♂️"
   },
   "star": 0,
   "rejected": false,
@@ -923,7 +923,7 @@
   "cat": "ice",
   "label": {
    "en": "freestyle + butterfly = 50m 🏊‍♂️🥶 -12°c, feels -19°, wind 30km/h. Today was hard, I almost gave up on going 😅",
-   "pt": "Nado ao pôr do sol entre paredes de gelo"
+   "pt": "crawl + borboleta = 50m 🏊‍♂️🥶 -12°c, sensação de -19°, vento de 30km/h. Hoje foi difícil, quase desisti de ir 😅"
   },
   "star": 0,
   "rejected": false,
@@ -937,8 +937,8 @@
   "id": "c46a381bb",
   "cat": "gym",
   "label": {
-   "en": "Smith machine split squats",
-   "pt": "Is this the hardest leg exercise? 🦵 Será este o exercício mais difícil de perna? 🦵"
+   "en": "Is this the hardest leg exercise? 🦵",
+   "pt": "Será este o exercício mais difícil de perna? 🦵"
   },
   "star": 0,
   "rejected": false,
@@ -953,7 +953,7 @@
   "cat": "ice",
   "label": {
    "en": "TBT from yesterday 😅, first time 3 laps (150m), my back was frozen and barely moving on the last lap",
-   "pt": "Três voltas na raia de gelo"
+   "pt": "TBT de ontem 😅, primeira vez 3 voltas (150m), minhas costas estavam congeladas e quase não mexiam na última volta"
   },
   "star": 0,
   "rejected": false,
@@ -968,7 +968,7 @@
   "cat": "ice",
   "label": {
    "en": "100m 🏊‍♂️🥶",
-   "pt": "100 m na raia de gelo"
+   "pt": "100m 🏊‍♂️🥶"
   },
   "star": 0,
   "rejected": false,
@@ -1027,8 +1027,8 @@
   "id": "cb436d50a",
   "cat": "gym",
   "label": {
-   "en": "Remada cavalinho 🐎💪🦵🔥",
-   "pt": "Remada cavalinho de regata rosa"
+   "en": "T-bar rows 🐎💪🦵🔥",
+   "pt": "Remada cavalinho 🐎💪🦵🔥"
   },
   "star": 0,
   "rejected": false,
@@ -1043,7 +1043,7 @@
   "cat": "food",
   "label": {
    "en": "sushi & bacon is this a crime?",
-   "pt": "Enrolando e cortando sushi"
+   "pt": "sushi & bacon, isso é crime?"
   },
   "star": 0,
   "rejected": false,
@@ -1057,8 +1057,8 @@
   "id": "c58fbd87b",
   "cat": "gym",
   "label": {
-   "en": "Old-school barbell rows",
-   "pt": "Remada curvada old school no meio de um longo treino de costas  estilo"
+   "en": "Old-school barbell rows in the middle of a long back workout",
+   "pt": "Remada curvada old school no meio de um longo treino de costas"
   },
   "star": 0,
   "rejected": false,
@@ -1073,7 +1073,7 @@
   "cat": "gym",
   "label": {
    "en": "leg day 🔥",
-   "pt": "Terra e agachamento pistol"
+   "pt": "dia de perna 🔥"
   },
   "star": 0,
   "rejected": false,
@@ -1088,7 +1088,7 @@
   "cat": "gym",
   "label": {
    "en": "Some new weights unlocked today 🔥",
-   "pt": "Leg press pesado"
+   "pt": "Novos pesos desbloqueados hoje 🔥"
   },
   "star": 0,
   "rejected": false,
@@ -1132,7 +1132,7 @@
   "id": "cb1507f81",
   "cat": "gym",
   "label": {
-   "en": "Hotel gym leg press",
+   "en": "Using every weight in the hotel gym on the leg press 🦵🔥 and I'm a weakling, a real bodybuilder would just warm up with this 😅",
    "pt": "Usando todos os pesos do hotel no leg press 🦵🔥 isso q sou frango, um bodybuilder de verdade só ia fazer aquecimento 😅"
   },
   "star": 0,
@@ -1148,7 +1148,7 @@
   "cat": "food",
   "label": {
    "en": "first brisket 😋",
-   "pt": "Fatiando o primeiro brisket"
+   "pt": "primeiro brisket 😋"
   },
   "star": 0,
   "rejected": true,
@@ -1163,7 +1163,7 @@
   "cat": "gym",
   "label": {
    "en": "bridge the hardest of all. Help! I can't get up after this 😅⚰️",
-   "pt": "Ponte de cabeça para baixo"
+   "pt": "ponte, a mais difícil de todas. Socorro! Não consigo levantar depois disso 😅⚰️"
   },
   "star": 0,
   "rejected": false,
@@ -1178,7 +1178,7 @@
   "cat": "gym",
   "label": {
    "en": "slow and steady wins the race 🔥💪🦵",
-   "pt": "Supino inclinado com halteres"
+   "pt": "devagar se vai ao longe 🔥💪🦵"
   },
   "star": 0,
   "rejected": false,
@@ -1193,7 +1193,7 @@
   "cat": "gym",
   "label": {
    "en": "last week I failed but today 1.5 reps, on the way to 10 reps 2025 🙏🦵🔥",
-   "pt": "Tentativa no hack"
+   "pt": "semana passada eu falhei, mas hoje 1,5 rep, rumo às 10 reps em 2025 🙏🦵🔥"
   },
   "star": 0,
   "rejected": false,
@@ -1208,7 +1208,7 @@
   "cat": "gym",
   "label": {
    "en": "first time 5 plates, but I'm not ready yet 😅 maybe next time 🙏",
-   "pt": "Hack com cinco anilhas"
+   "pt": "primeira vez com 5 anilhas, mas ainda não estou pronto 😅 quem sabe na próxima 🙏"
   },
   "star": 0,
   "rejected": false,
@@ -1238,7 +1238,7 @@
   "cat": "ice",
   "label": {
    "en": "Deadlifting ice blocks for a swim 🧊💪",
-   "pt": "Preparando para nadar no gelo"
+   "pt": "Levantamento terra com blocos de gelo pra poder nadar 🧊💪"
   },
   "star": 0,
   "rejected": false,
@@ -1253,7 +1253,7 @@
   "cat": "ice",
   "label": {
    "en": "First ice swimming of the season with my legend friend Tom 🥶😍🧊🏊‍♂️🩲",
-   "pt": "Primeiro nado no gelo da temporada"
+   "pt": "Primeiro nado no gelo da temporada com meu amigo lendário Tom 🥶😍🧊🏊‍♂️🩲"
   },
   "star": 0,
   "rejected": false,
@@ -1268,7 +1268,7 @@
   "cat": "gym",
   "label": {
    "en": "happy new year! last leg day of the year, trying out pistol squats on the Smith machine, they are so hard 🤯🦵💪",
-   "pt": "Agachamento pistol no Smith"
+   "pt": "feliz ano novo! último treino de perna do ano, testando agachamento pistol no Smith, é muito difícil 🤯🦵💪"
   },
   "star": 0,
   "rejected": false,
@@ -1283,7 +1283,7 @@
   "cat": "snow",
   "label": {
    "en": "First snow storm of the season ❤️❄️🌨️ best time to go to the gym 😅",
-   "pt": "Indo para a academia na nevasca"
+   "pt": "Primeira nevasca da temporada ❤️❄️🌨️ melhor hora pra ir pra academia 😅"
   },
   "star": 0,
   "rejected": false,
@@ -1298,7 +1298,7 @@
   "cat": "gym",
   "label": {
    "en": "new squats record 🤯🔥😁🦵",
-   "pt": "Agachamento livre pesado"
+   "pt": "novo recorde no agachamento 🤯🔥😁🦵"
   },
   "star": 0,
   "rejected": false,
@@ -1313,7 +1313,7 @@
   "cat": "ice",
   "label": {
    "en": "🧊🥶 the pool is getting longer, we extended it more today, now it is over 8 meters on the way to 20~25m 🙏",
-   "pt": "Nadando na piscina de gelo"
+   "pt": "🧊🥶 a piscina está ficando mais comprida, aumentamos mais hoje, agora tem mais de 8 metros, rumo aos 20~25m 🙏"
   },
   "star": 0,
   "rejected": false,
@@ -1343,7 +1343,7 @@
   "cat": "ice",
   "label": {
    "en": "3 more ice blocks out today, the pool is now over 10 meters 🧊❤️💪🏊‍♂️🩲",
-   "pt": "Voltas na piscina de gelo comprida"
+   "pt": "mais 3 blocos de gelo tirados hoje, agora a piscina tem mais de 10 metros 🧊❤️💪🏊‍♂️🩲"
   },
   "star": 0,
   "rejected": false,
@@ -1357,8 +1357,8 @@
   "id": "ca70f3582",
   "cat": "ice",
   "label": {
-   "en": "16°C scared most away, but 4 brave souls showed up to take the plunge today 🥶🧊💪🦵🏊‍♂️",
-   "pt": "Mergulho na raia de gelo ensolarada"
+   "en": "-16°C scared most away, but 4 brave souls showed up to take the plunge today 🥶🧊💪🦵🏊‍♂️",
+   "pt": "-16°C espantou a maioria, mas 4 corajosos apareceram pro mergulho hoje 🥶🧊💪🦵🏊‍♂️"
   },
   "star": 0,
   "rejected": false,
@@ -1373,7 +1373,7 @@
   "cat": "ice",
   "label": {
    "en": "4h to reopen 70% of the ice pool at -20ish°c 🥶🧊🏊‍♂️🌤️",
-   "pt": "Nado na piscina de gelo reaberta"
+   "pt": "4h pra reabrir 70% da piscina de gelo a uns -20°c 🥶🧊🏊‍♂️🌤️"
   },
   "star": 0,
   "rejected": false,
@@ -1388,7 +1388,7 @@
   "cat": "ice",
   "label": {
    "en": "Another wind day but it was sunny ☀️🧊🥶🏊‍♂️",
-   "pt": "Borboleta num dia de sol"
+   "pt": "Mais um dia de vento, mas fez sol ☀️🧊🥶🏊‍♂️"
   },
   "star": 0,
   "rejected": true,
@@ -1403,7 +1403,7 @@
   "cat": "ice",
   "label": {
    "en": "What should I do? I love butterfly 😭🥶🧊🏊‍♂️",
-   "pt": "Borboleta a −20 °C"
+   "pt": "O que eu faço? Eu amo borboleta 😭🥶🧊🏊‍♂️"
   },
   "star": 0,
   "rejected": false,
@@ -1433,7 +1433,7 @@
   "cat": "ice",
   "label": {
    "en": "The wind was too strong but we made it!",
-   "pt": "Mergulho no gelo com vento"
+   "pt": "O vento estava forte demais, mas conseguimos!"
   },
   "star": 0,
   "rejected": true,
@@ -1448,7 +1448,7 @@
   "cat": "gym",
   "label": {
    "en": "My goal for this year is to squat with 3 45lbs plates each side for 10 reps. It is already May and I'm still at 2 reps 😭😅🙏🦵",
-   "pt": "Agachamento de regata amarela"
+   "pt": "Minha meta pra esse ano é agachar com 3 anilhas de 20kg de cada lado por 10 reps. Já é maio e ainda estou em 2 reps 😭😅🙏🦵"
   },
   "star": 0,
   "rejected": false,
@@ -1462,8 +1462,8 @@
   "id": "c50cd837e",
   "cat": "gym",
   "label": {
-   "en": "Ninja course monkey bars",
-   "pt": "Barras do circuito ninja"
+   "en": "🙏 #altitudegymkanata",
+   "pt": "🙏 #altitudegymkanata"
   },
   "star": 0,
   "rejected": false,
@@ -1478,7 +1478,7 @@
   "cat": "nature",
   "label": {
    "en": "So cute 🥹",
-   "pt": "Cervo pastando na beira da floresta"
+   "pt": "Que fofo 🥹"
   },
   "star": 0,
   "rejected": false,
@@ -1493,7 +1493,7 @@
   "cat": "gym",
   "label": {
    "en": "Still far from the goal of 10 reps in 2025 but happy with the progress, started the year with 1 rep 🦵🏋️‍♂️🔥",
-   "pt": "Agachamento pesado de regata vermelha"
+   "pt": "Ainda longe da meta de 10 reps em 2025, mas feliz com o progresso, comecei o ano com 1 rep 🦵🏋️‍♂️🔥"
   },
   "star": 0,
   "rejected": false,
@@ -1508,7 +1508,7 @@
   "cat": "ice",
   "label": {
    "en": "First ice swim of the season, 15m pool 🥶🏊‍♂️🧊",
-   "pt": "Saindo da piscina de gelo"
+   "pt": "Primeiro nado no gelo da temporada, piscina de 15m 🥶🏊‍♂️🧊"
   },
   "star": 0,
   "rejected": false,
@@ -1523,7 +1523,7 @@
   "cat": "ice",
   "label": {
    "en": "No swimming today",
-   "pt": "Banho gelado no buraco no gelo"
+   "pt": "Sem nado hoje"
   },
   "star": 0,
   "rejected": false,
@@ -1538,7 +1538,7 @@
   "cat": "ice",
   "label": {
    "en": "Heaviest ice block ever and first butterfly of the year 🙏🥶❤️🏊‍♂️",
-   "pt": "Borboleta na piscina de gelo"
+   "pt": "O bloco de gelo mais pesado de todos e o primeiro borboleta do ano 🙏🥶❤️🏊‍♂️"
   },
   "star": 0,
   "rejected": true,
@@ -1553,7 +1553,7 @@
   "cat": "ice",
   "label": {
    "en": "What a beautiful and warm (-1c) day to go to the frozen beach! 🏖️ 🥶❤️🏊‍♂️",
-   "pt": "Nado na praia congelada"
+   "pt": "Que dia lindo e quente (-1c) pra ir à praia congelada! 🏖️ 🥶❤️🏊‍♂️"
   },
   "star": 0,
   "rejected": false,
@@ -1568,7 +1568,7 @@
   "cat": "ice",
   "label": {
    "en": "Building the resistance up again 🙏 it was so cold today🥶 -18c, wind gust 24km/h but the sun and the day were beautiful 😍",
-   "pt": "Nado na raia de gelo, céu azul"
+   "pt": "Recuperando a resistência de novo 🙏 estava muito frio hoje🥶 -18c, rajadas de vento de 24km/h, mas o sol e o dia estavam lindos 😍"
   },
   "star": 0,
   "rejected": false,
@@ -1582,8 +1582,8 @@
   "id": "ce8cf452a",
   "cat": "gym",
   "label": {
-   "en": "My first powerlifting competition at Squat 335lb ✅ 355lb ✅ 375lb ✅ record 🎉 Bench press 245lb ✅ 275lb 😫 275lb 😫 Deadlift 405lb ✅ 425lb ✅ record 🎉 455lb 😫",
-   "pt": "Levantamento terra na competição"
+   "en": "My first powerlifting competition: Squat 335lb ✅ 355lb ✅ 375lb ✅ record 🎉 Bench press 245lb ✅ 275lb 😫 275lb 😫 Deadlift 405lb ✅ 425lb ✅ record 🎉 455lb 😫",
+   "pt": "Minha primeira competição de powerlifting: Agachamento 335lb ✅ 355lb ✅ 375lb ✅ recorde 🎉 Supino 245lb ✅ 275lb 😫 275lb 😫 Terra 405lb ✅ 425lb ✅ recorde 🎉 455lb 😫"
   },
   "star": 0,
   "rejected": true,
@@ -1598,7 +1598,7 @@
   "cat": "food",
   "label": {
    "en": "Ketchup, mustard and relish on Costco’s pepperoni pizza",
-   "pt": "Ketchup na pizza da Costco"
+   "pt": "Ketchup, mostarda e picles na pizza de pepperoni da Costco"
   },
   "star": 0,
   "rejected": false,
