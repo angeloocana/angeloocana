@@ -100,6 +100,7 @@
 .rail::-webkit-scrollbar { display: none; }
 @media (hover: hover) and (pointer: fine) { .js-rails .rail { cursor: grab; } }
 .rail.is-dragging { scroll-snap-type: none; cursor: grabbing; user-select: none; }
+.rail.is-jumping { scroll-snap-type: none; }
 .rail.is-dragging > * { pointer-events: none; }
 .rail:focus-visible { box-shadow: inset 0 0 0 1px rgb(232 184 106 / 0.6); border-radius: 14px; }
 .slide { flex: none; position: relative; min-height: var(--row-h); scroll-snap-align: start; border-radius: 22px; }
@@ -394,8 +395,27 @@ html:not(.js-rails) .rail-arrow { display: none; }
 /* ---------- career: one card per company, today first ---------- */
 .row-career { background: radial-gradient(60% 60% at 30% 40%, #15110d, var(--bg) 70%); }
 .intro-career h2 { font-size: clamp(2.6rem, 1.4rem + 3.4vw, 4.8rem); }
+/* every job, a tap away: the intro's list slides the row to the one you pick (rails.tsx).
+   The names rise in like credits the first time the row is seen, and the last one picked stays lit. */
+.career-index { display: grid; gap: 0.7rem; margin-top: 0.5rem; }
+/* wider screens: two columns, read down then across, so the list doesn't make the row taller */
+@media (min-width: 641px) { .career-index { grid-template-rows: repeat(4, auto); grid-auto-flow: column; grid-auto-columns: minmax(0, max-content); column-gap: 2rem; } }
+.career-index a { display: inline-block; color: inherit; text-decoration: none; transition: transform 0.5s var(--ease); }
+.career-index b { display: block; font: 400 clamp(1.45rem, 1.2rem + 0.6vw, 1.7rem)/1.12 var(--serif); color: #e4ded4; transition: color 0.3s; }
+.career-index span { display: block; margin-top: 0.25rem; font: 500 0.66rem/1.2 var(--sans); letter-spacing: 0.16em; text-transform: uppercase; color: var(--dim); }
+.career-index em { font-style: normal; color: var(--amber); }
+.career-index i { display: inline-block; width: 6px; height: 6px; margin-left: 0.5rem; vertical-align: 1px; border-radius: 50%; background: var(--amber); box-shadow: 0 0 0 0 rgb(232 184 106 / 0.6); animation: ping-amber 1.8s ease-out infinite; }
+.career-index a:hover, .career-index a[data-picked] { transform: translateX(5px); }
+.career-index a:hover b, .career-index a[data-picked] b { color: var(--amber); }
+.career-index a:focus-visible { outline: 1px solid rgb(232 184 106 / 0.6); outline-offset: 4px; border-radius: 4px; }
+.js-rails .career-index:not([data-shown]) li { opacity: 0; }
+.career-index[data-shown] li { animation: credit-in 0.9s var(--ease) both; animation-delay: calc(0.15s + var(--i, 0) * 0.07s); }
+@keyframes credit-in { from { opacity: 0; transform: translateY(10px); } }
 .job { width: min(30rem, 84vw); padding: 1.8rem 1.6rem 1.6rem; background: linear-gradient(170deg, #141210, #0b0b0b 60%); border: 1px solid var(--line); display: flex; flex-direction: column; align-items: flex-start; }
 .job-featured { width: min(52rem, 88vw); border-color: rgb(232 184 106 / 0.45); background: radial-gradient(90% 60% at 0% 0%, rgb(232 184 106 / 0.09), transparent 70%), linear-gradient(170deg, #15120e, #0b0b0b 60%); }
+/* one highlight on its own card, below 900px only (shown at the end of this file) */
+.job-hl { flex-direction: column; align-items: flex-start; width: min(22rem, 78vw); padding: 1.8rem 1.6rem 1.6rem; border: 1px solid var(--line); background: linear-gradient(170deg, #141210, #0b0b0b 60%); }
+.job-hl-featured { border-color: rgb(232 184 106 / 0.28); background: radial-gradient(90% 50% at 0% 0%, rgb(232 184 106 / 0.06), transparent 70%), linear-gradient(170deg, #15120e, #0b0b0b 60%); }
 .job h3 { font-size: clamp(2.1rem, 1.4rem + 2vw, 3.2rem); line-height: 0.98; margin-block: 0.8rem 0.6rem; letter-spacing: -0.01em; }
 .job-featured h3 { font-size: clamp(2.6rem, 1.6rem + 3vw, 4.4rem); }
 .job h3 a { text-decoration: none; background: linear-gradient(var(--amber), var(--amber)) 0 92% / 0 2px no-repeat; transition: background-size 0.7s var(--ease); }
@@ -468,15 +488,19 @@ html:not(.js-rails) .rail-arrow { display: none; }
   .card, .job, .reel-frame { max-width: 78vw; }
   .row-hi .rail { align-items: flex-end; }
   .hi-values li { padding: 0.5rem 0.75rem; font-size: 0.62rem; }
-  .job { padding: 1.4rem 1.2rem 1.3rem; }
-  .row-career .rail { align-items: flex-start; }
+  .job, .job-hl { padding: 1.4rem 1.2rem 1.3rem; }
+  .job-meta { margin-bottom: 1.2rem; }
+  .job-clients { font-size: 0.86rem; }
+  .job-tech { gap: 0.3rem; }
+  .job-tech li { padding: 0.4rem 0.6rem; font-size: 0.64rem; }
 }
 
 @media (prefers-reduced-motion: reduce) {
   .cin::after { animation: none; }
   .cin-intro { display: none; }
   .js-rails .slide { animation: none; }
-  .rail-next, .row-down svg, .row-hi .clip, .hv, .room-chip, .ranks-you, .jd-pill i { animation: none; }
+  .rail-next, .row-down svg, .row-hi .clip, .hv, .room-chip, .ranks-you, .jd-pill i, .career-index i, .career-index[data-shown] li { animation: none; }
+  .js-rails .career-index:not([data-shown]) li { opacity: 1; }
 }
 
 /* career highlights: a grid of what I built; on the featured card, two columns */
@@ -493,4 +517,21 @@ html:not(.js-rails) .rail-arrow { display: none; }
 .job-highlights b a { color: inherit; text-decoration: none; background: linear-gradient(var(--amber), var(--amber)) 0 100% / 0 1px no-repeat; transition: background-size 0.5s var(--ease); }
 .job-highlights b a:hover { background-size: 100% 1px; }
 .job-highlights b a i { font-style: normal; font-size: 0.8em; color: var(--amber); }
+
+/* below 900px each highlight is its own card after its job (home-page.tsx), so the row stays one screen tall */
+.job-hl { display: none; }
+@media (max-width: 899.98px) {
+  .job-wide { width: min(30rem, 84vw); }
+  .job-wide .job-highlights { display: none; }
+  .job-hl { display: flex; }
+}
+.job-hl .job-label { margin-bottom: 1.4rem; }
+.job-hl-list { display: grid; gap: 1.1rem; width: 100%; }
+.job-hl-list > li + li { padding-top: 1.1rem; border-top: 1px solid var(--line); }
+.job-hl-list h3 { font-size: clamp(1.4rem, 1.2rem + 0.6vw, 1.7rem); line-height: 1.1; margin-bottom: 0.45rem; }
+.job-hl-n { font-style: italic; font-size: 0.75em; color: var(--amber); }
+.job-hl-list p { color: #bdb6aa; font-size: 0.9rem; line-height: 1.55; }
+.job-hl-list h3 a { color: inherit; text-decoration: none; background: linear-gradient(var(--amber), var(--amber)) 0 100% / 0 1px no-repeat; transition: background-size 0.5s var(--ease); }
+.job-hl-list h3 a:hover { background-size: 100% 1px; }
+.job-hl-list h3 a i { font-style: normal; font-size: 0.7em; color: var(--amber); }
 

@@ -1,7 +1,7 @@
 import type { Handle, RemixNode } from 'remix/component'
 
 import { Document } from './document.tsx'
-import { careerFor } from '../content/career.ts'
+import { careerFor, type Highlight } from '../content/career.ts'
 import { CATEGORY_NAMES, clipUrl, homeOrder, instagramUrl } from '../content/clips.ts'
 import { postsFor } from '../content/posts.ts'
 import { COPY, HREF, type Copy, type Lang } from '../copy.ts'
@@ -69,6 +69,22 @@ function Card(handle: Handle<{ class: string; title: string; body: string; child
       </div>
     </li>
   )
+}
+
+// Highlights share a card until it holds about 500 characters of text, which still fits the row's
+// height on a phone: Shopify's five take two cards and Kinaxis's three take one.
+function packHighlights(list: Highlight[], budget = 500) {
+  let cards: { h: Highlight; n: number }[][] = []
+  let used = Infinity
+  list.forEach((h, n) => {
+    if (used + h.body.length > budget) {
+      cards.push([])
+      used = 0
+    }
+    cards[cards.length - 1].push({ h, n })
+    used += h.body.length
+  })
+  return cards
 }
 
 export function formatDate(date: string, lang: Lang) {
@@ -340,9 +356,26 @@ c_sharp_phaser/JumpOverJump`}</pre>
               <p class="cin-kicker">{t.career.kicker}</p>
               <h2>{t.career.title[0]}<em>{t.career.title[1]}</em>{t.career.title[2]}</h2>
               <p>{t.career.sub(career.length, career[career.length - 1].start)}</p>
+              {/* a way straight to any job, so the older ones are a tap away; rails.tsx slides the row,
+                  rolls the names in like credits and keeps the last one picked lit */}
+              <ol class="career-index" aria-label={t.career.jump} data-reveal>
+                {career.map((job, i) => (
+                  <li key={job.id} style={`--i:${i}`}>
+                    <a href={`#job-${job.id}`} data-rail-jump>
+                      <b>{job.company}</b>
+                      <span>
+                        {job.start}
+                        {job.end !== job.start && '–'}
+                        {job.end === 'Now' ? <em>{t.career.now}</em> : job.end !== job.start && job.end.slice(2)}
+                        {job.end === 'Now' && <i aria-hidden="true" />}
+                      </span>
+                    </a>
+                  </li>
+                ))}
+              </ol>
             </li>
-            {career.map((job) => (
-              <li key={job.id} class={`slide job${job.featured ? ' job-featured' : ''}${job.highlights?.length ? ' job-wide' : ''}`}>
+            {career.flatMap((job) => [
+              <li key={job.id} id={`job-${job.id}`} class={`slide job${job.featured ? ' job-featured' : ''}${job.highlights?.length ? ' job-wide' : ''}`}>
                 <p class="job-years">
                   <span>{job.start}</span>
                   {job.start !== job.end && <i aria-hidden="true" />}
@@ -371,8 +404,26 @@ c_sharp_phaser/JumpOverJump`}</pre>
                     ))}
                   </ul>
                 )}
-              </li>
-            ))}
+              </li>,
+              // Below 900px the highlights don't fit beside the story, and stacked under it they made the
+              // card (and so the whole row) a screen taller than the rest. There, they move to cards of their own.
+              ...packHighlights(job.highlights ?? []).map((group) => (
+                <li key={`${job.id}-${group[0].n}`} class={`slide job-hl${job.featured ? ' job-hl-featured' : ''}`}>
+                  <p class="job-label">{job.company} · {t.career.highlights}</p>
+                  <ol class="job-hl-list">
+                    {group.map(({ h, n }) => (
+                      <li key={n}>
+                        <h3>
+                          <span class="job-hl-n">{String(n + 1).padStart(2, '0')}</span>{' '}
+                          {h.url ? <a href={h.url} rel="noopener" target="_blank">{h.title} <i aria-hidden="true">↗</i></a> : h.title}
+                        </h3>
+                        <p>{h.body}</p>
+                      </li>
+                    ))}
+                  </ol>
+                </li>
+              )),
+            ])}
           </Row>
 
           {/* Posts: everything published on the old site, newest first */}
