@@ -66,6 +66,8 @@ Clip tools (cut, montage, contact sheets, Instagram links) are in `scripts/clips
 - **`public/sw.js`** removes the old Gatsby site's offline service worker from returning visitors, and
   `/offline-plugin-app-shell-fallback/` serves the home page for the same reason. Keep both until 2027.
 - **Old URLs** (`/en/…`, `/fr/…`, tags, resume, about, contact) redirect in `scripts/build.ts`.
+- **`legacy/resumes/`** holds Ângelo's old resumes (2015–2021), phone numbers and all. He chose to keep them
+  in git until he writes new ones. They are not built into the site; don't delete them.
 
 ## Hosting
 
