@@ -139,11 +139,6 @@ export function HomePage(handle: Handle<{ lang: Lang }>) {
               </p>
               <h1>Ângelo <em>Ocanã</em></h1>
               <p class="hi-tldr">{t.hi.tldr}</p>
-              <ul class="hi-values" aria-label={t.hi.valuesLabel}>
-                {t.hi.values.map((value) => (
-                  <li key={value}>{value}</li>
-                ))}
-              </ul>
               <SocialLinks class="hi-links" t={t.links} />
             </li>
             {clips.map((clip, i) => (

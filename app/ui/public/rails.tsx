@@ -4,7 +4,7 @@ import type { Handle } from 'remix/component'
 // Every section is a row: scroll down to move between sections, sideways (trackpad, swipe, drag,
 // the arrow buttons or the keyboard) to see more inside one. For each [data-rail] this script:
 //   - drives the arrows ([data-rail-prev] / [data-rail-next]) and marks the row's start and end
-//   - lets a mouse drag the row (touch and trackpads scroll natively)
+//   - lets a mouse drag the row (touch and trackpads scroll natively); a press on text selects it instead
 //   - slides the row to a card when a [data-rail-jump] link to it is clicked, and keeps that link lit
 //   - shuffles the home row's clips so hobbies take turns ([data-shuffle]); starred clips stay first
 //   - fades the row's backdrop ([data-rail-bg]) to the poster of the slide in view
@@ -91,6 +91,7 @@ export const Rails = clientEntry(import.meta.url, function Rails(handle: Handle)
       track.addEventListener('pointerdown', (event) => {
         if (event.pointerType !== 'mouse' || event.button !== 0) return
         if ((event.target as Element).closest('a, button, video[controls], input')) return
+        if (onText(event)) return
         drag = { x: event.clientX, left: track.scrollLeft, moved: false }
       }, { signal })
       addEventListener('pointermove', (event) => {
@@ -109,6 +110,20 @@ export const Rails = clientEntry(import.meta.url, function Rails(handle: Handle)
           track.addEventListener('click', (e) => { e.preventDefault(); e.stopPropagation() }, { capture: true, once: true })
         }
       }, { signal })
+    }
+
+    // Is the pointer over the letters of some text (not just inside a box that holds text)?
+    function onText(event: PointerEvent) {
+      let el = event.target as Element
+      for (let node of el.childNodes) {
+        if (node.nodeType !== Node.TEXT_NODE || !node.textContent?.trim()) continue
+        let range = document.createRange()
+        range.selectNodeContents(node)
+        for (let r of range.getClientRects()) {
+          if (event.clientX >= r.left && event.clientX <= r.right && event.clientY >= r.top && event.clientY <= r.bottom) return true
+        }
+      }
+      return false
     }
 
     // Starred clips stay first. The rest are dealt again on every visit: the strongest clips (data-score)

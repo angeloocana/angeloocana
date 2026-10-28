@@ -15,6 +15,10 @@ export const assets = createAssetServer({
   denyFiles: ['app/**/*.test.*'],
   sourceMaps: isDevelopment ? 'external' : undefined,
   minify: !isDevelopment,
+  // A hash of each file goes in its URL (rails.@a1b2c3.tsx), so a new build gets new URLs. The built
+  // site caches /assets/ for a year without asking again (scripts/build.ts), and with stable URLs
+  // phones that had visited kept running the old scripts against new pages.
+  fingerprint: !isDevelopment,
   watch: isDevelopment,
   hmr: isHmr
     ? {

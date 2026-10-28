@@ -60,6 +60,9 @@ Clip tools (cut, montage, contact sheets, Instagram links) are in `scripts/clips
 - **Clips render as images**; `rails.tsx` adds a `<video>` only while a clip is near view and removes it
   after. A `<video>` per clip (114) made iPhone browsers close the page. Keep it that way.
 - **Clip URLs carry `?v=`** (file time) because media is cached for a week; a re-cut gets a new URL.
+- **Script URLs carry a hash** (`rails.%40a1b2c3.tsx.js`, `fingerprint` in `app/assets.ts`) because
+  `/assets/` is cached for a year without asking again. With plain names, phones that had visited kept
+  running old scripts against new pages (the clips stayed still).
 - **`public/sw.js`** removes the old Gatsby site's offline service worker from returning visitors, and
   `/offline-plugin-app-shell-fallback/` serves the home page for the same reason. Keep both until 2027.
 - **Old URLs** (`/en/…`, `/fr/…`, tags, resume, about, contact) redirect in `scripts/build.ts`.

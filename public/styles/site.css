@@ -20,7 +20,9 @@
 /* ---------- title intro ---------- */
 .cin-intro { position: fixed; inset: 0; z-index: 2000; display: grid; place-items: center; background: #000; pointer-events: none; animation: intro-out 0.9s ease 2.1s forwards; }
 .cin-intro p { display: grid; justify-items: center; gap: 0.6rem; }
-.cin-intro span { font: 400 clamp(2rem, 1rem + 4vw, 4rem)/1 var(--serif); letter-spacing: 0.02em; animation: intro-in 1.4s var(--ease) 0.2s both; }
+/* The blur filter clips to the box on iPhones, and line-height 1 leaves the Â's accent and the g's tail
+   outside it. The padding gives them room; the negative margin keeps the layout where it was. */
+.cin-intro span { font: 400 clamp(2rem, 1rem + 4vw, 4rem)/1 var(--serif); letter-spacing: 0.02em; padding-block: 0.2em; margin-block: -0.2em; animation: intro-in 1.4s var(--ease) 0.2s both; }
 .cin-intro em { font: 500 0.72rem/1 var(--sans); font-style: normal; letter-spacing: 0.5em; text-transform: uppercase; color: var(--amber); animation: intro-in 1.4s var(--ease) 0.7s both; }
 @keyframes intro-in { from { opacity: 0; letter-spacing: 0.3em; filter: blur(10px); } to { opacity: 1; filter: none; } }
 @keyframes intro-out { to { opacity: 0; visibility: hidden; } }
@@ -146,7 +148,7 @@ html:not(.js-rails) .rail-arrow { display: none; }
 .hi h1 { font-size: clamp(3.2rem, 1.4rem + 6vw, 7.2rem); line-height: 0.9; animation: title-in 2.2s var(--ease) 2.5s both; }
 .hi .cin-kicker { animation: fade 1.6s ease 2.7s both; color: #f4d28e; }
 .hi-tldr { font: 400 clamp(1.1rem, 0.9rem + 0.7vw, 1.5rem)/1.4 var(--serif); color: #ece6db; max-width: 42ch; animation: fade 1.6s ease 3s both; }
-.hi .hi-values, .hi .links { animation: fade 1.6s ease 3.3s both; }
+.hi .links { animation: fade 1.6s ease 3.3s both; }
 .cin-skip .hi > * { animation-delay: 0.15s !important; }
 .clip { --h: calc(var(--row-h) - 2.75rem); height: var(--h); min-height: 0; width: calc(var(--h) * 9 / 16); align-self: flex-start; overflow: hidden; background: #111; box-shadow: 0 30px 70px -30px rgb(0 0 0 / 0.95); transition: translate 0.6s var(--ease), scale 0.6s var(--ease), filter 0.5s; }
 /* rhythm: up, down, and every fourth clip a little wider */
@@ -363,9 +365,7 @@ html:not(.js-rails) .rail-arrow { display: none; }
 .reel-frame h3 { font: 600 1.25rem/1.15 var(--joj); }
 .reel-frame p:last-child { color: #a9a296; font-size: 0.95rem; }
 
-/* ---------- Hi: values and links ---------- */
-.hi-values { display: flex; flex-wrap: wrap; gap: 0.6rem; }
-.hi-values li { padding: 0.6rem 1rem; border-radius: 999px; border: 1px solid rgb(232 184 106 / 0.45); color: var(--amber); font: 600 0.7rem/1 var(--sans); letter-spacing: 0.18em; text-transform: uppercase; }
+/* ---------- Hi: links ---------- */
 /* contact links: email as the main button, then a row of equal social tiles (icon over label) */
 .links { display: grid; gap: 1.1rem; justify-items: start; margin-top: 0.6rem; }
 .foot-links { justify-items: center; }
@@ -487,7 +487,6 @@ html:not(.js-rails) .rail-arrow { display: none; }
   .hi .socials a { height: auto; aspect-ratio: 1; }
   .card, .job, .reel-frame { max-width: 78vw; }
   .row-hi .rail { align-items: flex-end; }
-  .hi-values li { padding: 0.5rem 0.75rem; font-size: 0.62rem; }
   .job, .job-hl { padding: 1.4rem 1.2rem 1.3rem; }
   .job-meta { margin-bottom: 1.2rem; }
   .job-clients { font-size: 0.86rem; }
