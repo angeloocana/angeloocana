@@ -1,7 +1,7 @@
 import { existsSync, readFileSync, writeFileSync } from 'node:fs'
 
 import { Document } from './document.tsx'
-import { CATEGORIES, CATEGORY_NAMES, instagramUrl, loadClips, saveClips, type Category, type Clip } from '../content/clips.ts'
+import { CATEGORIES, CATEGORY_NAMES, clipUrl, instagramUrl, loadClips, saveClips, type Category, type Clip } from '../content/clips.ts'
 import { ReviewBoard } from '../ui/public/review-board.tsx'
 
 // Local-only page (npm run dev → /review) for curating the home row: every clip grouped by category.
@@ -104,7 +104,7 @@ export function ReviewPage() {
               <ul class="rv-grid">
                 {g.clips.map((clip) => (
                   <li key={clip.id} class="rv" data-id={clip.id} data-star={String(clip.star)} data-rejected={String(clip.rejected)} data-caption-rejected={String(!!clip.captionRejected)} data-sources={sourceKeys(clip).join(' ')}>
-                    <video muted loop playsInline preload="none" poster={`/media/clips/${clip.id}.jpg`} src={`/media/clips/${clip.id}.mp4`} />
+                    <video muted loop playsInline preload="none" poster={clipUrl(clip.id, 'jpg')} src={clipUrl(clip.id, 'mp4')} />
                     <div class="rv-info">
                       <label class="rv-caption"><span>EN</span><textarea data-field="en" rows={1} maxLength={120} value={clip.label.en} /></label>
                       <label class="rv-caption"><span>PT</span><textarea data-field="pt" rows={1} maxLength={120} value={clip.label.pt} /></label>

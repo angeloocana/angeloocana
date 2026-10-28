@@ -28,8 +28,8 @@
   "id": "h-wood",
   "cat": "wood",
   "label": {
-   "en": "The board-game table I built",
-   "pt": "A mesa de jogos que eu construí"
+   "en": "Building my board-game table",
+   "pt": "Construindo minha mesa de jogos"
   },
   "star": 0,
   "rejected": false,
@@ -49,6 +49,19 @@
   "score": 4,
   "source": "montage",
   "ig": "/p/Dct5xUmGnAy/"
+ },
+ {
+  "id": "h-knife",
+  "cat": "wood",
+  "label": {
+   "en": "First Japanese-style woodwork, no screws",
+   "pt": "Primeira marcenaria no estilo japonês, sem parafusos"
+  },
+  "star": 0,
+  "rejected": false,
+  "score": 4,
+  "source": "montage",
+  "ig": "/p/Db-qU5zDsoV/"
  },
  {
   "id": "c1d578eb4",
@@ -1314,11 +1327,11 @@
   "id": "c44c03a8c",
   "cat": "ice",
   "label": {
-   "en": "oh no the perfect ice block broke 😭",
-   "pt": "Entrando devagar na piscina de gelo"
+   "en": "Oh no, the perfect ice block broke 😭",
+   "pt": "Ah não, o bloco de gelo perfeito quebrou 😭"
   },
   "star": 0,
-  "rejected": true,
+  "rejected": false,
   "score": 3,
   "source": "instagram",
   "igKind": "reels",
@@ -1404,8 +1417,8 @@
   "id": "ca94616f1",
   "cat": "ice",
   "label": {
-   "en": "Sunny ice pool dip",
-   "pt": "Mergulho ao sol na piscina de gelo"
+   "en": "Butterfly in the ice pool",
+   "pt": "Borboleta na piscina de gelo"
   },
   "star": 0,
   "rejected": false,
@@ -1423,7 +1436,7 @@
    "pt": "Mergulho no gelo com vento"
   },
   "star": 0,
-  "rejected": false,
+  "rejected": true,
   "score": 4,
   "source": "instagram",
   "igKind": "reels",
@@ -1991,8 +2004,8 @@
   "id": "c5f4eb936",
   "cat": "gym",
   "label": {
-   "en": "Deadlift reps",
-   "pt": "Repetições de levantamento terra"
+   "en": "Deadlift",
+   "pt": "Levantamento terra"
   },
   "star": 0,
   "rejected": false,
@@ -2003,7 +2016,7 @@
   "id": "cc226933b",
   "cat": "other",
   "label": {
-   "en": "Glowing event wristband",
+   "en": "Shopi",
    "pt": "Pulseira de evento brilhando"
   },
   "star": 0,
@@ -2021,7 +2034,8 @@
   "star": 0,
   "rejected": false,
   "score": 3,
-  "source": "phone"
+  "source": "phone",
+  "captionRejected": true
  },
  {
   "id": "c05173719",
@@ -2043,7 +2057,7 @@
    "pt": "Puxando blocos de gelo no lago"
   },
   "star": 0,
-  "rejected": false,
+  "rejected": true,
   "score": 4,
   "source": "phone"
  },

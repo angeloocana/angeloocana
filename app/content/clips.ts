@@ -1,6 +1,6 @@
 // The home page's video row. The list itself lives in clips.json, which the local review page
 // (/review, development only) edits: reject clips, star the ones that should come first.
-import { readFileSync, writeFileSync } from 'node:fs'
+import { existsSync, readFileSync, statSync, writeFileSync } from 'node:fs'
 
 import type { Lang } from '../copy.ts'
 
@@ -57,6 +57,16 @@ export type Clip = {
   posted?: string
   /** The public post on Instagram, as a path like /reel/ABC123/. */
   ig?: string
+}
+
+/**
+ * A clip's video or poster URL. The ?v= tag changes whenever the file is re-cut, so browsers that
+ * cached the old cut (media is cached for a week, see scripts/build.ts) fetch the new one.
+ */
+export function clipUrl(id: string, ext: 'mp4' | 'jpg') {
+  let file = new URL(`../../public/media/clips/${id}.${ext}`, import.meta.url)
+  let version = existsSync(file) ? Math.round(statSync(file).mtimeMs / 1000).toString(36) : '0'
+  return `/media/clips/${id}.${ext}?v=${version}`
 }
 
 /** The clip's Instagram post, when it has one. */

@@ -2,7 +2,7 @@ import type { Handle, RemixNode } from 'remix/component'
 
 import { Document } from './document.tsx'
 import { careerFor } from '../content/career.ts'
-import { CATEGORY_NAMES, homeOrder, instagramUrl } from '../content/clips.ts'
+import { CATEGORY_NAMES, clipUrl, homeOrder, instagramUrl } from '../content/clips.ts'
 import { postsFor } from '../content/posts.ts'
 import { COPY, HREF, type Copy, type Lang } from '../copy.ts'
 import { CineCursor } from '../ui/public/cine-cursor.tsx'
@@ -131,7 +131,7 @@ export function HomePage(handle: Handle<{ lang: Lang }>) {
               <SocialLinks class="hi-links" t={t.links} />
             </li>
             {clips.map((clip, i) => (
-              <li key={clip.id} class="slide clip" data-cat={clip.cat} data-star={String(clip.star)} data-score={String(clip.score)} data-poster={`${M}/clips/${clip.id}.jpg`}>
+              <li key={clip.id} class="slide clip" data-cat={clip.cat} data-star={String(clip.star)} data-score={String(clip.score)} data-poster={clipUrl(clip.id, 'jpg')}>
                 {/* the first few posters load right away; the rest as they come near (rails.tsx) */}
                 <video
                   class="clip-video"
@@ -140,11 +140,11 @@ export function HomePage(handle: Handle<{ lang: Lang }>) {
                   loop
                   playsInline
                   preload="none"
-                  poster={i < 6 ? `${M}/clips/${clip.id}.jpg` : undefined}
-                  data-lazy-poster={i < 6 ? undefined : `${M}/clips/${clip.id}.jpg`}
+                  poster={i < 6 ? clipUrl(clip.id, 'jpg') : undefined}
+                  data-lazy-poster={i < 6 ? undefined : clipUrl(clip.id, 'jpg')}
                   aria-label={clip.label[lang]}
                 >
-                  <source src={`${M}/clips/${clip.id}.mp4`} type="video/mp4" />
+                  <source src={clipUrl(clip.id, 'mp4')} type="video/mp4" />
                 </video>
                 <div class="clip-copy" aria-hidden="true">
                   <p class="clip-cat">{names[clip.cat]}</p>
