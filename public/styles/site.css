@@ -166,6 +166,11 @@ html:not(.js-rails) .rail-arrow { display: none; }
 .clip-cat { font: 600 0.6rem/1 var(--sans); letter-spacing: 0.22em; text-transform: uppercase; color: #f4d28e; }
 .clip-label { font: 400 clamp(1.15rem, 1rem + 0.4vw, 1.4rem)/1.15 var(--serif); display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
 @media (hover: hover) { .clip:hover .clip-video { transform: scale(1.05); } }
+/* the full video on Instagram: a small mark in the corner, brighter when the card is hovered */
+.clip-ig { position: absolute; z-index: 3; top: 0.7rem; right: 0.7rem; display: grid; place-items: center; width: 2.2rem; height: 2.2rem; border-radius: 50%; color: #fff; background: rgb(0 0 0 / 0.38); backdrop-filter: blur(6px); opacity: 0.75; transition: opacity 0.3s, background 0.3s, scale 0.3s var(--ease); }
+.clip-ig .social-icon { width: 1.1rem; height: 1.1rem; }
+.clip:hover .clip-ig, .clip-ig:focus-visible { opacity: 1; }
+.clip-ig:hover { background: linear-gradient(135deg, #f7b24a, #e1306c 60%, #8a3ab9); scale: 1.08; }
 
 /* ---------- intro slides: the first card of every other row ---------- */
 .intro { width: min(30rem, 84vw); display: grid; align-content: center; justify-items: start; gap: 1.1rem; padding: 0.5rem 1rem 0.5rem 0; }

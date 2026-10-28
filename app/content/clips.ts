@@ -49,7 +49,18 @@ export type Clip = {
   score: number
   /** The caption was rejected on the review page: the card shows only its category. */
   captionRejected?: boolean
+  /** Where the footage came from: an Instagram post, my old phone, or a montage of several clips. */
+  source: 'instagram' | 'phone' | 'montage'
+  /** For Instagram clips: what kind of post it was in the export. Stories expire, so they have no link. */
+  igKind?: 'reels' | 'posts' | 'stories' | 'igtv'
+  /** Day it was posted (from the export), used to find its Instagram link. */
+  posted?: string
+  /** The public post on Instagram, as a path like /reel/ABC123/. */
+  ig?: string
 }
+
+/** The clip's Instagram post, when it has one. */
+export const instagramUrl = (clip: Clip) => (clip.ig ? `https://www.instagram.com${clip.ig}` : undefined)
 
 const FILE = new URL('./clips.json', import.meta.url)
 

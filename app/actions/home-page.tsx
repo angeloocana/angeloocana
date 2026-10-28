@@ -2,7 +2,7 @@ import type { Handle, RemixNode } from 'remix/component'
 
 import { Document } from './document.tsx'
 import { careerFor } from '../content/career.ts'
-import { CATEGORY_NAMES, homeOrder } from '../content/clips.ts'
+import { CATEGORY_NAMES, homeOrder, instagramUrl } from '../content/clips.ts'
 import { postsFor } from '../content/posts.ts'
 import { COPY, HREF, type Copy, type Lang } from '../copy.ts'
 import { CineCursor } from '../ui/public/cine-cursor.tsx'
@@ -11,6 +11,7 @@ import { FONTS, SiteFoot, SiteNav, SocialLinks } from '../ui/chrome.tsx'
 import { AppleWatch, IPad, IPhone, Laptop, Pixel, Screens, WearWatch } from '../ui/devices.tsx'
 import { JojDesktop, JojPhone } from '../ui/joj-screens.tsx'
 import { JojDemo } from '../ui/public/joj-demo.tsx'
+import { SocialIcon } from '../ui/social-icons.tsx'
 
 const M = '/media'
 
@@ -149,6 +150,11 @@ export function HomePage(handle: Handle<{ lang: Lang }>) {
                   <p class="clip-cat">{names[clip.cat]}</p>
                   {!clip.captionRejected && <p class="clip-label">{clip.label[lang]}</p>}
                 </div>
+                {instagramUrl(clip) && (
+                  <a class="clip-ig" href={instagramUrl(clip)} target="_blank" rel="noopener" aria-label={`${t.hi.onInstagram}: ${clip.label[lang]} (${t.links.newTab})`} data-cursor="Instagram">
+                    <SocialIcon id="instagram" />
+                  </a>
+                )}
               </li>
             ))}
           </Row>

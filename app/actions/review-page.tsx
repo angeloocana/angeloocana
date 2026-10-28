@@ -1,7 +1,7 @@
 import { existsSync, readFileSync, writeFileSync } from 'node:fs'
 
 import { Document } from './document.tsx'
-import { CATEGORIES, CATEGORY_NAMES, loadClips, saveClips, type Category, type Clip } from '../content/clips.ts'
+import { CATEGORIES, CATEGORY_NAMES, instagramUrl, loadClips, saveClips, type Category, type Clip } from '../content/clips.ts'
 import { ReviewBoard } from '../ui/public/review-board.tsx'
 
 // Local-only page (npm run dev → /review) for curating the home row: every clip grouped by category.
@@ -41,6 +41,22 @@ export async function saveReview(request: Request) {
   return Response.json(clip)
 }
 
+// The source filter: every clip gets one of these keys, shown as a badge and used by the filter buttons.
+const SOURCES = [
+  { key: 'all', label: 'All' },
+  { key: 'instagram', label: 'Instagram' },
+  { key: 'ig-reels', label: 'IG reels' },
+  { key: 'ig-posts', label: 'IG posts' },
+  { key: 'ig-stories', label: 'IG stories' },
+  { key: 'not-instagram', label: 'Not Instagram' },
+  { key: 'phone', label: 'Old phone' },
+  { key: 'montage', label: 'Montage' },
+] as const
+const KIND = { reels: 'reel', posts: 'post', stories: 'story', igtv: 'IGTV' } as const
+const sourceKeys = (clip: Clip) => (clip.source === 'instagram' ? ['instagram', `ig-${clip.igKind}`] : ['not-instagram', clip.source])
+const sourceLabel = (clip: Clip) =>
+  clip.source === 'instagram' ? `Instagram ${clip.igKind ? KIND[clip.igKind] : ''}`.trim() : clip.source === 'phone' ? 'Old phone' : 'Montage'
+
 export function ReviewPage() {
   return () => {
     let clips = loadClips()
@@ -64,6 +80,16 @@ export function ReviewPage() {
           </div>
           <label class="rv-toggle"><input type="checkbox" data-hide-rejected /> Hide rejected</label>
         </header>
+        <div class="rv-sources" role="group" aria-label="Show clips from">
+          {SOURCES.map((s) => {
+            let count = s.key === 'all' ? clips.length : clips.filter((c) => sourceKeys(c).includes(s.key)).length
+            return count ? (
+              <button key={s.key} type="button" data-source-filter={s.key} aria-pressed={s.key === 'all' ? 'true' : 'false'}>
+                {s.label} <span>{count}</span>
+              </button>
+            ) : null
+          })}
+        </div>
         <nav class="rv-tabs" aria-label="Categories">
           {groups.map((g) => (
             <a key={g.cat} href={`#${g.cat}`}>
@@ -77,12 +103,17 @@ export function ReviewPage() {
               <h2>{names[g.cat]}</h2>
               <ul class="rv-grid">
                 {g.clips.map((clip) => (
-                  <li key={clip.id} class="rv" data-id={clip.id} data-star={String(clip.star)} data-rejected={String(clip.rejected)} data-caption-rejected={String(!!clip.captionRejected)}>
+                  <li key={clip.id} class="rv" data-id={clip.id} data-star={String(clip.star)} data-rejected={String(clip.rejected)} data-caption-rejected={String(!!clip.captionRejected)} data-sources={sourceKeys(clip).join(' ')}>
                     <video muted loop playsInline preload="none" poster={`/media/clips/${clip.id}.jpg`} src={`/media/clips/${clip.id}.mp4`} />
                     <div class="rv-info">
                       <label class="rv-caption"><span>EN</span><textarea data-field="en" rows={1} maxLength={120} value={clip.label.en} /></label>
                       <label class="rv-caption"><span>PT</span><textarea data-field="pt" rows={1} maxLength={120} value={clip.label.pt} /></label>
-                      <small>score {clip.score}</small>
+                      <small class="rv-meta">
+                        <span class={`rv-src rv-src-${clip.source}`}>{sourceLabel(clip)}</span>
+                        {clip.posted && <span>{clip.posted}</span>}
+                        {instagramUrl(clip) && <a href={instagramUrl(clip)} target="_blank" rel="noopener">Open on Instagram ↗</a>}
+                        <span>score {clip.score}</span>
+                      </small>
                     </div>
                     <div class="rv-actions">
                       <button type="button" class="rv-star" data-act="star" title="Star: click to cycle ★ → ★★ → ★★★ → none">

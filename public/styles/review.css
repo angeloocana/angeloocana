@@ -45,3 +45,15 @@ body.rv-page { margin: 0; background: #0b0b0b; color: #ece7df; font: 14px/1.45 s
 .rv[data-moved]::after { content: 'Moved: reload to regroup'; display: block; padding: 0 0.6rem 0.5rem; color: #e8b86a; font-size: 0.7rem; }
 /* caption boxes grow to show the whole caption */
 .rv-caption textarea { resize: none; field-sizing: content; min-height: 1.9em; line-height: 1.35; overflow: hidden; }
+/* source filter and badges */
+.rv-sources { display: flex; flex-wrap: wrap; gap: 0.35rem; padding: 0.6rem 1.2rem 0; }
+.rv-sources button { font: inherit; font-size: 0.8rem; color: #ece7df; background: #151515; border: 1px solid #2a2a2a; border-radius: 999px; padding: 0.3rem 0.7rem; cursor: pointer; }
+.rv-sources button span { color: #8f887d; margin-left: 0.25rem; }
+.rv-sources button[aria-pressed='true'] { background: #e8b86a; border-color: #e8b86a; color: #111; }
+.rv-sources button[aria-pressed='true'] span { color: #3b2e17; }
+.rv[hidden], .rv-group[hidden] { display: none; }
+.rv-meta { display: flex; flex-wrap: wrap; gap: 0.25rem 0.5rem; align-items: center; }
+.rv-src { padding: 0.05rem 0.4rem; border-radius: 999px; font-weight: 600; color: #111; background: #8f887d; }
+.rv-src-instagram { background: linear-gradient(90deg, #f7b24a, #e1306c); color: #fff; }
+.rv-src-phone { background: #6aa7e8; }
+.rv-src-montage { background: #b6f46b; }

@@ -30,6 +30,16 @@ export const ReviewBoard = clientEntry(import.meta.url, function ReviewBoard(han
       if (counter) counter.textContent = String(live)
     }
 
+    // source filter: show only clips from Instagram, the old phone, etc.
+    document.addEventListener('click', (event) => {
+      let filter = (event.target as Element).closest<HTMLElement>('[data-source-filter]')
+      if (!filter) return
+      let key = filter.dataset.sourceFilter!
+      for (let b of document.querySelectorAll<HTMLElement>('[data-source-filter]')) b.setAttribute('aria-pressed', String(b === filter))
+      for (let card of document.querySelectorAll<HTMLElement>('.rv')) card.hidden = key !== 'all' && !card.dataset.sources!.split(' ').includes(key)
+      for (let group of document.querySelectorAll<HTMLElement>('.rv-group')) group.hidden = !group.querySelector('.rv:not([hidden])')
+    }, { signal })
+
     document.addEventListener('click', (event) => {
       let button = (event.target as Element).closest<HTMLElement>('[data-act]')
       let card = button?.closest<HTMLElement>('.rv')
