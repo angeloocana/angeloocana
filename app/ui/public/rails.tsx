@@ -243,10 +243,72 @@ export const Rails = clientEntry(import.meta.url, function Rails(handle: Handle)
     addEventListener('scroll', onScroll, { signal, passive: true })
     onScroll()
 
+    let flight = reduced ? null : setUpFlight()
+
     // Any first interaction skips the title intro.
-    let skip = () => root.classList.add('cin-skip')
+    let skip = () => {
+      root.classList.add('cin-skip')
+      flight?.skipped()
+    }
     for (let type of ['wheel', 'touchstart', 'keydown', 'pointerdown'] as const) {
       addEventListener(type, skip, { signal, once: true, passive: true })
+    }
+
+    // The plane in "Brazil ✈ Ottawa" takes off once the title, the text and the clips have settled, so
+    // it is the only thing moving: 5s after load, or soon after the intro is skipped. It waits while the
+    // tab is hidden or the route is off screen, and flies again on hover or tap.
+    function setUpFlight() {
+      let route = document.querySelector<HTMLElement>('[data-flight]')
+      let plane = route?.querySelector('.hi-plane')
+      if (!route || !plane) return null
+      let el = route
+      let due = false
+      let flown = false
+      let flying = false
+      let inView = false
+      el.dataset.flight = 'wait'
+
+      function fly() {
+        if (flying) return
+        flying = true
+        flown = true
+        el.dataset.flight = 'wait'
+        void el.offsetWidth // restarts the animations on a replay
+        el.dataset.flight = 'fly'
+      }
+      let flyIfReady = () => {
+        if (due && !flown && inView && document.visibilityState === 'visible') fly()
+      }
+      plane.addEventListener('animationend', () => { flying = false }, { signal })
+
+      let timer = 0
+      let takeOffIn = (ms: number) => {
+        clearTimeout(timer)
+        timer = window.setTimeout(() => { due = true; flyIfReady() }, Math.max(0, ms))
+      }
+      takeOffIn(5000 - performance.now())
+      signal.addEventListener('abort', () => clearTimeout(timer))
+
+      let seen = new IntersectionObserver((entries) => {
+        inView = entries.at(-1)!.intersectionRatio > 0.9
+        flyIfReady()
+      }, { threshold: [0, 0.5, 0.95, 1], rootMargin: '-64px 0px 0px 0px' }) // below the fixed menu
+      seen.observe(el)
+      signal.addEventListener('abort', () => seen.disconnect())
+      document.addEventListener('visibilitychange', () => setTimeout(flyIfReady, 500), { signal })
+
+      el.addEventListener('pointerenter', (event) => {
+        if (event.pointerType === 'mouse' && flown) fly()
+      }, { signal })
+      el.addEventListener('click', fly, { signal })
+
+      return {
+        // A skip ends the intro at once, so the plane can go after a short beat (the title still needs
+        // until about 2s after load to settle when the intro is skipped straight away).
+        skipped() {
+          if (!due) takeOffIn(Math.min(5000, Math.max(performance.now() + 600, 2000)) - performance.now())
+        },
+      }
     }
   })
 
