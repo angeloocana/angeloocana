@@ -145,7 +145,7 @@ html:not(.js-rails) .rail-arrow { display: none; }
 .hi h1 { font-size: clamp(3.2rem, 1.4rem + 6vw, 7.2rem); line-height: 0.9; animation: title-in 2.2s var(--ease) 2.5s both; }
 .hi .cin-kicker { animation: fade 1.6s ease 2.7s both; color: #f4d28e; }
 .hi-tldr { font: 400 clamp(1.1rem, 0.9rem + 0.7vw, 1.5rem)/1.4 var(--serif); color: #ece6db; max-width: 42ch; animation: fade 1.6s ease 3s both; }
-.hi .hi-values, .hi .links { animation: fade 1.6s ease 3.3s both; }
+.hi .links { animation: fade 1.6s ease 3.3s both; }
 .cin-skip .hi > * { animation-delay: 0.15s !important; }
 .clip { --h: calc(var(--row-h) - 2.75rem); height: var(--h); min-height: 0; width: calc(var(--h) * 9 / 16); align-self: flex-start; overflow: hidden; background: #111; box-shadow: 0 30px 70px -30px rgb(0 0 0 / 0.95); transition: translate 0.6s var(--ease), scale 0.6s var(--ease), filter 0.5s; }
 /* rhythm: up, down, and every fourth clip a little wider */
@@ -362,9 +362,7 @@ html:not(.js-rails) .rail-arrow { display: none; }
 .reel-frame h3 { font: 600 1.25rem/1.15 var(--joj); }
 .reel-frame p:last-child { color: #a9a296; font-size: 0.95rem; }
 
-/* ---------- Hi: values and links ---------- */
-.hi-values { display: flex; flex-wrap: wrap; gap: 0.6rem; }
-.hi-values li { padding: 0.6rem 1rem; border-radius: 999px; border: 1px solid rgb(232 184 106 / 0.45); color: var(--amber); font: 600 0.7rem/1 var(--sans); letter-spacing: 0.18em; text-transform: uppercase; }
+/* ---------- Hi: links ---------- */
 /* contact links: email as the main button, then a row of equal social tiles (icon over label) */
 .links { display: grid; gap: 1.1rem; justify-items: start; margin-top: 0.6rem; }
 .foot-links { justify-items: center; }
@@ -467,7 +465,6 @@ html:not(.js-rails) .rail-arrow { display: none; }
   .hi .socials a { height: auto; aspect-ratio: 1; }
   .card, .job, .reel-frame { max-width: 78vw; }
   .row-hi .rail { align-items: flex-end; }
-  .hi-values li { padding: 0.5rem 0.75rem; font-size: 0.62rem; }
   .job { padding: 1.4rem 1.2rem 1.3rem; }
   .row-career .rail { align-items: flex-start; }
 }
