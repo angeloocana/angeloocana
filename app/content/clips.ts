@@ -1,8 +1,10 @@
 // The home page's video row. The list itself lives in clips.json, which the local review page
 // (/review, development only) edits: reject clips, star the ones that should come first.
-import { readFileSync, writeFileSync } from 'node:fs'
+import { existsSync, readFileSync, statSync, writeFileSync } from 'node:fs'
+import { join } from 'node:path'
 
 import type { Lang } from '../copy.ts'
+import { MEDIA_DIR } from './media-dir.ts'
 
 export const CATEGORIES = ['ice', 'gym', 'wood', 'camping', 'food', 'snow', 'bike', 'travel', 'nature', 'music', 'other'] as const
 export type Category = (typeof CATEGORIES)[number]
@@ -47,7 +49,30 @@ export type Clip = {
   rejected: boolean
   /** How strong it is as an opening clip, 1..5 (from the first review). */
   score: number
+  /** The caption was rejected on the review page: the card shows only its category. */
+  captionRejected?: boolean
+  /** Where the footage came from: an Instagram post, my old phone, or a montage of several clips. */
+  source: 'instagram' | 'phone' | 'montage'
+  /** For Instagram clips: what kind of post it was in the export. Stories expire, so they have no link. */
+  igKind?: 'reels' | 'posts' | 'stories' | 'igtv'
+  /** Day it was posted (from the export), used to find its Instagram link. */
+  posted?: string
+  /** The public post on Instagram, as a path like /reel/ABC123/. */
+  ig?: string
 }
+
+/**
+ * A clip's video or poster URL. The ?v= tag changes whenever the file is re-cut, so browsers that
+ * cached the old cut (media is cached for a week, see scripts/build.ts) fetch the new one.
+ */
+export function clipUrl(id: string, ext: 'mp4' | 'jpg') {
+  let file = join(MEDIA_DIR, 'media', 'clips', `${id}.${ext}`)
+  let version = existsSync(file) ? Math.round(statSync(file).mtimeMs / 1000).toString(36) : '0'
+  return `/media/clips/${id}.${ext}?v=${version}`
+}
+
+/** The clip's Instagram post, when it has one. */
+export const instagramUrl = (clip: Clip) => (clip.ig ? `https://www.instagram.com${clip.ig}` : undefined)
 
 const FILE = new URL('./clips.json', import.meta.url)
 

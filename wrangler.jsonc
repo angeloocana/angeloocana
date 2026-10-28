@@ -9,7 +9,10 @@
     "directory": "./dist",
     "html_handling": "auto-trailing-slash",
     "not_found_handling": "none"
-  }
-  // Going live: add "routes": [{ "pattern": "angeloocana.com", "custom_domain": true }]
-  // once the angeloocana.com DNS zone is on Cloudflare.
+  },
+  // the zone is on Cloudflare: both hostnames serve this site
+  "routes": [
+    { "pattern": "angeloocana.com", "custom_domain": true },
+    { "pattern": "www.angeloocana.com", "custom_domain": true }
+  ]
 }

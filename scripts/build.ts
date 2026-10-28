@@ -1,8 +1,11 @@
 // Prerenders the site to plain files in dist/, ready for any static host (Cloudflare, see wrangler.jsonc).
 // Run with `npm run build`. It renders each page through the real router, then follows every
 // /assets/ URL (scripts, import maps, chunks) so the browser islands work without a server.
+import { existsSync } from 'node:fs'
 import { cp, mkdir, rm, writeFile } from 'node:fs/promises'
 import { dirname, join } from 'node:path'
+
+import { MEDIA_DIR } from '../app/content/media-dir.ts'
 
 import { loadClips } from '../app/content/clips.ts'
 import { allPosts } from '../app/content/posts.ts'
@@ -15,14 +18,25 @@ const PAGES: Record<string, string> = { '/': 'index.html', '/pt': 'pt/index.html
 for (let post of allPosts()) PAGES[post.url] = `${post.url.slice(1)}index.html`
 
 await rm(OUT, { recursive: true, force: true })
-// public/ first (styles, favicon, media), then the rendered pages and scripts on top.
-// Only clips that are live on the home page ship; rejected ones never leave this machine.
+// public/ and the media first, then the rendered pages and scripts on top.
 const live = new Set(loadClips().filter((clip) => !clip.rejected).map((clip) => clip.id))
+// A deploy replaces every file on the site, so a build without the media would delete the live videos.
+// Media comes from the shared folder outside the repo (app/content/media-dir.ts); stop if anything is missing.
+const MEDIA = join(MEDIA_DIR, 'media')
+let missing = [...live].flatMap((id) => [`${id}.mp4`, `${id}.jpg`]).filter((file) => !existsSync(join(MEDIA, 'clips', file)))
+if (missing.length) {
+  throw new Error(`Missing ${missing.length} clip files in ${MEDIA}/clips (${missing.slice(0, 3).join(', ')}…). Cut them first, or set ANGELOOCANA_MEDIA.`)
+}
 await cp('public', OUT, {
   recursive: true,
+  filter: (src) => !src.endsWith('.DS_Store') && !src.endsWith('styles/review.css') && !src.startsWith('public/media'),
+})
+// only clips that are live on the home page ship; rejected ones never leave this machine
+await cp(MEDIA, join(OUT, 'media'), {
+  recursive: true,
   filter: (src) => {
-    if (src.endsWith('.DS_Store') || src.endsWith('styles/review.css')) return false
-    let clip = src.match(/media\/clips\/([^/]+)\.(mp4|jpg)$/)
+    if (src.endsWith('.DS_Store')) return false
+    let clip = src.match(/clips\/([^/]+)\.(mp4|jpg)$/)
     return !clip || live.has(clip[1])
   },
 })
@@ -106,10 +120,12 @@ await save(
     '/fr/resume/* /#career 301',
     '/fr/about/ / 301',
     '/fr/contact/ /#contact 301',
-    '/offline-plugin-app-shell-fallback/ / 301',
     '',
   ].join('\n'),
 )
+// The old site's offline service worker answers page loads with this address. A redirect there makes
+// the browser show an error, so it gets the home page itself until those old workers are gone (see public/sw.js).
+await save('offline-plugin-app-shell-fallback/index.html', (await (await get('/')).text()))
 const SITE_ORIGIN = 'https://angeloocana.com'
 await save(
   'sitemap.xml',
@@ -119,7 +135,7 @@ await save(
 )
 await save(
   '_headers',
-  ['/media/*', '  Cache-Control: public, max-age=604800', '/assets/*', '  Cache-Control: public, max-age=31536000, immutable', ''].join('\n'),
+  ['/sw.js', '  Cache-Control: no-cache', '/media/*', '  Cache-Control: public, max-age=604800', '/assets/*', '  Cache-Control: public, max-age=31536000, immutable', ''].join('\n'),
 )
 
 console.log(`Built ${Object.keys(PAGES).length} pages, ${live.size} clips and ${seen.size} script files into ${OUT}/`)

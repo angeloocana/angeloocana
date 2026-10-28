@@ -2,7 +2,7 @@ import type { Handle, RemixNode } from 'remix/component'
 
 import { Document } from './document.tsx'
 import { careerFor } from '../content/career.ts'
-import { CATEGORY_NAMES, homeOrder } from '../content/clips.ts'
+import { CATEGORY_NAMES, clipUrl, homeOrder, instagramUrl } from '../content/clips.ts'
 import { postsFor } from '../content/posts.ts'
 import { COPY, HREF, type Copy, type Lang } from '../copy.ts'
 import { CineCursor } from '../ui/public/cine-cursor.tsx'
@@ -11,6 +11,7 @@ import { FONTS, SiteFoot, SiteNav, SocialLinks } from '../ui/chrome.tsx'
 import { AppleWatch, IPad, IPhone, Laptop, Pixel, Screens, WearWatch } from '../ui/devices.tsx'
 import { JojDesktop, JojPhone } from '../ui/joj-screens.tsx'
 import { JojDemo } from '../ui/public/joj-demo.tsx'
+import { SocialIcon } from '../ui/social-icons.tsx'
 
 const M = '/media'
 
@@ -130,25 +131,19 @@ export function HomePage(handle: Handle<{ lang: Lang }>) {
               <SocialLinks class="hi-links" t={t.links} />
             </li>
             {clips.map((clip, i) => (
-              <li key={clip.id} class="slide clip" data-cat={clip.cat} data-star={String(clip.star)} data-score={String(clip.score)} data-poster={`${M}/clips/${clip.id}.jpg`}>
-                {/* the first few posters load right away; the rest as they come near (rails.tsx) */}
-                <video
-                  class="clip-video"
-                  data-autoplay
-                  muted
-                  loop
-                  playsInline
-                  preload="none"
-                  poster={i < 6 ? `${M}/clips/${clip.id}.jpg` : undefined}
-                  data-lazy-poster={i < 6 ? undefined : `${M}/clips/${clip.id}.jpg`}
-                  aria-label={clip.label[lang]}
-                >
-                  <source src={`${M}/clips/${clip.id}.mp4`} type="video/mp4" />
-                </video>
+              <li key={clip.id} class="slide clip" data-cat={clip.cat} data-star={String(clip.star)} data-score={String(clip.score)} data-poster={clipUrl(clip.id, 'jpg')} data-video={clipUrl(clip.id, 'mp4')}>
+                {/* a still; rails.tsx adds the video player only while the clip is near the screen,
+                    because phones crash with a hundred video players on one page */}
+                <img class="clip-video" src={clipUrl(clip.id, 'jpg')} alt={clip.label[lang]} loading={i < 6 ? 'eager' : 'lazy'} decoding="async" width="540" height="960" />
                 <div class="clip-copy" aria-hidden="true">
                   <p class="clip-cat">{names[clip.cat]}</p>
-                  <p class="clip-label">{clip.label[lang]}</p>
+                  {!clip.captionRejected && <p class="clip-label">{clip.label[lang]}</p>}
                 </div>
+                {instagramUrl(clip) && (
+                  <a class="clip-ig" href={instagramUrl(clip)} target="_blank" rel="noopener" aria-label={`${t.hi.onInstagram}: ${clip.label[lang]} (${t.links.newTab})`} data-cursor="Instagram">
+                    <SocialIcon id="instagram" />
+                  </a>
+                )}
               </li>
             ))}
           </Row>

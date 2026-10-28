@@ -20,10 +20,25 @@ export const ReviewBoard = clientEntry(import.meta.url, function ReviewBoard(han
       let clip = (await response.json()) as { star: number; rejected: boolean; cat: string }
       card.dataset.moved = card.closest('section')?.id === clip.cat ? undefined : 'true'
       if (card.dataset.moved !== 'true') delete card.dataset.moved
+      let saved = card.querySelector<HTMLElement>('.rv-saved')
+      if (saved) {
+        saved.textContent = 'Saved'
+        setTimeout(() => (saved.textContent = ''), 1400)
+      }
       let live = document.querySelectorAll('.rv[data-rejected="false"]').length
       let counter = document.querySelector('[data-live]')
       if (counter) counter.textContent = String(live)
     }
+
+    // source filter: show only clips from Instagram, the old phone, etc.
+    document.addEventListener('click', (event) => {
+      let filter = (event.target as Element).closest<HTMLElement>('[data-source-filter]')
+      if (!filter) return
+      let key = filter.dataset.sourceFilter!
+      for (let b of document.querySelectorAll<HTMLElement>('[data-source-filter]')) b.setAttribute('aria-pressed', String(b === filter))
+      for (let card of document.querySelectorAll<HTMLElement>('.rv')) card.hidden = key !== 'all' && !card.dataset.sources!.split(' ').includes(key)
+      for (let group of document.querySelectorAll<HTMLElement>('.rv-group')) group.hidden = !group.querySelector('.rv:not([hidden])')
+    }, { signal })
 
     document.addEventListener('click', (event) => {
       let button = (event.target as Element).closest<HTMLElement>('[data-act]')
@@ -31,6 +46,10 @@ export const ReviewBoard = clientEntry(import.meta.url, function ReviewBoard(han
       if (!button || !card || button.tagName === 'SELECT') return
       if (button.dataset.act === 'star') save(card, { star: (Number(card.dataset.star) + 1) % 4 })
       if (button.dataset.act === 'reject') save(card, { rejected: card.dataset.rejected !== 'true' })
+      if (button.dataset.act === 'caption') {
+        card.dataset.captionRejected = String(card.dataset.captionRejected !== 'true')
+        save(card, { captionRejected: card.dataset.captionRejected === 'true' })
+      }
     }, { signal })
 
     document.addEventListener('change', (event) => {
@@ -41,6 +60,21 @@ export const ReviewBoard = clientEntry(import.meta.url, function ReviewBoard(han
       }
       let card = target.closest<HTMLElement>('.rv')
       if (card && target.matches('select[data-act="cat"]')) save(card, { cat: (target as HTMLSelectElement).value })
+      // captions and feedback save when the field loses focus (or on Enter for captions)
+      if (card && target.matches('[data-field="en"], [data-field="pt"]')) {
+        let value = (field: string) => card.querySelector<HTMLTextAreaElement>(`[data-field="${field}"]`)!.value
+        save(card, { label: { en: value('en'), pt: value('pt') } })
+      }
+      if (card && target.matches('textarea[data-field="note"]')) save(card, { note: (target as HTMLTextAreaElement).value })
+    }, { signal })
+
+    // Enter in a caption saves it (captions are one line, even though the box wraps to show it all)
+    document.addEventListener('keydown', (event) => {
+      let target = event.target as HTMLElement
+      if (event.key === 'Enter' && target.matches('.rv-caption textarea')) {
+        event.preventDefault()
+        target.blur()
+      }
     }, { signal })
 
     // hover (or focus) a card to play it

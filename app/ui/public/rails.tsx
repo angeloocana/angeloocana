@@ -139,6 +139,41 @@ export const Rails = clientEntry(import.meta.url, function Rails(handle: Handle)
       for (let video of document.querySelectorAll<HTMLVideoElement>('video[data-autoplay]')) watcher.observe(video)
       signal.addEventListener('abort', () => watcher.disconnect())
 
+      // Clips are stills until they come near the screen inside their row; then they get a video player,
+      // which is removed again once they move away. Only a handful of players exist at a time, which
+      // keeps phones from running out of memory and closing the page.
+      for (let track of document.querySelectorAll<HTMLElement>('[data-rail-track]')) {
+        if (!track.querySelector('[data-video]')) continue
+        let players = new IntersectionObserver((entries) => {
+          for (let { target, isIntersecting } of entries) {
+            let slide = target as HTMLElement
+            let video = slide.querySelector<HTMLVideoElement>('video.clip-video')
+            if (isIntersecting && !video) {
+              video = document.createElement('video')
+              video.className = 'clip-video'
+              video.muted = true
+              video.loop = true
+              video.playsInline = true
+              video.setAttribute('playsinline', '')
+              video.setAttribute('aria-hidden', 'true')
+              video.preload = 'metadata'
+              video.poster = slide.dataset.poster ?? ''
+              video.src = slide.dataset.video!
+              slide.querySelector('img.clip-video')?.after(video)
+              watcher.observe(video)
+            } else if (!isIntersecting && video) {
+              watcher.unobserve(video)
+              video.pause()
+              video.removeAttribute('src')
+              video.load()
+              video.remove()
+            }
+          }
+        }, { root: track, rootMargin: '0px 60%' })
+        for (let slide of track.querySelectorAll<HTMLElement>('[data-video]')) players.observe(slide)
+        signal.addEventListener('abort', () => players.disconnect())
+      }
+
       let timer = setInterval(() => {
         for (let stack of document.querySelectorAll<HTMLElement>('[data-cycle]')) {
           let rect = stack.getBoundingClientRect()
