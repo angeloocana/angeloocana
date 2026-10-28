@@ -128,13 +128,18 @@ export function HomePage(handle: Handle<{ lang: Lang }>) {
             <li class="slide hi">
               <p class="cin-kicker hi-kicker">
                 <span>{t.hi.role}</span>
-                <span class="hi-route">
+                {/* rails.tsx flies the plane once the title has landed, and again on hover or tap */}
+                <span class="hi-route" data-flight>
                   <span>{t.hi.from}</span>
                   <svg class="hi-flight" viewBox="0 0 72 22" role="img" aria-label={t.hi.movedTo}>
-                    <path class="hi-arc" d="M4 18 Q36 -6 68 18" />
+                    {/* the dashed route appears behind the plane as it flies */}
+                    <mask id="hi-trail" maskUnits="userSpaceOnUse" x="-4" y="-10" width="80" height="36">
+                      <path class="hi-reveal" d="M4 18 Q36 -6 68 18" />
+                    </mask>
+                    <path class="hi-arc" d="M4 18 Q36 -6 68 18" mask="url(#hi-trail)" />
                     <path class="hi-plane" d="M6 0 2 -1 -1 -5h-1.5l1.6 4H-4l-1.2-1.6H-6.2L-5.4 0l-.8 1.6h1L-4 1h3.1l-1.6 4H-1l3-4Z" />
                   </svg>
-                  <span>{t.hi.place}</span>
+                  <span class="hi-to">{t.hi.place}</span>
                 </span>
               </p>
               <h1>Ângelo <em>Ocanã</em></h1>
