@@ -1,15 +1,22 @@
-// Cloudflare Workers static assets: the prerendered site in dist/ (npm run build), no server code.
-// Free plan, unlimited bandwidth. Deploy with `npm run deploy` (needs `npx wrangler login` once).
+// Cloudflare Workers static assets: the prerendered site in dist/ (npm run build), plus a small worker
+// (worker.ts) that serves /media from R2. Free plan. Every push to master deploys through Workers Builds;
+// `npm run deploy` does the same by hand (needs `npx wrangler login` once).
 {
   "name": "angeloocana",
+  // only /media/* runs it (assets.run_worker_first): the videos and screenshots come from R2
+  "main": "worker.ts",
   "compatibility_date": "2026-10-10",
   "workers_dev": true,
   "preview_urls": false,
   "assets": {
     "directory": "./dist",
+    "binding": "ASSETS",
     "html_handling": "auto-trailing-slash",
-    "not_found_handling": "none"
+    "not_found_handling": "none",
+    "run_worker_first": ["/media/*"]
   },
+  // filled by `npm run media:push`; "remote" makes `npm run preview` read the real bucket too
+  "r2_buckets": [{ "binding": "MEDIA", "bucket_name": "angeloocana-media", "remote": true }],
   // the zone is on Cloudflare: both hostnames serve this site
   "routes": [
     { "pattern": "angeloocana.com", "custom_domain": true },
