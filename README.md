@@ -11,7 +11,7 @@ Built with Remix 3, prerendered to static files and hosted on Cloudflare.
 - `content/posts/`: blog posts in Markdown, kept as first published. `blog/x/y.en.md` is served at `/en/blog/x/y/`, `.pt.md` at `/pt/blog/x/y/`. Add a file to publish a post.
 - `app/content/clips.json`: the home row's video clips. Curate them at http://localhost:44100/review while `npm run dev` runs: reject a clip, star it (★★★ opens the row), edit captions or move it to another category. Only live clips are built. Tools to cut clips are in `scripts/clips/`.
 - `app/actions/home-page.tsx`: the page. `app/ui/public/` holds the small browser scripts (scroll scenes, career tabs, cursor).
-- `public/styles/`: the CSS. Screenshots and video loops are not in the repo: they live in `~/dev/angeloocana-media/media` (see `AGENTS.md`), and the build stops if they are missing.
+- `public/styles/`: the CSS. Screenshots and video loops are not in the repo: they live in `~/dev/angeloocana-media/media`, and the live site serves them from a Cloudflare R2 bucket filled by `npm run media:push` (see `AGENTS.md`).
 
 ## Commands
 

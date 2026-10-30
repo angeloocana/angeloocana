@@ -30,8 +30,9 @@ python3 scripts/clips/clips.py links                 # refresh Instagram links a
 ```
 
 A clip's id is `c` + the first 8 hex characters of the sha1 of its `src` in `items.json`; montages are `h-…`.
-Re-cut files get a new `?v=` tag in their URL automatically, so visitors see the new cut right away.
-Then check the result on `/review` (or the home page), and deploy.
+Check the result on `/review` (or the home page), then `npm run media:push` to upload it to the R2 bucket
+the site serves `/media` from, and commit `app/content/media.json` (merging to master deploys). Re-cut
+files get a new `?v=` tag in their URL from that file, so visitors see the new cut right away.
 
 ## Choosing footage
 
