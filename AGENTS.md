@@ -83,7 +83,8 @@ Clip tools (cut, montage, contact sheets, Instagram links) are in `scripts/clips
   Only `/media/*` runs `worker.ts` (from the R2 bucket `angeloocana-media`); everything else is a static file.
 - Deploys: Cloudflare Workers Builds, like jumpoverjump and track2.fit. Every push to master runs
   `npm run build` and `npx wrangler@4.151.1 deploy` on Cloudflare (Node from `.node-version`); the result
-  shows as a "Workers Builds" check on the commit.
+  shows as a "Workers Builds" check on the commit. Builds for other branches are off, so a PR never
+  deploys. Settings: Cloudflare dashboard → Workers & Pages → angeloocana → Settings → Builds.
 - Domain registered at GoDaddy; DNS on Cloudflare (nameservers `brit`/`duke.ns.cloudflare.com`), with
   "Always Use HTTPS" on.
 - The old Gatsby site is still on Netlify (project `angeloocana.com`, builds skipped by `netlify.toml`). Its
