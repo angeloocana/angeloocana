@@ -227,14 +227,14 @@ export const TicTacToe = clientEntry(import.meta.url, function TicTacToe(handle:
         if (started) draw(false)
       }).observe(canvas)
 
-      // the first game starts once the board is on screen
+      // the first game starts once half the board is on screen
       let seen = new IntersectionObserver((entries) => {
         if (started || !entries.some((e) => e.isIntersecting)) return
         started = true
         seen.disconnect()
         update()
         later(2000, aiMoves)
-      }, { threshold: 0.6 })
+      }, { threshold: 0.5 })
       seen.observe(canvas)
       signal.addEventListener('abort', () => seen.disconnect())
     }
