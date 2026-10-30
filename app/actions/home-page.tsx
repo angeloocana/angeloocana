@@ -2,6 +2,7 @@ import type { Handle, RemixNode } from 'remix/component'
 
 import { Document } from './document.tsx'
 import { careerFor, type Highlight } from '../content/career.ts'
+import { learningFor } from '../content/learning.ts'
 import { CATEGORY_NAMES, clipUrl, homeOrder, instagramUrl } from '../content/clips.ts'
 import { postsFor } from '../content/posts.ts'
 import { COPY, HREF, type Copy, type Lang } from '../copy.ts'
@@ -11,6 +12,7 @@ import { FONTS, SiteFoot, SiteNav, SocialLinks } from '../ui/chrome.tsx'
 import { AppleWatch, IPad, IPhone, Laptop, Pixel, Screens, WearWatch } from '../ui/devices.tsx'
 import { JojDesktop, JojPhone } from '../ui/joj-screens.tsx'
 import { JojDemo } from '../ui/public/joj-demo.tsx'
+import { TicTacToe } from '../ui/public/tic-tac-toe.tsx'
 import { SocialIcon } from '../ui/social-icons.tsx'
 
 const M = '/media'
@@ -71,13 +73,14 @@ function Card(handle: Handle<{ class: string; title: string; body: string; child
   )
 }
 
-// Highlights share a card until it holds about 500 characters of text, which still fits the row's
-// height on a phone: Shopify's five take two cards and Kinaxis's three take one.
-function packHighlights(list: Highlight[], budget = 500) {
+// Highlights share a card until it holds about 500 characters of text, or four highlights (their titles
+// take room too), which still fits the row's height on a phone: Shopify's five take two cards, Kinaxis's
+// three take one, and the six from freelancing's comeback take two.
+function packHighlights(list: Highlight[], budget = 500, most = 4) {
   let cards: { h: Highlight; n: number }[][] = []
   let used = Infinity
   list.forEach((h, n) => {
-    if (used + h.body.length > budget) {
+    if (used + h.body.length > budget || cards[cards.length - 1].length === most) {
       cards.push([])
       used = 0
     }
@@ -96,6 +99,7 @@ export function HomePage(handle: Handle<{ lang: Lang }>) {
     let { lang } = handle.props
     let t = COPY[lang]
     let career = careerFor(lang)
+    let learning = learningFor(lang)
     let clips = homeOrder()
     let names = CATEGORY_NAMES[lang]
     return (
@@ -111,6 +115,7 @@ export function HomePage(handle: Handle<{ lang: Lang }>) {
       >
         <Rails />
         <JojDemo />
+        <TicTacToe />
         <CineCursor />
 
         <div class="cin-intro" aria-hidden="true">
@@ -242,7 +247,7 @@ export function HomePage(handle: Handle<{ lang: Lang }>) {
               </Card>
             </Row>
 
-            <Row id="jumpoverjump" class="row-joj" label="Jump Over Jump" t={t.rail} next={{ href: '#career', label: t.nav.chapters[1].label }}>
+            <Row id="jumpoverjump" class="row-joj" label="Jump Over Jump" t={t.rail} next={{ href: '#tictactoe', label: 'Tic Tac Toe AI' }}>
               <li class="slide intro intro-wide intro-joj">
                 <div class="intro-text">
                   <p class="cin-kicker">{t.joj.kickerFirst}</p>
@@ -348,26 +353,82 @@ c_sharp_phaser/JumpOverJump`}</pre>
                 </li>
               ))}
             </Row>
+
+            {/* Tic Tac Toe AI: the 2017 game, playable here (ui/public/tic-tac-toe.tsx runs it) */}
+            <Row id="tictactoe" class="row-ttt" label="Tic Tac Toe AI" t={t.rail} next={{ href: '#career', label: t.nav.chapters[1].label }}>
+              {/* the board sits in the first card, beside the story on wide screens and above it on phones,
+                  so it's playable before any sideways scrolling */}
+              <li class="slide intro intro-wide intro-ttt">
+                <div class="intro-text">
+                  <p class="cin-kicker">{t.ttt.kicker}</p>
+                  <h2>{t.ttt.title[0]}<em>{t.ttt.title[1]}</em>{t.ttt.title[2]}</h2>
+                  <p>{t.ttt.body}</p>
+                </div>
+                <div class="intro-visual ttt-play">
+                  <div class="ttt" role="group" aria-label={t.ttt.game} data-ttt data-words={JSON.stringify(t.ttt.words)}>
+                    <p class="ttt-score">
+                      <small>{t.ttt.you}</small> <b data-ttt-human>0</b> <i>×</i> <b data-ttt-ai>0</b> <small>{t.ttt.ai}</small>
+                    </p>
+                    <div class="ttt-board">
+                      <canvas aria-hidden="true" />
+                      <div class="ttt-cells">
+                        {[0, 1, 2, 3, 4, 5, 6, 7, 8].map((i) => <button key={i} type="button" data-ttt-cell={i} aria-disabled="true" />)}
+                      </div>
+                    </div>
+                    <div class="ttt-foot">
+                      <p class="ttt-status" data-ttt-status aria-live="polite" />
+                      <button type="button" class="cin-btn ttt-new" data-ttt-new>{t.ttt.newGame}</button>
+                    </div>
+                  </div>
+                </div>
+              </li>
+              <li class="slide job ttt-story">
+                <p class="job-label">{t.ttt.builtWith}</p>
+                <h3>{t.ttt.storyTitle}</h3>
+                <p class="job-built">{t.ttt.note}</p>
+                <p class="ttt-ported">{t.ttt.ported}</p>
+                <p class="cap-ctas">
+                  <a class="cin-btn" href="https://github.com/angeloocana/tic-tac-toe-ai" data-cursor="GitHub">{t.ttt.code} <span aria-hidden="true">→</span></a>
+                </p>
+                <ul class="job-tech" aria-label={t.ttt.builtWith}>
+                  {t.ttt.stack.map((tech) => <li key={tech}>{tech}</li>)}
+                </ul>
+              </li>
+              <li class="slide job ttt-log">
+                <p class="job-label">{t.ttt.log.kicker} · 2017</p>
+                <h3>{t.ttt.log.title}</h3>
+                <ul class="job-highlights">
+                  {t.ttt.log.items.map((item) => (
+                    <li key={item.date}>
+                      <b>{item.date}</b>
+                      <small>{item.text}</small>
+                    </li>
+                  ))}
+                </ul>
+              </li>
+            </Row>
           </div>
 
           {/* Career: today first, then back to the start */}
-          <Row id="career" class="row-career" label={t.nav.chapters[1].label} t={t.rail} next={{ href: '#posts', label: t.nav.chapters[2].label }} chapter>
+          <Row id="career" class="row-career" label={t.nav.chapters[1].label} t={t.rail} next={{ href: '#learning', label: t.learning.label }} chapter>
             <li class="slide intro intro-career">
               <p class="cin-kicker">{t.career.kicker}</p>
               <h2>{t.career.title[0]}<em>{t.career.title[1]}</em>{t.career.title[2]}</h2>
-              <p>{t.career.sub(career.length, career[career.length - 1].start)}</p>
+              {/* counted by company, so the two freelance chapters count once */}
+              <p>{t.career.sub(new Set(career.map((job) => job.company)).size, career[career.length - 1].start)}</p>
               {/* a way straight to any job, so the older ones are a tap away; rails.tsx slides the row,
                   rolls the names in like credits and keeps the last one picked lit */}
               <ol class="career-index" aria-label={t.career.jump} data-reveal>
                 {career.map((job, i) => (
                   <li key={job.id} style={`--i:${i}`}>
                     <a href={`#job-${job.id}`} data-rail-jump>
-                      <b>{job.company}</b>
+                      <b>{job.short ?? job.company}</b>
                       <span>
                         {job.start}
                         {job.end !== job.start && '–'}
                         {job.end === 'Now' ? <em>{t.career.now}</em> : job.end !== job.start && job.end.slice(2)}
                         {job.end === 'Now' && <i aria-hidden="true" />}
+                        {job.chapter && ` · ${job.chapter}`}
                       </span>
                     </a>
                   </li>
@@ -382,7 +443,10 @@ c_sharp_phaser/JumpOverJump`}</pre>
                   {job.start !== job.end && <span>{job.end === 'Now' ? t.career.now : job.end}</span>}
                   {job.featured && <span class="job-badge">{t.career.today}</span>}
                 </p>
-                <h3>{job.url ? <a href={job.url} data-cursor={t.career.visit}>{job.company}</a> : job.company}</h3>
+                <h3>
+                  {job.url ? <a href={job.url} data-cursor={t.career.visit}>{job.company}</a> : job.company}
+                  {job.chapter && <> <em>{job.chapter}</em></>}
+                </h3>
                 {(job.role || job.place) && <p class="job-meta">{[job.role, job.place].filter(Boolean).join(' · ')}</p>}
                 <p class="job-label">{t.career.built}</p>
                 {job.built ? <p class="job-built">{job.built}</p> : <p class="job-built job-empty">{t.career.empty}</p>}
@@ -409,7 +473,7 @@ c_sharp_phaser/JumpOverJump`}</pre>
               // card (and so the whole row) a screen taller than the rest. There, they move to cards of their own.
               ...packHighlights(job.highlights ?? []).map((group) => (
                 <li key={`${job.id}-${group[0].n}`} class={`slide job-hl${job.featured ? ' job-hl-featured' : ''}`}>
-                  <p class="job-label">{job.company} · {t.career.highlights}</p>
+                  <p class="job-label">{[job.company, job.chapter, t.career.highlights].filter(Boolean).join(' · ')}</p>
                   <ol class="job-hl-list">
                     {group.map(({ h, n }) => (
                       <li key={n}>
@@ -424,6 +488,39 @@ c_sharp_phaser/JumpOverJump`}</pre>
                 </li>
               )),
             ])}
+          </Row>
+
+          {/* Education & more: the rest of the old résumés, in the career's card style. Part of the Career chapter. */}
+          <Row id="learning" class="row-learning" label={t.learning.label} t={t.rail} next={{ href: '#posts', label: t.nav.chapters[2].label }}>
+            <li class="slide intro intro-career">
+              <p class="cin-kicker">{t.learning.kicker}</p>
+              <h2>{t.learning.title[0]}<em>{t.learning.title[1]}</em>{t.learning.title[2]}</h2>
+              <p>{t.learning.body}</p>
+            </li>
+            {learning.map((study) => (
+              <li key={study.id} class="slide job study">
+                {study.start && (
+                  <p class="job-years">
+                    <span>{study.start}</span>
+                    {study.end && study.end !== study.start && <i aria-hidden="true" />}
+                    {study.end && study.end !== study.start && <span>{study.end === 'Now' ? t.career.now : study.end}</span>}
+                  </p>
+                )}
+                <h3>{study.url ? <a href={study.url} data-cursor={t.career.visit}>{study.title}</a> : study.title}</h3>
+                {study.meta && <p class="job-meta">{study.meta}</p>}
+                {study.body && <p class="job-built">{study.body}</p>}
+                {study.items && (
+                  <ul class="job-highlights">
+                    {study.items.map((item) => (
+                      <li key={item.title}>
+                        <b>{item.url ? <a href={item.url} rel="noopener" target="_blank">{item.title} <i aria-hidden="true">↗</i></a> : item.title}</b>
+                        {item.body && <small>{item.body}</small>}
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </li>
+            ))}
           </Row>
 
           {/* Posts: everything published on the old site, newest first */}
