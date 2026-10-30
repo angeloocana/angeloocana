@@ -33,6 +33,9 @@ await cp('public', OUT, {
 // Browser modules compiled from .ts/.tsx keep their source names, which static hosts would serve
 // with the wrong type. Save them as .js and point every reference at the new name.
 const TS_URL = /(\/assets\/[^"'`#?\s]+?\.tsx?)(?=["'`#?\s])/g
+// A module that imports a sibling (tic-tac-toe.tsx → ./tic-tac-toe-ai.ts) needs the same rename, or the
+// browser asks for the .ts name, which the import map no longer has, and the whole module fails to load.
+const RELATIVE_TS_IMPORT = /(\bfrom\s*|\bimport\s*\(?\s*)(["'])(\.{1,2}\/[^"']+?\.tsx?)\2/g
 const asJs = (path: string) => (/\.tsx?$/.test(path) ? `${path}.js` : path)
 // Cloudflare answers a path with a bare @ (rails.@a1b2c3.tsx) with a redirect to its %40 spelling,
 // one extra round trip per script, so references use that spelling from the start.
@@ -40,7 +43,10 @@ const ASSET_URL = /\/assets\/[^"'`\s)]+/g
 
 async function save(path: string, body: string | Uint8Array) {
   if (typeof body === 'string') {
-    body = body.replace(TS_URL, '$1.js').replace(ASSET_URL, (url) => url.replaceAll('@', '%40'))
+    body = body
+      .replace(TS_URL, '$1.js')
+      .replace(RELATIVE_TS_IMPORT, '$1$2$3.js$2')
+      .replace(ASSET_URL, (url) => url.replaceAll('@', '%40'))
   }
   // URLs are percent-encoded (%40remix-run); files on disk are not (@remix-run)
   let file = join(OUT, decodeURIComponent(asJs(path)))
