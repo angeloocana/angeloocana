@@ -1,5 +1,6 @@
 // The tiles of Pool Tile Designer (github.com/angeloocana/pool-tile-designer), which Ângelo built in a
-// week in July 2017 as "Desenhe suas Pastilhas": pick a color, then paint a pool's mosaic tile by tile.
+// week in July 2017 as "Desenhe suas Pastilhas", a prototype for a pool builder: pick a color, then paint
+// a pool's mosaic tile by tile.
 // Ported from JavaScript (Ramda, Redux) to plain TypeScript, keeping its small immutable functions and
 // its palette. One fix: the original read the old colors back by [column][row] when resizing, so a
 // resize lost or swapped them on any grid that wasn't square (its tests only tried one tile).
