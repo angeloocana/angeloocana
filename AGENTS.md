@@ -49,6 +49,8 @@ Clip tools (cut, montage, contact sheets, Instagram links) are in `scripts/clips
 
 - `app/copy.ts`: every word on the page, English and Portuguese side by side.
 - `app/content/career.ts`: jobs (Shopify, Kinaxis, …), each with an optional `pt` block.
+- `app/content/learning.ts`: the Education row's cards. `app/content/projects.ts`: the More projects row
+  (open source and smaller builds; public repos only), after the three projects that have rows of their own.
 - `app/content.ts`: email and social links.
 - `content/posts/`: blog posts in Markdown, kept as first published, at their old URLs
   (`blog/x/y.en.md` → `/en/blog/x/y/`, `.pt.md` → `/pt/blog/x/y/`, `Tutoriais/X.md` → `/Tutoriais/X/`).

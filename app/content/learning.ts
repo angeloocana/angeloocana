@@ -1,6 +1,7 @@
-// School, courses, certifications, languages and side projects: the rest of the old résumés
+// School, courses, certifications and languages: the rest of the old résumés
 // (legacy/resumes/ and legacy/src/data/resume/), one card each in the row after the career.
 // Each entry's `pt` block holds the Portuguese version; anything missing there falls back to English.
+// The smaller projects (content/projects.ts) use the same cards.
 
 import type { Lang } from '../copy.ts'
 
@@ -20,6 +21,8 @@ export type Study = {
   body?: string
   /** A short list on the card: courses, certificates, languages, projects. */
   items?: Item[]
+  /** Technologies, shown as tags at the bottom of the card. */
+  tech?: string[]
   pt?: Words
 }
 
@@ -142,29 +145,12 @@ export const LEARNING: Study[] = [
       ],
     },
   },
-  {
-    id: 'side-projects',
-    title: 'Side projects',
-    items: [
-      { title: 'Polutz', body: 'Open-source, reusable and tested modules to share between projects, in React, GraphQL and Node.js.', url: 'https://github.com/polutz/polutz' },
-      { title: 'angeloocana.com v2', body: '2017: the second version of this site, in Gatsby, React and GraphQL.' },
-      { title: 'angeloocana.com.br', body: '2014–15: my first site, in Angular and C#.' },
-    ],
-    pt: {
-      title: 'Projetos paralelos',
-      items: [
-        { title: 'Polutz', body: 'Módulos open source, reutilizáveis e testados, para compartilhar entre projetos, em React, GraphQL e Node.js.', url: 'https://github.com/polutz/polutz' },
-        { title: 'angeloocana.com v2', body: '2017: a segunda versão deste site, em Gatsby, React e GraphQL.' },
-        { title: 'angeloocana.com.br', body: '2014–15: meu primeiro site, em Angular e C#.' },
-      ],
-    },
-  },
 ]
 
-/** The learning cards in one language: the `pt` block wins where it has a value. */
-export function learningFor(lang: Lang): Study[] {
-  if (lang === 'en') return LEARNING
-  return LEARNING.map((study) => ({
+/** Cards in one language: the `pt` block wins where it has a value. */
+export function cardsFor(list: Study[], lang: Lang): Study[] {
+  if (lang === 'en') return list
+  return list.map((study) => ({
     ...study,
     title: study.pt?.title ?? study.title,
     meta: study.pt?.meta ?? study.meta,
@@ -172,3 +158,5 @@ export function learningFor(lang: Lang): Study[] {
     items: study.pt?.items ?? study.items,
   }))
 }
+
+export const learningFor = (lang: Lang) => cardsFor(LEARNING, lang)

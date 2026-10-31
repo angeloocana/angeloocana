@@ -2,9 +2,10 @@ import type { Handle, RemixNode } from 'remix/component'
 
 import { Document } from './document.tsx'
 import { careerFor, type Highlight } from '../content/career.ts'
-import { learningFor } from '../content/learning.ts'
+import { learningFor, type Study } from '../content/learning.ts'
 import { CATEGORY_NAMES, clipUrl, homeOrder, instagramUrl } from '../content/clips.ts'
 import { postsFor } from '../content/posts.ts'
+import { GITHUB, projectsFor } from '../content/projects.ts'
 import { COPY, HREF, type Copy, type Lang } from '../copy.ts'
 import { CineCursor } from '../ui/public/cine-cursor.tsx'
 import { Rails } from '../ui/public/rails.tsx'
@@ -73,6 +74,40 @@ function Card(handle: Handle<{ class: string; title: string; body: string; child
   )
 }
 
+// One card in the Education and More projects rows, in the career's card style: years, title, a line or
+// two, a short list, and the technologies at the bottom.
+function studyCard(study: Study, t: Copy) {
+  return (
+    <li key={study.id} class="slide job study">
+      {study.start && (
+        <p class="job-years">
+          <span>{study.start}</span>
+          {study.end && study.end !== study.start && <i aria-hidden="true" />}
+          {study.end && study.end !== study.start && <span>{study.end === 'Now' ? t.career.now : study.end}</span>}
+        </p>
+      )}
+      <h3>{study.url ? <a href={study.url} data-cursor={t.career.visit}>{study.title}</a> : study.title}</h3>
+      {study.meta && <p class="job-meta">{study.meta}</p>}
+      {study.body && <p class="job-built">{study.body}</p>}
+      {study.items && (
+        <ul class="job-highlights">
+          {study.items.map((item) => (
+            <li key={item.title}>
+              <b>{item.url ? <a href={item.url} rel="noopener" target="_blank">{item.title} <i aria-hidden="true">↗</i></a> : item.title}</b>
+              {item.body && <small>{item.body}</small>}
+            </li>
+          ))}
+        </ul>
+      )}
+      {study.tech && (
+        <ul class="job-tech" aria-label={t.career.tech}>
+          {study.tech.map((tech) => <li key={tech}>{tech}</li>)}
+        </ul>
+      )}
+    </li>
+  )
+}
+
 // Highlights share a card until it holds about 500 characters of text, or four highlights (their titles
 // take room too), which still fits the row's height on a phone: Shopify's five take two cards, Kinaxis's
 // three take one, and the six from freelancing's comeback take two.
@@ -100,6 +135,7 @@ export function HomePage(handle: Handle<{ lang: Lang }>) {
     let t = COPY[lang]
     let career = careerFor(lang)
     let learning = learningFor(lang)
+    let projects = projectsFor(lang)
     let clips = homeOrder()
     let names = CATEGORY_NAMES[lang]
     return (
@@ -355,7 +391,7 @@ c_sharp_phaser/JumpOverJump`}</pre>
             </Row>
 
             {/* Tic Tac Toe AI: the 2017 game, playable here (ui/public/tic-tac-toe.tsx runs it) */}
-            <Row id="tictactoe" class="row-ttt" label="Tic Tac Toe AI" t={t.rail} next={{ href: '#career', label: t.nav.chapters[1].label }}>
+            <Row id="tictactoe" class="row-ttt" label="Tic Tac Toe AI" t={t.rail} next={{ href: '#more-projects', label: t.more.label }}>
               {/* the board sits in the first card, beside the story on wide screens and above it on phones,
                   so it's playable before any sideways scrolling */}
               <li class="slide intro intro-wide intro-ttt">
@@ -406,6 +442,19 @@ c_sharp_phaser/JumpOverJump`}</pre>
                   ))}
                 </ul>
               </li>
+            </Row>
+
+            {/* More projects: open source and smaller builds (content/projects.ts), then GitHub for the rest */}
+            <Row id="more-projects" class="row-more" label={t.more.label} t={t.rail} next={{ href: '#career', label: t.nav.chapters[1].label }}>
+              <li class="slide intro intro-career">
+                <p class="cin-kicker">{t.more.kicker}</p>
+                <h2>{t.more.title[0]}<em>{t.more.title[1]}</em>{t.more.title[2]}</h2>
+                <p>{t.more.body}</p>
+                <p class="cap-ctas">
+                  <a class="cin-btn" href={GITHUB} data-cursor="GitHub">{t.more.github} <span aria-hidden="true">→</span></a>
+                </p>
+              </li>
+              {projects.map((project) => studyCard(project, t))}
             </Row>
           </div>
 
@@ -497,30 +546,7 @@ c_sharp_phaser/JumpOverJump`}</pre>
               <h2>{t.learning.title[0]}<em>{t.learning.title[1]}</em>{t.learning.title[2]}</h2>
               <p>{t.learning.body}</p>
             </li>
-            {learning.map((study) => (
-              <li key={study.id} class="slide job study">
-                {study.start && (
-                  <p class="job-years">
-                    <span>{study.start}</span>
-                    {study.end && study.end !== study.start && <i aria-hidden="true" />}
-                    {study.end && study.end !== study.start && <span>{study.end === 'Now' ? t.career.now : study.end}</span>}
-                  </p>
-                )}
-                <h3>{study.url ? <a href={study.url} data-cursor={t.career.visit}>{study.title}</a> : study.title}</h3>
-                {study.meta && <p class="job-meta">{study.meta}</p>}
-                {study.body && <p class="job-built">{study.body}</p>}
-                {study.items && (
-                  <ul class="job-highlights">
-                    {study.items.map((item) => (
-                      <li key={item.title}>
-                        <b>{item.url ? <a href={item.url} rel="noopener" target="_blank">{item.title} <i aria-hidden="true">↗</i></a> : item.title}</b>
-                        {item.body && <small>{item.body}</small>}
-                      </li>
-                    ))}
-                  </ul>
-                )}
-              </li>
-            ))}
+            {learning.map((study) => studyCard(study, t))}
           </Row>
 
           {/* Posts: everything published on the old site, newest first */}
