@@ -168,6 +168,14 @@ const en = {
       ],
     },
   },
+  // the last projects row: everything smaller, in Education's cards (content/projects.ts)
+  more: {
+    label: 'More projects',
+    kicker: 'Personal projects · and more',
+    title: ['And a few ', 'more', '.'],
+    body: 'Open source, libraries and smaller builds, since 2014. Everything else is on GitHub.',
+    github: 'All of it on GitHub',
+  },
   career: {
     kicker: 'Career · today, then back to the start',
     title: ['Where I’ve ', 'built', ' things.'],
@@ -189,7 +197,7 @@ const en = {
     label: 'Education & more',
     kicker: 'Education · courses · languages',
     title: ['Never stopped ', 'learning', '.'],
-    body: 'School and college around São Paulo, courses ever since, the languages I speak, and side projects along the way.',
+    body: 'School and college around São Paulo, courses ever since, and the languages I speak.',
   },
   posts: {
     kicker: 'Posts',
@@ -367,6 +375,13 @@ const pt: Copy = {
       ],
     },
   },
+  more: {
+    label: 'Mais projetos',
+    kicker: 'Projetos pessoais · e mais',
+    title: ['E mais ', 'alguns', '.'],
+    body: 'Open source, bibliotecas e projetos menores, desde 2014. O resto está no GitHub.',
+    github: 'Tudo no GitHub',
+  },
   career: {
     kicker: 'Carreira · de hoje até o começo',
     title: ['Onde eu ', 'construí', ' coisas.'],
@@ -387,7 +402,7 @@ const pt: Copy = {
     label: 'Estudos e mais',
     kicker: 'Estudos · cursos · idiomas',
     title: ['Nunca parei de ', 'aprender', '.'],
-    body: 'Escola e faculdade na Grande São Paulo, cursos desde então, os idiomas que falo e projetos paralelos pelo caminho.',
+    body: 'Escola e faculdade na Grande São Paulo, cursos desde então e os idiomas que falo.',
   },
   posts: {
     kicker: 'Posts',

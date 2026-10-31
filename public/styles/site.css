@@ -442,6 +442,8 @@ html:not(.js-rails) .rail-arrow { display: none; }
 .row-career { background: radial-gradient(60% 60% at 30% 40%, #15110d, var(--bg) 70%); }
 /* education & more, right after the career: the same cards (.job), with lists in place of highlights */
 .row-learning { background: radial-gradient(60% 60% at 70% 40%, #13110e, var(--bg) 70%); }
+/* more projects, closing the projects chapter: the same cards again */
+.row-more { background: radial-gradient(60% 60% at 70% 50%, rgb(232 184 106 / 0.04), transparent 70%); }
 .intro-career h2 { font-size: clamp(2.6rem, 1.4rem + 3.4vw, 4.8rem); }
 /* every job, a tap away: the intro's list slides the row to the one you pick (rails.tsx).
    The names rise in like credits the first time the row is seen, and the last one picked stays lit. */
