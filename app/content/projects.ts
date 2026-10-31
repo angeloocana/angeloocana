@@ -1,6 +1,7 @@
 // The smaller personal projects, after the three that have a row of their own (track2.fit, Jump Over
 // Jump, Tic Tac Toe AI): one card each, in the Education row's card style. Only public repos; the row
-// links to GitHub for everything else (exercises, forks, sites made for other people).
+// links to GitHub for everything else (exercises, forks, sites made for other people). The pool tile
+// designer's card is playable, so it lives in home-page.tsx (words in copy.ts, code in ui/public/pool-tiles.tsx).
 // Each entry's `pt` block holds the Portuguese version; anything missing there falls back to English.
 
 import { SOCIALS } from '../content.ts'
@@ -75,7 +76,6 @@ export const PROJECTS: Study[] = [
     items: [
       { title: 'Workout assistant', body: '2025: an MCP server that lets an AI log a workout, set by set.', url: `${GH}/workout` },
       { title: 'moon-nodes', body: '2018: is the moon ascending or descending? Any day to 2100.', url: `${GH}/moon-nodes` },
-      { title: 'Pool tile designer', body: '2017: lay out a swimming pool’s tiles, in React and Redux.', url: 'https://pool-tile-designer.surge.sh' },
       { title: 'freecom.club', body: '2017: an open-source app for citizens to vote on local proposals.', url: `${GH}/freecomclub` },
     ],
     pt: {
@@ -83,7 +83,6 @@ export const PROJECTS: Study[] = [
       items: [
         { title: 'Assistente de treino', body: '2025: um servidor MCP para uma IA registrar um treino, série por série.', url: `${GH}/workout` },
         { title: 'moon-nodes', body: '2018: a lua está ascendente ou descendente? Qualquer dia até 2100.', url: `${GH}/moon-nodes` },
-        { title: 'Pool tile designer', body: '2017: monte os azulejos de uma piscina, em React e Redux.', url: 'https://pool-tile-designer.surge.sh' },
         { title: 'freecom.club', body: '2017: um app open source para cidadãos votarem nas propostas do bairro.', url: `${GH}/freecomclub` },
       ],
     },

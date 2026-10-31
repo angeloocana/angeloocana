@@ -14,6 +14,8 @@ import { AppleWatch, IPad, IPhone, Laptop, Pixel, Screens, WearWatch } from '../
 import { JojDesktop, JojPhone } from '../ui/joj-screens.tsx'
 import { JojDemo } from '../ui/public/joj-demo.tsx'
 import { TicTacToe } from '../ui/public/tic-tac-toe.tsx'
+import { PoolTiles } from '../ui/public/pool-tiles.tsx'
+import { COLORS, describeTile, sampleTiles } from '../ui/public/pool-tiles-domain.ts'
 import { SocialIcon } from '../ui/social-icons.tsx'
 
 const M = '/media'
@@ -74,6 +76,21 @@ function Card(handle: Handle<{ class: string; title: string; body: string; child
   )
 }
 
+// A card's title, when it links somewhere: the same ↗ as the links in the card's list, so it reads as a
+// link before you hover it, and like them it opens in a new tab. The ↗ stays on the line of the last word.
+function TitleLink(handle: Handle<{ href: string; label: string; text: string }>) {
+  return () => {
+    let words = handle.props.text.split(' ')
+    let last = words.pop()
+    return (
+      <a href={handle.props.href} rel="noopener" target="_blank" data-cursor={handle.props.label}>
+        {words.length > 0 && `${words.join(' ')} `}
+        <span class="title-end">{last}<i class="title-arrow" aria-hidden="true">↗</i></span>
+      </a>
+    )
+  }
+}
+
 // One card in the Education and More projects rows, in the career's card style: years, title, a line or
 // two, a short list, and the technologies at the bottom.
 function studyCard(study: Study, t: Copy) {
@@ -86,7 +103,7 @@ function studyCard(study: Study, t: Copy) {
           {study.end && study.end !== study.start && <span>{study.end === 'Now' ? t.career.now : study.end}</span>}
         </p>
       )}
-      <h3>{study.url ? <a href={study.url} data-cursor={t.career.visit}>{study.title}</a> : study.title}</h3>
+      <h3>{study.url ? <TitleLink href={study.url} label={t.career.visit} text={study.title} /> : study.title}</h3>
       {study.meta && <p class="job-meta">{study.meta}</p>}
       {study.body && <p class="job-built">{study.body}</p>}
       {study.items && (
@@ -106,6 +123,56 @@ function studyCard(study: Study, t: Copy) {
       )}
     </li>
   )
+}
+
+// The pool tile designer (2017), playable in its card: the story on the left, the tiles on the right (under
+// it on phones). The page renders the opening design, and ui/public/pool-tiles.tsx makes it paint.
+function PoolCard(handle: Handle<{ t: Copy }>) {
+  return () => {
+    let { t } = handle.props
+    let tiles = sampleTiles()
+    let { nRows, nCols } = tiles.size
+    let words = { cell: t.pool.cell, names: t.pool.names }
+    let sizes = [['nRows', t.pool.rows, nRows], ['nCols', t.pool.cols, nCols]] as const
+    return (
+      <li class="slide job study pool-card">
+        <p class="job-years"><span>2017</span></p>
+        <h3><TitleLink href="https://github.com/angeloocana/pool-tile-designer" label="GitHub" text={t.pool.title} /></h3>
+        <p class="job-meta">{t.pool.meta}</p>
+        <p class="job-built">{t.pool.body} <span class="pool-drag">{t.pool.drag}</span></p>
+        <p class="pool-note">{t.pool.note}</p>
+        <ul class="job-tech" aria-label={t.pool.builtWith}>
+          {t.pool.stack.map((tech) => <li key={tech}>{tech}</li>)}
+        </ul>
+        <div class="pool" data-pool data-words={JSON.stringify(words)}>
+          <div class="pool-colors" role="group" aria-label={t.pool.colors}>
+            {COLORS.map((color, i) => (
+              <button key={color} type="button" data-pool-color={color} aria-pressed={i === 0 ? 'true' : 'false'} aria-label={t.pool.names[i]} title={t.pool.names[i]} style={`--c:${color}`} />
+            ))}
+          </div>
+          {/* a frame of fixed height, so resizing the tiles never moves the buttons under them */}
+          <div class="pool-frame">
+            <div class="pool-grid" role="group" aria-label={t.pool.tiles} data-pool-grid style={`--rows:${nRows};--cols:${nCols}`}>
+              {tiles.rows.flat().map((tile) => (
+                <button key={`${tile.x}-${tile.y}`} type="button" tabIndex={tile.x + tile.y === 0 ? 0 : -1} data-x={String(tile.x)} data-y={String(tile.y)} style={`--c:${tile.color}`} aria-label={describeTile(t.pool.cell, t.pool.names, tile)} />
+              ))}
+            </div>
+          </div>
+          <div class="pool-foot">
+            {sizes.map(([key, label, value]) => (
+              <span key={key} class="pool-step">
+                <b>{label}</b>
+                <button type="button" data-pool-step={key} data-by="-1" aria-label={t.pool.fewer[key]}>−</button>
+                <output data-pool-out={key}>{value}</output>
+                <button type="button" data-pool-step={key} data-by="1" aria-label={t.pool.more[key]}>+</button>
+              </span>
+            ))}
+            <button type="button" class="cin-btn pool-clear" data-pool-clear>{t.pool.clear}</button>
+          </div>
+        </div>
+      </li>
+    )
+  }
 }
 
 // Highlights share a card until it holds about 500 characters of text, or four highlights (their titles
@@ -152,6 +219,7 @@ export function HomePage(handle: Handle<{ lang: Lang }>) {
         <Rails />
         <JojDemo />
         <TicTacToe />
+        <PoolTiles />
         <CineCursor />
 
         <div class="cin-intro" aria-hidden="true">
@@ -454,7 +522,10 @@ c_sharp_phaser/JumpOverJump`}</pre>
                   <a class="cin-btn" href={GITHUB} data-cursor="GitHub">{t.more.github} <span aria-hidden="true">→</span></a>
                 </p>
               </li>
-              {projects.map((project) => studyCard(project, t))}
+              {/* the pool tile designer plays second, after the best-known one */}
+              {studyCard(projects[0], t)}
+              <PoolCard t={t} />
+              {projects.slice(1).map((project) => studyCard(project, t))}
             </Row>
           </div>
 
@@ -493,7 +564,7 @@ c_sharp_phaser/JumpOverJump`}</pre>
                   {job.featured && <span class="job-badge">{t.career.today}</span>}
                 </p>
                 <h3>
-                  {job.url ? <a href={job.url} data-cursor={t.career.visit}>{job.company}</a> : job.company}
+                  {job.url ? <TitleLink href={job.url} label={t.career.visit} text={job.company} /> : job.company}
                   {job.chapter && <> <em>{job.chapter}</em></>}
                 </h3>
                 {(job.role || job.place) && <p class="job-meta">{[job.role, job.place].filter(Boolean).join(' · ')}</p>}

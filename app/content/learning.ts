@@ -57,26 +57,14 @@ export const LEARNING: Study[] = [
     pt: { body: 'Curso técnico de Web Design com ênfase em mídias digitais.' },
   },
   {
-    id: 'pluralsight',
-    title: 'Pluralsight',
-    start: '2012',
-    meta: 'Design and technology courses',
-    url: 'https://app.pluralsight.com/profile/ocanaangelo',
-    body: 'Online courses ever since. A few from the early years:',
-    items: [
-      { title: 'ASP.NET MVC 4 Fundamentals' },
-      { title: 'Build Your Own Application Framework with ASP.NET MVC 5' },
-      { title: 'AngularJS: Get Started' },
-      { title: 'Domain-Driven Design Fundamentals' },
-      { title: 'Introduction to Ruby on Rails 3' },
-    ],
-    pt: { meta: 'Cursos de design e tecnologia', body: 'Cursos online desde então. Alguns dos primeiros anos:' },
-  },
-  {
     id: 'online',
     title: 'Online learning',
-    body: 'Besides Pluralsight, I keep learning from:',
+    start: '2012',
+    end: 'Now',
+    // numbers from the public Pluralsight profile, October 2026 (nothing new there since 2023, so they hold)
+    body: '743 hours of video and 138 courses, on Pluralsight alone.',
     items: [
+      { title: 'Pluralsight', body: 'Since 2012. Expert on 11 Skill IQ tests, and in the top 1% for HTML5.', url: 'https://app.pluralsight.com/profile/ocanaangelo' },
       { title: 'egghead.io', url: 'https://egghead.io' },
       { title: 'Frontend Masters', body: 'Now master.dev', url: 'https://master.dev' },
       { title: 'O’Reilly', url: 'https://www.oreilly.com' },
@@ -86,8 +74,9 @@ export const LEARNING: Study[] = [
     ],
     pt: {
       title: 'Aprendendo online',
-      body: 'Além da Pluralsight, sigo aprendendo com:',
+      body: '743 horas de vídeo e 138 cursos, só na Pluralsight.',
       items: [
+        { title: 'Pluralsight', body: 'Desde 2012. Expert em 11 testes Skill IQ, e no top 1% em HTML5.', url: 'https://app.pluralsight.com/profile/ocanaangelo' },
         { title: 'egghead.io', url: 'https://egghead.io' },
         { title: 'Frontend Masters', body: 'Agora master.dev', url: 'https://master.dev' },
         { title: 'O’Reilly', url: 'https://www.oreilly.com' },
