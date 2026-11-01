@@ -11,6 +11,11 @@ export const routes = route({
   oldEnglishHome: get('/en'),
   // Local clip review (GET page, POST changes). Development only.
   review: '/review',
+  // Local cut editor for one clip (GET page, POST draft or rebuild), and what it plays. Development only.
+  reviewCut: '/review/cut/:id',
+  reviewMoments: get('/review/moments/:vid'),
+  reviewSheet: get('/review/sheet/:vid'),
+  reviewSource: get('/review/source'),
   // Old preview links (/concepts/cinematic and friends) now live at the home page.
   concepts: get('/concepts/*rest'),
 })

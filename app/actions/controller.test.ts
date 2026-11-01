@@ -33,6 +33,13 @@ describe('root controller', () => {
     assert.equal(missing.status, 404)
   })
 
+  it('keeps the clip review tools off outside development', async () => {
+    for (let path of ['/review', '/review/cut/h-ice', '/review/moments/v226', '/review/sheet/v226', '/review/source?path=ig%3Areels%2Fx.mp4']) {
+      let response = await router.fetch(new URL(path, 'http://localhost'))
+      assert.equal(response.status, 404, path)
+    }
+  })
+
   it('sends old preview links to the home page', async () => {
     let response = await router.fetch(new URL('/concepts/cinematic', 'http://localhost'))
 

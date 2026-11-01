@@ -58,10 +58,14 @@ Clip tools (cut, montage, contact sheets, Instagram links) are in `scripts/clips
 - `app/content/clips.json`: the home row's clips (category, EN/PT caption, star, rejected, source,
   Instagram link). Curate them at http://localhost:44100/review while `npm run dev` runs: reject,
   star (★★★ opens the row), edit or reject captions, filter by source, leave notes. Dev only; never built.
+  **Edit cut** on a card opens `/review/cut/<id>`: every short moment of the clip's source videos, the ones
+  it uses now, and a new selection to rebuild it from (`clips.py rebuild` applies saved drafts). Clips
+  rebuilt there, or marked "Keep this cut", get a mark on /review and drop out of its "To check" filter.
 - `app/actions/home-page.tsx`: the page. Every section is a sideways row (`Row`), driven by
   `app/ui/public/rails.tsx` (arrows, drag, shuffle, autoplay). The Jump Over Jump demo is
   `app/ui/public/joj-demo.tsx`; devices are `app/ui/devices.tsx`.
 - `app/actions/post-page.tsx`: one blog post. `app/actions/review-page.tsx`: the review page.
+  `app/actions/cut-page.tsx` + `app/ui/public/cut-editor.tsx` + `app/content/cuts.ts`: the cut editor.
 - `public/styles/`: the CSS. `scripts/build.ts`: prerender, redirects (`_redirects`), sitemap, cache headers.
 
 ## Things that look odd but are on purpose
