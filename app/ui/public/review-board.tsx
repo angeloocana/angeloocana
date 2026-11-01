@@ -2,9 +2,68 @@ import { clientEntry } from 'remix/component'
 import type { Handle } from 'remix/component'
 
 // Behaviour for the local review page (/review): hover to play, and save each change to clips.json.
+
+// Which clips the cut filter shows (data-cut is set by review-page.tsx: todo, draft, edited or kept).
+const CUT_FILTERS: Record<string, (card: HTMLElement) => boolean> = {
+  all: () => true,
+  todo: (card) => card.dataset.cut === 'todo' && card.dataset.rejected === 'false',
+  draft: (card) => card.dataset.cut === 'draft',
+  edited: (card) => card.dataset.cut === 'edited',
+  kept: (card) => card.dataset.cut === 'kept',
+}
+const isChecked = (card: HTMLElement) => card.dataset.rejected === 'false' && (card.dataset.cut === 'edited' || card.dataset.cut === 'kept')
+
 export const ReviewBoard = clientEntry(import.meta.url, function ReviewBoard(handle: Handle) {
   handle.queueTask(() => {
     let signal = handle.signal
+    let cards = [...document.querySelectorAll<HTMLElement>('.rv')]
+
+    // The filters are remembered (in this browser only), so coming back from Edit cut keeps your place.
+    let filters = { source: 'all', cut: 'all', hideRejected: false }
+    try {
+      Object.assign(filters, JSON.parse(localStorage.getItem('rv-filters') ?? '{}'))
+    } catch {}
+    function applyFilters() {
+      if (!document.querySelector(`[data-source-filter="${filters.source}"]`)) filters.source = 'all'
+      if (!CUT_FILTERS[filters.cut]) filters.cut = 'all'
+      for (let b of document.querySelectorAll<HTMLElement>('[data-source-filter]')) b.setAttribute('aria-pressed', String(b.dataset.sourceFilter === filters.source))
+      for (let b of document.querySelectorAll<HTMLElement>('[data-cut-filter]')) b.setAttribute('aria-pressed', String(b.dataset.cutFilter === filters.cut))
+      for (let card of cards) {
+        card.hidden = (filters.source !== 'all' && !card.dataset.sources!.split(' ').includes(filters.source)) || !CUT_FILTERS[filters.cut](card)
+      }
+      for (let group of document.querySelectorAll<HTMLElement>('.rv-group')) group.hidden = !group.querySelector('.rv:not([hidden])')
+      document.body.classList.toggle('hide-rejected', filters.hideRejected)
+      let toggle = document.querySelector<HTMLInputElement>('[data-hide-rejected]')
+      if (toggle) toggle.checked = filters.hideRejected
+      try {
+        localStorage.setItem('rv-filters', JSON.stringify(filters))
+      } catch {}
+    }
+
+    // the counts in the header, the cut filter and the category tabs (rejecting a clip changes them)
+    function tally() {
+      let text = (selector: string, value: number) => document.querySelectorAll(selector).forEach((el) => (el.textContent = String(value)))
+      let live = cards.filter((card) => card.dataset.rejected === 'false')
+      let checked = live.filter(isChecked).length
+      text('[data-live]', live.length)
+      text('[data-checkable]', live.length)
+      text('[data-checked]', checked)
+      let bar = document.querySelector<HTMLElement>('[data-checked-bar]')
+      if (bar) bar.style.width = `${live.length ? (checked / live.length) * 100 : 0}%`
+      for (let b of document.querySelectorAll<HTMLElement>('[data-cut-filter]')) {
+        let count = b.querySelector('span')
+        if (count) count.textContent = String(cards.filter(CUT_FILTERS[b.dataset.cutFilter!]).length)
+      }
+      for (let tab of document.querySelectorAll<HTMLElement>('[data-cat-checked]')) {
+        let done = cards.filter((card) => card.closest('section')?.id === tab.dataset.catChecked && isChecked(card)).length
+        tab.textContent = `✓${done}`
+        tab.hidden = !done
+      }
+    }
+    applyFilters()
+    tally()
+    // after the filters hide cards, the browser's jump to #clip-id may have missed: do it again
+    if (location.hash) document.getElementById(decodeURIComponent(location.hash.slice(1)))?.scrollIntoView({ block: 'center' })
 
     async function save(card: HTMLElement, patch: Record<string, unknown>) {
       // show the change at once, so quick repeated clicks build on it
@@ -25,19 +84,16 @@ export const ReviewBoard = clientEntry(import.meta.url, function ReviewBoard(han
         saved.textContent = 'Saved'
         setTimeout(() => (saved.textContent = ''), 1400)
       }
-      let live = document.querySelectorAll('.rv[data-rejected="false"]').length
-      let counter = document.querySelector('[data-live]')
-      if (counter) counter.textContent = String(live)
+      tally()
     }
 
-    // source filter: show only clips from Instagram, the old phone, etc.
+    // source filter (Instagram, the old phone, …) and cut filter (to check, edited, …)
     document.addEventListener('click', (event) => {
-      let filter = (event.target as Element).closest<HTMLElement>('[data-source-filter]')
-      if (!filter) return
-      let key = filter.dataset.sourceFilter!
-      for (let b of document.querySelectorAll<HTMLElement>('[data-source-filter]')) b.setAttribute('aria-pressed', String(b === filter))
-      for (let card of document.querySelectorAll<HTMLElement>('.rv')) card.hidden = key !== 'all' && !card.dataset.sources!.split(' ').includes(key)
-      for (let group of document.querySelectorAll<HTMLElement>('.rv-group')) group.hidden = !group.querySelector('.rv:not([hidden])')
+      let button = (event.target as Element).closest<HTMLElement>('[data-source-filter], [data-cut-filter]')
+      if (!button) return
+      if (button.dataset.sourceFilter) filters.source = button.dataset.sourceFilter
+      if (button.dataset.cutFilter) filters.cut = button.dataset.cutFilter
+      applyFilters()
     }, { signal })
 
     document.addEventListener('click', (event) => {
@@ -55,7 +111,8 @@ export const ReviewBoard = clientEntry(import.meta.url, function ReviewBoard(han
     document.addEventListener('change', (event) => {
       let target = event.target as HTMLElement
       if (target.matches('[data-hide-rejected]')) {
-        document.body.classList.toggle('hide-rejected', (target as HTMLInputElement).checked)
+        filters.hideRejected = (target as HTMLInputElement).checked
+        applyFilters()
         return
       }
       let card = target.closest<HTMLElement>('.rv')
@@ -78,7 +135,7 @@ export const ReviewBoard = clientEntry(import.meta.url, function ReviewBoard(han
     }, { signal })
 
     // hover (or focus) a card to play it
-    for (let card of document.querySelectorAll<HTMLElement>('.rv')) {
+    for (let card of cards) {
       let video = card.querySelector('video')!
       card.addEventListener('pointerenter', () => video.play().catch(() => {}), { signal })
       card.addEventListener('pointerleave', () => video.pause(), { signal })

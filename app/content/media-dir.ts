@@ -3,7 +3,10 @@
 //   media/     what the site serves at /media: the dev server reads it from here (app/router.ts),
 //              and the build copies it into dist/ (scripts/build.ts)
 //   sources/   originals that are not in the Instagram export (old phone videos)
-//   index/     the clip catalogue: items.json (every source video), montages.json (montage recipes)
+//   index/     the clip catalogue: items.json (every source video), montages.json (how every clip is cut),
+//              cut-drafts.json (cuts changed on /review/cut that are not rebuilt yet),
+//              cut-checks.json (clips whose cut you checked there: edited or kept)
+//   work/      scratch output, and moments/: each source video split into short moments for /review/cut
 //   clip-feedback.json   notes left on the /review page
 import { homedir } from 'node:os'
 import { join } from 'node:path'
