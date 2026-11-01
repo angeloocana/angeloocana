@@ -111,7 +111,7 @@ export const CutEditor = clientEntry(import.meta.url, function CutEditor(handle:
       hasDraft = false
       if (result.check !== undefined) check = result.check
       video = result.video ?? video
-      status = 'Rebuilt: the clip now uses this cut. Check it on /review, then deploy.'
+      status = 'Rebuilt: the clip now uses this cut. It goes live after npm run media:push and a push to master.'
     }
     handle.update()
   }
