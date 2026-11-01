@@ -77,6 +77,7 @@ export const ReviewBoard = clientEntry(import.meta.url, function ReviewBoard(han
         return
       }
       let clip = (await response.json()) as { star: number; rejected: boolean; cat: string }
+      window.dispatchEvent(new Event('review:changed'))
       card.dataset.moved = card.closest('section')?.id === clip.cat ? undefined : 'true'
       if (card.dataset.moved !== 'true') delete card.dataset.moved
       let saved = card.querySelector<HTMLElement>('.rv-saved')

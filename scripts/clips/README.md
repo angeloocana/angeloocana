@@ -57,6 +57,8 @@ A clip's id is `c` + the first 8 hex characters of the sha1 of its `src` in `ite
 Check the result on `/review` (or the home page), then `npm run media:push` to upload it to the R2 bucket
 the site serves `/media` from, and commit `app/content/media.json` (merging to master deploys). Re-cut
 files get a new `?v=` tag in their URL from that file, so visitors see the new cut right away.
+On the always-on review server (http://localhost:44144, `scripts/review-server.sh`) that happens by itself
+two minutes after the last change: see `scripts/publish-review.ts`.
 
 ## Choosing footage
 

@@ -2,6 +2,8 @@ import { clientEntry, on, ref } from 'remix/component'
 import type { Handle } from 'remix/component'
 
 import type { CutCheck, Moment, Piece, Source } from '../../content/cuts.ts'
+import type { PublishInfo } from '../../content/publish.ts'
+import { PublishStatus } from './publish-status.tsx'
 
 // The local cut editor (/review/cut/:id). On the right, every short moment of the clip's source videos:
 // hover one to watch it, click it to add it to the cut or take it out. On the left, the clip as it is now,
@@ -24,6 +26,8 @@ type Props = {
   next: { id: string; title: string } | null
   /** How many clips on the home page have their cut checked, this one included. */
   progress: { checked: number; total: number }
+  /** Whether the review's changes are live yet. */
+  publish: PublishInfo
 }
 
 type MomentSet = { id: string; dur: number; w: number; h: number; cols: number; moments: Moment[]; sheet: string }
@@ -111,7 +115,8 @@ export const CutEditor = clientEntry(import.meta.url, function CutEditor(handle:
       hasDraft = false
       if (result.check !== undefined) check = result.check
       video = result.video ?? video
-      status = 'Rebuilt: the clip now uses this cut. It goes live after npm run media:push and a push to master.'
+      status = 'Rebuilt: the clip now uses this cut.'
+      window.dispatchEvent(new Event('review:changed'))
     }
     handle.update()
   }
@@ -610,6 +615,7 @@ export const CutEditor = clientEntry(import.meta.url, function CutEditor(handle:
             <span title="Clips on the home page whose cut you edited or kept">{othersChecked + Number(isChecked())} of {progress.total} checked</span>
             {next && <a class="ce-next" href={`/review/cut/${next.id}`} title={next.title}>Next to check →</a>}
           </nav>
+          <PublishStatus initial={handle.props.publish} />
           <h1>{clip.title} <small>{clip.cat}{clip.rejected ? ' · rejected' : ''}</small></h1>
           {checkState()}
           <div class="ce-players">

@@ -16,6 +16,8 @@ export const routes = route({
   reviewMoments: get('/review/moments/:vid'),
   reviewSheet: get('/review/sheet/:vid'),
   reviewSource: get('/review/source'),
+  // whether the review's changes are live yet (GET), or publish them now (POST)
+  reviewPublish: '/review/publish',
   // Old preview links (/concepts/cinematic and friends) now live at the home page.
   concepts: get('/concepts/*rest'),
 })

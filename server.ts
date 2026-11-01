@@ -17,6 +17,8 @@ server.listen(port, () => {
   }
 
   console.log(`Server listening on http://localhost:${hmrProxyPort ?? port}`)
+  // the always-on review server (scripts/review-server.sh) publishes review changes left waiting
+  if (process.env.REVIEW_AUTOPUBLISH === '1') import('./app/content/publish.ts').then((publish) => publish.resumePublishing())
 })
 
 let shuttingDown = false

@@ -5,6 +5,8 @@ import { Document } from './document.tsx'
 import { CATEGORIES, CATEGORY_NAMES, clipUrl, instagramUrl, loadClips, saveClips, type Category, type Clip } from '../content/clips.ts'
 import { cutState, loadChecks, loadDrafts, type CutCheck, type CutState } from '../content/cuts.ts'
 import { MEDIA_DIR } from '../content/media-dir.ts'
+import { publishInfo, reviewChanged } from '../content/publish.ts'
+import { PublishStatus } from '../ui/public/publish-status.tsx'
 import { ReviewBoard } from '../ui/public/review-board.tsx'
 
 // Local-only page (npm run dev → /review) for curating the home row: every clip grouped by category.
@@ -25,6 +27,7 @@ export async function saveReview(request: Request) {
   let clips = loadClips()
   let clip = clips.find((c) => c.id === body.id)
   if (!clip) return Response.json({ error: 'Unknown clip' }, { status: 404 })
+  let before = JSON.stringify(clip)
   if (body.star !== undefined) clip.star = Math.max(0, Math.min(3, Math.round(Number(body.star) || 0)))
   if (body.rejected !== undefined) clip.rejected = Boolean(body.rejected)
   if (body.cat !== undefined && (CATEGORIES as readonly string[]).includes(body.cat)) clip.cat = body.cat as Category
@@ -41,6 +44,8 @@ export async function saveReview(request: Request) {
     writeFileSync(NOTES, JSON.stringify(notes, null, 1) + '\n')
   }
   saveClips(clips)
+  // a note isn't on the site; anything else about the clip is, so it gets published
+  if (JSON.stringify(clip) !== before) reviewChanged()
   return Response.json(clip)
 }
 
@@ -105,12 +110,13 @@ export function ReviewPage() {
             <h1>Review clips</h1>
             <p>
               <b data-live>{live}</b> on the home page · {clips.length - live} rejected. Hover to play. <b>★</b> moves a clip to the front
-              (★★★ first). Edit captions in place, reject a caption to hide it, or leave feedback for Claude. Changes save right away; <a href="/">open the home page</a> to see the order. <b>Edit cut</b> shows every moment of a clip's videos, so you can choose which ones it uses; clips you edit or keep there get a green mark.
+              (★★★ first). Edit captions in place, reject a caption to hide it, or leave feedback for Claude. Changes save right away and go live by themselves two minutes after your last one; <a href="/">open the home page</a> to see the order. <b>Edit cut</b> shows every moment of a clip's videos, so you can choose which ones it uses; clips you edit or keep there get a green mark.
             </p>
           </div>
           <div class="rv-progress" title="Clips on the home page whose cut you edited or kept in Edit cut">
             <span><b data-checked>{checked}</b> of <b data-checkable>{live}</b> cuts checked</span>
             <span class="rv-bar"><i data-checked-bar style={`width:${live ? (checked / live) * 100 : 0}%`} /></span>
+            <PublishStatus initial={publishInfo()} />
           </div>
           <label class="rv-toggle"><input type="checkbox" data-hide-rejected /> Hide rejected</label>
         </header>

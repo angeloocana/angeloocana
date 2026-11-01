@@ -8,6 +8,7 @@ import { PostPage } from './post-page.tsx'
 import { postAt } from '../content/posts.ts'
 import { ReviewPage, reviewEnabled, saveReview } from './review-page.tsx'
 import { clipExists, CutPage, momentsJson, saveCut, sheetFile, sourceMedia } from './cut-page.tsx'
+import { publishInfo, startPublish } from '../content/publish.ts'
 
 function post(context: { request: Request; render: (node: RemixNode) => Response | Promise<Response> }) {
   let found = postAt(new URL(context.request.url).pathname)
@@ -57,6 +58,11 @@ export default createController(routes, {
     },
     reviewSource(context) {
       return reviewEnabled() ? sourceMedia(context.request) : new Response('Not Found', { status: 404 })
+    },
+    reviewPublish(context) {
+      if (!reviewEnabled()) return new Response('Not Found', { status: 404 })
+      if (context.request.method === 'POST') startPublish()
+      return Response.json(publishInfo(), { headers: { 'Cache-Control': 'no-store' } })
     },
     concepts() {
       return new Response(null, { status: 301, headers: { Location: routes.home.href() } })

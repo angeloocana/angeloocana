@@ -34,7 +34,7 @@ describe('root controller', () => {
   })
 
   it('keeps the clip review tools off outside development', async () => {
-    for (let path of ['/review', '/review/cut/h-ice', '/review/moments/v226', '/review/sheet/v226', '/review/source?path=ig%3Areels%2Fx.mp4']) {
+    for (let path of ['/review', '/review/cut/h-ice', '/review/moments/v226', '/review/sheet/v226', '/review/source?path=ig%3Areels%2Fx.mp4', '/review/publish']) {
       let response = await router.fetch(new URL(path, 'http://localhost'))
       assert.equal(response.status, 404, path)
     }
