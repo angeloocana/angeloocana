@@ -1,13 +1,10 @@
 // Prerenders the site to plain files in dist/, ready for any static host (Cloudflare, see wrangler.jsonc).
 // Run with `npm run build`. It renders each page through the real router, then follows every
 // /assets/ URL (scripts, import maps, chunks) so the browser islands work without a server.
-import { existsSync } from 'node:fs'
 import { cp, mkdir, rm, writeFile } from 'node:fs/promises'
 import { dirname, join } from 'node:path'
 
-import { MEDIA_DIR } from '../app/content/media-dir.ts'
-
-import { loadClips } from '../app/content/clips.ts'
+import { MEDIA_VERSIONS, loadClips } from '../app/content/clips.ts'
 import { allPosts } from '../app/content/posts.ts'
 import { router } from '../app/router.ts'
 
@@ -18,32 +15,27 @@ const PAGES: Record<string, string> = { '/': 'index.html', '/pt': 'pt/index.html
 for (let post of allPosts()) PAGES[post.url] = `${post.url.slice(1)}index.html`
 
 await rm(OUT, { recursive: true, force: true })
-// public/ and the media first, then the rendered pages and scripts on top.
+// public/ first, then the rendered pages and scripts on top.
 const live = new Set(loadClips().filter((clip) => !clip.rejected).map((clip) => clip.id))
-// A deploy replaces every file on the site, so a build without the media would delete the live videos.
-// Media comes from the shared folder outside the repo (app/content/media-dir.ts); stop if anything is missing.
-const MEDIA = join(MEDIA_DIR, 'media')
-let missing = [...live].flatMap((id) => [`${id}.mp4`, `${id}.jpg`]).filter((file) => !existsSync(join(MEDIA, 'clips', file)))
+// The videos and screenshots aren't built in: they live in the angeloocana-media R2 bucket, which the
+// worker serves at /media (worker.ts), so this runs from git alone (Workers Builds deploys every push).
+// app/content/media.json lists what has been uploaded; stop if a live clip hasn't been, rather than
+// publish a page with a broken video.
+let missing = [...live].flatMap((id) => [`clips/${id}.mp4`, `clips/${id}.jpg`]).filter((key) => !MEDIA_VERSIONS[key])
 if (missing.length) {
-  throw new Error(`Missing ${missing.length} clip files in ${MEDIA}/clips (${missing.slice(0, 3).join(', ')}…). Cut them first, or set ANGELOOCANA_MEDIA.`)
+  throw new Error(`${missing.length} live clip files aren't in the bucket yet (${missing.slice(0, 3).join(', ')}…). Run \`npm run media:push\` and commit app/content/media.json.`)
 }
 await cp('public', OUT, {
   recursive: true,
   filter: (src) => !src.endsWith('.DS_Store') && !src.endsWith('styles/review.css') && !src.startsWith('public/media'),
 })
-// only clips that are live on the home page ship; rejected ones never leave this machine
-await cp(MEDIA, join(OUT, 'media'), {
-  recursive: true,
-  filter: (src) => {
-    if (src.endsWith('.DS_Store')) return false
-    let clip = src.match(/clips\/([^/]+)\.(mp4|jpg)$/)
-    return !clip || live.has(clip[1])
-  },
-})
 
 // Browser modules compiled from .ts/.tsx keep their source names, which static hosts would serve
 // with the wrong type. Save them as .js and point every reference at the new name.
 const TS_URL = /(\/assets\/[^"'`#?\s]+?\.tsx?)(?=["'`#?\s])/g
+// A module that imports a sibling (tic-tac-toe.tsx → ./tic-tac-toe-ai.ts) needs the same rename, or the
+// browser asks for the .ts name, which the import map no longer has, and the whole module fails to load.
+const RELATIVE_TS_IMPORT = /(\bfrom\s*|\bimport\s*\(?\s*)(["'])(\.{1,2}\/[^"']+?\.tsx?)\2/g
 const asJs = (path: string) => (/\.tsx?$/.test(path) ? `${path}.js` : path)
 // Cloudflare answers a path with a bare @ (rails.@a1b2c3.tsx) with a redirect to its %40 spelling,
 // one extra round trip per script, so references use that spelling from the start.
@@ -51,7 +43,10 @@ const ASSET_URL = /\/assets\/[^"'`\s)]+/g
 
 async function save(path: string, body: string | Uint8Array) {
   if (typeof body === 'string') {
-    body = body.replace(TS_URL, '$1.js').replace(ASSET_URL, (url) => url.replaceAll('@', '%40'))
+    body = body
+      .replace(TS_URL, '$1.js')
+      .replace(RELATIVE_TS_IMPORT, '$1$2$3.js$2')
+      .replace(ASSET_URL, (url) => url.replaceAll('@', '%40'))
   }
   // URLs are percent-encoded (%40remix-run); files on disk are not (@remix-run)
   let file = join(OUT, decodeURIComponent(asJs(path)))
@@ -145,7 +140,8 @@ await save(
 )
 await save(
   '_headers',
-  ['/sw.js', '  Cache-Control: no-cache', '/media/*', '  Cache-Control: public, max-age=604800', '/assets/*', '  Cache-Control: public, max-age=31536000, immutable', ''].join('\n'),
+  // (/media/* gets its headers from worker.ts)
+  ['/sw.js', '  Cache-Control: no-cache', '/assets/*', '  Cache-Control: public, max-age=31536000, immutable', ''].join('\n'),
 )
 
 console.log(`Built ${Object.keys(PAGES).length} pages, ${live.size} clips and ${seen.size} script files into ${OUT}/`)

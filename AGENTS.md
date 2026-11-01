@@ -10,7 +10,8 @@ served by Cloudflare. English at `/`, Portuguese at `/pt`. Read this before chan
   location data and other people's names; only finished, metadata-free loops go on the site, and
   @mentions are never shown. `.githooks/pre-commit` checks for some of this.
 - **Footage of other people:** prefer clips where Ângelo is the subject; no kids or strangers as the focus.
-- **Ship through master.** Branch, open a PR, merge, then deploy from up-to-date master. Deploying an old
+- **Ship through master.** Branch, open a PR, merge: every push to master deploys itself (Workers Builds,
+  see Hosting). A hand deploy (`npm run deploy`) must also come from up-to-date master; deploying an old
   branch rolls the live site back.
 - Ask before anything hard to undo outside the repo (DNS, Cloudflare or Netlify settings, deleting media).
 
@@ -21,9 +22,10 @@ npm i
 npm run dev        # http://localhost:44100, restarts on change (npm run hmr for live reload)
 npm test
 npm run typecheck
-npm run build      # prerender to dist/ (needs the media folder, see below)
-npm run preview    # build, then serve dist/ the way Cloudflare will
-npm run deploy     # build and publish to Cloudflare
+npm run build      # prerender to dist/ (from git alone; media comes from R2, see below)
+npm run preview    # build, then serve dist/ the way Cloudflare will (media from the real bucket)
+npm run deploy     # build and publish to Cloudflare by hand (pushes to master already do this)
+npm run media:push # upload new or re-cut media to R2 and update app/content/media.json (--dry-run to look)
 ```
 
 Node 24 (`~/.nvm/versions/node/v24.21.0/bin`). Wrangler is pinned in `package.json` and already signed in
@@ -33,9 +35,13 @@ on Ângelo's Mac.
 
 Videos and screenshots are **not in git**. They live in one folder on Ângelo's Mac that every checkout
 and session shares: `~/dev/angeloocana-media` (override with `$ANGELOOCANA_MEDIA`, see
-`app/content/media-dir.ts`). Its `media/` folder is served at `/media` by the dev server (`app/router.ts`)
-and copied into `dist/` by the build. A deploy replaces every file on the site, so the build stops if any
-live clip is missing rather than publishing a site without videos. Never move or delete that folder.
+`app/content/media-dir.ts`). Its `media/` folder is served at `/media` by the dev server (`app/router.ts`).
+The live site serves `/media` from the private R2 bucket `angeloocana-media`, through the small worker in
+`worker.ts` (byte ranges included: iPhone Safari needs them for video). After cutting or re-cutting clips,
+run `npm run media:push`: it uploads what changed (live clips and screenshots only; rejected clips never
+leave the Mac, and are taken down if they had gone up) and rewrites `app/content/media.json`, the content
+hashes the page uses as `?v=`. Commit that file. The build stops if a live clip isn't in it. Deploys no
+longer touch the media. Never move or delete the local folder: it is still the source for every upload.
 
 Clip tools (cut, montage, contact sheets, Instagram links) are in `scripts/clips/`; read its README.
 
@@ -43,6 +49,9 @@ Clip tools (cut, montage, contact sheets, Instagram links) are in `scripts/clips
 
 - `app/copy.ts`: every word on the page, English and Portuguese side by side.
 - `app/content/career.ts`: jobs (Shopify, Kinaxis, …), each with an optional `pt` block.
+- `app/content/learning.ts`: the Education row's cards. `app/content/projects.ts`: the More projects row
+  (open source and smaller builds; public repos only), after the three projects that have rows of their own.
+  Its playable card, the 2017 pool tile designer, is `app/ui/public/pool-tiles.tsx` (logic in `pool-tiles-domain.ts`).
 - `app/content.ts`: email and social links.
 - `content/posts/`: blog posts in Markdown, kept as first published, at their old URLs
   (`blog/x/y.en.md` → `/en/blog/x/y/`, `.pt.md` → `/pt/blog/x/y/`, `Tutoriais/X.md` → `/Tutoriais/X/`).
@@ -63,7 +72,8 @@ Clip tools (cut, montage, contact sheets, Instagram links) are in `scripts/clips
 
 - **Clips render as images**; `rails.tsx` adds a `<video>` only while a clip is near view and removes it
   after. A `<video>` per clip (114) made iPhone browsers close the page. Keep it that way.
-- **Clip URLs carry `?v=`** (file time) because media is cached for a week; a re-cut gets a new URL.
+- **Clip URLs carry `?v=`** (the file's hash from `media.json`) because media is cached for a week; a
+  re-cut gets a new URL once it's pushed.
 - **Script URLs carry a hash** (`rails.%40a1b2c3.tsx.js`, `fingerprint` in `app/assets.ts`) because
   `/assets/` is cached for a year without asking again. With plain names, phones that had visited kept
   running old scripts against new pages (the clips stayed still).
@@ -77,6 +87,11 @@ Clip tools (cut, montage, contact sheets, Instagram links) are in `scripts/clips
 
 - Cloudflare Workers static assets, worker `angeloocana` (`wrangler.jsonc`), custom domains
   `angeloocana.com` and `www.angeloocana.com`. Preview copy: https://angeloocana.angeloocana.workers.dev.
+  Only `/media/*` runs `worker.ts` (from the R2 bucket `angeloocana-media`); everything else is a static file.
+- Deploys: Cloudflare Workers Builds, like jumpoverjump and track2.fit. Every push to master runs
+  `npm run build` and `npx wrangler@4.151.1 deploy` on Cloudflare (Node from `.node-version`); the result
+  shows as a "Workers Builds" check on the commit. Builds for other branches are off, so a PR never
+  deploys. Settings: Cloudflare dashboard → Workers & Pages → angeloocana → Settings → Builds.
 - Domain registered at GoDaddy; DNS on Cloudflare (nameservers `brit`/`duke.ns.cloudflare.com`), with
   "Always Use HTTPS" on.
 - The old Gatsby site is still on Netlify (project `angeloocana.com`, builds skipped by `netlify.toml`). Its

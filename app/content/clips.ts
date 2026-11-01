@@ -61,13 +61,20 @@ export type Clip = {
   ig?: string
 }
 
+/** Every uploaded media file's content hash, written by `npm run media:push` (scripts/media-push.ts). */
+export const MEDIA_VERSIONS: Record<string, string> = JSON.parse(readFileSync(new URL('./media.json', import.meta.url), 'utf8'))
+
 /**
  * A clip's video or poster URL. The ?v= tag changes whenever the file is re-cut, so browsers that
- * cached the old cut (media is cached for a week, see scripts/build.ts) fetch the new one.
+ * cached the old cut (media is cached for a week, see worker.ts) fetch the new one. It's the hash from
+ * media.json; a clip cut but not pushed yet (only ever in development) uses its file time instead.
  */
 export function clipUrl(id: string, ext: 'mp4' | 'jpg') {
-  let file = join(MEDIA_DIR, 'media', 'clips', `${id}.${ext}`)
-  let version = existsSync(file) ? Math.round(statSync(file).mtimeMs / 1000).toString(36) : '0'
+  let version = MEDIA_VERSIONS[`clips/${id}.${ext}`]
+  if (!version) {
+    let file = join(MEDIA_DIR, 'media', 'clips', `${id}.${ext}`)
+    version = existsSync(file) ? Math.round(statSync(file).mtimeMs / 1000).toString(36) : '0'
+  }
   return `/media/clips/${id}.${ext}?v=${version}`
 }
 

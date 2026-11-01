@@ -10,7 +10,8 @@
     "typecheck": "tsc --noEmit",
     "build": "NODE_ENV=production node --import remix/node-tsx scripts/build.ts",
     "preview": "npm run build && npx wrangler@4.151.1 dev",
-    "deploy": "npm run build && npx wrangler@4.151.1 deploy"
+    "deploy": "npm run build && npx wrangler@4.151.1 deploy",
+    "media:push": "node --import remix/node-tsx scripts/media-push.ts"
   },
   "engines": {
     "node": ">=24.3.0"
