@@ -75,7 +75,7 @@ body.rv-page { margin: 0; background: #0b0b0b; color: #ece7df; font: 14px/1.45 s
   .rv-head, .rv-tabs { position: static; }
   .rv-progress { flex: 1 1 auto; }
 }
-.rv-progress { display: grid; gap: 0.3rem; min-width: 11rem; white-space: nowrap; color: #cfc8bc; font-size: 0.85rem; }
+.rv-progress { display: grid; gap: 0.3rem; min-width: 11rem; max-width: 28rem; white-space: nowrap; color: #cfc8bc; font-size: 0.85rem; }
 .rv-progress b { color: #7fc97a; }
 .rv-bar { display: block; height: 6px; border-radius: 999px; background: #262626; overflow: hidden; }
 .rv-bar i { display: block; height: 100%; background: #7fc97a; border-radius: inherit; transition: width 0.3s; }
@@ -183,3 +183,17 @@ body.rv-page { margin: 0; background: #0b0b0b; color: #ece7df; font: 14px/1.45 s
   .ce { grid-template-columns: 1fr; }
   .ce-side { position: static; height: auto; border-right: 0; }
 }
+
+/* ---- whether the review's changes are live (app/ui/public/publish-status.tsx) ---- */
+.pub { display: flex; flex-wrap: wrap; align-items: center; gap: 0.35rem 0.45rem; font-size: 0.8rem; color: #cfc8bc; white-space: normal; }
+.pub-dot { width: 0.55rem; height: 0.55rem; border-radius: 50%; background: #7fc97a; flex: none; }
+.pub[data-state='waiting'] .pub-dot { background: #e8b86a; }
+.pub[data-state='running'] .pub-dot { background: #e8b86a; animation: pub-pulse 1s ease-in-out infinite alternate; }
+.pub[data-state='failed'] .pub-dot { background: #e2554a; }
+.pub[data-state='failed'] .pub-text { color: #f0938b; font-weight: 600; }
+.pub[data-state='off'] .pub-dot { background: #555; }
+.pub[data-state='off'] { color: #8f887d; }
+.pub-now { font: inherit; font-size: 0.72rem; color: #ece7df; background: #1f1f1f; border: 1px solid #444; border-radius: 999px; padding: 0.1rem 0.5rem; cursor: pointer; }
+.pub-detail { flex-basis: 100%; color: #c9a19c; font-size: 0.72rem; white-space: pre-wrap; }
+.ce-side > .pub { margin: -0.2rem 0 0.6rem; }
+@keyframes pub-pulse { from { opacity: 0.35; } to { opacity: 1; } }

@@ -12,7 +12,10 @@ served by Cloudflare. English at `/`, Portuguese at `/pt`. Read this before chan
 - **Footage of other people:** prefer clips where Ângelo is the subject; no kids or strangers as the focus.
 - **Ship through master.** Branch, open a PR, merge: every push to master deploys itself (Workers Builds,
   see Hosting). A hand deploy (`npm run deploy`) must also come from up-to-date master; deploying an old
-  branch rolls the live site back.
+  branch rolls the live site back. One exception: the review server (below) commits `app/content/clips.json`
+  and `media.json` straight to master by itself, so what Ângelo changes on /review goes live.
+- **Leave `~/dev/angeloocana` (the main checkout) on master, with nothing uncommitted**: the always-on review
+  server runs from it and publishes from it. Work in a worktree or branch elsewhere.
 - Ask before anything hard to undo outside the repo (DNS, Cloudflare or Netlify settings, deleting media).
 
 ## Commands
@@ -26,6 +29,7 @@ npm run build      # prerender to dist/ (from git alone; media comes from R2, se
 npm run preview    # build, then serve dist/ the way Cloudflare will (media from the real bucket)
 npm run deploy     # build and publish to Cloudflare by hand (pushes to master already do this)
 npm run media:push # upload new or re-cut media to R2 and update app/content/media.json (--dry-run to look)
+scripts/review-server.sh install|restart|status|logs|uninstall   # the always-on review tool, see below
 ```
 
 Node 24 (`~/.nvm/versions/node/v24.21.0/bin`). Wrangler is pinned in `package.json` and already signed in
@@ -56,11 +60,17 @@ Clip tools (cut, montage, contact sheets, Instagram links) are in `scripts/clips
 - `content/posts/`: blog posts in Markdown, kept as first published, at their old URLs
   (`blog/x/y.en.md` → `/en/blog/x/y/`, `.pt.md` → `/pt/blog/x/y/`, `Tutoriais/X.md` → `/Tutoriais/X/`).
 - `app/content/clips.json`: the home row's clips (category, EN/PT caption, star, rejected, source,
-  Instagram link). Curate them at http://localhost:44100/review while `npm run dev` runs: reject,
-  star (★★★ opens the row), edit or reject captions, filter by source, leave notes. Dev only; never built.
+  Instagram link). Ângelo curates them at http://localhost:44144/review: reject, star (★★★ opens the
+  row), edit or reject captions, filter by source, leave notes. Dev only; never built.
   **Edit cut** on a card opens `/review/cut/<id>`: every short moment of the clip's source videos, the ones
   it uses now, and a new selection to rebuild it from (`clips.py rebuild` applies saved drafts). Clips
   rebuilt there, or marked "Keep this cut", get a mark on /review and drop out of its "To check" filter.
+  Port 44144 is the **always-on review server**: a launchd agent (`scripts/review-server.sh`) runs the dev
+  server from the main checkout, at login and again whenever it stops; don't stop it or take its port.
+  Two minutes after the last change there, it publishes by itself (`app/content/publish.ts` →
+  `scripts/publish-review.ts`): `media:push`, then a commit of `clips.json` and `media.json` to master, and
+  a push, which deploys. Both pages show whether changes are live yet; the log is `work/publish.log` in
+  the media folder. `npm run dev` in any other checkout also serves /review, but never publishes.
 - `app/actions/home-page.tsx`: the page. Every section is a sideways row (`Row`), driven by
   `app/ui/public/rails.tsx` (arrows, drag, shuffle, autoplay). The Jump Over Jump demo is
   `app/ui/public/joj-demo.tsx`; devices are `app/ui/devices.tsx`.

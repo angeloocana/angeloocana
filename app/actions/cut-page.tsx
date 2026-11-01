@@ -8,6 +8,7 @@ import { Document } from './document.tsx'
 import { loadNotes, reviewGroups } from './review-page.tsx'
 import { CATEGORY_NAMES, clipUrl, loadClips } from '../content/clips.ts'
 import { cleanPieces, clipSource, cutState, exclusive, loadChecks, loadDraft, loadDrafts, loadMoments, loadRecipe, loadSources, MOMENTS_DIR, rebuildClip, saveDraft, setCheck, sourceFile } from '../content/cuts.ts'
+import { publishInfo, reviewChanged } from '../content/publish.ts'
 import { CutEditor } from '../ui/public/cut-editor.tsx'
 
 // Local-only cut editor (npm run dev → /review/cut/<clip id>): every short moment of the clip's source
@@ -39,6 +40,7 @@ export function CutPage(handle: Handle<{ id: string }>) {
           note={loadNotes()[clip.id] ?? ''}
           check={checks[clip.id] ?? null}
           next={next ? { id: next.id, title: next.label.en } : null}
+          publish={publishInfo()}
           progress={{ checked: live.filter((c) => checked(c.id)).length, total: live.length }}
         />
       </Document>
@@ -63,6 +65,7 @@ export async function saveCut(request: Request, id: string) {
 
   let result = await rebuildClip(id)
   if (!result.ok) return Response.json({ error: result.output.split('\n').slice(-6).join('\n') || 'Rebuild failed' }, { status: 500 })
+  reviewChanged()
   return Response.json({ draft: false, video: clipUrl(id, 'mp4'), current: loadRecipe(id), check: loadChecks()[id] ?? null })
 }
 
