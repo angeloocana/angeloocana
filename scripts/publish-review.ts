@@ -40,8 +40,8 @@ function run(command: string, args: string[]) {
 }
 
 const count = (range: string) => Number(git('rev-list', '--count', range))
-/** Tracked files with changes not committed yet. */
-const dirty = () => git('status', '--porcelain', '--untracked-files=no').split('\n').filter(Boolean).map((line) => line.slice(3))
+/** Tracked files with changes not committed yet, staged or not. */
+const dirty = () => git('diff', '--name-only', 'HEAD').split('\n').filter(Boolean)
 
 let state: PublishState = readState()
 /** New code came in from master: the review server should restart to run it (it doesn't watch files). */
