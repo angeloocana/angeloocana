@@ -17,12 +17,18 @@ export const CineCursor = clientEntry(import.meta.url, function CineCursor(handl
     let tx = x
     let ty = y
     let raf = 0
+    let then = 0
 
-    function loop() {
-      x += (tx - x) * 0.18
-      y += (ty - y) * 0.18
+    // Eases toward the pointer by elapsed time, not per frame, so a slow or dropped frame doesn't make
+    // the ring lag further behind; it stops when it has caught up and starts again on the next move.
+    function loop(now: number) {
+      let k = 1 - Math.exp(-Math.max(0, now - then) / 28)
+      then = now
+      x += (tx - x) * k
+      y += (ty - y) * k
+      if (Math.abs(tx - x) < 0.3 && Math.abs(ty - y) < 0.3) { x = tx; y = ty; raf = 0 }
+      else raf = requestAnimationFrame(loop)
       cursor.style.transform = `translate3d(${x}px, ${y}px, 0)`
-      raf = requestAnimationFrame(loop)
     }
 
     addEventListener(
@@ -30,6 +36,7 @@ export const CineCursor = clientEntry(import.meta.url, function CineCursor(handl
       (event) => {
         tx = event.clientX
         ty = event.clientY
+        if (!raf) { then = performance.now(); raf = requestAnimationFrame(loop) }
         cursor.dataset.on = 'true'
         let target = event.target instanceof Element ? event.target.closest<HTMLElement>('a, button, [data-cursor]') : null
         let mode = target ? target.dataset.cursor || 'link' : ''
@@ -41,7 +48,6 @@ export const CineCursor = clientEntry(import.meta.url, function CineCursor(handl
       { signal, passive: true },
     )
     document.addEventListener('pointerleave', () => { cursor.dataset.on = 'false' }, { signal })
-    raf = requestAnimationFrame(loop)
     signal.addEventListener('abort', () => cancelAnimationFrame(raf))
   })
 
