@@ -2072,5 +2072,17 @@
   "rejected": true,
   "score": 4,
   "source": "phone"
+ },
+ {
+  "id": "h-ocr",
+  "cat": "gym",
+  "label": {
+   "en": "Ninja gym: warped wall, ladder wall and rope",
+   "pt": "Academia ninja: parede, escada e corda"
+  },
+  "star": 0,
+  "rejected": false,
+  "score": 4,
+  "source": "montage"
  }
 ]
