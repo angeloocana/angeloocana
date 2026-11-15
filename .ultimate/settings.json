@@ -1,0 +1,13 @@
+{
+  "isolates": {
+    "worktree": {
+      "setup": [
+        "npm ci --prefer-offline --no-audit --no-fund"
+      ]
+    }
+  },
+  "lander": {
+    "checks": [["npm run typecheck", "npm test"], { "command": "npm run build", "timeout": 300 }],
+    "push": "origin"
+  }
+}
