@@ -13,8 +13,8 @@ export interface DocumentProps {
   description?: string
   /** Extra stylesheets, in order. */
   styles?: string[]
-  /** A Google Fonts css2 URL for this page. */
-  fonts?: string | null
+  /** Font files in public/ to preload: the ones the first screen shows (their @font-face rules are in a stylesheet). */
+  fonts?: string[]
   bodyClass?: string
   themeColor?: string
   title?: string
@@ -46,7 +46,7 @@ export function Document(handle: Handle<DocumentProps>) {
       lang = 'en',
       locale = 'en_CA',
       styles = [],
-      fonts,
+      fonts = [],
       themeColor = '#070707',
       title,
       ogType = 'website',
@@ -75,9 +75,9 @@ export function Document(handle: Handle<DocumentProps>) {
           ))}
           <link rel="alternate" hrefLang="x-default" href={`${ORIGIN}/`} />
           <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-          {fonts && <link rel="preconnect" href="https://fonts.googleapis.com" />}
-          {fonts && <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />}
-          {fonts && <link rel="stylesheet" href={fonts} />}
+          {fonts.map((font) => (
+            <link key={font} rel="preload" href={font} as="font" type="font/woff2" crossOrigin="anonymous" />
+          ))}
           {styles.map((style) => (
             <link key={style} rel="stylesheet" href={versioned(style)} />
           ))}

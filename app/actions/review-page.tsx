@@ -103,7 +103,7 @@ export function ReviewPage() {
     let state = (clip: Clip) => cutState(clip.id, drafts, checks)
     let checked = clips.filter((c) => !c.rejected && checks[c.id] && !drafts[c.id]).length
     return (
-      <Document title="Review clips" bodyClass="rv-page" fonts={null} styles={['/styles/review.css']}>
+      <Document title="Review clips" bodyClass="rv-page" styles={['/styles/review.css']}>
         <ReviewBoard />
         <header class="rv-head">
           <div>

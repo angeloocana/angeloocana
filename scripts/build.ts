@@ -141,7 +141,9 @@ await save(
 await save(
   '_headers',
   // (/media/* gets its headers from worker.ts)
-  ['/sw.js', '  Cache-Control: no-cache', '/assets/*', '  Cache-Control: public, max-age=31536000, immutable', ''].join('\n'),
+  // (/fonts/ never change in place: a new font gets a new file name)
+  ['/sw.js', '  Cache-Control: no-cache', '/assets/*', '  Cache-Control: public, max-age=31536000, immutable',
+    '/fonts/*', '  Cache-Control: public, max-age=31536000, immutable', ''].join('\n'),
 )
 
 console.log(`Built ${Object.keys(PAGES).length} pages, ${live.size} clips and ${seen.size} script files into ${OUT}/`)

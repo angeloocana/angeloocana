@@ -119,6 +119,9 @@
 /* slides grow into place as they enter the row from the side */
 @supports (animation-timeline: view()) {
   .js-rails .slide { animation: slide-in linear both; animation-timeline: view(inline); animation-range: entry 0% entry 70%; }
+  /* clips far from view skip it (rails.tsx marks the near ones): a scroll-driven animation on each of
+     114 clips made page scrolling drop frames on slower devices */
+  .js-rails .slide[data-video]:not([data-near]) { animation: none; }
 }
 @keyframes slide-in { from { opacity: 0.2; transform: scale(0.92) translateY(10px); } to { opacity: 1; transform: none; } }
 

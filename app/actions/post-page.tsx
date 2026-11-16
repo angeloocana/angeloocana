@@ -27,7 +27,7 @@ export function PostPage(handle: Handle<{ post: Post }>) {
         locale={t.meta.locale}
         bodyClass="cin post-page"
         fonts={FONTS}
-        styles={['/styles/base.css', '/styles/site.css', '/styles/post.css']}
+        styles={['/styles/fonts.css', '/styles/base.css', '/styles/site.css', '/styles/post.css']}
         themeColor="#070707"
         url={post.url}
         ogType="article"

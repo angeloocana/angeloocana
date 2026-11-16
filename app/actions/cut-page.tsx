@@ -29,7 +29,7 @@ export function CutPage(handle: Handle<{ id: string }>) {
     let next = [...order.slice(at + 1), ...order.slice(0, at)].find((c) => !c.rejected && !checked(c.id))
     let live = clips.filter((c) => !c.rejected)
     return (
-      <Document title={`Cut: ${clip.label.en}`} bodyClass="rv-page ce-page" fonts={null} styles={['/styles/review.css']}>
+      <Document title={`Cut: ${clip.label.en}`} bodyClass="rv-page ce-page" styles={['/styles/review.css']}>
         <CutEditor
           clip={{ id: clip.id, title: clip.label.en, cat: CATEGORY_NAMES.en[clip.cat], rejected: clip.rejected }}
           current={current}

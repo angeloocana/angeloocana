@@ -7,10 +7,9 @@ import { SocialIcon } from './social-icons.tsx'
 // What every page shares: the fonts, the fixed menu with the language flags, the contact links
 // and the footer.
 
-// Instrument Serif + Inter carry the film; each project borrows its product's own type:
-// Barlow Condensed for track2.fit, Fraunces for Jump Over Jump.
-export const FONTS =
-  'https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@300;400;500;600&family=Barlow+Condensed:ital,wght@1,700;1,800&family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;1,9..144,500&display=swap'
+// The fonts live in public/fonts/ (public/styles/fonts.css); these two carry the first screen, so they
+// are preloaded.
+export const FONTS = ['/fonts/inter.woff2', '/fonts/instrument-serif.woff2']
 
 export function SocialLinks(handle: Handle<{ class: string; t: Copy['links'] }>) {
   return () => (

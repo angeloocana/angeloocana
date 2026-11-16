@@ -193,6 +193,8 @@ export const Rails = clientEntry(import.meta.url, function Rails(handle: Handle)
           for (let { target, isIntersecting } of entries) {
             let slide = target as HTMLElement
             let video = slide.querySelector<HTMLVideoElement>('video.clip-video')
+            // only clips near the screen run the slide-in animation: 114 of them scrolling with the page cost frames
+            slide.toggleAttribute('data-near', isIntersecting)
             if (isIntersecting && !video) {
               video = document.createElement('video')
               video.className = 'clip-video'
@@ -220,6 +222,7 @@ export const Rails = clientEntry(import.meta.url, function Rails(handle: Handle)
       }
 
       let timer = setInterval(() => {
+        if (document.hidden) return
         for (let stack of document.querySelectorAll<HTMLElement>('[data-cycle]')) {
           let rect = stack.getBoundingClientRect()
           if (rect.bottom < 0 || rect.top > innerHeight || rect.right < 0 || rect.left > innerWidth) continue
@@ -263,7 +266,12 @@ export const Rails = clientEntry(import.meta.url, function Rails(handle: Handle)
     let chapters = [...document.querySelectorAll<HTMLElement>('[data-chapter][id]')]
     let links = [...document.querySelectorAll<HTMLElement>('[data-chapter-link]')]
     let last = ''
+    let pending = false
     let onScroll = () => {
+      if (!pending) { pending = true; requestAnimationFrame(highlight) }
+    }
+    let highlight = () => {
+      pending = false
       let current = chapters[0]?.id ?? ''
       for (let chapter of chapters) if (chapter.getBoundingClientRect().top <= innerHeight / 2) current = chapter.id
       if (current === last) return
@@ -271,7 +279,7 @@ export const Rails = clientEntry(import.meta.url, function Rails(handle: Handle)
       for (let link of links) link.toggleAttribute('aria-current', link.dataset.chapterLink === current)
     }
     addEventListener('scroll', onScroll, { signal, passive: true })
-    onScroll()
+    highlight()
 
     let flight = reduced ? null : setUpFlight()
 

@@ -213,7 +213,7 @@ export function HomePage(handle: Handle<{ lang: Lang }>) {
         locale={t.meta.locale}
         bodyClass="cin"
         fonts={FONTS}
-        styles={['/styles/base.css', '/styles/devices.css', '/styles/site.css']}
+        styles={['/styles/fonts.css', '/styles/base.css', '/styles/devices.css', '/styles/site.css']}
         themeColor="#070707"
       >
         <Rails />
