@@ -42,6 +42,10 @@ MOMENTS = os.path.join(WORK, 'moments')
 MOMENTS_VERSION = 1
 FPS = 30
 SCALE = 'scale=720:1280:force_original_aspect_ratio=increase:flags=lanczos'
+# The page shows clips at most ~540px wide, so they go out at 540x960, capped at 700 kbit/s: about 40%
+# lighter than 720p at CRF 28, and the same to the eye at card size.
+WEB = ['-c:v', 'libx264', '-preset', 'slow', '-crf', '27', '-maxrate', '700k', '-bufsize', '1400k',
+       '-profile:v', 'high', '-pix_fmt', 'yuv420p', '-movflags', '+faststart']
 
 
 def read_json(path, default):
@@ -180,10 +184,8 @@ def build(name, pieces=None):
     graph = ';'.join(chains) + ';' + ''.join(f'[p{i}]' for i in range(len(pieces))) + f'concat=n={len(pieces)}:v=1:a=0[out]'
     os.makedirs(OUT, exist_ok=True)
     mp4, tmp = os.path.join(OUT, f'{name}.mp4'), os.path.join(OUT, f'{name}.part.mp4')
-    # longer clips get a little more compression so the page stays light
-    crf = '31' if sum(p[3] if p[0] == 'vid' else p[2] for p in pieces) > 15 else '28'
-    ffmpeg(*inputs, '-filter_complex', graph, '-map', '[out]', '-an', '-map_metadata', '-1', '-map_chapters', '-1',
-           '-c:v', 'libx264', '-preset', 'slow', '-crf', crf, '-profile:v', 'high', '-movflags', '+faststart', tmp)
+    ffmpeg(*inputs, '-filter_complex', graph + ';[out]scale=540:960:flags=lanczos[web]', '-map', '[web]', '-an',
+           '-map_metadata', '-1', '-map_chapters', '-1', *WEB, tmp)
     os.replace(tmp, mp4)
     poster(mp4, os.path.join(OUT, f'{name}.jpg'))
     return mp4
