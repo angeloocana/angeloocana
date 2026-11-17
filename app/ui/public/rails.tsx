@@ -26,9 +26,18 @@ export const Rails = clientEntry(import.meta.url, function Rails(handle: Handle)
     // a pause button stops all motion on the page, and keeps it stopped across visits in this tab;
     // html.is-paused stops the looping CSS animations, and joj-demo.tsx waits while it is there
     let paused = sessionStorage.getItem('ao-paused') === '1'
+    // reduced motion (or data saver) counts as paused for everything that moves on its own: the CSS loops,
+    // the SVG timelines, the Jump Over Jump demo (it reads html.is-paused) and the cycling screens
     let showMotion = () => {
-      root.classList.toggle('is-paused', paused)
-      for (let svg of document.querySelectorAll<SVGSVGElement>('svg.sync-art')) paused ? svg.pauseAnimations() : svg.unpauseAnimations()
+      let still = paused || !motion
+      root.classList.toggle('is-paused', still)
+      for (let svg of document.querySelectorAll<SVGSVGElement>('svg.sync-art')) {
+        if (still) {
+          svg.pauseAnimations()
+          // held where the pulses are spread along their lines, not bunched at the start
+          if (!motion) svg.setCurrentTime(1.4)
+        } else svg.unpauseAnimations()
+      }
     }
     showMotion()
     // new clip slides (from [data-more]) are handed to the video code below once it is set up
@@ -430,24 +439,43 @@ export const Rails = clientEntry(import.meta.url, function Rails(handle: Handle)
         for (let stack of document.querySelectorAll<HTMLElement>('[data-cycle]')) {
           let rect = stack.getBoundingClientRect()
           if (rect.bottom < 0 || rect.top > innerHeight || rect.right < 0 || rect.left > innerWidth) continue
-          let shots = [...stack.children] as HTMLElement[]
-          let i = shots.findIndex((s) => s.classList.contains('on'))
-          shots[i]?.classList.remove('on')
-          shots[(i + 1) % shots.length]?.classList.add('on')
+          advance(stack)
         }
       }, 2600)
+      // the second screen of each stack on screen loads once the page has loaded, ready for the first step
+      let preload = () => {
+        for (let stack of document.querySelectorAll<HTMLElement>('[data-cycle]')) {
+          let rect = stack.getBoundingClientRect()
+          if (rect.bottom > 0 && rect.top < innerHeight) loadShot(stack.children[1])
+        }
+      }
+      if (document.readyState === 'complete') preload()
+      else addEventListener('load', preload, { signal, once: true })
       signal.addEventListener('abort', () => clearInterval(timer))
+    }
+
+    // A cycling stack's next screen: shown, and the one after it starts loading (devices.tsx leaves all but
+    // the first in data-src).
+    function loadShot(shot: Element | undefined) {
+      let img = shot as HTMLImageElement | undefined
+      if (img?.dataset.src) {
+        img.src = img.dataset.src
+        delete img.dataset.src
+      }
+    }
+    function advance(stack: Element | null) {
+      if (!stack) return
+      let shots = [...stack.children]
+      let i = shots.findIndex((s) => s.classList.contains('on'))
+      let next = shots[(i + 1) % shots.length]
+      loadShot(next)
+      shots[i]?.classList.remove('on')
+      next?.classList.add('on')
+      loadShot(shots[(i + 2) % shots.length])
     }
 
     // Hero device clusters follow the mouse: each device tilts and drifts by its own depth, and
     // the one under the pointer lifts and shows its next screen.
-    let advance = (stack: Element | null) => {
-      if (!stack) return
-      let shots = [...stack.children]
-      let i = shots.findIndex((s) => s.classList.contains('on'))
-      shots[i]?.classList.remove('on')
-      shots[(i + 1) % shots.length]?.classList.add('on')
-    }
     for (let visual of document.querySelectorAll<HTMLElement>('.intro-visual')) {
       visual.addEventListener('pointermove', (event) => {
         if (event.pointerType !== 'mouse' || reduced) return

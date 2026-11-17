@@ -15,7 +15,16 @@ type Key = keyof Size
 export const PoolTiles = clientEntry(import.meta.url, function PoolTiles(handle: Handle) {
   handle.queueTask(() => {
     let signal = handle.signal
-    for (let root of document.querySelectorAll<HTMLElement>('[data-pool]')) setUp(root)
+    // each designer is built (162 tile buttons) once it comes within a screen of view, not at load
+    let near = new IntersectionObserver((entries) => {
+      for (let { target, isIntersecting } of entries) {
+        if (!isIntersecting) continue
+        near.unobserve(target)
+        setUp(target as HTMLElement)
+      }
+    }, { rootMargin: '100% 100%' })
+    for (let root of document.querySelectorAll<HTMLElement>('[data-pool]')) near.observe(root)
+    signal.addEventListener('abort', () => near.disconnect())
 
     function setUp(root: HTMLElement) {
       let words = JSON.parse(root.dataset.words ?? '{}') as Words

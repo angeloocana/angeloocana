@@ -200,7 +200,9 @@ export function Laptop(handle: Handle<DeviceProps>) {
   )
 }
 
-/** One or more screenshots; the first is shown without JS, the rest cross-fade when cycled. */
+/** One or more screenshots; the first is shown without JS, the rest cross-fade when cycled. The rest wait
+    in data-src until the stack starts cycling (rails.tsx loads each one a step ahead), so the first screen
+    doesn't download pictures it never shows (and reduced motion, which doesn't cycle, never loads them). */
 export function Screens(handle: Handle<{ srcs: string[]; alt: string; position?: string }>) {
   return () => {
     let { alt, position, srcs } = handle.props
@@ -210,7 +212,8 @@ export function Screens(handle: Handle<{ srcs: string[]; alt: string; position?:
           <img
             key={src}
             class={i === 0 ? 'screen on' : 'screen'}
-            src={src}
+            src={i === 0 ? src : undefined}
+            data-src={i === 0 ? undefined : src}
             alt={i === 0 ? alt : ''}
             aria-hidden={i === 0 ? undefined : 'true'}
             loading="lazy"

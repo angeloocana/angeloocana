@@ -51,6 +51,17 @@ export const JojDemo = clientEntry(import.meta.url, function JojDemo(handle: Han
     let signal = handle.signal
     let boards = [...document.querySelectorAll<HTMLElement>('[data-joj-demo]')]
     if (!boards.length || matchMedia('(prefers-reduced-motion: reduce)').matches) return
+    // the games load once a board comes within a screen of view, not with the page
+    await new Promise<void>((resolve) => {
+      let near = new IntersectionObserver((entries) => {
+        if (!entries.some((e) => e.isIntersecting)) return
+        near.disconnect()
+        resolve()
+      }, { rootMargin: '100% 0px' })
+      boards.forEach((board) => near.observe(board))
+      signal.addEventListener('abort', () => near.disconnect())
+    })
+    if (signal.aborted) return
     let games: Move[][] = []
     try {
       let raw = (await (await fetch('/data/joj-games.json', { signal })).json()).games as number[][][]
