@@ -9,9 +9,9 @@ export const HREF: Record<Lang, string> = { en: '/', pt: '/pt' }
 
 const en = {
   meta: {
-    title: 'Ângelo Ocanã · Software engineer',
+    title: 'Ângelo Ocanã · Staff software engineer',
     description:
-      'Software engineer at Shopify, in Ottawa. I build a workout tracker, a twelve-year-old board game and other things for the web, since 2007.',
+      'Staff software engineer at Shopify, in Ottawa. I build a workout tracker, a twelve-year-old board game and other things for the web, since 2007.',
     locale: 'en_CA',
   },
   intro: 'presents',
@@ -31,11 +31,11 @@ const en = {
   },
   // the first screen: who I am, then three tiles that each open a row further down
   hi: {
-    role: 'Software engineer',
+    role: 'Staff software engineer',
     from: 'Brazil',
     place: 'Ottawa',
     movedTo: 'moved to',
-    proof: 'Software engineer at Shopify, in Ottawa. I’ve been learning and building for the web since 2007, and I still try to learn something new every day. I like making hard things feel simple for the people who use them.',
+    proof: 'Staff software engineer at Shopify, in Ottawa. I’ve been learning and building for the web since 2007, and I still try to learn something new every day. I like making hard things feel simple for the people who use them.',
     work: 'See my work',
     tiles: {
       label: 'A little of everything',
@@ -256,9 +256,9 @@ export type Copy = typeof en
 
 const pt: Copy = {
   meta: {
-    title: 'Ângelo Ocanã · Engenheiro de software',
+    title: 'Ângelo Ocanã · Engenheiro de software staff',
     description:
-      'Engenheiro de software na Shopify, em Ottawa. Construo um app de treino, um jogo de tabuleiro de doze anos e outras coisas para a web, desde 2007.',
+      'Engenheiro de software staff na Shopify, em Ottawa. Construo um app de treino, um jogo de tabuleiro de doze anos e outras coisas para a web, desde 2007.',
     locale: 'pt_BR',
   },
   intro: 'apresenta',
@@ -277,11 +277,11 @@ const pt: Copy = {
     langs: { en: 'English', pt: 'Português' },
   },
   hi: {
-    role: 'Engenheiro de software',
+    role: 'Engenheiro de software staff',
     from: 'Brasil',
     place: 'Ottawa',
     movedTo: 'mudou-se para',
-    proof: 'Engenheiro de software na Shopify, em Ottawa. Aprendo e construo para a web desde 2007, e ainda tento aprender algo novo todo dia. Gosto de fazer coisas complicadas parecerem simples para quem usa.',
+    proof: 'Engenheiro de software staff na Shopify, em Ottawa. Aprendo e construo para a web desde 2007, e ainda tento aprender algo novo todo dia. Gosto de fazer coisas complicadas parecerem simples para quem usa.',
     work: 'Ver meu trabalho',
     tiles: {
       label: 'Um pouco de tudo',

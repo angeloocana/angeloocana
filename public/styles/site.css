@@ -194,9 +194,9 @@ html:not(.js-rails) .rail-arrow { display: none; }
 /* Career: today's projects, lit one after another like a marquee, over the whole career on one line */
 .tile-career { grid-row: 1 / 3; background: radial-gradient(90% 55% at 0% 0%, rgb(232 184 106 / 0.1), transparent 70%), linear-gradient(170deg, #15120e, #0b0b0b 60%); border-color: rgb(232 184 106 / 0.3); }
 .tile-projects { display: grid; gap: 0.2rem; margin-block: auto; padding-block: 1rem; }
-.tile-projects li { white-space: nowrap; font: 400 clamp(1.3rem, 0.8rem + 1.1vw, 2rem)/1.18 var(--serif); color: #8f897f; animation: lit 10s linear infinite; animation-delay: calc(var(--i) * 2s); }
+.tile-projects li { white-space: nowrap; font: 400 clamp(1.3rem, 0.8rem + 1.1vw, 2rem)/1.18 var(--serif); color: #8f897f; transition: color 0.25s; }
+.tile-career:hover .tile-projects li, .tile-career:focus-within .tile-projects li { color: var(--text); }
 .tile-projects li::before { content: ''; display: inline-block; width: 0.9rem; height: 1px; margin-right: 0.6rem; vertical-align: 0.32em; background: currentColor; opacity: 0.6; }
-@keyframes lit { 0%, 20% { color: var(--text); } 3%, 17% { color: #f4d28e; } 23%, 100% { color: #8f897f; } }
 .tile-line { position: relative; width: 100%; margin-top: 1.1rem; }
 .tl-track { position: relative; display: block; height: 1px; background: linear-gradient(90deg, rgb(236 231 223 / 0.12), rgb(236 231 223 / 0.3)); }
 .tl-track i { position: absolute; top: -3px; width: 7px; height: 7px; margin-left: -3px; border-radius: 50%; background: #0b0b0b; box-shadow: inset 0 0 0 1px rgb(236 231 223 / 0.45); }

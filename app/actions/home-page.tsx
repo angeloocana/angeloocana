@@ -118,13 +118,13 @@ function Hero(handle: Handle<{ lang: Lang; t: Copy; clips: Clip[] }>) {
         </div>
 
         <ul class="hero-tiles" aria-label={tiles.label}>
-          {/* Career: today's job, its projects lit one after another, and every company on one line */}
+          {/* Career: today's job, its projects, and every company on one line */}
           <li class="tile tile-career">
             <p class="tile-kicker">{tiles.career.kicker}</p>
             <h2 class="tile-title"><a href="#career" class="tile-link">{now.company}<span class="tile-go" aria-hidden="true">→</span></a></h2>
             <p class="tile-meta"><span class="tile-now">{tiles.career.now}</span> · {tiles.career.role}</p>
             <ol class="tile-projects">
-              {(now.highlights ?? []).map((h, i) => <li key={h.title} style={`--i:${i}`}>{h.title}</li>)}
+              {(now.highlights ?? []).map((h) => <li key={h.title}>{h.title}</li>)}
             </ol>
             <div class="tile-line" aria-hidden="true">
               <span class="tl-track">
