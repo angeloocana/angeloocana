@@ -38,7 +38,7 @@ const en = {
     from: 'Brazil',
     place: 'Ottawa',
     movedTo: 'moved to',
-    proof: 'Staff software engineer at Shopify, in Ottawa. I’ve been learning and building for the web since 2007, and I still try to learn something new every day. I like making hard things feel simple for the people who use them.',
+    proof: 'I work at Shopify, in Ottawa. I’ve been learning and building for the web since 2007, and I still try to learn something new every day. I like making hard things feel simple for the people who use them.',
     work: 'See my work',
     tiles: {
       label: 'A little of everything',
@@ -290,7 +290,7 @@ const pt: Copy = {
     from: 'Brasil',
     place: 'Ottawa',
     movedTo: 'mudou-se para',
-    proof: 'Engenheiro de software staff na Shopify, em Ottawa. Aprendo e construo para a web desde 2007, e ainda tento aprender algo novo todo dia. Gosto de fazer coisas complicadas parecerem simples para quem usa.',
+    proof: 'Trabalho na Shopify, em Ottawa. Aprendo e construo para a web desde 2007, e ainda tento aprender algo novo todo dia. Gosto de fazer coisas complicadas parecerem simples para quem usa.',
     work: 'Ver meu trabalho',
     tiles: {
       label: 'Um pouco de tudo',
