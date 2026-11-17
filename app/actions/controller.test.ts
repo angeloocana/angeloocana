@@ -2,6 +2,7 @@ import * as assert from 'remix/assert'
 import { describe, it } from 'remix/test'
 
 import { loadClips } from '../content/clips.ts'
+import { plain, postsFor } from '../content/posts.ts'
 import { router } from '../router.ts'
 import { routes } from '../routes.ts'
 
@@ -36,6 +37,28 @@ describe('root controller', () => {
     let { clips } = (await response.json()) as { clips: { id: string }[] }
     let live = loadClips().filter((clip) => !clip.rejected).map((clip) => clip.id).sort()
     assert.deepEqual(clips.map((clip) => clip.id).sort(), live)
+  })
+
+  it('keeps HTML out of the post cards’ excerpts', async () => {
+    assert.equal(plain('Hi <img style="max-width: 100%" src="x.png" /> there <!-- note -->'), 'Hi there')
+    for (let lang of ['en', 'pt'] as const) {
+      for (let post of postsFor(lang)) {
+        assert.ok(!/[<>]|src=|style=/.test(post.excerpt), `${post.url}: ${post.excerpt}`)
+      }
+    }
+    let html = await (await router.fetch(new URL(routes.home.href(), 'http://localhost'))).text()
+    for (let [, excerpt] of html.matchAll(/<p class="post-excerpt">([^]*?)<\/p>/g)) {
+      assert.ok(!/&lt;|src=/.test(excerpt), excerpt)
+    }
+  })
+
+  it('names the menu’s sections in page order, each one on the page', async () => {
+    let html = await (await router.fetch(new URL(routes.home.href(), 'http://localhost'))).text()
+    let menu = html.match(/<nav [^>]*class="cin-menu"[^]*?<\/nav>/)![0]
+    let ids = [...menu.matchAll(/data-chapter-link="([^"]+)"/g)].map((m) => m[1])
+    assert.deepEqual(ids, ['career', 'projects', 'outside', 'learning', 'posts', 'contact'])
+    let at = ids.map((id) => html.indexOf(`id="${id}"`))
+    assert.ok(at.every((pos, i) => pos > 0 && (i === 0 || pos > at[i - 1])), `menu out of page order: ${at}`)
   })
 
   it('GET /pt returns the Portuguese page', async () => {

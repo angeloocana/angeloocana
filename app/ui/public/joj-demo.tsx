@@ -76,7 +76,9 @@ export const JojDemo = clientEntry(import.meta.url, function JojDemo(handle: Han
         dot?.classList.toggle('jd-turn-black', !white)
       }
 
-      // pause while off screen or in a background tab
+      // pause while off screen, in a background tab, or while the page's pause button is on (rails.tsx
+      // marks html.is-paused); a light poll picks up the moment it is turned off again
+      let paused = () => document.documentElement.classList.contains('is-paused')
       let visible = false
       let wake: (() => void) | null = null
       let watcher = new IntersectionObserver(([entry]) => {
@@ -88,8 +90,9 @@ export const JojDemo = clientEntry(import.meta.url, function JojDemo(handle: Han
       let sleep = (ms: number) =>
         new Promise<void>((resolve) => {
           let finish = () => {
-            if (signal.aborted || (visible && !document.hidden)) return resolve()
-            wake = () => { wake = null; resolve() }
+            if (signal.aborted || (visible && !document.hidden && !paused())) return resolve()
+            if (paused()) return void setTimeout(finish, 500)
+            wake = () => { wake = null; finish() }
           }
           setTimeout(finish, ms)
         })

@@ -71,7 +71,7 @@ export function SiteNav(handle: Handle<{ lang: Lang; t: Copy; home?: boolean; la
         <a href={home ? '#top' : base} class="cin-mark" aria-label={`Ângelo Ocanã · ${t.nav.top}`} data-cursor={t.nav.top}>ÂO</a>
         <nav class="cin-menu" aria-label={t.nav.label}>
           {t.nav.chapters.map((chapter) => (
-            <a key={chapter.href} href={`${base}${chapter.href}`} data-chapter-link={chapter.href.slice(1)}>{chapter.label}</a>
+            <a key={chapter.href} href={`${base}${chapter.href}`} class={chapter.phone === false ? 'menu-wide' : undefined} data-chapter-link={chapter.href.slice(1)}>{chapter.label}</a>
           ))}
         </nav>
         {/* the two flags as a small hand of cards: the current one stands taller and ringed */}
@@ -85,6 +85,8 @@ export function SiteNav(handle: Handle<{ lang: Lang; t: Copy; home?: boolean; la
               lang={code}
               aria-label={t.nav.langs[code]}
               aria-current={code === lang ? 'true' : undefined}
+              // the page you're on: still a link, but not a Tab stop on the way to the content
+              tabIndex={code === lang ? -1 : undefined}
             >
               <span class="lang-face"><Flag lang={code} /></span>
             </a>
@@ -97,7 +99,7 @@ export function SiteNav(handle: Handle<{ lang: Lang; t: Copy; home?: boolean; la
 
 export function SiteFoot(handle: Handle<{ t: Copy }>) {
   return () => (
-    <footer id="contact" class="cin-foot">
+    <footer id="contact" class="cin-foot" data-chapter>
       <h2>{handle.props.t.foot.title}</h2>
       <SocialLinks class="foot-links" t={handle.props.t.links} />
       <p class="cin-fine">© {new Date().getFullYear()} Ângelo Ocanã · {handle.props.t.foot.built}</p>

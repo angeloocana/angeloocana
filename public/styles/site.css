@@ -14,7 +14,7 @@
 .cin h1, .cin h2, .cin h3 { font-family: var(--serif); font-weight: 400; line-height: 0.98; letter-spacing: -0.01em; }
 .cin em { font-style: italic; color: var(--amber); }
 .cin a { text-decoration-color: rgb(232 184 106 / 0.5); text-underline-offset: 0.2em; }
-.cin-kicker { font: 500 0.72rem/1 var(--sans); letter-spacing: 0.28em; text-transform: uppercase; color: var(--amber); }
+.cin-kicker { font: 500 0.75rem/1 var(--sans); letter-spacing: 0.28em; text-transform: uppercase; color: var(--amber); }
 .cin-lede { font-family: var(--serif); font-size: clamp(1.3rem, 1rem + 1.3vw, 1.9rem); line-height: 1.35; color: var(--text); max-width: 34ch; }
 
 /* ---------- title intro ---------- */
@@ -29,7 +29,7 @@
 .cin-skip .cin-intro, .cin-seen .cin-intro { display: none; }
 /* ---------- keyboard: a skip link, and one visible focus ring everywhere ---------- */
 .cin :focus-visible { outline: 2px solid var(--amber); outline-offset: 3px; }
-.skip-link { position: absolute; z-index: 70; left: 1rem; top: 0.6rem; padding: 0.7rem 1rem; border-radius: 999px; background: var(--amber); color: #111; font: 600 0.8rem/1 var(--sans); text-decoration: none; transform: translateY(-200%); }
+.skip-link { position: absolute; z-index: 70; left: 1rem; top: 0.6rem; display: inline-flex; align-items: center; min-height: 2.75rem; padding: 0.7rem 1rem; border-radius: 999px; background: var(--amber); color: #111; font: 600 0.8rem/1 var(--sans); text-decoration: none; transform: translateY(-200%); }
 .skip-link:focus { transform: none; }
 main:focus { outline: none; }
 
@@ -42,7 +42,7 @@ main:focus { outline: none; }
 
 /* ---------- fixed navigation: logo, three links and the language switch ---------- */
 .cin-nav { position: fixed; z-index: 60; inset: 0 0 auto 0; display: flex; justify-content: space-between; align-items: center; gap: 1rem; padding: 0.9rem clamp(1rem, 3vw, 2.5rem); color: #fff; background: linear-gradient(rgb(7 7 7 / 0.82), rgb(7 7 7 / 0.55)); backdrop-filter: blur(14px) saturate(1.2); -webkit-backdrop-filter: blur(14px) saturate(1.2); border-bottom: 1px solid rgb(255 255 255 / 0.06); }
-.cin-mark { font: 400 1.5rem/1 var(--serif); letter-spacing: 0.04em; text-decoration: none; }
+.cin-mark { display: inline-grid; place-items: center; min-width: 2.75rem; min-height: 2.75rem; margin-left: -0.6rem; font: 400 1.5rem/1 var(--serif); letter-spacing: 0.04em; text-decoration: none; }
 .cin-menu { display: flex; margin-left: auto; gap: clamp(0.9rem, 2.4vw, 2.4rem); }
 /* language switch: two flag cards fanned like a hand. Each card (the link) stays put so its hover
    area never moves; only the face inside it moves. Entering the hand gives both cards a jiggle;
@@ -66,14 +66,27 @@ main:focus { outline: none; }
 }
 @keyframes jiggle { 30% { translate: 0 -3px; rotate: -4deg; } 60% { translate: 0 0; rotate: 3deg; } }
 @media (prefers-reduced-motion: reduce) { .cin-langs:hover .lang-face { animation: none; } }
-.cin-menu a { position: relative; display: inline-flex; align-items: center; min-height: 2rem; text-decoration: none; font: 500 0.7rem/1 var(--sans); letter-spacing: 0.18em; text-transform: uppercase; padding-block: 0.4rem; opacity: 0.62; transition: opacity 0.3s; white-space: nowrap; }
-.cin-menu a::after { content: ''; position: absolute; left: 0; right: 0; bottom: 0; height: 1px; background: currentColor; transform: scaleX(0); transform-origin: left; transition: transform 0.6s var(--ease); }
+.cin-menu a { position: relative; display: inline-flex; align-items: center; min-height: 2.75rem; text-decoration: none; font: 500 0.75rem/1 var(--sans); letter-spacing: 0.16em; text-transform: uppercase; padding-block: 0.4rem; opacity: 0.62; transition: opacity 0.3s; white-space: nowrap; }
+.cin-menu a::after { content: ''; position: absolute; left: 0; right: 0; bottom: 0.45rem; height: 1px; background: currentColor; transform: scaleX(0); transform-origin: left; transition: transform 0.6s var(--ease); }
 .cin-menu a:hover, .cin-menu a[aria-current], .cin-menu a:focus-visible { opacity: 1; }
 .cin-menu a[aria-current]::after { transform: scaleX(1); }
-@media (max-width: 640px) {
-  .cin-nav { gap: 0.6rem; padding-inline: 1rem 0.6rem; }
-  .cin-menu { gap: 0.85rem; }
-  .cin-menu a { font-size: 0.62rem; letter-spacing: 0.1em; }
+/* between phones and wide screens the menu loses its letter-spacing before anything else */
+@media (max-width: 1100px) { .cin-menu { gap: 1.1rem; } .cin-menu a { letter-spacing: 0.1em; } }
+/* phones: three doors (Career, Projects, Contact); the rows in between are a swipe down. The links keep
+   44px of height to tap, and spread across the space between the logo and the flags. */
+@media (max-width: 760px) {
+  .cin-nav { gap: 0.25rem; padding-block: 0.4rem; padding-inline: 1rem 0.5rem; }
+  .cin-menu { gap: 0; justify-content: center; flex: 1; }
+  .cin-menu .menu-wide { display: none; }
+  .cin-menu a { padding-inline: 0.45rem; letter-spacing: 0.06em; }
+  .cin-menu a::after { left: 0.45rem; right: 0.45rem; }
+  /* the flags: each card's tap area is 44px square and they sit side by side; the faces still fan */
+  .cin-langs { width: 5.5rem; height: 2.75rem; }
+  .lang-card { top: 0; width: 2.75rem; height: 2.75rem; margin-left: -1.375rem; }
+  .lang-en { transform: translateX(-1.375rem) rotate(calc(var(--lean) * -1)); }
+  .lang-pt { transform: translateX(1.375rem) rotate(var(--lean)); }
+  .lang-en .lang-face { translate: 0.8rem 0; }
+  .lang-pt .lang-face { translate: -0.8rem 0; }
 }
 
 /* ---------- buttons ---------- */
@@ -82,7 +95,7 @@ main:focus { outline: none; }
 .cin-btn span { transition: transform 0.4s var(--ease); }
 .cin-btn:hover span { transform: translateX(5px); }
 .cin-btn-joj { background: #ee9b6b; }
-.cin-soon { font: 500 0.7rem/1 var(--sans); letter-spacing: 0.16em; text-transform: uppercase; color: var(--dim); border: 1px dashed var(--line); border-radius: 999px; padding: 0.8rem 1rem; }
+.cin-soon { font: 500 0.75rem/1 var(--sans); letter-spacing: 0.16em; text-transform: uppercase; color: var(--dim); border: 1px dashed var(--line); border-radius: 999px; padding: 0.8rem 1rem; }
 
 /* "Software engineer · Brazil ✈ Ottawa". rails.tsx sets data-flight: "wait" parks the plane in Brazil
    with no route drawn, "fly" flies it to Ottawa, drawing the dashed route behind it (the mask's dash is
@@ -120,6 +133,13 @@ main:focus { outline: none; }
 .rail.is-dragging > * { pointer-events: none; }
 .rail:focus-visible { box-shadow: inset 0 0 0 1px rgb(232 184 106 / 0.6); border-radius: 14px; }
 .slide { flex: none; position: relative; min-height: var(--row-h); scroll-snap-align: start; border-radius: 22px; }
+/* the supporting rows (More projects, Learning, Posts) are as tall as their cards need, not a stage:
+   each card keeps its own height (a short one doesn't stretch to the tallest), the intro sits at the top */
+.row-more .slide, .row-learning .slide, .row-posts .slide { min-height: 0; }
+.row-more .rail, .row-learning .rail { align-items: flex-start; }
+.row-more .intro, .row-learning .intro { align-content: start; }
+/* a card with only a line or two (a school, a course) is narrower, so more of the row shows at once */
+.row-learning .study:not(:has(.job-highlights)) { width: min(22rem, 84vw); }
 /* slides grow into place as they enter the row from the side */
 @supports (animation-timeline: view()) {
   .js-rails .slide { animation: slide-in linear both; animation-timeline: view(inline); animation-range: entry 0% entry 70%; }
@@ -149,7 +169,7 @@ main:focus { outline: none; }
 html:not(.js-rails) .rail-arrow { display: none; }
 
 /* the way down: names the next row, and bobs */
-.row-down { display: flex; align-items: center; min-height: 2.5rem; gap: 0.65rem; width: max-content; margin: 0.35rem auto 0; padding: 0.7rem 1.1rem 0.7rem 1.25rem; border-radius: 999px; border: 1px solid var(--line); background: rgb(255 255 255 / 0.03); color: var(--text); text-decoration: none; font: 500 0.66rem/1 var(--sans); letter-spacing: 0.22em; text-transform: uppercase; transition: border-color 0.3s, background 0.3s; }
+.row-down { display: flex; align-items: center; min-height: 2.75rem; gap: 0.65rem; width: max-content; margin: 0.35rem auto 0; padding: 0.7rem 1.1rem 0.7rem 1.25rem; border-radius: 999px; border: 1px solid var(--line); background: rgb(255 255 255 / 0.03); color: var(--text); text-decoration: none; font: 500 0.75rem/1 var(--sans); letter-spacing: 0.22em; text-transform: uppercase; transition: border-color 0.3s, background 0.3s; }
 .row-down span { color: var(--dim); }
 .row-down b { font-weight: 600; }
 .row-down svg { width: 1.05rem; height: 1.05rem; fill: none; stroke: var(--amber); stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; animation: bob 1.8s ease-in-out infinite; }
@@ -159,8 +179,9 @@ html:not(.js-rails) .rail-arrow { display: none; }
 /* ---------- the first screen: who I am, then three doors into the page ----------
    Text on the left; on the right a bento of three tiles, each a link to its row: Career (widest, first),
    What I build (real screens on the devices), Outside work (one clip playing). Nothing here waits for an
-   animation: the hero is the page's LCP, so it paints at once and only fades in its tiles a touch. */
-.hero { --hero-h: min(34rem, calc(100svh - 9rem)); position: relative; isolation: isolate; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.08fr); align-items: center; gap: clamp(2rem, 4vw, 4.5rem); min-height: min(90svh, 52rem); padding: clamp(5.5rem, 11vh, 7rem) var(--gut) clamp(1.5rem, 4vh, 3rem); }
+   animation: the hero is the page's LCP, so it paints at once, tiles included. On wide screens it fills
+   the first screen (no band under the tiles, no next card peeking in) and the tiles grow with it. */
+.hero { --hero-h: min(40rem, calc(100svh - 10rem)); position: relative; isolation: isolate; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.08fr); align-items: center; gap: clamp(2rem, 4vw, 4.5rem); min-height: min(100svh, 60rem); padding: clamp(5.5rem, 11vh, 7rem) var(--gut) clamp(1.5rem, 4vh, 3rem); }
 .hero::before { content: ''; position: absolute; inset: 0; z-index: -1; background: radial-gradient(55% 60% at 18% 45%, rgb(232 184 106 / 0.07), transparent 70%), radial-gradient(50% 60% at 80% 50%, #11161a, transparent 70%); }
 .hero-text { display: grid; justify-items: start; gap: 1.4rem; max-width: 38rem; }
 .hero .hi-kicker { color: #f4d28e; }
@@ -173,8 +194,7 @@ html:not(.js-rails) .rail-arrow { display: none; }
 .cin-btn-ghost:hover { box-shadow: inset 0 0 0 1px var(--amber); color: var(--amber); }
 
 .hero-tiles { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); grid-template-rows: minmax(0, 1fr) minmax(0, 1fr); gap: 0.9rem; height: var(--hero-h); }
-.tile { position: relative; overflow: hidden; display: flex; flex-direction: column; align-items: flex-start; gap: 0.5rem; padding: 1.3rem 1.4rem; border-radius: 22px; border: 1px solid var(--line); background: linear-gradient(170deg, #141210, #0b0b0b 65%); transition: border-color 0.3s, translate 0.5s var(--ease); animation: fade 0.6s ease both; }
-.tile:nth-child(2) { animation-delay: 0.08s; } .tile:nth-child(3) { animation-delay: 0.16s; }
+.tile { position: relative; overflow: hidden; display: flex; flex-direction: column; align-items: flex-start; gap: 0.5rem; padding: 1.3rem 1.4rem; border-radius: 22px; border: 1px solid var(--line); background: linear-gradient(170deg, #141210, #0b0b0b 65%); transition: border-color 0.3s, translate 0.5s var(--ease); }
 /* the whole tile is the link: the title's link stretches over it */
 .tile-link { color: inherit; text-decoration: none; }
 .tile-link::after { content: ''; position: absolute; inset: 0; z-index: 3; border-radius: inherit; }
@@ -185,24 +205,26 @@ html:not(.js-rails) .rail-arrow { display: none; }
   .tile:hover { border-color: rgb(232 184 106 / 0.45); translate: 0 -3px; }
   .tile:hover .tile-go { transform: translateX(4px); }
 }
-.tile-kicker { font: 500 0.66rem/1 var(--sans); letter-spacing: 0.26em; text-transform: uppercase; color: var(--amber); }
+.tile-kicker { font: 500 0.75rem/1.2 var(--sans); letter-spacing: 0.24em; text-transform: uppercase; color: var(--amber); }
 .tile-title { font-size: clamp(2rem, 1.4rem + 1.6vw, 3rem); }
-.tile-meta, .tile-foot { font: 500 0.7rem/1.4 var(--sans); letter-spacing: 0.14em; text-transform: uppercase; color: var(--dim); }
+.tile-meta, .tile-foot { font: 500 0.75rem/1.4 var(--sans); letter-spacing: 0.14em; text-transform: uppercase; color: var(--dim); }
 .tile-now { color: var(--amber); }
 .tile-body { color: #bdb6aa; font-size: 0.92rem; line-height: 1.5; max-width: 22ch; }
 
-/* Career: today's projects, lit one after another like a marquee, over the whole career on one line */
+/* Career: what I built at today's job, as a labelled list (text, not links: the tile itself is the one
+   link, to the Career row), over the whole career on one line */
 .tile-career { grid-row: 1 / 3; background: radial-gradient(90% 55% at 0% 0%, rgb(232 184 106 / 0.1), transparent 70%), linear-gradient(170deg, #15120e, #0b0b0b 60%); border-color: rgb(232 184 106 / 0.3); }
-.tile-projects { display: grid; gap: 0.2rem; margin-block: auto; padding-block: 1rem; }
-.tile-projects li { white-space: nowrap; font: 400 clamp(1.3rem, 0.8rem + 1.1vw, 2rem)/1.18 var(--serif); color: #8f897f; transition: color 0.25s; }
-.tile-career:hover .tile-projects li, .tile-career:focus-within .tile-projects li { color: var(--text); }
-.tile-projects li::before { content: ''; display: inline-block; width: 0.9rem; height: 1px; margin-right: 0.6rem; vertical-align: 0.32em; background: currentColor; opacity: 0.6; }
+.tile-built { display: grid; gap: 0.7rem; margin-block: auto; padding-block: 1rem; }
+.tile-label { font: 500 0.75rem/1 var(--sans); letter-spacing: 0.2em; text-transform: uppercase; color: var(--dim); }
+.tile-projects { display: grid; gap: 0.25rem; }
+.tile-projects li { font: 400 clamp(1.25rem, 0.8rem + 1vw, 1.8rem)/1.15 var(--serif); color: #c9c2b6; }
+.tile-projects li::before { content: ''; display: inline-block; width: 6px; height: 6px; margin-right: 0.7rem; vertical-align: 0.2em; border-radius: 50%; background: rgb(232 184 106 / 0.55); }
 .tile-line { position: relative; width: 100%; margin-top: 1.1rem; }
 .tl-track { position: relative; display: block; height: 1px; background: linear-gradient(90deg, rgb(236 231 223 / 0.12), rgb(236 231 223 / 0.3)); }
 .tl-track i { position: absolute; top: -3px; width: 7px; height: 7px; margin-left: -3px; border-radius: 50%; background: #0b0b0b; box-shadow: inset 0 0 0 1px rgb(236 231 223 / 0.45); }
 .tl-track i.tl-now { background: var(--amber); box-shadow: 0 0 0 0 rgb(232 184 106 / 0.6); animation: ping-amber 1.8s ease-out infinite; }
 .tl-track b { position: absolute; top: -1px; right: 0; height: 3px; border-radius: 2px; background: var(--amber); }
-.tl-years { position: relative; display: flex; justify-content: space-between; margin-top: 0.6rem; font: 500 0.66rem/1 var(--sans); letter-spacing: 0.12em; color: var(--dim); }
+.tl-years { position: relative; display: flex; justify-content: space-between; margin-top: 0.6rem; font: 500 0.75rem/1 var(--sans); letter-spacing: 0.12em; color: var(--dim); }
 .tl-years span:nth-child(2) { position: absolute; translate: -50% 0; color: var(--amber); }
 
 /* What I build: each product named in its own type, its devices peeking up from the bottom right */
@@ -227,6 +249,8 @@ html:not(.js-rails) .rail-arrow { display: none; }
 .tile-life .tile-foot { color: #d9d3c8; }
 
 /* play / pause: on the playing tile and on the Outside work row, all in step (rails.tsx) */
+/* a 44px tap area around the visible circle */
+.clip-pause::before, .clip-ig::before { content: ''; position: absolute; inset: -5px; border-radius: 50%; }
 .clip-pause { position: relative; z-index: 4; display: grid; place-items: center; width: 2.6rem; height: 2.6rem; border-radius: 50%; border: 1px solid rgb(255 255 255 / 0.3); background: rgb(0 0 0 / 0.5); color: #fff; cursor: pointer; backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); transition: background 0.3s, border-color 0.3s; }
 .clip-pause:hover { border-color: var(--amber); }
 .clip-pause svg { width: 1.05rem; height: 1.05rem; fill: none; stroke: currentColor; stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; }
@@ -240,33 +264,36 @@ html:not(.js-rails) .clip-pause { display: none; }
   .hero { grid-template-columns: minmax(0, 1fr); min-height: 0; }
   .hero-tiles { height: 26rem; }
 }
-/* phones: the text, then the three tiles in a row under it, small enough that all three show */
+/* phones: the text, then the tiles as a small bento: Career tall on the left, Projects and Outside work
+   stacked on the right. All three fit the first screen, with labels at 12px or more. */
 @media (max-width: 760px) {
-  .hero { grid-template-columns: minmax(0, 1fr); min-height: 0; gap: 1.6rem; padding-top: 5.2rem; padding-bottom: 1.5rem; }
+  .hero { grid-template-columns: minmax(0, 1fr); min-height: 0; gap: 1.5rem; padding-top: 5rem; padding-bottom: 1.25rem; }
   .hero-text { gap: 1rem; }
   .hero-role { font-size: clamp(2.3rem, 1.4rem + 4.4vw, 3rem); }
   .hero-proof { font-size: 0.98rem; line-height: 1.55; }
-  .hero-ctas .cin-btn { padding: 0.8rem 1.1rem; font-size: 0.78rem; }
+  .hero-ctas .cin-btn { min-height: 2.75rem; padding: 0.8rem 1.1rem; font-size: 0.78rem; }
   .hero-mail { font-size: 0.86rem; }
-  .hero-tiles { grid-template-columns: 1.15fr 1fr 0.85fr; grid-template-rows: 13.5rem; height: auto; gap: 0.5rem; margin-inline: calc(var(--gut) * -0.4); }
-  .tile { padding: 0.85rem 0.8rem; border-radius: 16px; gap: 0.3rem; }
-  .tile-career { grid-row: auto; }
-  .tile-kicker { font-size: 0.56rem; letter-spacing: 0.16em; }
-  .tile-title { font-size: 1.55rem; }
+  .hero-tiles { grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr); grid-template-rows: repeat(2, 9.25rem); height: auto; gap: 0.5rem; margin-inline: calc(var(--gut) * -0.4); }
+  .tile { padding: 0.9rem 0.85rem; border-radius: 16px; gap: 0.3rem; }
+  .tile-kicker { letter-spacing: 0.12em; }
+  .tile-title { font-size: 1.75rem; }
   .tile-meta { display: none; }
-  .tile-projects li { font-size: 0.88rem; line-height: 1.3; }
-  .tile-projects li::before { width: 0.45rem; margin-right: 0.35rem; }
-  .tile-projects li:nth-child(n+4) { display: none; }
-  .tile-line { margin-top: 0.4rem; }
-  .tl-years { font-size: 0.56rem; letter-spacing: 0.04em; }
+  .tile-built { gap: 0.45rem; padding-block: 0.6rem 0; }
+  .tile-projects { gap: 0.15rem; }
+  .tile-projects li { font-size: 1.05rem; line-height: 1.2; }
+  .tile-projects li::before { width: 4px; height: 4px; margin-right: 0.45rem; }
+  .tile-projects li:nth-child(n+5) { display: none; }
+  .tile-line { margin-top: 0.6rem; }
+  .tl-years { letter-spacing: 0.04em; }
   .tl-years span:nth-child(2) { display: none; }
-  .tile-foot { font-size: 0.56rem; letter-spacing: 0.08em; }
-  .brand-t2f { font-size: 1.05rem; }
-  .brand-joj { font-size: 0.85rem; }
-  .tile-build .tile-body, .tile-career .tile-foot { display: none; }
-  .tile-devices { right: auto; left: 8%; top: 56%; width: 92%; }
-  .tile-life { padding: 0.75rem; }
-  .tile-life .tile-title { font-size: 1.15rem; }
+  .tile-foot { letter-spacing: 0.08em; }
+  .tile-career .tile-foot { margin-top: 0.15rem; }
+  .brand-t2f { font-size: 1.35rem; }
+  .brand-joj { font-size: 1rem; }
+  .tile-build .tile-body { display: none; }
+  .tile-devices { right: -4%; top: 52%; width: 70%; }
+  .tile-life { padding: 0.85rem; }
+  .tile-life .tile-title { font-size: 1.3rem; line-height: 1.05; }
   .tile-pause { top: 0.5rem; right: 0.5rem; width: 2.2rem; height: 2.2rem; }
 }
 
@@ -289,7 +316,7 @@ html:not(.js-rails) .clip-pause { display: none; }
 .clip-video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; transition: transform 1.2s var(--ease); }
 .clip::after { content: ''; position: absolute; inset: 0; background: linear-gradient(to top, rgb(0 0 0 / 0.82), transparent 38%); pointer-events: none; }
 .clip-copy { position: absolute; z-index: 2; left: 0; right: 0; bottom: 0; display: grid; gap: 0.35rem; padding: 1rem 1.1rem 1.15rem; }
-.clip-cat { font: 600 0.6rem/1 var(--sans); letter-spacing: 0.22em; text-transform: uppercase; color: #f4d28e; }
+.clip-cat { font: 600 0.75rem/1 var(--sans); letter-spacing: 0.22em; text-transform: uppercase; color: #f4d28e; }
 .clip-label { font: 400 clamp(1.15rem, 1rem + 0.4vw, 1.4rem)/1.15 var(--serif); display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
 @media (hover: hover) { .clip:hover .clip-video { transform: scale(1.05); } }
 /* the full video on Instagram: a small mark in the corner, brighter when the card is hovered */
@@ -437,7 +464,7 @@ html:not(.js-rails) .clip-pause { display: none; }
 .bots { width: 100%; display: grid; gap: 0.4rem; }
 .bots li { display: grid; grid-template-columns: minmax(0, 1fr) auto; column-gap: 0.8rem; padding: 0.5rem 0.75rem; border: 1px solid var(--line); border-radius: 12px; background: rgb(255 255 255 / 0.02); }
 .bots b { font: 600 0.95rem/1.2 var(--joj); }
-.bots small { grid-column: 1; color: var(--dim); font-size: 0.74rem; line-height: 1.3; }
+.bots small { grid-column: 1; color: var(--dim); font-size: 0.75rem; line-height: 1.3; }
 .bot-level { grid-column: 2; grid-row: 1 / 3; align-self: center; display: flex; gap: 3px; }
 .bot-level i { width: 5px; height: 15px; border-radius: 2px; background: rgb(255 255 255 / 0.12); }
 .bot-level i.on { background: #ee9b6b; }
@@ -445,7 +472,7 @@ html:not(.js-rails) .clip-pause { display: none; }
 .card-online { width: min(86vw, max(20rem, calc(var(--vis) * 0.62 + 4rem))); }
 .online-art { position: relative; display: grid; place-items: center; width: 100%; height: 100%; }
 .online-art .c-dev { width: min(62%, calc(var(--vis) * 0.47)); }
-.room-chip { position: absolute; z-index: 3; display: flex; align-items: center; gap: 0.45rem; margin: 0; padding: 0.5rem 0.8rem; border-radius: 999px; background: #1d1a17; border: 1px solid rgb(238 155 107 / 0.5); color: #f2ebe0; font: 500 0.72rem/1 var(--sans); white-space: nowrap; box-shadow: 0 14px 30px -12px rgb(0 0 0 / 0.9); }
+.room-chip { position: absolute; z-index: 3; display: flex; align-items: center; gap: 0.45rem; margin: 0; padding: 0.5rem 0.8rem; border-radius: 999px; background: #1d1a17; border: 1px solid rgb(238 155 107 / 0.5); color: #f2ebe0; font: 500 0.75rem/1 var(--sans); white-space: nowrap; box-shadow: 0 14px 30px -12px rgb(0 0 0 / 0.9); }
 .room-chip b { font-weight: 600; color: #ee9b6b; }
 .room-copied { left: 0; top: 16%; animation: float 6s ease-in-out infinite; }
 .room-copied i { display: grid; place-items: center; width: 1.1rem; height: 1.1rem; border-radius: 50%; background: #7fc97a; color: #0b0b0b; font-style: normal; font-size: 0.65rem; }
@@ -453,18 +480,18 @@ html:not(.js-rails) .clip-pause { display: none; }
 .card-ranks { width: min(84vw, 23rem); }
 .ranks { width: 100%; padding: 1rem; border: 1px solid var(--line); border-radius: 16px; background: #12100e; display: grid; gap: 0.6rem; }
 .ranks-tabs { display: flex; gap: 0.3rem; margin: 0; }
-.ranks-tabs span { padding: 0.35rem 0.7rem; border-radius: 999px; border: 1px solid var(--line); font: 500 0.7rem/1 var(--sans); color: #cfc6b8; }
+.ranks-tabs span { padding: 0.35rem 0.7rem; border-radius: 999px; border: 1px solid var(--line); font: 500 0.75rem/1 var(--sans); color: #cfc6b8; }
 .ranks-tabs .on { background: #ee9b6b; border-color: #ee9b6b; color: #1b1714; }
 .ranks ol { display: grid; }
 .ranks li { display: grid; grid-template-columns: 1.6rem minmax(0, 1fr) auto; align-items: center; gap: 0.5rem; padding: 0.6rem 0.4rem; border-bottom: 1px solid var(--line); font-size: 0.88rem; }
 .ranks li span { font: italic 400 1.25rem/1 var(--serif); color: #ee9b6b; }
-.ranks li small { color: var(--dim); font-size: 0.7rem; letter-spacing: 0.1em; }
+.ranks li small { color: var(--dim); font-size: 0.75rem; letter-spacing: 0.1em; }
 .ranks li:not(.ranks-you) { opacity: 0.55; }
 .ranks-you { border-radius: 10px; border-bottom-color: transparent !important; background: linear-gradient(90deg, rgb(238 155 107 / 0.2), transparent); animation: you-glow 2.8s ease-in-out infinite; }
 .ranks-you b { color: #fff; }
 .ranks-you i { font-style: normal; }
 @keyframes you-glow { 50% { background-color: rgb(238 155 107 / 0.1); } }
-.ranks-points { margin: 0; text-align: center; color: var(--dim); font-size: 0.72rem; letter-spacing: 0.08em; }
+.ranks-points { margin: 0; text-align: center; color: var(--dim); font-size: 0.75rem; letter-spacing: 0.08em; }
 .card-learn { width: min(84vw, 22rem); }
 .learn-chips { display: flex; flex-wrap: wrap; justify-content: center; gap: 0.55rem; }
 .learn-chips li { padding: 0.75rem 1.05rem; border-radius: 999px; border: 1px solid rgb(238 155 107 / 0.45); background: rgb(238 155 107 / 0.06); color: #f2d3bd; font: 600 0.82rem/1 var(--sans); }
@@ -480,7 +507,9 @@ html:not(.js-rails) .clip-pause { display: none; }
 .rf-shot img { width: 100%; height: 100%; object-fit: cover; }
 .rf-logo .rf-shot img { object-fit: contain; padding: 12%; background: #f2efe6; }
 .rf-neural .rf-shot img { object-position: 0% 50%; }
-.rf-code { margin: 0; width: 100%; height: 100%; padding: 1.2rem 1.4rem; font: 400 clamp(0.62rem, 0.5rem + 0.4vw, 0.82rem)/1.55 ui-monospace, 'SF Mono', Menlo, monospace; color: #b6f46b; background: radial-gradient(circle at 30% 20%, #10170b, #050605 70%); white-space: pre; overflow: hidden; }
+/* pre.rf-code, not .rf-code: the 2024 frame's card is .rf-code too (rf-<kind>), and this rule stretched it
+   to the whole row's width, making the Jump Over Jump row twice as tall as its content */
+pre.rf-code { margin: 0; width: 100%; height: 100%; padding: 1.2rem 1.4rem; font: 400 clamp(0.75rem, 0.6rem + 0.3vw, 0.82rem)/1.55 ui-monospace, 'SF Mono', Menlo, monospace; color: #b6f46b; background: radial-gradient(circle at 30% 20%, #10170b, #050605 70%); white-space: pre; overflow: hidden; }
 .rf-term { color: #e9e2d6; letter-spacing: 0.1em; line-height: 1.3; }
 .rf-year { font: italic 400 clamp(2.4rem, 2rem + 1.6vw, 3.4rem)/1 var(--serif); color: #ee9b6b; }
 .reel-frame h3 { font: 600 1.25rem/1.15 var(--joj); }
@@ -494,7 +523,7 @@ html:not(.js-rails) .clip-pause { display: none; }
 .link-email:hover { transform: translateY(-2px); box-shadow: 0 14px 34px -12px rgb(232 184 106 / 0.7); }
 .link-email .social-icon { width: 1.35rem; height: 1.35rem; }
 .socials { display: grid; grid-template-columns: repeat(6, 5.6rem); gap: 0.6rem; }
-.socials a { display: grid; justify-items: center; align-content: center; gap: 0.6rem; height: 5.6rem; border-radius: 18px; border: 1px solid var(--line); background: rgb(255 255 255 / 0.025); color: var(--text); text-decoration: none; font: 500 0.68rem/1 var(--sans); letter-spacing: 0.04em; transition: color 0.3s, border-color 0.3s, background 0.3s, transform 0.4s var(--ease); }
+.socials a { display: grid; justify-items: center; align-content: center; gap: 0.6rem; height: 5.6rem; border-radius: 18px; border: 1px solid var(--line); background: rgb(255 255 255 / 0.025); color: var(--text); text-decoration: none; font: 500 0.75rem/1 var(--sans); letter-spacing: 0.04em; transition: color 0.3s, border-color 0.3s, background 0.3s, transform 0.4s var(--ease); }
 .socials a:hover { color: var(--amber); border-color: rgb(232 184 106 / 0.55); background: rgb(232 184 106 / 0.07); transform: translateY(-3px); }
 .socials .social-icon { width: 1.75rem; height: 1.75rem; }
 .social-icon { flex: none; display: block; }
@@ -524,7 +553,7 @@ html:not(.js-rails) .clip-pause { display: none; }
 .ttt-foot { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 0.6rem 1rem; width: 100%; }
 .ttt-story .ttt-ported { margin-top: 0.8rem; color: var(--dim); font-size: 0.85rem; }
 .ttt-score { display: flex; align-items: baseline; gap: 0.7rem; font: 400 2.2rem/1 var(--serif); }
-.ttt-score small { font: 500 0.66rem/1 var(--sans); letter-spacing: 0.22em; text-transform: uppercase; color: var(--dim); }
+.ttt-score small { font: 500 0.75rem/1 var(--sans); letter-spacing: 0.22em; text-transform: uppercase; color: var(--dim); }
 .ttt-score b { font-weight: 400; }
 .ttt-score i { font-style: normal; font-size: 1.1rem; color: var(--dim); }
 /* the board sets the panel's width (on narrow screens the panel fills the card instead, above) */
@@ -536,11 +565,11 @@ html:not(.js-rails) .clip-pause { display: none; }
 .ttt-cells button:focus-visible { outline: 1px solid rgb(232 184 106 / 0.7); outline-offset: -6px; }
 .ttt-cells button[aria-disabled='true'] { cursor: default; }
 .ttt-status { min-height: 1.2em; font: italic 400 1.35rem/1.2 var(--serif); color: var(--amber); }
-.ttt-new { padding: 0.75rem 1.25rem; font-size: 0.72rem; }
+.ttt-new { padding: 0.75rem 1.25rem; font-size: 0.75rem; }
 /* the commit log reads as a plain list, not boxes, so seven entries still fit a phone's row */
 .ttt-log .job-highlights { gap: 0; margin-top: 1rem; }
 .ttt-log .job-highlights li { padding: 0.55rem 0; border: 0; border-top: 1px solid var(--line); border-radius: 0; background: none; }
-.ttt-log .job-highlights b { font: 500 0.66rem/1.2 var(--sans); letter-spacing: 0.18em; text-transform: uppercase; color: var(--amber); }
+.ttt-log .job-highlights b { font: 500 0.75rem/1.2 var(--sans); letter-spacing: 0.18em; text-transform: uppercase; color: var(--amber); }
 .ttt-log .job-highlights small { font-size: 0.86rem; line-height: 1.4; }
 
 /* ---------- career: one card per company, today first ---------- */
@@ -574,14 +603,14 @@ html:not(.js-rails) .clip-pause { display: none; }
 .pool-grid button:hover { box-shadow: inset 0 0 0 2px rgb(0 0 0 / 0.28); }
 .pool-grid button:focus-visible { position: relative; z-index: 1; outline: 2px solid var(--amber); }
 .pool-foot { display: flex; flex-wrap: wrap; align-items: center; gap: 0.7rem 1.3rem; width: 100%; }
-.pool-step { display: inline-flex; align-items: center; gap: 0.45rem; font: 500 0.66rem/1 var(--sans); letter-spacing: 0.2em; text-transform: uppercase; color: var(--dim); }
+.pool-step { display: inline-flex; align-items: center; gap: 0.45rem; font: 500 0.75rem/1 var(--sans); letter-spacing: 0.2em; text-transform: uppercase; color: var(--dim); }
 .pool-step b { font-weight: 500; margin-right: 0.15rem; }
 .pool-step button { all: unset; display: grid; place-items: center; width: 1.9rem; height: 1.9rem; border-radius: 50%; border: 1px solid var(--line); color: var(--text); font: 400 1rem/1 var(--sans); cursor: pointer; transition: border-color 0.3s; }
 .pool-step button:hover:not([aria-disabled='true']) { border-color: var(--amber); }
 .pool-step button[aria-disabled='true'] { opacity: 0.35; cursor: default; }
 .pool-step button:focus-visible { outline: 1px solid var(--amber); outline-offset: 2px; }
 .pool-step output { min-width: 1.4em; text-align: center; font: 400 1.15rem/1 var(--serif); letter-spacing: 0; color: var(--text); }
-.pool-clear { margin-left: auto; padding: 0.7rem 1.15rem; font-size: 0.7rem; }
+.pool-clear { margin-left: auto; padding: 0.7rem 1.15rem; font-size: 0.75rem; }
 @media (min-width: 900px) {
   .job.pool-card { --pool-h: calc(var(--row-h) - 11rem); display: grid; grid-template-columns: minmax(0, 18rem) minmax(0, 1fr); grid-auto-rows: min-content; align-content: start; column-gap: 2.4rem; width: min(60rem, 90vw); }
   .job.pool-card > * { grid-column: 1; }
@@ -595,7 +624,7 @@ html:not(.js-rails) .clip-pause { display: none; }
 @media (min-width: 641px) { .career-index { grid-template-rows: repeat(4, auto); grid-auto-flow: column; grid-auto-columns: minmax(0, max-content); column-gap: 2rem; } }
 .career-index a { display: inline-block; color: inherit; text-decoration: none; transition: transform 0.5s var(--ease); }
 .career-index b { display: block; font: 400 clamp(1.45rem, 1.2rem + 0.6vw, 1.7rem)/1.12 var(--serif); color: #e4ded4; transition: color 0.3s; }
-.career-index span { display: block; margin-top: 0.25rem; font: 500 0.66rem/1.2 var(--sans); letter-spacing: 0.16em; text-transform: uppercase; color: var(--dim); }
+.career-index span { display: block; margin-top: 0.25rem; font: 500 0.75rem/1.2 var(--sans); letter-spacing: 0.16em; text-transform: uppercase; color: var(--dim); }
 .career-index em { font-style: normal; color: var(--amber); }
 .career-index i { display: inline-block; width: 6px; height: 6px; margin-left: 0.5rem; vertical-align: 1px; border-radius: 50%; background: var(--amber); box-shadow: 0 0 0 0 rgb(232 184 106 / 0.6); animation: ping-amber 1.8s ease-out infinite; }
 .career-index a:hover, .career-index a[data-picked] { transform: translateX(5px); }
@@ -623,15 +652,15 @@ html:not(.js-rails) .clip-pause { display: none; }
 .film-panel h3 { font-size: clamp(2.8rem, 1.4rem + 4vw, 5.6rem); line-height: 0.95; margin-block: 0.9rem 0.8rem; letter-spacing: -0.02em; }
 .film-panel h3 a { text-decoration: none; background: linear-gradient(var(--amber), var(--amber)) 0 92% / 0 2px no-repeat; transition: background-size 0.7s var(--ease); }
 .film-panel h3 a:hover { background-size: 100% 2px; }
-.job-meta { font: 500 0.72rem/1.4 var(--sans); letter-spacing: 0.2em; text-transform: uppercase; color: var(--dim); margin-bottom: 1.8rem; }
-.job-label { font: 500 0.66rem/1 var(--sans); letter-spacing: 0.28em; text-transform: uppercase; color: var(--amber); margin-bottom: 0.9rem; }
+.job-meta { font: 500 0.75rem/1.4 var(--sans); letter-spacing: 0.16em; text-transform: uppercase; color: var(--dim); margin-bottom: 1.8rem; }
+.job-label { font: 500 0.75rem/1 var(--sans); letter-spacing: 0.24em; text-transform: uppercase; color: var(--amber); margin-bottom: 0.9rem; }
 .job-built { font: 400 clamp(1.2rem, 1rem + 0.6vw, 1.55rem)/1.45 var(--serif); color: var(--text); max-width: 42ch; }
 .job-empty { color: var(--dim); font-style: italic; }
 .job-clients { margin-top: 1.1rem; color: #c9c2b6; font-size: 0.95rem; }
-.job-clients span { color: var(--dim); font: 500 0.66rem/1 var(--sans); letter-spacing: 0.24em; text-transform: uppercase; margin-right: 0.4rem; }
+.job-clients span { color: var(--dim); font: 500 0.75rem/1 var(--sans); letter-spacing: 0.24em; text-transform: uppercase; margin-right: 0.4rem; }
 .job-tech { display: flex; flex-wrap: wrap; gap: 0.45rem; margin-top: 1.3rem; }
-.job-tech li { font: 500 0.72rem/1 var(--sans); letter-spacing: 0.04em; padding: 0.5rem 0.75rem; border-radius: 999px; border: 1px solid var(--line); color: #d9d3c8; background: rgb(255 255 255 / 0.03); }
-.job-badge { display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.45rem 0.8rem; border-radius: 999px; border: 1px solid rgb(232 184 106 / 0.5); color: var(--amber); font: 600 0.62rem/1 var(--sans); letter-spacing: 0.24em; text-transform: uppercase; }
+.job-tech li { font: 500 0.75rem/1 var(--sans); letter-spacing: 0.04em; padding: 0.5rem 0.75rem; border-radius: 999px; border: 1px solid var(--line); color: #d9d3c8; background: rgb(255 255 255 / 0.03); }
+.job-badge { display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.45rem 0.8rem; border-radius: 999px; border: 1px solid rgb(232 184 106 / 0.5); color: var(--amber); font: 600 0.75rem/1 var(--sans); letter-spacing: 0.2em; text-transform: uppercase; }
 .job-badge::before { content: ''; width: 7px; height: 7px; border-radius: 50%; background: var(--amber); box-shadow: 0 0 0 0 rgb(232 184 106 / 0.6); animation: ping-amber 1.8s ease-out infinite; }
 @keyframes ping-amber { to { box-shadow: 0 0 0 10px rgb(232 184 106 / 0); } }
 .job-highlights { display: grid; gap: 0.6rem; margin-top: 1.4rem; max-width: 34rem; }
@@ -648,13 +677,13 @@ html:not(.js-rails) .clip-pause { display: none; }
 .post-card > a { display: flex; flex-direction: column; gap: 0.6rem; height: 100%; padding: 1.4rem 1.4rem 1.3rem; border: 1px solid var(--line); border-radius: 22px; background: linear-gradient(170deg, #141312, #0b0b0b 60%); color: var(--text); text-decoration: none; transition: border-color 0.3s, translate 0.5s var(--ease), background 0.3s; }
 .post-card > a:hover { border-color: rgb(232 184 106 / 0.5); translate: 0 -4px; background: linear-gradient(170deg, #1a1714, #0d0c0b 60%); }
 .post-year { font: italic 400 2.6rem/1 var(--serif); color: var(--amber); }
-.post-meta { display: flex; flex-wrap: wrap; gap: 0.3rem 0.9rem; margin: 0; font: 500 0.64rem/1.3 var(--sans); letter-spacing: 0.14em; text-transform: uppercase; color: var(--dim); }
+.post-meta { display: flex; flex-wrap: wrap; gap: 0.3rem 0.9rem; margin: 0; font: 500 0.75rem/1.3 var(--sans); letter-spacing: 0.14em; text-transform: uppercase; color: var(--dim); }
 .post-lang { color: #f4d28e; }
 .post-card h3 { font: 400 clamp(1.3rem, 1.1rem + 0.5vw, 1.6rem)/1.15 var(--serif); }
 .post-excerpt { color: #a9a296; font-size: 0.88rem; line-height: 1.5; display: -webkit-box; -webkit-line-clamp: 4; -webkit-box-orient: vertical; overflow: hidden; }
 .post-tags { display: flex; flex-wrap: wrap; gap: 0.35rem; }
 .post-card .post-tags { margin-top: auto; }
-.post-tags li { padding: 0.35rem 0.6rem; border-radius: 999px; border: 1px solid var(--line); color: #d9d3c8; font: 500 0.64rem/1 var(--sans); letter-spacing: 0.04em; }
+.post-tags li { padding: 0.35rem 0.6rem; border-radius: 999px; border: 1px solid var(--line); color: #d9d3c8; font: 500 0.75rem/1 var(--sans); letter-spacing: 0.04em; }
 
 /* ---------- footer ---------- */
 .cin-foot { display: grid; justify-items: center; text-align: center; gap: 1.6rem; padding: clamp(6rem, 14vh, 9rem) 1.5rem 8rem; background: radial-gradient(70% 50% at 50% 0%, rgb(111 183 196 / 0.1), transparent 70%), #050505; }
@@ -669,9 +698,17 @@ html:not(.js-rails) .clip-pause { display: none; }
 
 @media (max-width: 640px) {
   .cin { --row-h: min(58svh, 32rem); }
-  .rail-arrow { width: 3.2rem; height: 3.2rem; }
-  .rail-prev { display: none; }
+  /* the arrow sits in the row's bottom padding, clear of the cards above it */
+  .rail { padding-bottom: 4.25rem; }
+  .rail-arrow { top: auto; bottom: 0.5rem; width: 2.75rem; height: 2.75rem; transform: none; }
+  .rail-next:hover { transform: scale(1.08); }
+  [data-at-start] .rail-prev, [data-at-end] .rail-next, .rail-arrow:disabled { transform: scale(0.7); }
+  .rail-prev { display: grid; }
+  .rail-wrap::after { bottom: 4rem; }
+  /* intro cards: as tall as their words, not a full stage */
+  .slide.intro:not(.intro-wide) { min-height: 0; }
   .intro { align-content: start; padding-top: 1rem; }
+  .intro h2 { font-size: clamp(2.3rem, 1.6rem + 3vw, 3rem); }
   /* narrower cards so a good slice of the next one always shows */
   .intro { width: 78vw; }
   .intro-wide { --u: min(calc(var(--row-h) * 0.5), 60vw); width: 82vw; grid-template-columns: minmax(0, 1fr); row-gap: 1.2rem; align-content: start; }
@@ -683,11 +720,18 @@ html:not(.js-rails) .clip-pause { display: none; }
   .job-meta { margin-bottom: 1.2rem; }
   .job-clients { font-size: 0.86rem; }
   .job-tech { gap: 0.3rem; }
-  .job-tech li { padding: 0.4rem 0.6rem; font-size: 0.64rem; }
+  .job-tech li { padding: 0.4rem 0.6rem; }
 }
+
+/* the pause button (rails.tsx sets html.is-paused): every looping animation holds still, the rail's tug
+   and the grain included. One-off entrances still finish. */
+.is-paused .cin::after, .is-paused .rail-next, .is-paused .row-down svg, .is-paused .hv, .is-paused .room-chip, .is-paused .ranks-you,
+.is-paused .jd-pill i, .is-paused .career-index i, .is-paused .tl-track i, .is-paused .job-badge::before { animation-play-state: paused; }
+.is-paused [data-at-start] .rail-next { animation-play-state: paused; }
 
 @media (prefers-reduced-motion: reduce) {
   .cin::after { animation: none; }
+  .tl-track i.tl-now, .job-badge::before { animation: none; }
   .cin-intro { display: none; }
   .js-rails .slide { animation: none; }
   .rail-next, .row-down svg, .hv, .room-chip, .ranks-you, .jd-pill i, .career-index i, .career-index[data-shown] li { animation: none; }
@@ -725,5 +769,27 @@ html:not(.js-rails) .clip-pause { display: none; }
   .row-career .career-index li { animation: none; }
   /* highlights as a plain list with rules, not boxes: lighter in a long stack */
   .job-wide .job-highlights { gap: 0; margin-top: 1.2rem; }
-  .job-wide .job-highlights li { padding: 0.8rem 0; border: 0; border-top: 1px solid var(--line); border-radius: 0; background: none; }
+  .job-wide .job-highlights li { padding: 0.65rem 0; border: 0; border-top: 1px solid var(--line); border-radius: 0; background: none; }
+  .row-career .job-highlights small { font-size: 0.92rem; line-height: 1.45; }
+  .row-career .job-built { font-size: 1.12rem; line-height: 1.4; }
+  .row-career .job-meta { margin-bottom: 0.9rem; }
+  .row-career .job h3 { margin-block: 0.6rem 0.5rem; }
+  /* the recent jobs in full, then one button for the rest: the list of companies would only repeat
+     what is right below it, so it goes. The older jobs open with the button (rails.tsx), or through
+     :target when a link points at one of them (that also works without JS). */
+  .row-career .career-index, .row-career .career-pick { display: none; }
+  .row-career .intro { gap: 0.8rem; }
+  .row-career:not([data-older]) .rail:not(:has(.job-older:target)) .job-older { display: none; }
+  .row-career[data-older] .career-more, .row-career .rail:has(.job-older:target) .career-more { display: none; }
+  .career-more { scroll-snap-align: none; }
+  .career-more a { display: grid; gap: 0.45rem; padding: 1.1rem 1.2rem; border: 1px dashed rgb(232 184 106 / 0.45); border-radius: 18px; color: var(--text); text-decoration: none; transition: border-color 0.3s, background 0.3s; }
+  .career-more a:hover { border-color: var(--amber); background: rgb(232 184 106 / 0.06); }
+  .career-more b { font: 400 1.6rem/1.1 var(--serif); }
+  .career-more b span { color: var(--amber); font-size: 0.8em; }
+  .career-more a > span { font: 500 0.75rem/1.45 var(--sans); letter-spacing: 0.06em; color: var(--dim); }
+  /* long tech lists fold to their first few on a phone, where they wrap into many lines */
+  .row-career .job-tech li:nth-child(n+7) { display: none; }
+  .row-career .job .job-tech { padding-top: 1rem; }
 }
+/* wide screens: the career is a sideways row, every job in it; the fold button is a phone thing */
+@media (min-width: 900px) { .career-more { display: none; } }

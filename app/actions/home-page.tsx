@@ -25,7 +25,11 @@ const INSTAGRAM = SOCIALS.find((social) => social.id === 'instagram')!.url
 /** How many clips the page carries; rails.tsx fetches the rest from /data/clips.json as the row nears view. */
 export const CLIPS_IN_PAGE = 12
 
-// The Instagram mark, kept out of the Tab order: one link per row (the row's first card) is the keyboard's way there.
+/** On phones the career shows this many recent jobs in full; the older ones fold behind one button. */
+const RECENT_JOBS = 2
+
+// The Instagram mark, out of the Tab order: rails.tsx makes only the clip in view tabbable (a roving
+// tabindex), and the arrow keys move between clips from there.
 function ClipSlide(handle: Handle<{ clip: Clip; lang: Lang; t: Copy }>) {
   return () => {
     let { clip, lang, t } = handle.props
@@ -84,7 +88,6 @@ function Hero(handle: Handle<{ lang: Lang; t: Copy; clips: Clip[] }>) {
     let first = Number(career[career.length - 1].start)
     let year = new Date().getFullYear()
     let at = (y: string) => `${(((y === 'Now' ? year : Number(y)) - first) / (year - first)) * 100}%`
-    let companies = new Set(career.map((job) => job.company)).size
     let clip = clips[0]
     let tiles = t.hi.tiles
     return (
@@ -123,9 +126,13 @@ function Hero(handle: Handle<{ lang: Lang; t: Copy; clips: Clip[] }>) {
             <p class="tile-kicker">{tiles.career.kicker}</p>
             <h2 class="tile-title"><a href="#career" class="tile-link">{now.company}<span class="tile-go" aria-hidden="true">→</span></a></h2>
             <p class="tile-meta"><span class="tile-now">{tiles.career.now}</span> · {tiles.career.role}</p>
-            <ol class="tile-projects">
-              {(now.highlights ?? []).map((h) => <li key={h.title}>{h.title}</li>)}
-            </ol>
+            {/* what I built there, as plain text: the whole tile is one link, to the Career row */}
+            <div class="tile-built">
+              <p class="tile-label">{t.career.built}</p>
+              <ul class="tile-projects">
+                {(now.highlights ?? []).map((h) => <li key={h.title}>{h.title}</li>)}
+              </ul>
+            </div>
             <div class="tile-line" aria-hidden="true">
               <span class="tl-track">
                 {career.map((job) => <i key={job.id} class={job.end === 'Now' ? 'tl-now' : ''} style={`left:${at(job.start)}`} />)}
@@ -133,7 +140,7 @@ function Hero(handle: Handle<{ lang: Lang; t: Copy; clips: Clip[] }>) {
               </span>
               <span class="tl-years"><span>{first}</span><span style={`left:${at(now.start)}`}>{now.start}</span><span>{t.career.now}</span></span>
             </div>
-            <p class="tile-foot">{tiles.career.since(companies, String(first))}</p>
+            <p class="tile-foot">{tiles.career.since(career.length, String(first))}</p>
           </li>
 
           {/* What I build: the two products, each named in its own typeface, on the devices they run on */}
@@ -156,10 +163,11 @@ function Hero(handle: Handle<{ lang: Lang; t: Copy; clips: Clip[] }>) {
             </div>
           </li>
 
-          {/* Outside work: the row's first clip, playing (the only video on the first screen) */}
+          {/* Outside work: the row's first clip, playing (the only video on the first screen). rails.tsx
+              starts it once the page has loaded and gone idle; the poster shows until then. */}
           {clip && (
             <li class="tile tile-life">
-              <video class="tile-video" data-autoplay muted loop playsInline preload="none" poster={clipUrl(clip.id, 'jpg')} aria-hidden="true">
+              <video class="tile-video" data-autoplay="idle" muted loop playsInline preload="none" poster={clipUrl(clip.id, 'jpg')} aria-hidden="true">
                 <source src={clipUrl(clip.id, 'mp4')} type="video/mp4" />
               </video>
               <div class="tile-life-copy">
@@ -346,6 +354,8 @@ export function HomePage(handle: Handle<{ lang: Lang }>) {
     let learning = learningFor(lang)
     let projects = projectsFor(lang)
     let clips = homeOrder()
+    // each section's name, the same in the menu and on the row
+    let nav = (href: string) => t.nav.chapters.find((chapter) => chapter.href === href)!.label
     return (
       <Document
         lang={lang}
@@ -377,14 +387,15 @@ export function HomePage(handle: Handle<{ lang: Lang }>) {
           <Hero lang={lang} t={t} clips={clips} />
 
           {/* Career: today first, then back to the start */}
-          <Row id="career" class="row-career" label={t.nav.chapters[1].label} t={t.rail} next={{ href: '#projects', label: t.nav.chapters[0].label }} chapter>
+          <Row id="career" class="row-career" label={nav('#career')} t={t.rail} next={{ href: '#projects', label: nav('#projects') }} chapter>
             <li class="slide intro intro-career">
               <p class="cin-kicker">{t.career.kicker}</p>
               <h2>{t.career.title[0]}<em>{t.career.title[1]}</em>{t.career.title[2]}</h2>
-              {/* counted by company, so the two freelance chapters count once */}
-              <p>{t.career.sub(new Set(career.map((job) => job.company)).size, career[career.length - 1].start)}</p>
+              {/* counted by job, like the list below it (the two freelance stretches are two) */}
+              <p>{t.career.sub(career.length, career[career.length - 1].start)} <span class="career-pick">{t.career.pick}</span></p>
               {/* a way straight to any job, so the older ones are a tap away; rails.tsx slides the row,
-                  rolls the names in like credits and keeps the last one picked lit */}
+                  rolls the names in like credits and keeps the last one picked lit. Phones stack the
+                  jobs instead and leave this out (the fold after the recent jobs does its work there). */}
               <ol class="career-index" aria-label={t.career.jump} data-reveal>
                 {career.map((job, i) => (
                   <li key={job.id} style={`--i:${i}`}>
@@ -402,8 +413,18 @@ export function HomePage(handle: Handle<{ lang: Lang }>) {
                 ))}
               </ol>
             </li>
-            {career.map((job) => (
-              <li key={job.id} id={`job-${job.id}`} class={`slide job${job.featured ? ' job-featured' : ''}${job.highlights?.length ? ' job-wide' : ''}`}>
+            {career.map((job, i) => [
+              // phones: the older jobs wait behind this one link. It works as a plain #link too (the
+              // :target opens them, with no JS); rails.tsx keeps them open once opened.
+              i === RECENT_JOBS && (
+                <li key="more" class="slide career-more">
+                  <a href={`#job-${job.id}`} data-career-more>
+                    <b>{t.career.earlier(career.length - RECENT_JOBS)} <span aria-hidden="true">↓</span></b>
+                    <span>{career[career.length - 1].start}–{job.end} · {[...new Set(career.slice(RECENT_JOBS).map((old) => old.short ?? old.company))].join(', ')}</span>
+                  </a>
+                </li>
+              ),
+              <li key={job.id} id={`job-${job.id}`} class={`slide job${job.featured ? ' job-featured' : ''}${job.highlights?.length ? ' job-wide' : ''}${i >= RECENT_JOBS ? ' job-older' : ''}`}>
                 <p class="job-years">
                   <span>{job.start}</span>
                   {job.start !== job.end && <i aria-hidden="true" />}
@@ -435,8 +456,8 @@ export function HomePage(handle: Handle<{ lang: Lang }>) {
                     ))}
                   </ul>
                 )}
-              </li>
-            ))}
+              </li>,
+            ])}
           </Row>
 
           {/* Personal projects: one row each */}
@@ -679,7 +700,7 @@ c_sharp_phaser/JumpOverJump`}</pre>
             </Row>
 
             {/* More projects: open source and smaller builds (content/projects.ts), then GitHub for the rest */}
-            <Row id="more-projects" class="row-more" label={t.more.label} t={t.rail} next={{ href: '#outside', label: t.outside.label }}>
+            <Row id="more-projects" class="row-more" label={t.more.label} t={t.rail} next={{ href: '#outside', label: nav('#outside') }}>
               <li class="slide intro intro-career">
                 <p class="cin-kicker">{t.more.kicker}</p>
                 <h2>{t.more.title[0]}<em>{t.more.title[1]}</em>{t.more.title[2]}</h2>
@@ -697,7 +718,7 @@ c_sharp_phaser/JumpOverJump`}</pre>
 
           {/* Outside work: the clips, hobbies taking turns. The page carries the first few; rails.tsx fetches
               the rest (data-more) as the row comes near. */}
-          <Row id="outside" class="row-outside" label={t.outside.label} t={t.rail} next={{ href: '#learning', label: t.learning.label }} backdrop shuffle more="/data/clips.json" words={{ ig: t.hi.onInstagram, newTab: t.links.newTab }}>
+          <Row id="outside" class="row-outside" label={nav('#outside')} t={t.rail} next={{ href: '#learning', label: nav('#learning') }} chapter backdrop shuffle more="/data/clips.json" words={{ ig: t.hi.onInstagram, newTab: t.links.newTab }}>
             <li class="slide intro intro-outside">
               <p class="cin-kicker">{t.outside.kicker}</p>
               <h2>{t.outside.title[0]}<em>{t.outside.title[1]}</em>{t.outside.title[2]}</h2>
@@ -711,7 +732,7 @@ c_sharp_phaser/JumpOverJump`}</pre>
           </Row>
 
           {/* Education & more: the rest of the old résumés, in the career's card style. Part of the Career chapter. */}
-          <Row id="learning" class="row-learning" label={t.learning.label} t={t.rail} next={{ href: '#posts', label: t.nav.chapters[2].label }}>
+          <Row id="learning" class="row-learning" label={nav('#learning')} t={t.rail} next={{ href: '#posts', label: nav('#posts') }} chapter>
             <li class="slide intro intro-career">
               <p class="cin-kicker">{t.learning.kicker}</p>
               <h2>{t.learning.title[0]}<em>{t.learning.title[1]}</em>{t.learning.title[2]}</h2>
@@ -721,7 +742,7 @@ c_sharp_phaser/JumpOverJump`}</pre>
           </Row>
 
           {/* Posts: everything published on the old site, newest first */}
-          <Row id="posts" class="row-posts" label={t.nav.chapters[2].label} t={t.rail} next={{ href: '#contact', label: t.foot.title }} chapter>
+          <Row id="posts" class="row-posts" label={nav('#posts')} t={t.rail} next={{ href: '#contact', label: t.foot.title }} chapter>
             <li class="slide intro intro-posts">
               <p class="cin-kicker">{t.posts.kicker}</p>
               <h2>{t.posts.title[0]}<em>{t.posts.title[1]}</em></h2>

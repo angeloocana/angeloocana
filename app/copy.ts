@@ -19,12 +19,15 @@ const en = {
     label: 'Sections',
     top: 'Top',
     skip: 'Skip to content',
+    // in page order; `phone: false` leaves an item out of the narrow phone header (the rows still get there)
     chapters: [
-      { href: '#projects', label: 'Work' },
       { href: '#career', label: 'Career' },
-      { href: '#posts', label: 'Posts' },
+      { href: '#projects', label: 'Projects' },
+      { href: '#outside', label: 'Outside work', phone: false },
+      { href: '#learning', label: 'Learning', phone: false },
+      { href: '#posts', label: 'Posts', phone: false },
       { href: '#contact', label: 'Contact' },
-    ],
+    ] as { href: string; label: string; phone?: false }[],
     switchTo: { lang: 'pt' as Lang, label: 'PT', name: 'Leia em português' },
     langsLabel: 'Language',
     langs: { en: 'English', pt: 'Português' } as Record<Lang, string>,
@@ -39,12 +42,12 @@ const en = {
     work: 'See my work',
     tiles: {
       label: 'A little of everything',
-      career: { kicker: 'Career', now: '2021–now', role: 'Staff software engineer · team lead', since: (count: number, since: string) => `${count} companies since ${since}` },
-      build: { kicker: 'What I build', title: 'track2.fit · Jump Over Jump', body: 'My own apps, end to end.' },
+      career: { kicker: 'Career', now: '2021–now', role: 'Staff software engineer · team lead', since: (count: number, since: string) => `${count} jobs since ${since}` },
+      build: { kicker: 'Projects', title: 'track2.fit · Jump Over Jump', body: 'My own apps, end to end.' },
       life: { kicker: 'Outside work', count: (count: number) => `${count} videos` },
     },
     onInstagram: 'Watch the full video on Instagram',
-    pause: 'Pause videos',
+    pause: 'Pause motion',
   },
   // the clips row, after the projects
   outside: {
@@ -216,7 +219,11 @@ const en = {
   career: {
     kicker: 'Career · today, then back to the start',
     title: ['Where I’ve ', 'built', ' things.'],
-    sub: (count: number, since: string) => `${count} companies since ${since}. Pick one to jump to it.`,
+    sub: (count: number, since: string) => `${count} jobs since ${since}.`,
+    pick: 'Pick one to jump to it.',
+    // phones: the older jobs fold behind one button
+    earlier: (count: number) => `${count} earlier jobs`,
+    hide: 'Hide earlier jobs',
     today: 'Today',
     now: 'Now',
     built: 'What I built',
@@ -231,7 +238,7 @@ const en = {
   },
   // the row after the career: school, courses, languages (content/learning.ts)
   learning: {
-    label: 'Education & more',
+    label: 'Learning',
     kicker: 'Education · courses · languages',
     title: ['Never stopped ', 'learning', '.'],
     body: 'School and college around São Paulo, courses ever since, and the languages I speak.',
@@ -267,9 +274,11 @@ const pt: Copy = {
     top: 'Topo',
     skip: 'Pular para o conteúdo',
     chapters: [
-      { href: '#projects', label: 'Projetos' },
       { href: '#career', label: 'Carreira' },
-      { href: '#posts', label: 'Posts' },
+      { href: '#projects', label: 'Projetos' },
+      { href: '#outside', label: 'Fora do trabalho', phone: false },
+      { href: '#learning', label: 'Estudos', phone: false },
+      { href: '#posts', label: 'Posts', phone: false },
       { href: '#contact', label: 'Contato' },
     ],
     switchTo: { lang: 'en', label: 'EN', name: 'Read in English' },
@@ -285,12 +294,12 @@ const pt: Copy = {
     work: 'Ver meu trabalho',
     tiles: {
       label: 'Um pouco de tudo',
-      career: { kicker: 'Carreira', now: '2021–hoje', role: 'Engenheiro de software staff · líder técnico', since: (count: number, since: string) => `${count} empresas desde ${since}` },
-      build: { kicker: 'O que eu construo', title: 'track2.fit · Jump Over Jump', body: 'Meus apps, de ponta a ponta.' },
+      career: { kicker: 'Carreira', now: '2021–hoje', role: 'Engenheiro de software staff · líder técnico', since: (count: number, since: string) => `${count} trabalhos desde ${since}` },
+      build: { kicker: 'Projetos', title: 'track2.fit · Jump Over Jump', body: 'Meus apps, de ponta a ponta.' },
       life: { kicker: 'Fora do trabalho', count: (count: number) => `${count} vídeos` },
     },
     onInstagram: 'Ver o vídeo completo no Instagram',
-    pause: 'Pausar vídeos',
+    pause: 'Pausar animações',
   },
   outside: {
     label: 'Fora do trabalho',
@@ -456,7 +465,10 @@ const pt: Copy = {
   career: {
     kicker: 'Carreira · de hoje até o começo',
     title: ['Onde eu ', 'construí', ' coisas.'],
-    sub: (count: number, since: string) => `${count} empresas desde ${since}. Escolha uma para ir direto a ela.`,
+    sub: (count: number, since: string) => `${count} trabalhos desde ${since}.`,
+    pick: 'Escolha um para ir direto a ele.',
+    earlier: (count: number) => `${count} trabalhos anteriores`,
+    hide: 'Ocultar trabalhos anteriores',
     today: 'Hoje',
     now: 'Hoje',
     built: 'O que eu construí',
@@ -470,7 +482,7 @@ const pt: Copy = {
     jump: 'Ir para uma empresa',
   },
   learning: {
-    label: 'Estudos e mais',
+    label: 'Estudos',
     kicker: 'Estudos · cursos · idiomas',
     title: ['Nunca parei de ', 'aprender', '.'],
     body: 'Escola e faculdade na Grande São Paulo, cursos desde então e os idiomas que falo.',

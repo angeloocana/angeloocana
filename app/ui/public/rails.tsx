@@ -11,7 +11,9 @@ import type { Handle } from 'remix/component'
 //   - shuffles the home row's clips so hobbies take turns ([data-shuffle]); starred clips stay first
 //   - fades the row's backdrop ([data-rail-bg]) to the poster of the slide in view
 // It also plays [data-autoplay] videos only while they are on screen (and not paused with a [data-pause]
-// button), highlights the menu link of the section in view, and cross-fades [data-cycle] screen stacks.
+// button), highlights the menu link of the section in view, cross-fades [data-cycle] screen stacks, keeps
+// one clip's Instagram link in the Tab order (the arrow keys move it), and opens the career's older jobs
+// ([data-career-more]). One pause stops all of the automatic motion: videos, screens, looping animations.
 // Without JS the rows still scroll.
 export const Rails = clientEntry(import.meta.url, function Rails(handle: Handle) {
   handle.queueTask(() => {
@@ -21,8 +23,14 @@ export const Rails = clientEntry(import.meta.url, function Rails(handle: Handle)
     let reduced = matchMedia('(prefers-reduced-motion: reduce)').matches
     let saveData = (navigator as Navigator & { connection?: { saveData?: boolean } }).connection?.saveData
     let motion = !reduced && !saveData
-    // a pause button stops every clip on the page, and keeps them stopped across visits in this tab
+    // a pause button stops all motion on the page, and keeps it stopped across visits in this tab;
+    // html.is-paused stops the looping CSS animations, and joj-demo.tsx waits while it is there
     let paused = sessionStorage.getItem('ao-paused') === '1'
+    let showMotion = () => {
+      root.classList.toggle('is-paused', paused)
+      for (let svg of document.querySelectorAll<SVGSVGElement>('svg.sync-art')) paused ? svg.pauseAnimations() : svg.unpauseAnimations()
+    }
+    showMotion()
     // new clip slides (from [data-more]) are handed to the video code below once it is set up
     let onNewSlides: (slides: HTMLElement[]) => void = () => {}
 
@@ -88,6 +96,34 @@ export const Rails = clientEntry(import.meta.url, function Rails(handle: Handle)
       track.addEventListener('scroll', request, { signal, passive: true })
       addEventListener('resize', request, { signal })
       update()
+
+      // The clips' Instagram links: one Tab stop for the whole row, on the clip in view (a roving tabindex).
+      // From there the left and right arrows move to the clip before or after it, and Enter opens its post.
+      let links = () => [...track.querySelectorAll<HTMLAnchorElement>('.clip-ig')]
+      let rove = () => {
+        let all = links()
+        if (!all.length || all.includes(document.activeElement as HTMLAnchorElement)) return
+        let view = track.getBoundingClientRect()
+        let current = all.find((a) => a.getBoundingClientRect().left >= view.left) ?? all[0]
+        for (let a of all) a.tabIndex = a === current ? 0 : -1
+      }
+      if (track.querySelector('[data-clip]')) {
+        track.addEventListener('scroll', () => requestAnimationFrame(rove), { signal, passive: true })
+        rove()
+        track.addEventListener('keydown', (event) => {
+          let link = (event.target as Element).closest<HTMLAnchorElement>('.clip-ig')
+          let dir = event.key === 'ArrowRight' ? 1 : event.key === 'ArrowLeft' ? -1 : 0
+          if (!link || !dir) return
+          let all = links()
+          let to = all[all.indexOf(link) + dir]
+          event.preventDefault()
+          if (!to) return
+          link.tabIndex = -1
+          to.tabIndex = 0
+          to.focus({ preventScroll: true })
+          to.closest('.slide')?.scrollIntoView({ inline: 'center', block: 'nearest', behavior: reduced ? 'auto' : 'smooth' })
+        }, { signal })
+      }
 
       // arrows: page by the width of what is visible
       rail.addEventListener('click', (event) => {
@@ -190,6 +226,7 @@ export const Rails = clientEntry(import.meta.url, function Rails(handle: Handle)
       }
       track.append(...added)
       onNewSlides(added)
+      track.dispatchEvent(new Event('scroll'))
     }
 
     // Is the pointer over the letters of some text (not just inside a box that holds text)?
@@ -257,6 +294,21 @@ export const Rails = clientEntry(import.meta.url, function Rails(handle: Handle)
     if (!motion) pauseButtons.forEach((b) => (b.hidden = true))
     showPaused()
 
+    // The career's older jobs (phones fold them after the recent ones): one tap opens them all and moves
+    // focus to the first. Without JS the link's #hash does the same through :target (site.css).
+    for (let more of document.querySelectorAll<HTMLAnchorElement>('[data-career-more]')) {
+      more.addEventListener('click', (event) => {
+        let first = document.getElementById(more.hash.slice(1))
+        let row = more.closest('[data-rail]')
+        if (!first || !row) return
+        event.preventDefault()
+        row.setAttribute('data-older', 'open')
+        first.tabIndex = -1
+        first.focus({ preventScroll: true })
+        first.scrollIntoView({ block: 'start', behavior: reduced ? 'auto' : 'smooth' })
+      }, { signal })
+    }
+
     // Videos play only while on screen, and never for reduced motion or data saver.
     if (motion) {
       let onScreen = new Set<HTMLVideoElement>()
@@ -274,13 +326,24 @@ export const Rails = clientEntry(import.meta.url, function Rails(handle: Handle)
           paused = !paused
           sessionStorage.setItem('ao-paused', paused ? '1' : '0')
           showPaused()
+          showMotion()
           for (let video of onScreen) {
             if (paused) video.pause()
             else video.play().catch(() => {})
           }
         }, { signal })
       }
-      for (let video of document.querySelectorAll<HTMLVideoElement>('video[data-autoplay]')) watcher.observe(video)
+      // [data-autoplay="idle"] (the hero's clip, the biggest file on the first screen) waits until the page
+      // has loaded and the browser is idle, so it never competes with the first paint; its poster shows until then
+      let videos = [...document.querySelectorAll<HTMLVideoElement>('video[data-autoplay]')]
+      videos.filter((v) => v.dataset.autoplay !== 'idle').forEach((v) => watcher.observe(v))
+      let whenIdle = () => {
+        let go = () => videos.filter((v) => v.dataset.autoplay === 'idle').forEach((v) => watcher.observe(v))
+        if ('requestIdleCallback' in window) requestIdleCallback(go, { timeout: 2000 })
+        else setTimeout(go, 200)
+      }
+      if (document.readyState === 'complete') whenIdle()
+      else addEventListener('load', whenIdle, { signal, once: true })
       signal.addEventListener('abort', () => watcher.disconnect())
 
       // Clips are stills until they come near the screen inside their row; then they get a video player,
@@ -288,6 +351,16 @@ export const Rails = clientEntry(import.meta.url, function Rails(handle: Handle)
       // keeps phones from running out of memory and closing the page.
       for (let track of document.querySelectorAll<HTMLElement>('[data-rail-track]')) {
         if (!track.querySelector('[data-video]')) continue
+        // nothing loads until the row itself comes within a screen of view: measured against the row
+        // alone, its first clips would get players (posters, metadata) on the first screen
+        let rowNear = new IntersectionObserver(([entry]) => {
+          if (!entry.isIntersecting) return
+          rowNear.disconnect()
+          for (let slide of track.querySelectorAll<HTMLElement>('[data-video]')) players.observe(slide)
+          onNewSlides = (slides) => slides.forEach((slide) => players.observe(slide))
+        }, { rootMargin: '100% 0px' })
+        rowNear.observe(track)
+        signal.addEventListener('abort', () => rowNear.disconnect())
         let players = new IntersectionObserver((entries) => {
           for (let { target, isIntersecting } of entries) {
             let slide = target as HTMLElement
@@ -316,13 +389,11 @@ export const Rails = clientEntry(import.meta.url, function Rails(handle: Handle)
             }
           }
         }, { root: track, rootMargin: '0px 60%' })
-        for (let slide of track.querySelectorAll<HTMLElement>('[data-video]')) players.observe(slide)
-        onNewSlides = (slides) => slides.forEach((slide) => players.observe(slide))
         signal.addEventListener('abort', () => players.disconnect())
       }
 
       let timer = setInterval(() => {
-        if (document.hidden) return
+        if (document.hidden || paused) return
         for (let stack of document.querySelectorAll<HTMLElement>('[data-cycle]')) {
           let rect = stack.getBoundingClientRect()
           if (rect.bottom < 0 || rect.top > innerHeight || rect.right < 0 || rect.left > innerWidth) continue
@@ -372,9 +443,11 @@ export const Rails = clientEntry(import.meta.url, function Rails(handle: Handle)
     }
     let highlight = () => {
       pending = false
-      // nothing is lit on the first screen, above the first chapter
+      // nothing is lit on the first screen, above the first chapter; at the very bottom it's the last one
+      // (the footer is too short to reach the middle of the screen)
       let current = ''
       for (let chapter of chapters) if (chapter.getBoundingClientRect().top <= innerHeight / 2) current = chapter.id
+      if (scrollY > 0 && innerHeight + scrollY >= document.documentElement.scrollHeight - 4) current = chapters.at(-1)?.id ?? current
       if (current === last) return
       last = current
       for (let link of links) link.toggleAttribute('aria-current', link.dataset.chapterLink === current)
