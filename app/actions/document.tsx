@@ -66,7 +66,11 @@ export function Document(handle: Handle<DocumentProps>) {
       intro,
     } = handle.props
     let alternates = handle.props.alternates ?? HREF
-    let { href, importMap, preloads } = scriptEntry
+    // No <link rel="modulepreload"> for the entry's ~57 modules: on a phone they all raced the stylesheets,
+    // fonts and hero images, and held the first paint back by about a second (Lighthouse mobile LCP 3.1 s →
+    // 2.1 s without them). The page is prerendered and reads fine before the scripts; the module graph still
+    // loads them, just after what the first screen needs.
+    let { href, importMap } = scriptEntry
     let fullTitle = title ?? 'Ângelo Ocanã'
     let url = `${ORIGIN}${handle.props.url ?? HREF[lang]}`
 
@@ -102,9 +106,6 @@ export function Document(handle: Handle<DocumentProps>) {
           ))}
           <title>{fullTitle}</title>
           <ImportMap value={importMap} />
-          {preloads.map((preloadHref) => (
-            <link key={preloadHref} rel="modulepreload" href={preloadHref} />
-          ))}
           <script type="module" src={href}></script>
         </head>
         <body class={bodyClass}>{children}</body>
