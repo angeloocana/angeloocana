@@ -143,15 +143,24 @@ function Hero(handle: Handle<{ lang: Lang; t: Copy; clips: Clip[] }>) {
             <p class="tile-foot">{tiles.career.since(career.length, String(first))}</p>
           </li>
 
-          {/* What I build: the two products, each named in its own typeface, on the devices they run on */}
+          {/* What I build: the two products, each named in its own typeface with what it is, on the devices
+              they run on. Each is its own link, to its own row. */}
           <li class="tile tile-build">
-            <p class="tile-kicker">{tiles.build.kicker}</p>
-            <h2 class="tile-title tile-brands">
-              <a href="#projects" class="tile-link">
-                <span class="brand-t2f">track<sup>2</sup>.fit</span>
-                <span class="brand-joj">Jump <em>Over</em> Jump</span>
-              </a>
-            </h2>
+            <h2 class="tile-kicker">{tiles.build.kicker}</h2>
+            <ul class="tile-brands">
+              <li>
+                <a href="#track2fit" class="brand-link" aria-label={`track2.fit: ${tiles.build.t2f}`}>
+                  <span class="brand-t2f">track<sup>2</sup>.fit</span>
+                  <small>{tiles.build.t2f}</small>
+                </a>
+              </li>
+              <li>
+                <a href="#jumpoverjump" class="brand-link" aria-label={`Jump Over Jump: ${tiles.build.joj}`}>
+                  <span class="brand-joj">Jump <em>Over</em> Jump</span>
+                  <small>{tiles.build.joj}</small>
+                </a>
+              </li>
+            </ul>
             <p class="tile-body">{tiles.build.body}</p>
             <div class="tile-devices" aria-hidden="true">
               <IPhone class="td-phone">
@@ -200,26 +209,46 @@ function Row(
     /** JSON with the rest of the row's clips, appended as the row nears view (rails.tsx). */
     more?: string
     words?: Record<string, string>
+    /** A supporting row's opening words: the row's first card on wider screens, above the row on phones,
+        so the first card shows at once there. Rendered in both places; CSS shows one (the other is display: none). */
+    intro?: RemixNode
+    introClass?: string
+    /** The arrows' names, for this row's things ("Next clip"), in place of the generic ones. */
+    arrows?: { prev: string; next: string }
+    /** Shows "3 / 115" under the row (rails.tsx counts the slides of this class). */
+    count?: string
+    /** A hint for keyboard users, shown under the row while it has keyboard focus. */
+    keys?: string
   }>,
 ) {
   return () => {
-    let { backdrop, chapter, children, class: className, id, label, more, next, shuffle, t, words } = handle.props
+    let { arrows, backdrop, chapter, children, class: className, count, id, intro, introClass = '', keys, label, more, next, shuffle, t, words } = handle.props
     return (
       <section id={id} class={`row ${className}`} data-rail data-chapter={chapter ? '' : undefined} aria-label={label}>
         {backdrop && <div class="row-bg" data-rail-bg aria-hidden="true" />}
+        {intro && <div class={`intro row-head ${introClass}`}>{intro}</div>}
         <div class="rail-wrap">
           {/* the section carries the name; the list is focusable so arrow keys scroll it */}
-          <ul class="rail" data-rail-track data-shuffle={shuffle ? '' : undefined} data-more={more} data-words={words && JSON.stringify(words)} tabIndex={0}>
+          <ul class="rail" data-rail-track data-shuffle={shuffle ? '' : undefined} data-more={more} data-words={words && JSON.stringify(words)} data-count={count} tabIndex={0}>
+            {intro && <li class={`slide intro intro-slide ${introClass}`}>{intro}</li>}
             {children}
           </ul>
           {/* rails.tsx disables the one that has nowhere to go, which also takes it out of the Tab order */}
-          <button type="button" class="rail-arrow rail-prev" data-rail-prev aria-label={t.prev} disabled>
+          <button type="button" class="rail-arrow rail-prev" data-rail-prev aria-label={arrows?.prev ?? t.prev} disabled>
             <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7" /></svg>
           </button>
-          <button type="button" class="rail-arrow rail-next" data-rail-next aria-label={t.next}>
+          <button type="button" class="rail-arrow rail-next" data-rail-next aria-label={arrows?.next ?? t.next}>
             <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7" /></svg>
           </button>
         </div>
+        {/* where you are in a long row, and how much is left (rails.tsx fills it in); in its place while
+            the row has keyboard focus, the keys that move through it */}
+        {count && (
+          <div class="rail-foot">
+            <p class="rail-count" data-rail-count aria-hidden="true" />
+            {keys && <p class="rail-keys" aria-hidden="true">{keys}</p>}
+          </div>
+        )}
         {next && (
           <a class="row-down" href={next.href}>
             <span>{t.down}</span>
@@ -708,15 +737,23 @@ c_sharp_phaser/JumpOverJump`}</pre>
             </Row>
 
             {/* More projects: open source and smaller builds (content/projects.ts), then GitHub for the rest */}
-            <Row id="more-projects" class="row-more" label={t.more.label} t={t.rail} next={{ href: '#outside', label: nav('#outside') }}>
-              <li class="slide intro intro-career">
+            <Row
+              id="more-projects"
+              class="row-more"
+              label={t.more.label}
+              t={t.rail}
+              arrows={t.rail.projects}
+              next={{ href: '#outside', label: nav('#outside') }}
+              introClass="intro-career"
+              intro={<>
                 <p class="cin-kicker">{t.more.kicker}</p>
                 <h2>{t.more.title[0]}<em>{t.more.title[1]}</em>{t.more.title[2]}</h2>
                 <p>{t.more.body}</p>
                 <p class="cap-ctas">
                   <a class="cin-btn" href={GITHUB} data-cursor="GitHub">{t.more.github} <span aria-hidden="true">→</span></a>
                 </p>
-              </li>
+              </>}
+            >
               {/* the pool tile designer plays second, after the best-known one */}
               {studyCard(projects[0], t)}
               <PoolCard t={t} />
@@ -726,8 +763,21 @@ c_sharp_phaser/JumpOverJump`}</pre>
 
           {/* Outside work: the clips, hobbies taking turns. The page carries the first few; rails.tsx fetches
               the rest (data-more) as the row comes near. */}
-          <Row id="outside" class="row-outside" label={nav('#outside')} t={t.rail} next={{ href: '#learning', label: nav('#learning') }} chapter backdrop shuffle more="/data/clips.json" words={{ ig: t.hi.onInstagram, newTab: t.links.newTab }}>
-            <li class="slide intro intro-outside">
+          <Row
+            id="outside"
+            class="row-outside"
+            label={nav('#outside')}
+            t={t.rail}
+            arrows={t.rail.clips}
+            count="clip"
+            next={{ href: '#learning', label: nav('#learning') }}
+            chapter
+            backdrop
+            shuffle
+            more="/data/clips.json"
+            words={{ ig: t.hi.onInstagram, newTab: t.links.newTab }}
+            introClass="intro-outside"
+            intro={<>
               <p class="cin-kicker">{t.outside.kicker}</p>
               <h2>{t.outside.title[0]}<em>{t.outside.title[1]}</em>{t.outside.title[2]}</h2>
               <p>{t.outside.body(clips.length)}</p>
@@ -735,27 +785,47 @@ c_sharp_phaser/JumpOverJump`}</pre>
                 <a class="cin-btn" href={INSTAGRAM} rel="me noopener" target="_blank" data-cursor="Instagram">{t.outside.instagram} <span aria-hidden="true">↗</span></a>
                 <PauseButton label={t.hi.pause} />
               </p>
-            </li>
+            </>}
+            keys={t.outside.keys}
+          >
             {clips.slice(0, CLIPS_IN_PAGE).map((clip) => <ClipSlide key={clip.id} clip={clip} lang={lang} t={t} />)}
           </Row>
 
           {/* Education & more: the rest of the old résumés, in the career's card style. Part of the Career chapter. */}
-          <Row id="learning" class="row-learning" label={nav('#learning')} t={t.rail} next={{ href: '#posts', label: nav('#posts') }} chapter>
-            <li class="slide intro intro-career">
+          <Row
+            id="learning"
+            class="row-learning"
+            label={nav('#learning')}
+            t={t.rail}
+            next={{ href: '#posts', label: nav('#posts') }}
+            chapter
+            introClass="intro-career"
+            intro={<>
               <p class="cin-kicker">{t.learning.kicker}</p>
               <h2>{t.learning.title[0]}<em>{t.learning.title[1]}</em>{t.learning.title[2]}</h2>
               <p>{t.learning.body}</p>
-            </li>
+            </>}
+          >
             {learning.map((study) => studyCard(study, t))}
           </Row>
 
           {/* Posts: everything published on the old site, newest first */}
-          <Row id="posts" class="row-posts" label={nav('#posts')} t={t.rail} next={{ href: '#contact', label: t.foot.title }} chapter>
-            <li class="slide intro intro-posts">
+          <Row
+            id="posts"
+            class="row-posts"
+            label={nav('#posts')}
+            t={t.rail}
+            arrows={t.rail.posts}
+            count="post-card"
+            next={{ href: '#contact', label: t.foot.title }}
+            chapter
+            introClass="intro-posts"
+            intro={<>
               <p class="cin-kicker">{t.posts.kicker}</p>
               <h2>{t.posts.title[0]}<em>{t.posts.title[1]}</em></h2>
               <p>{t.posts.body}</p>
-            </li>
+            </>}
+          >
             {postsFor(lang).map((post) => (
               <li key={post.key} class="slide post-card">
                 <a href={post.url} hrefLang={post.lang} data-cursor={t.posts.kicker}>

@@ -152,13 +152,18 @@ main:focus { outline: none; }
 .rail.is-dragging > * { pointer-events: none; }
 .rail:focus-visible { box-shadow: inset 0 0 0 1px rgb(232 184 106 / 0.6); border-radius: 14px; }
 .slide { flex: none; position: relative; min-height: var(--row-h); scroll-snap-align: start; border-radius: 22px; }
-/* the supporting rows (More projects, Learning, Posts) are as tall as their cards need, not a stage:
-   each card keeps its own height (a short one doesn't stretch to the tallest), the intro sits at the top */
+/* the supporting rows (More projects, Learning, Posts) are as tall as their cards need, not a stage.
+   Their cards are close in height, so they share one (the tags sit at the foot, like the career's). */
 .row-more .slide, .row-learning .slide, .row-posts .slide { min-height: 0; }
-.row-more .rail, .row-learning .rail { align-items: flex-start; }
 .row-more .intro, .row-learning .intro { align-content: start; }
-/* a card with only a line or two (a school, a course) is narrower, so more of the row shows at once */
-.row-learning .study:not(:has(.job-highlights)) { width: min(22rem, 84vw); }
+/* Learning mixes a line or two (a school, a course) with long lists, which left half the row empty under
+   the short ones. The short ones stack in pairs instead, and each list takes a whole column. */
+.row-learning .rail { display: grid; grid-template-rows: auto auto; grid-auto-flow: column dense; grid-auto-columns: max-content; }
+.row-learning .slide { grid-row: span 2; }
+.row-learning .study:not(:has(.job-highlights)) { grid-row: span 1; width: min(22rem, 78vw); }
+/* on phones (and wider) a supporting row's opening words are its first card; on phones they sit above
+   the row instead (below), so its first card shows at once. The same words are in both places. */
+.intro.row-head { display: none; }
 /* slides grow into place as they enter the row from the side */
 @supports (animation-timeline: view()) {
   .js-rails .slide { animation: slide-in linear both; animation-timeline: view(inline); animation-range: entry 0% entry 70%; }
@@ -170,15 +175,33 @@ main:focus { outline: none; }
 
 
 /* arrows over the row's edges: a big one pulls you to the right, a small one brings you back */
-.rail-wrap { position: relative; }
+.rail-wrap { position: relative; --arrow-x: clamp(0.75rem, 2.5vw, 2.5rem); }
+/* Wider screens: the row fades out under each arrow, so an arrow never sits on a card's words, and a card
+   the row stops at begins just clear of the small arrow. The fades come and go with the arrows. */
+@property --fade-l { syntax: '<length>'; inherits: true; initial-value: 0px; }
+@property --fade-r { syntax: '<length>'; inherits: true; initial-value: 0px; }
+@property --soft-l { syntax: '<length>'; inherits: true; initial-value: 0px; }
+@property --soft-r { syntax: '<length>'; inherits: true; initial-value: 0px; }
+@media (min-width: 641px) {
+  .js-rails .rail {
+    --rail-mask: linear-gradient(to right, transparent var(--fade-l), #000 calc(var(--fade-l) + var(--soft-l)), #000 calc(100% - var(--fade-r) - var(--soft-r)), transparent calc(100% - var(--fade-r)));
+    scroll-padding-left: calc(var(--arrow-x) + 3.2rem + 2.5rem);
+    -webkit-mask-image: var(--rail-mask);
+    mask-image: var(--rail-mask);
+    transition: --fade-l 0.4s, --fade-r 0.4s, --soft-l 0.4s, --soft-r 0.4s;
+  }
+  .js-rails [data-rail]:not([data-at-start]) .rail { --fade-l: calc(var(--arrow-x) + 3.4rem); --soft-l: 2.5rem; }
+  .js-rails [data-rail]:not([data-at-end]) .rail { --fade-r: calc(var(--arrow-x) + 4.6rem); --soft-r: 3rem; }
+  .js-rails .rail-wrap::after { display: none; }
+}
 .rail-arrow:disabled { visibility: hidden; }
 .rail-wrap::after { content: ''; position: absolute; z-index: 4; top: 0; bottom: 0; right: 0; width: clamp(3rem, 9vw, 10rem); background: linear-gradient(to left, rgb(7 7 7 / 0.75), transparent); pointer-events: none; transition: opacity 0.5s; }
 [data-at-end] .rail-wrap::after { opacity: 0; }
 .rail-arrow { position: absolute; z-index: 5; top: 50%; display: grid; place-items: center; width: 4.4rem; height: 4.4rem; border-radius: 50%; border: 0; cursor: pointer; transform: translateY(-50%); transition: opacity 0.4s, transform 0.5s var(--ease), background 0.3s, color 0.3s; }
 .rail-arrow svg { width: 42%; height: 42%; fill: none; stroke: currentColor; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
-.rail-next { right: clamp(0.75rem, 2.5vw, 2.5rem); background: var(--text); color: #0b0b0b; box-shadow: 0 0 0 0 rgb(236 231 223 / 0.45), 0 24px 50px -16px rgb(0 0 0 / 0.9); animation: pull 2.6s ease-in-out infinite; }
+.rail-next { right: var(--arrow-x); background: var(--text); color: #0b0b0b; box-shadow: 0 0 0 0 rgb(236 231 223 / 0.45), 0 24px 50px -16px rgb(0 0 0 / 0.9); animation: pull 2.6s ease-in-out infinite; }
 .rail-next:hover { background: var(--amber); transform: translateY(-50%) scale(1.08); animation-play-state: paused; }
-.rail-prev { left: clamp(0.75rem, 2.5vw, 2.5rem); width: 3.2rem; height: 3.2rem; background: rgb(14 14 14 / 0.72); color: var(--text); border: 1px solid var(--line); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); }
+.rail-prev { left: var(--arrow-x); width: 3.2rem; height: 3.2rem; background: rgb(14 14 14 / 0.72); color: var(--text); border: 1px solid var(--line); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); }
 .rail-prev:hover { border-color: var(--amber); color: var(--amber); }
 [data-at-start] .rail-prev, [data-at-end] .rail-next, .rail-arrow:disabled { opacity: 0; pointer-events: none; transform: translateY(-50%) scale(0.7); }
 /* until the row has been moved once, the arrow keeps tugging and glowing */
@@ -186,6 +209,18 @@ main:focus { outline: none; }
 @keyframes pull { 0%, 60%, 100% { translate: 0 0; } 30% { translate: 8px 0; } }
 @keyframes glow { 0% { box-shadow: 0 0 0 0 rgb(236 231 223 / 0.45), 0 24px 50px -16px rgb(0 0 0 / 0.9); } 70%, 100% { box-shadow: 0 0 0 18px rgb(236 231 223 / 0), 0 24px 50px -16px rgb(0 0 0 / 0.9); } }
 html:not(.js-rails) .rail-arrow { display: none; }
+
+/* where you are in a long row: "12 / 115", one quiet line under it, a thin bar filling as you go */
+.rail-foot { display: grid; justify-items: center; margin-top: 0.15rem; }
+.rail-foot > * { grid-area: 1 / 1; }
+.rail-count { display: flex; align-items: center; gap: 0.8rem; width: min(14rem, 50vw); min-height: 1.5rem; transition: opacity 0.3s; font: 500 0.75rem/1 var(--sans); letter-spacing: 0.12em; color: var(--dim); font-variant-numeric: tabular-nums; }
+.rail-count:empty { display: none; }
+.rail-count i { position: relative; flex: 1; height: 1px; background: var(--line); }
+.rail-count i::after { content: ''; position: absolute; inset: 0 auto 0 0; width: var(--done, 0%); background: var(--amber); transition: width 0.3s; }
+/* the keyboard path, in the count's place while the row or a clip's link has keyboard focus */
+.rail-keys { align-self: center; font: 500 0.75rem/1.2 var(--sans); letter-spacing: 0.12em; color: var(--text); opacity: 0; transition: opacity 0.3s; }
+.row:has(.rail:focus-visible, .clip-ig:focus-visible) .rail-keys { opacity: 1; }
+.row:has(.rail:focus-visible, .clip-ig:focus-visible) .rail-count { opacity: 0; }
 
 /* the way down: names the next row, and bobs */
 .row-down { display: flex; align-items: center; min-height: 2.75rem; gap: 0.65rem; width: max-content; margin: 0.35rem auto 0; padding: 0.7rem 1.1rem 0.7rem 1.25rem; border-radius: 999px; border: 1px solid var(--line); background: rgb(255 255 255 / 0.03); color: var(--text); text-decoration: none; font: 500 0.75rem/1 var(--sans); letter-spacing: 0.22em; text-transform: uppercase; transition: border-color 0.3s, background 0.3s; }
@@ -200,9 +235,11 @@ html:not(.js-rails) .rail-arrow { display: none; }
    What I build (real screens on the devices), Outside work (one clip playing). Nothing here waits for an
    animation: the hero is the page's LCP, so it paints at once, tiles included. On wide screens it fills
    the first screen (no band under the tiles, no next card peeking in) and the tiles grow with it. */
-.hero { --hero-h: min(40rem, calc(100svh - 10rem)); position: relative; isolation: isolate; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.08fr); align-items: center; gap: clamp(2rem, 4vw, 4.5rem); min-height: min(100svh, 60rem); padding: clamp(5.5rem, 11vh, 7rem) var(--gut) clamp(1.5rem, 4vh, 3rem); }
+/* the text hangs from the same top line as the tiles (its kicker level with theirs), and the whole block
+   sits in the middle of the first screen */
+.hero { --hero-h: min(33rem, calc(100svh - 11rem)); position: relative; isolation: isolate; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.08fr); align-items: start; align-content: center; gap: clamp(2rem, 4vw, 4.5rem); min-height: min(100svh - 6rem, 50rem); padding: 6rem var(--gut) clamp(1.5rem, 4vh, 3rem); }
 .hero::before { content: ''; position: absolute; inset: 0; z-index: -1; background: radial-gradient(55% 60% at 18% 45%, rgb(232 184 106 / 0.07), transparent 70%), radial-gradient(50% 60% at 80% 50%, #11161a, transparent 70%); }
-.hero-text { display: grid; justify-items: start; gap: 1.4rem; max-width: 38rem; }
+.hero-text { display: grid; justify-items: start; gap: 1.5rem; max-width: 38rem; padding-top: 1.3rem; }
 .hero .hi-kicker { color: #f4d28e; }
 .hero-role { font: 400 clamp(2.9rem, 1.2rem + 4.2vw, 5.6rem)/0.94 var(--serif); letter-spacing: -0.015em; text-wrap: balance; }
 .hero-proof { font: 300 clamp(1.02rem, 0.92rem + 0.35vw, 1.2rem)/1.6 var(--sans); color: #c9c2b6; max-width: 44ch; }
@@ -224,7 +261,7 @@ html:not(.js-rails) .rail-arrow { display: none; }
   .tile:hover { border-color: rgb(232 184 106 / 0.45); translate: 0 -3px; }
   .tile:hover .tile-go { transform: translateX(4px); }
 }
-.tile-kicker { font: 500 0.75rem/1.2 var(--sans); letter-spacing: 0.24em; text-transform: uppercase; color: var(--amber); }
+.tile .tile-kicker { font: 500 0.75rem/1.2 var(--sans); letter-spacing: 0.24em; text-transform: uppercase; color: var(--amber); }
 .tile-title { font-size: clamp(2rem, 1.4rem + 1.6vw, 3rem); }
 .tile-meta, .tile-foot { font: 500 0.75rem/1.4 var(--sans); letter-spacing: 0.14em; text-transform: uppercase; color: var(--dim); }
 .tile-now { color: var(--amber); }
@@ -233,7 +270,7 @@ html:not(.js-rails) .rail-arrow { display: none; }
 /* Career: what I built at today's job, as a labelled list (text, not links: the tile itself is the one
    link, to the Career row), over the whole career on one line */
 .tile-career { grid-row: 1 / 3; background: radial-gradient(90% 55% at 0% 0%, rgb(232 184 106 / 0.1), transparent 70%), linear-gradient(170deg, #15120e, #0b0b0b 60%); border-color: rgb(232 184 106 / 0.3); }
-.tile-built { display: grid; gap: 0.7rem; margin-block: auto; padding-block: 1rem; }
+.tile-built { display: grid; gap: 0.7rem; margin-block: 1.6rem auto; }
 .tile-label { font: 500 0.75rem/1 var(--sans); letter-spacing: 0.2em; text-transform: uppercase; color: var(--dim); }
 .tile-projects { display: grid; gap: 0.25rem; }
 .tile-projects li { font: 400 clamp(1.25rem, 0.8rem + 1vw, 1.8rem)/1.15 var(--serif); color: #c9c2b6; }
@@ -248,13 +285,20 @@ html:not(.js-rails) .rail-arrow { display: none; }
 
 /* What I build: each product named in its own type, its devices peeking up from the bottom right */
 .tile-build { background: radial-gradient(80% 80% at 100% 100%, rgb(182 244 107 / 0.08), transparent 65%), linear-gradient(170deg, #121411, #0b0b0b 65%); }
-.tile-brands a { display: grid; gap: 0.15rem; }
+/* two links, one per product, each to its own row; the tile itself is not a link */
+.tile-brands { position: relative; z-index: 3; display: grid; gap: 0.55rem; }
+.brand-link { display: grid; gap: 0.25rem; padding-block: 0.15rem; color: inherit; text-decoration: none; }
+.brand-link small { font: 500 0.75rem/1.2 var(--sans); letter-spacing: 0.12em; text-transform: uppercase; color: var(--dim); transition: color 0.3s; }
+.brand-link small::after { content: ' →'; color: var(--amber); }
+.brand-link:hover small { color: var(--text); }
+.brand-link:focus-visible { outline-offset: 4px; border-radius: 4px; }
 .brand-t2f { font: italic 800 clamp(1.5rem, 1.1rem + 1vw, 2.1rem)/0.95 var(--t2f); text-transform: uppercase; color: #b6f46b; }
 .brand-t2f sup { font-size: 0.55em; }
 .brand-joj { font: 600 clamp(1.2rem, 0.95rem + 0.7vw, 1.6rem)/1.05 var(--joj); letter-spacing: -0.02em; }
 .brand-joj em { color: #ee9b6b; font-style: normal; }
 .tile-build .tile-body { max-width: 11ch; margin-top: auto; }
-.tile-devices { position: absolute; right: 1rem; top: 46%; width: 50%; aspect-ratio: 0.8; pointer-events: none; transition: translate 0.6s var(--ease); }
+@media (hover: hover) { .tile-build:hover { translate: none; } }
+.tile-devices { position: absolute; right: 1rem; top: 58%; width: 44%; aspect-ratio: 0.8; pointer-events: none; transition: translate 0.6s var(--ease); }
 .td-phone { position: absolute; right: 26%; top: 0; width: 56%; rotate: -5deg; }
 .td-watch { position: absolute; right: -2%; top: 18%; width: 40%; rotate: 8deg; z-index: 2; }
 @media (hover: hover) { .tile-build:hover .tile-devices { translate: 0 -6%; } }
@@ -294,7 +338,8 @@ html:not(.js-rails) .clip-pause { display: none; }
   .hero-mail { font-size: 0.86rem; }
   .hero-tiles { grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr); grid-template-rows: repeat(2, 9.25rem); height: auto; gap: 0.5rem; margin-inline: calc(var(--gut) * -0.4); }
   .tile { padding: 0.9rem 0.85rem; border-radius: 16px; gap: 0.3rem; }
-  .tile-kicker { letter-spacing: 0.12em; }
+  /* in sentence case on phones, so "Fora do trabalho" fits its narrow tile on one line */
+  .tile .tile-kicker { font-weight: 600; letter-spacing: 0.04em; text-transform: none; white-space: nowrap; }
   .tile-title { font-size: 1.75rem; }
   .tile-meta { display: none; }
   .tile-built { gap: 0.45rem; padding-block: 0.6rem 0; }
@@ -309,8 +354,10 @@ html:not(.js-rails) .clip-pause { display: none; }
   .tile-career .tile-foot { margin-top: 0.15rem; }
   .brand-t2f { font-size: 1.35rem; }
   .brand-joj { font-size: 1rem; }
-  .tile-build .tile-body { display: none; }
-  .tile-devices { right: -4%; top: 52%; width: 70%; }
+  /* the names and what each one is fill the tile; the devices would sit on top of them */
+  .tile-build .tile-body, .tile-devices { display: none; }
+  .tile-brands { gap: 0.45rem; margin-top: 0.15rem; }
+  .brand-link small { letter-spacing: 0.04em; font-weight: 600; text-transform: none; }
   .tile-life { padding: 0.85rem; }
   .tile-life .tile-title { font-size: 1.3rem; line-height: 1.05; }
   .tile-pause { top: 0.5rem; right: 0.5rem; width: 2.2rem; height: 2.2rem; }
@@ -664,7 +711,7 @@ pre.rf-code { margin: 0; width: 100%; height: 100%; padding: 1.2rem 1.4rem; font
 .title-end { white-space: nowrap; }
 .title-arrow { display: inline-block; margin-left: 0.2em; font-style: normal; font-size: 0.42em; vertical-align: 0.95em; color: var(--amber); transition: transform 0.4s var(--ease); }
 .job h3 a:hover .title-arrow { transform: translate(3px, -3px); }
-.job .job-built { font-size: clamp(1.05rem, 0.95rem + 0.35vw, 1.25rem); }
+
 .job .job-tech { margin-top: auto; padding-top: 1.3rem; }
 .job-years { display: flex; align-items: center; gap: 1rem; font: italic 400 clamp(1.6rem, 1rem + 1.6vw, 2.6rem)/1 var(--serif); color: var(--amber); }
 .job-years i { width: clamp(2rem, 4vw, 3.4rem); height: 1px; background: currentColor; opacity: 0.6; }
@@ -673,7 +720,9 @@ pre.rf-code { margin: 0; width: 100%; height: 100%; padding: 1.2rem 1.4rem; font
 .film-panel h3 a:hover { background-size: 100% 2px; }
 .job-meta { font: 500 0.75rem/1.4 var(--sans); letter-spacing: 0.16em; text-transform: uppercase; color: var(--dim); margin-bottom: 1.8rem; }
 .job-label { font: 500 0.75rem/1 var(--sans); letter-spacing: 0.24em; text-transform: uppercase; color: var(--amber); margin-bottom: 0.9rem; }
-.job-built { font: 400 clamp(1.2rem, 1rem + 0.6vw, 1.55rem)/1.45 var(--serif); color: var(--text); max-width: 42ch; }
+/* what I built, in the sans like the rest of the reading text: the display serif is for headings */
+.job-built { font: 300 1.0625rem/1.6 var(--sans); color: #d9d3c8; max-width: 58ch; }
+.job-featured .job-built { font-size: 1.125rem; }
 .job-empty { color: var(--dim); font-style: italic; }
 .job-clients { margin-top: 1.1rem; color: #c9c2b6; font-size: 0.95rem; }
 .job-clients span { color: var(--dim); font: 500 0.75rem/1 var(--sans); letter-spacing: 0.24em; text-transform: uppercase; margin-right: 0.4rem; }
@@ -726,6 +775,10 @@ pre.rf-code { margin: 0; width: 100%; height: 100%; padding: 1.2rem 1.4rem; font
   .rail-wrap::after { bottom: 4rem; }
   /* intro cards: as tall as their words, not a full stage */
   .slide.intro:not(.intro-wide) { min-height: 0; }
+  /* the supporting rows' opening words go above the row, so its first card shows at once */
+  .intro.row-head { display: grid; width: auto; padding: 0 var(--gut) 0.25rem; gap: 0.8rem; }
+  .row-head > p:not(.cin-kicker):not(.cap-ctas) { font-size: 0.98rem; line-height: 1.55; }
+  .slide.intro-slide { display: none; }
   .intro { align-content: start; padding-top: 1rem; }
   .intro h2 { font-size: clamp(2.3rem, 1.6rem + 3vw, 3rem); }
   /* narrower cards so a good slice of the next one always shows */
@@ -790,7 +843,7 @@ pre.rf-code { margin: 0; width: 100%; height: 100%; padding: 1.2rem 1.4rem; font
   .job-wide .job-highlights { gap: 0; margin-top: 1.2rem; }
   .job-wide .job-highlights li { padding: 0.65rem 0; border: 0; border-top: 1px solid var(--line); border-radius: 0; background: none; }
   .row-career .job-highlights small { font-size: 0.92rem; line-height: 1.45; }
-  .row-career .job-built { font-size: 1.12rem; line-height: 1.4; }
+  .row-career .job-built { font-size: 1rem; line-height: 1.55; }
   .row-career .job-meta { margin-bottom: 0.9rem; }
   .row-career .job h3 { margin-block: 0.6rem 0.5rem; }
   /* the recent jobs in full, then one button for the rest: the list of companies would only repeat

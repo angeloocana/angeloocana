@@ -46,7 +46,7 @@ const en = {
     tiles: {
       label: 'A little of everything',
       career: { kicker: 'Career', now: '2021–now', role: 'Staff software engineer · team lead', since: (count: number, since: string) => `${count} jobs since ${since}` },
-      build: { kicker: 'Projects', title: 'track2.fit · Jump Over Jump', body: 'My own apps, end to end.' },
+      build: { kicker: 'Projects', title: 'track2.fit · Jump Over Jump', body: 'My own apps, end to end.', t2f: 'Workout tracker', joj: 'Board game' },
       life: { kicker: 'Outside work', count: (count: number) => `${count} videos` },
     },
     onInstagram: 'Watch the full video on Instagram',
@@ -59,8 +59,17 @@ const en = {
     title: ['Life off the ', 'keyboard', '.'],
     body: (count: number) => `${count} short videos: cold water, weights, wood, snow and trails. Most link to the full post on Instagram.`,
     instagram: 'More on Instagram',
+    keys: '← → to move between clips',
   },
-  rail: { prev: 'Previous', next: 'More', down: 'Next' },
+  // the arrows' names: generic, and for the rows whose things have a name
+  rail: {
+    prev: 'Previous',
+    next: 'More',
+    down: 'Next',
+    clips: { prev: 'Previous clips', next: 'Next clips' },
+    posts: { prev: 'Previous posts', next: 'More posts' },
+    projects: { prev: 'Previous projects', next: 'More projects' },
+  },
   links: { elsewhere: 'Elsewhere', newTab: 'opens in a new tab', write: 'Write' },
   t2f: {
     kickerFirst: 'Personal projects · track2.fit',
@@ -299,7 +308,7 @@ const pt: Copy = {
     tiles: {
       label: 'Um pouco de tudo',
       career: { kicker: 'Carreira', now: '2021–hoje', role: 'Engenheiro de software staff · líder técnico', since: (count: number, since: string) => `${count} trabalhos desde ${since}` },
-      build: { kicker: 'Projetos', title: 'track2.fit · Jump Over Jump', body: 'Meus apps, de ponta a ponta.' },
+      build: { kicker: 'Projetos', title: 'track2.fit · Jump Over Jump', body: 'Meus apps, de ponta a ponta.', t2f: 'App de treino', joj: 'Jogo de tabuleiro' },
       life: { kicker: 'Fora do trabalho', count: (count: number) => `${count} vídeos` },
     },
     onInstagram: 'Ver o vídeo completo no Instagram',
@@ -311,8 +320,16 @@ const pt: Copy = {
     title: ['A vida longe do ', 'teclado', '.'],
     body: (count: number) => `${count} vídeos curtos: água gelada, pesos, madeira, neve e trilhas. A maioria leva ao post completo no Instagram.`,
     instagram: 'Mais no Instagram',
+    keys: '← → para passar de um vídeo a outro',
   },
-  rail: { prev: 'Anterior', next: 'Mais', down: 'A seguir' },
+  rail: {
+    prev: 'Anterior',
+    next: 'Mais',
+    down: 'A seguir',
+    clips: { prev: 'Vídeos anteriores', next: 'Próximos vídeos' },
+    posts: { prev: 'Posts anteriores', next: 'Mais posts' },
+    projects: { prev: 'Projetos anteriores', next: 'Mais projetos' },
+  },
   links: { elsewhere: 'Em outros lugares', newTab: 'abre em uma nova aba', write: 'Escrever' },
   t2f: {
     kickerFirst: 'Projetos pessoais · track2.fit',

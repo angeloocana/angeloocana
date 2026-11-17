@@ -56,6 +56,23 @@ export const Rails = clientEntry(import.meta.url, function Rails(handle: Handle)
         signal.addEventListener('abort', () => near.disconnect())
       }
 
+      // "12 / 115" under a long row: the last of its things ([data-count] names their class) that is
+      // mostly in view, out of all of them, and a thin bar that fills as you go
+      let count = rail.querySelector<HTMLElement>('[data-rail-count]')
+      let kind = track.dataset.count
+      let showCount = (atEnd: boolean) => {
+        if (!count || !kind) return
+        let items = [...track.getElementsByClassName(kind)] as HTMLElement[]
+        if (!items.length) return
+        let right = track.getBoundingClientRect().right
+        let seen = atEnd ? items.length : items.filter((el) => el.getBoundingClientRect().left + el.offsetWidth * 0.6 <= right).length
+        let text = `${seen} / ${items.length}`
+        if (count.dataset.text === text) return
+        count.dataset.text = text
+        count.innerHTML = `<span>${text}</span><i></i>`
+        count.style.setProperty('--done', `${(seen / items.length) * 100}%`)
+      }
+
       let queued = false
       let lastBg = ''
       function update() {
@@ -64,6 +81,7 @@ export const Rails = clientEntry(import.meta.url, function Rails(handle: Handle)
         let max = track.scrollWidth - track.clientWidth
         let atStart = track.scrollLeft < 8
         let atEnd = track.scrollLeft > max - 8
+        showCount(atEnd)
         rail.toggleAttribute('data-at-start', atStart)
         rail.toggleAttribute('data-at-end', atEnd)
         // a disabled arrow leaves the Tab order; if it had focus, the other one takes it
