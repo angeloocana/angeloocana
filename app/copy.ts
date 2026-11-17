@@ -9,9 +9,9 @@ export const HREF: Record<Lang, string> = { en: '/', pt: '/pt' }
 
 const en = {
   meta: {
-    title: 'Ângelo Ocanã · Staff software engineer at Shopify',
+    title: 'Ângelo Ocanã · Software engineer',
     description:
-      'Staff software engineer at Shopify in Ottawa, team lead on Rollouts, Delivery promise and Buy with Prime. I also build my own apps, track2.fit and Jump Over Jump.',
+      'Software engineer at Shopify, in Ottawa. I build a workout tracker, a twelve-year-old board game and other things for the web, since 2007.',
     locale: 'en_CA',
   },
   intro: 'presents',
@@ -31,12 +31,11 @@ const en = {
   },
   // the first screen: who I am, then three tiles that each open a row further down
   hi: {
-    role: 'Building for the web since 2007',
+    role: 'Software engineer',
     from: 'Brazil',
     place: 'Ottawa',
     movedTo: 'moved to',
-    title: ['Staff software engineer', ' at Shopify.'],
-    proof: 'Team lead on Rollouts, Delivery promise and Amazon’s Buy with Prime in Shopify checkout: projects I championed, designed and shipped for millions of merchants.',
+    proof: 'Software engineer at Shopify, in Ottawa. I’ve been learning and building for the web since 2007, and I still try to learn something new every day. I like making hard things feel simple for the people who use them.',
     work: 'See my work',
     tiles: {
       label: 'A little of everything',
@@ -257,9 +256,9 @@ export type Copy = typeof en
 
 const pt: Copy = {
   meta: {
-    title: 'Ângelo Ocanã · Engenheiro de software staff na Shopify',
+    title: 'Ângelo Ocanã · Engenheiro de software',
     description:
-      'Engenheiro de software staff na Shopify, em Ottawa, líder técnico em Rollouts, Promessa de entrega e Buy with Prime. Também construo meus próprios apps, o track2.fit e o Jump Over Jump.',
+      'Engenheiro de software na Shopify, em Ottawa. Construo um app de treino, um jogo de tabuleiro de doze anos e outras coisas para a web, desde 2007.',
     locale: 'pt_BR',
   },
   intro: 'apresenta',
@@ -278,12 +277,11 @@ const pt: Copy = {
     langs: { en: 'English', pt: 'Português' },
   },
   hi: {
-    role: 'Construindo para a web desde 2007',
+    role: 'Engenheiro de software',
     from: 'Brasil',
     place: 'Ottawa',
     movedTo: 'mudou-se para',
-    title: ['Engenheiro de software staff', ' na Shopify.'],
-    proof: 'Líder técnico em Rollouts, Promessa de entrega e no Buy with Prime da Amazon no checkout da Shopify: projetos que defendi, desenhei e entreguei a milhões de lojistas.',
+    proof: 'Engenheiro de software na Shopify, em Ottawa. Aprendo e construo para a web desde 2007, e ainda tento aprender algo novo todo dia. Gosto de fazer coisas complicadas parecerem simples para quem usa.',
     work: 'Ver meu trabalho',
     tiles: {
       label: 'Um pouco de tudo',

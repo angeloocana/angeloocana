@@ -164,10 +164,7 @@ html:not(.js-rails) .rail-arrow { display: none; }
 .hero::before { content: ''; position: absolute; inset: 0; z-index: -1; background: radial-gradient(55% 60% at 18% 45%, rgb(232 184 106 / 0.07), transparent 70%), radial-gradient(50% 60% at 80% 50%, #11161a, transparent 70%); }
 .hero-text { display: grid; justify-items: start; gap: 1.4rem; max-width: 38rem; }
 .hero .hi-kicker { color: #f4d28e; }
-.hero h1 { display: grid; gap: 0.9rem; }
-.hero-name { font: 400 clamp(1.6rem, 1.2rem + 1vw, 2.2rem)/1 var(--serif); color: #e4ded4; }
 .hero-role { font: 400 clamp(2.9rem, 1.2rem + 4.2vw, 5.6rem)/0.94 var(--serif); letter-spacing: -0.015em; text-wrap: balance; }
-.hero-at { color: var(--amber); font-style: italic; }
 .hero-proof { font: 300 clamp(1.02rem, 0.92rem + 0.35vw, 1.2rem)/1.6 var(--sans); color: #c9c2b6; max-width: 44ch; }
 .hero-ctas { display: flex; flex-wrap: wrap; gap: 0.7rem; margin-top: 0.3rem; }
 .hero-mail { background: var(--amber); text-transform: none; letter-spacing: 0; font-weight: 500; font-size: 0.95rem; padding: 0.85rem 1.3rem; }
@@ -247,7 +244,6 @@ html:not(.js-rails) .clip-pause { display: none; }
 @media (max-width: 760px) {
   .hero { grid-template-columns: minmax(0, 1fr); min-height: 0; gap: 1.6rem; padding-top: 5.2rem; padding-bottom: 1.5rem; }
   .hero-text { gap: 1rem; }
-  .hero h1 { gap: 0.6rem; }
   .hero-role { font-size: clamp(2.3rem, 1.4rem + 4.4vw, 3rem); }
   .hero-proof { font-size: 0.98rem; line-height: 1.55; }
   .hero-ctas .cin-btn { padding: 0.8rem 1.1rem; font-size: 0.78rem; }

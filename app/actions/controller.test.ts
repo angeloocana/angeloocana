@@ -16,7 +16,7 @@ describe('root controller', () => {
     assert.match(response.headers.get('Content-Type') ?? '', /text\/html/)
     let html = await response.text()
     assert.match(html, /<html[\s>]/)
-    assert.match(html, /Staff software engineer/)
+    assert.match(html, /<h1[^>]*>Ângelo <em>Ocanã<\/em><\/h1>/)
     // work first: hero, career, projects, then the clips, learning, posts and contact
     let order = ['top', 'career', 'projects', 'outside', 'learning', 'posts', 'contact'].map((id) => html.indexOf(`id="${id}"`))
     assert.ok(order.every((at, i) => at > 0 && (i === 0 || at > order[i - 1])), `sections out of order: ${order}`)

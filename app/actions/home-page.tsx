@@ -106,10 +106,7 @@ function Hero(handle: Handle<{ lang: Lang; t: Copy; clips: Clip[] }>) {
               <span class="hi-to">{t.hi.place}</span>
             </span>
           </p>
-          <h1 id="hero-title">
-            <span class="hero-name">Ângelo <em>Ocanã</em></span>
-            <span class="hero-role">{t.hi.title[0]}<span class="hero-at">{t.hi.title[1]}</span></span>
-          </h1>
+          <h1 id="hero-title" class="hero-role">Ângelo <em>Ocanã</em></h1>
           <p class="hero-proof">{t.hi.proof}</p>
           <p class="hero-ctas">
             <a class="cin-btn hero-mail" href={`mailto:${SITE.email}`} data-cursor={t.links.write}>
