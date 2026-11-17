@@ -114,7 +114,8 @@ main:focus { outline: none; }
 .cin-btn span { transition: transform 0.4s var(--ease); }
 .cin-btn:hover span { transform: translateX(5px); }
 .cin-btn-joj { background: #ee9b6b; }
-.cin-soon { font: 500 0.75rem/1 var(--sans); letter-spacing: 0.16em; text-transform: uppercase; color: var(--dim); border: 1px dashed var(--line); border-radius: 999px; padding: 0.8rem 1rem; }
+/* "How I built it · soon": a note beside the button, not a second button */
+.cin-soon { font: italic 400 1.05rem/1.3 var(--serif); color: var(--dim); }
 
 /* "Software engineer · Brazil ✈ Ottawa". rails.tsx sets data-flight: "wait" parks the plane in Brazil
    with no route drawn, "fly" flies it to Ottawa, drawing the dashed route behind it (the mask's dash is
@@ -293,7 +294,7 @@ html:not(.js-rails) .rail-arrow { display: none; }
 .brand-link:hover small { color: var(--text); }
 .brand-link:focus-visible { outline-offset: 4px; border-radius: 4px; }
 .brand-t2f { font: italic 800 clamp(1.5rem, 1.1rem + 1vw, 2.1rem)/0.95 var(--t2f); text-transform: uppercase; color: #b6f46b; }
-.brand-t2f sup { font-size: 0.55em; }
+.brand-t2f sup { font-size: max(0.55em, 0.75rem); }
 .brand-joj { font: 600 clamp(1.2rem, 0.95rem + 0.7vw, 1.6rem)/1.05 var(--joj); letter-spacing: -0.02em; }
 .brand-joj em { color: #ee9b6b; font-style: normal; }
 .tile-build .tile-body { max-width: 11ch; margin-top: auto; }
@@ -312,8 +313,8 @@ html:not(.js-rails) .rail-arrow { display: none; }
 .tile-life .tile-foot { color: #d9d3c8; }
 
 /* play / pause: on the playing tile and on the Outside work row, all in step (rails.tsx) */
-/* a 44px tap area around the visible circle */
-.clip-pause::before, .clip-ig::before { content: ''; position: absolute; inset: -5px; border-radius: 50%; }
+/* a tap area of 44px or more around the visible circle */
+.clip-pause::before, .clip-ig::before { content: ''; position: absolute; inset: min(-5px, calc((100% - 2.75rem) / 2)); border-radius: 50%; }
 .clip-pause { position: relative; z-index: 4; display: grid; place-items: center; width: 2.6rem; height: 2.6rem; border-radius: 50%; border: 1px solid rgb(255 255 255 / 0.3); background: rgb(0 0 0 / 0.5); color: #fff; cursor: pointer; backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); transition: background 0.3s, border-color 0.3s; }
 .clip-pause:hover { border-color: var(--amber); }
 .clip-pause svg { width: 1.05rem; height: 1.05rem; fill: none; stroke: currentColor; stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; }
@@ -357,6 +358,7 @@ html:not(.js-rails) .clip-pause { display: none; }
   /* the names and what each one is fill the tile; the devices would sit on top of them */
   .tile-build .tile-body, .tile-devices { display: none; }
   .tile-brands { gap: 0.45rem; margin-top: 0.15rem; }
+  .brand-link { min-height: 2.75rem; align-content: center; gap: 0.15rem; padding-block: 0; }
   .brand-link small { letter-spacing: 0.04em; font-weight: 600; text-transform: none; }
   .tile-life { padding: 0.85rem; }
   .tile-life .tile-title { font-size: 1.3rem; line-height: 1.05; }
@@ -460,13 +462,13 @@ html:not(.js-rails) .clip-pause { display: none; }
 .sync-pulse { fill: #b6f46b; filter: drop-shadow(0 0 5px #b6f46b); }
 .sync-cloud rect { fill: rgb(182 244 107 / 0.12); stroke: rgb(182 244 107 / 0.55); }
 .sync-node rect { fill: #161616; stroke: rgb(236 231 223 / 0.25); }
-.sync-art text { fill: #b6f46b; font: 600 9px/1 var(--sans); letter-spacing: 0.18em; text-anchor: middle; }
-.sync-node text { fill: #d9d3c8; font-size: 7px; }
+.sync-art text { fill: #b6f46b; font: 600 12px/1 var(--sans); letter-spacing: 0.14em; text-anchor: middle; }
+.sync-node text { fill: #d9d3c8; font-size: 11.5px; letter-spacing: 0.08em; }
 .soon-screen { position: absolute; inset: 0; display: grid; place-content: center; justify-items: center; gap: 0.5rem; background: radial-gradient(circle at 50% 40%, #1d2a12, #000 70%); color: #fff; text-align: center; }
 .soon-screen b { font: italic 800 1.3rem/1 var(--t2f); letter-spacing: 0.02em; }
 .soon-screen sup { font-size: 0.6em; }
-.soon-screen span { font: 600 0.62rem/1 var(--sans); letter-spacing: 0.2em; text-transform: uppercase; color: #b6f46b; }
-.soon-screen small { font: 400 0.6rem/1 var(--sans); color: #8a8a8a; }
+.soon-screen span { font: 600 0.75rem/1 var(--sans); letter-spacing: 0.2em; text-transform: uppercase; color: #b6f46b; }
+.soon-screen small { font: 400 0.75rem/1 var(--sans); color: #9a9a9a; }
 
 
 /* ---------- Jump Over Jump screens: the real home page, rebuilt so a demo game can play ---------- */
@@ -541,7 +543,7 @@ html:not(.js-rails) .clip-pause { display: none; }
 .room-chip { position: absolute; z-index: 3; display: flex; align-items: center; gap: 0.45rem; margin: 0; padding: 0.5rem 0.8rem; border-radius: 999px; background: #1d1a17; border: 1px solid rgb(238 155 107 / 0.5); color: #f2ebe0; font: 500 0.75rem/1 var(--sans); white-space: nowrap; box-shadow: 0 14px 30px -12px rgb(0 0 0 / 0.9); }
 .room-chip b { font-weight: 600; color: #ee9b6b; }
 .room-copied { left: 0; top: 16%; animation: float 6s ease-in-out infinite; }
-.room-copied i { display: grid; place-items: center; width: 1.1rem; height: 1.1rem; border-radius: 50%; background: #7fc97a; color: #0b0b0b; font-style: normal; font-size: 0.65rem; }
+.room-copied i { display: grid; place-items: center; width: 1.1rem; height: 1.1rem; border-radius: 50%; background: #7fc97a; color: #0b0b0b; font-style: normal; font-size: 0.75rem; }
 .room-vs { right: 0; bottom: 18%; animation: float 7s ease-in-out -3s infinite; }
 .card-ranks { width: min(84vw, 23rem); }
 .ranks { width: 100%; padding: 1rem; border: 1px solid var(--line); border-radius: 16px; background: #12100e; display: grid; gap: 0.6rem; }
@@ -594,7 +596,8 @@ pre.rf-code { margin: 0; width: 100%; height: 100%; padding: 1.2rem 1.4rem; font
 .socials .social-icon { width: 1.75rem; height: 1.75rem; }
 .social-icon { flex: none; display: block; }
 @media (max-width: 720px) {
-  .socials { grid-template-columns: repeat(6, minmax(0, 1fr)); width: 100%; max-width: 26rem; gap: 0.45rem; }
+  .foot-links { width: min(100%, 26rem); }
+  .socials { grid-template-columns: repeat(6, minmax(2.75rem, 1fr)); justify-self: stretch; gap: 0.45rem; }
   .socials a { height: auto; aspect-ratio: 1; border-radius: 16px; }
   .socials span { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
   .socials .social-icon { width: 1.55rem; height: 1.55rem; }
@@ -657,11 +660,13 @@ pre.rf-code { margin: 0; width: 100%; height: 100%; padding: 1.2rem 1.4rem; font
 @media (hover: none) { .pool-drag { display: none; } }
 @media (max-width: 899px) { .pool-card .job-tech { display: none; } }
 .pool { display: grid; gap: 0.9rem; justify-items: start; width: 100%; margin-top: 1.4rem; }
-.pool-colors { display: flex; flex-wrap: wrap; gap: 0.5rem; }
-.pool-colors button { all: unset; box-sizing: border-box; width: 1.7rem; height: 1.7rem; border-radius: 50%; background: var(--c); cursor: pointer; box-shadow: inset 0 0 0 1px rgb(0 0 0 / 0.25); transition: transform 0.3s var(--ease), box-shadow 0.3s; }
-.pool-colors button:hover { transform: scale(1.1); }
-.pool-colors button[aria-pressed='true'] { transform: scale(1.12); box-shadow: 0 0 0 2px #0b0b0b, 0 0 0 3.5px var(--amber); }
-.pool-colors button:focus-visible { outline: 1px solid var(--amber); outline-offset: 5px; }
+/* each swatch is drawn small but taps as 44px: the button is the tap area, its circle is a ::before */
+.pool-colors { display: flex; flex-wrap: wrap; gap: 0; margin-inline: -0.5rem; }
+.pool-colors button { all: unset; position: relative; box-sizing: border-box; width: 2.75rem; height: 2.75rem; cursor: pointer; }
+.pool-colors button::before { content: ''; position: absolute; inset: 0.525rem; border-radius: 50%; background: var(--c); box-shadow: inset 0 0 0 1px rgb(0 0 0 / 0.25); transition: transform 0.3s var(--ease), box-shadow 0.3s; }
+.pool-colors button:hover::before { transform: scale(1.1); }
+.pool-colors button[aria-pressed='true']::before { transform: scale(1.12); box-shadow: 0 0 0 2px #0b0b0b, 0 0 0 3.5px var(--amber); }
+.pool-colors button:focus-visible { outline: 1px solid var(--amber); outline-offset: -2px; border-radius: 50%; }
 /* the light lines between tiles are the grout */
 .pool-frame { width: 100%; height: var(--pool-h); }
 .pool-grid { display: grid; grid-template: repeat(var(--rows), 1fr) / repeat(var(--cols), 1fr); gap: 1px; padding: 1px; width: min(100%, calc(var(--pool-h) * var(--cols) / var(--rows))); aspect-ratio: var(--cols) / var(--rows); background: #b9c4c9; border-radius: 4px; user-select: none; -webkit-user-select: none; }
@@ -671,12 +676,14 @@ pre.rf-code { margin: 0; width: 100%; height: 100%; padding: 1.2rem 1.4rem; font
 .pool-foot { display: flex; flex-wrap: wrap; align-items: center; gap: 0.7rem 1.3rem; width: 100%; }
 .pool-step { display: inline-flex; align-items: center; gap: 0.45rem; font: 500 0.75rem/1 var(--sans); letter-spacing: 0.2em; text-transform: uppercase; color: var(--dim); }
 .pool-step b { font-weight: 500; margin-right: 0.15rem; }
-.pool-step button { all: unset; display: grid; place-items: center; width: 1.9rem; height: 1.9rem; border-radius: 50%; border: 1px solid var(--line); color: var(--text); font: 400 1rem/1 var(--sans); cursor: pointer; transition: border-color 0.3s; }
+.pool-step button { all: unset; position: relative; display: grid; place-items: center; width: 1.9rem; height: 1.9rem; border-radius: 50%; border: 1px solid var(--line); color: var(--text); font: 400 1rem/1 var(--sans); cursor: pointer; transition: border-color 0.3s; }
 .pool-step button:hover:not([aria-disabled='true']) { border-color: var(--amber); }
 .pool-step button[aria-disabled='true'] { opacity: 0.35; cursor: default; }
 .pool-step button:focus-visible { outline: 1px solid var(--amber); outline-offset: 2px; }
+/* 44px to tap, around the drawn circle */
+.pool-step button::before { content: ''; position: absolute; inset: calc((1.9rem - 2.75rem) / 2); border-radius: 50%; }
 .pool-step output { min-width: 1.4em; text-align: center; font: 400 1.15rem/1 var(--serif); letter-spacing: 0; color: var(--text); }
-.pool-clear { margin-left: auto; padding: 0.7rem 1.15rem; font-size: 0.75rem; }
+.pool-clear { margin-left: auto; min-height: 2.75rem; padding: 0.7rem 1.15rem; font-size: 0.75rem; }
 @media (min-width: 900px) {
   .job.pool-card { --pool-h: calc(var(--row-h) - 11rem); display: grid; grid-template-columns: minmax(0, 18rem) minmax(0, 1fr); grid-auto-rows: min-content; align-content: start; column-gap: 2.4rem; width: min(60rem, 90vw); }
   .job.pool-card > * { grid-column: 1; }
@@ -769,6 +776,8 @@ pre.rf-code { margin: 0; width: 100%; height: 100%; padding: 1.2rem 1.4rem; font
   /* the arrow sits in the row's bottom padding, clear of the cards above it */
   .rail { padding-bottom: 4.25rem; }
   .rail-arrow { top: auto; bottom: 0.5rem; width: 2.75rem; height: 2.75rem; transform: none; }
+  /* 52px to tap, so the tug and hover scale never take it under 44 */
+  .rail-arrow::before { content: ''; position: absolute; inset: -0.25rem; border-radius: 50%; }
   .rail-next:hover { transform: scale(1.08); }
   [data-at-start] .rail-prev, [data-at-end] .rail-next, .rail-arrow:disabled { transform: scale(0.7); }
   .rail-prev { display: grid; }
@@ -825,6 +834,10 @@ pre.rf-code { margin: 0; width: 100%; height: 100%; padding: 1.2rem 1.4rem; font
   .job-wide:not(.job-featured):has(.job-highlights > li:nth-child(7)) { width: min(64rem, 92vw); }
   .job-wide .job-highlights:has(> li:nth-child(7)) { grid-template-columns: repeat(2, minmax(0, 1fr)); align-content: start; }
 }
+/* a highlight with a link: the whole box is the link's tap area (the measure counts the ::after) */
+.job-highlights li:has(> b > a) { position: relative; }
+.job-highlights b a { position: static; }
+.job-highlights b a::after { content: ''; position: absolute; inset: 0; border-radius: inherit; }
 .job-highlights b a { color: inherit; text-decoration: none; background: linear-gradient(var(--amber), var(--amber)) 0 100% / 0 1px no-repeat; transition: background-size 0.5s var(--ease); }
 .job-highlights b a:hover { background-size: 100% 1px; }
 .job-highlights b a i { font-style: normal; font-size: 0.8em; color: var(--amber); }

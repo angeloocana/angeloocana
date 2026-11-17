@@ -555,10 +555,10 @@ export function HomePage(handle: Handle<{ lang: Lang }>) {
                       </animateMotion>
                     </circle>
                   ))}
-                  <g class="sync-cloud"><rect x="84" y="20" width="72" height="34" rx="17" /><text x="120" y="42">SYNC</text></g>
-                  <g class="sync-node"><rect x="20" y="156" width="40" height="30" rx="8" /><text x="40" y="175">WATCH</text></g>
-                  <g class="sync-node"><rect x="100" y="156" width="40" height="30" rx="8" /><text x="120" y="175">PHONE</text></g>
-                  <g class="sync-node"><rect x="180" y="156" width="40" height="30" rx="8" /><text x="200" y="175">WEB</text></g>
+                  <g class="sync-cloud"><rect x="80" y="20" width="80" height="36" rx="18" /><text x="121" y="42.5">SYNC</text></g>
+                  <g class="sync-node"><rect x="8" y="156" width="64" height="32" rx="9" /><text x="40.5" y="176">WATCH</text></g>
+                  <g class="sync-node"><rect x="88" y="156" width="64" height="32" rx="9" /><text x="120.5" y="176">PHONE</text></g>
+                  <g class="sync-node"><rect x="168" y="156" width="64" height="32" rx="9" /><text x="200.5" y="176">WEB</text></g>
                 </svg>
               </Card>
               <Card class="card-soon" title={t.t2f.cards.soon.title} body={t.t2f.cards.soon.body}>

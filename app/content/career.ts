@@ -85,7 +85,7 @@ export const CAREER: Job[] = [
       highlights: [
         {
           title: 'Rollouts',
-          body: 'Lançar mudanças no tema, no checkout e nas contas com data marcada, liberar aos poucos ou rodar como experimento A/B contra a loja atual.',
+          body: 'Mudanças no tema, no checkout e nas contas lançadas com data marcada, liberadas aos poucos ou testadas como experimento A/B contra a loja atual.',
           url: 'https://help.shopify.com/pt-BR/manual/markets/rollouts',
         },
         {
@@ -105,7 +105,7 @@ export const CAREER: Job[] = [
         },
         {
           title: 'Shopify Fulfillment Network',
-          body: 'Pedidos, e depois Growth e Activation: levar os pedidos dos lojistas aos armazéns da Shopify e ajudar novos lojistas a começarem a enviar pela rede.',
+          body: 'Pedidos, e depois Growth e Activation: a chegada dos pedidos dos lojistas aos armazéns da Shopify e a ajuda para novos lojistas começarem a enviar pela rede.',
         },
       ],
     },
