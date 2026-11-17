@@ -69,10 +69,25 @@ export function SiteNav(handle: Handle<{ lang: Lang; t: Copy; home?: boolean; la
       <header class="cin-nav">
         {home && <a class="skip-link" href="#main">{t.nav.skip}</a>}
         <a href={home ? '#top' : base} class="cin-mark" aria-label={`Ângelo Ocanã · ${t.nav.top}`} data-cursor={t.nav.top}>ÂO</a>
+        {/* Phones show the first two sections and a More button; the rest open under it as a small list
+            (rails.tsx toggles it, closes it on Escape, a tap outside or a pick). Wide screens show all six in
+            one line: the list is display: contents there and the button is hidden. Without JS, phones keep
+            the plain links to Career, Projects and Contact. */}
         <nav class="cin-menu" aria-label={t.nav.label}>
-          {t.nav.chapters.map((chapter) => (
-            <a key={chapter.href} href={`${base}${chapter.href}`} class={chapter.phone === false ? 'menu-wide' : undefined} data-chapter-link={chapter.href.slice(1)}>{chapter.label}</a>
+          {t.nav.chapters.filter((chapter) => chapter.phone !== false).slice(0, 2).map((chapter) => (
+            <a key={chapter.href} href={`${base}${chapter.href}`} data-chapter-link={chapter.href.slice(1)}>{chapter.label}</a>
           ))}
+          {home && (
+            <button type="button" class="menu-toggle" aria-expanded="false" aria-controls="menu-more" hidden>
+              {t.nav.more}
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6" /></svg>
+            </button>
+          )}
+          <div id="menu-more" class="menu-more">
+            {t.nav.chapters.slice(2).map((chapter) => (
+              <a key={chapter.href} href={`${base}${chapter.href}`} class={chapter.phone === false ? 'menu-wide' : undefined} data-chapter-link={chapter.href.slice(1)}>{chapter.label}</a>
+            ))}
+          </div>
         </nav>
         {/* the two flags as a small hand of cards: the current one stands taller and ringed */}
         <p class="cin-langs" role="group" aria-label={t.nav.langsLabel}>

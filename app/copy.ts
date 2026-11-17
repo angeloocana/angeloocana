@@ -19,7 +19,10 @@ const en = {
     label: 'Sections',
     top: 'Top',
     skip: 'Skip to content',
-    // in page order; `phone: false` leaves an item out of the narrow phone header (the rows still get there)
+    // phones: the button that opens the sections after the first two
+    more: 'More',
+    // in page order; phones show the first two and put the rest under More (without JS, `phone: false`
+    // leaves an item out of the phone header)
     chapters: [
       { href: '#career', label: 'Career' },
       { href: '#projects', label: 'Projects' },
@@ -273,6 +276,7 @@ const pt: Copy = {
     label: 'Seções',
     top: 'Topo',
     skip: 'Pular para o conteúdo',
+    more: 'Mais',
     chapters: [
       { href: '#career', label: 'Carreira' },
       { href: '#projects', label: 'Projetos' },

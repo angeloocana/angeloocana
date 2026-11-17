@@ -70,16 +70,35 @@ main:focus { outline: none; }
 .cin-menu a::after { content: ''; position: absolute; left: 0; right: 0; bottom: 0.45rem; height: 1px; background: currentColor; transform: scaleX(0); transform-origin: left; transition: transform 0.6s var(--ease); }
 .cin-menu a:hover, .cin-menu a[aria-current], .cin-menu a:focus-visible { opacity: 1; }
 .cin-menu a[aria-current]::after { transform: scaleX(1); }
+/* wide screens: all six in one line (the More list is just part of it there, and its button is hidden) */
+.menu-more { display: contents; }
+.menu-toggle { display: none; }
 /* between phones and wide screens the menu loses its letter-spacing before anything else */
 @media (max-width: 1100px) { .cin-menu { gap: 1.1rem; } .cin-menu a { letter-spacing: 0.1em; } }
-/* phones: three doors (Career, Projects, Contact); the rows in between are a swipe down. The links keep
-   44px of height to tap, and spread across the space between the logo and the flags. */
+/* phones: Career, Projects and a More button; the other four open in a short list under the header
+   (rails.tsx). Without JS there's no button, and Contact stands in for it. The links keep 44px of height
+   to tap, and spread across the space between the logo and the flags. */
 @media (max-width: 760px) {
   .cin-nav { gap: 0.25rem; padding-block: 0.4rem; padding-inline: 1rem 0.5rem; }
   .cin-menu { gap: 0; justify-content: center; flex: 1; }
   .cin-menu .menu-wide { display: none; }
-  .cin-menu a { padding-inline: 0.45rem; letter-spacing: 0.06em; }
+  .cin-menu a, .menu-toggle { padding-inline: 0.45rem; letter-spacing: 0.06em; }
   .cin-menu a::after { left: 0.45rem; right: 0.45rem; }
+  .js-rails .menu-toggle:not([hidden]) { all: unset; position: relative; display: inline-flex; align-items: center; gap: 0.3rem; min-height: 2.75rem; padding-inline: 0.45rem; font: 500 0.75rem/1 var(--sans); letter-spacing: 0.06em; text-transform: uppercase; opacity: 0.62; cursor: pointer; transition: opacity 0.3s; }
+  .menu-toggle svg { width: 0.9rem; height: 0.9rem; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; transition: rotate 0.3s var(--ease); }
+  .js-rails .menu-toggle:hover, .js-rails .menu-toggle:focus-visible, .js-rails .menu-toggle[aria-expanded='true'], .js-rails .menu-toggle[data-current] { opacity: 1; }
+  .js-rails .menu-toggle:focus-visible { outline: 2px solid var(--amber); outline-offset: -2px; border-radius: 6px; }
+  .menu-toggle[aria-expanded='true'] svg { rotate: 180deg; }
+  /* the section in view is one of the four under More: the button is underlined like a link would be */
+  .menu-toggle::after { content: ''; position: absolute; left: 0.45rem; right: 0.45rem; bottom: 0.45rem; height: 1px; background: currentColor; transform: scaleX(0); transform-origin: left; transition: transform 0.6s var(--ease); }
+  .menu-toggle[data-current]::after { transform: scaleX(1); }
+  /* the list: a quiet panel under the header, one section per line */
+  .js-rails .cin-menu:has(.menu-toggle:not([hidden])) .menu-more { position: absolute; top: 100%; left: 0; right: 0; display: none; padding: 0.35rem 1rem 0.75rem; background: #0a0a0a; border-bottom: 1px solid rgb(255 255 255 / 0.08); box-shadow: 0 24px 40px -20px rgb(0 0 0 / 0.9); }
+  .js-rails .menu-more[data-open] { display: grid !important; }
+  .js-rails .menu-more[data-open] a { display: flex; min-height: 3rem; padding-inline: 0.2rem; border-top: 1px solid rgb(255 255 255 / 0.06); font-size: 0.8rem; letter-spacing: 0.14em; }
+  .js-rails .menu-more[data-open] a:first-child { border-top: 0; }
+  .js-rails .menu-more[data-open] a::after { left: 0.2rem; right: auto; width: 1.5rem; bottom: 0.6rem; }
+  .js-rails .menu-more[data-open] a[aria-current] { color: var(--amber); }
   /* the flags: each card's tap area is 44px square and they sit side by side; the faces still fan */
   .cin-langs { width: 5.5rem; height: 2.75rem; }
   .lang-card { top: 0; width: 2.75rem; height: 2.75rem; margin-left: -1.375rem; }
@@ -781,7 +800,13 @@ pre.rf-code { margin: 0; width: 100%; height: 100%; padding: 1.2rem 1.4rem; font
   .row-career .intro { gap: 0.8rem; }
   .row-career:not([data-older]) .rail:not(:has(.job-older:target)) .job-older { display: none; }
   .row-career[data-older] .career-more, .row-career .rail:has(.job-older:target) .career-more { display: none; }
-  .career-more { scroll-snap-align: none; }
+  .career-more { scroll-snap-align: none; scroll-margin-top: 4.5rem; }
+  /* the way back, under the last older job: shown only while they are open */
+  .row-career:not([data-older]) .rail:not(:has(.job-older:target)) .career-less { display: none; }
+  .career-less { scroll-snap-align: none; }
+  .career-less a { display: inline-flex; align-items: center; gap: 0.6rem; min-height: 2.75rem; padding: 0.7rem 1.2rem; border: 1px solid var(--line); border-radius: 999px; color: var(--text); text-decoration: none; font: 500 0.75rem/1 var(--sans); letter-spacing: 0.16em; text-transform: uppercase; transition: border-color 0.3s; }
+  .career-less a:hover { border-color: var(--amber); }
+  .career-less span { color: var(--amber); }
   .career-more a { display: grid; gap: 0.45rem; padding: 1.1rem 1.2rem; border: 1px dashed rgb(232 184 106 / 0.45); border-radius: 18px; color: var(--text); text-decoration: none; transition: border-color 0.3s, background 0.3s; }
   .career-more a:hover { border-color: var(--amber); background: rgb(232 184 106 / 0.06); }
   .career-more b { font: 400 1.6rem/1.1 var(--serif); }
@@ -792,4 +817,4 @@ pre.rf-code { margin: 0; width: 100%; height: 100%; padding: 1.2rem 1.4rem; font
   .row-career .job .job-tech { padding-top: 1rem; }
 }
 /* wide screens: the career is a sideways row, every job in it; the fold button is a phone thing */
-@media (min-width: 900px) { .career-more { display: none; } }
+@media (min-width: 900px) { .career-more, .career-less { display: none; } }

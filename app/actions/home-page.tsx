@@ -417,7 +417,7 @@ export function HomePage(handle: Handle<{ lang: Lang }>) {
               // phones: the older jobs wait behind this one link. It works as a plain #link too (the
               // :target opens them, with no JS); rails.tsx keeps them open once opened.
               i === RECENT_JOBS && (
-                <li key="more" class="slide career-more">
+                <li key="more" id="career-more" class="slide career-more">
                   <a href={`#job-${job.id}`} data-career-more>
                     <b>{t.career.earlier(career.length - RECENT_JOBS)} <span aria-hidden="true">↓</span></b>
                     <span>{career[career.length - 1].start}–{job.end} · {[...new Set(career.slice(RECENT_JOBS).map((old) => old.short ?? old.company))].join(', ')}</span>
@@ -458,6 +458,14 @@ export function HomePage(handle: Handle<{ lang: Lang }>) {
                 )}
               </li>,
             ])}
+            {/* phones, once the older jobs are open: folds them again and goes back to the button that
+                opened them (rails.tsx). Without JS it is a link back to that button, which also closes
+                them (the :target that opened them moves away). */}
+            <li class="slide career-less">
+              <a href="#career-more" data-career-less>
+                <span aria-hidden="true">↑</span> {t.career.hide}
+              </a>
+            </li>
           </Row>
 
           {/* Personal projects: one row each */}

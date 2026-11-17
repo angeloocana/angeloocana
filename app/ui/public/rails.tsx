@@ -308,6 +308,21 @@ export const Rails = clientEntry(import.meta.url, function Rails(handle: Handle)
         first.scrollIntoView({ block: 'start', behavior: reduced ? 'auto' : 'smooth' })
       }, { signal })
     }
+    // ...and "Hide earlier jobs" folds them again, scrolls back to the fold and gives its button focus.
+    // When a #link opened an older job (:target), the link's own #career-more navigation moves the target off it.
+    for (let less of document.querySelectorAll<HTMLAnchorElement>('[data-career-less]')) {
+      less.addEventListener('click', (event) => {
+        let row = less.closest('[data-rail]')
+        let button = document.querySelector<HTMLElement>('[data-career-more]')
+        if (!row || !button) return
+        if (!row.querySelector('.job-older:target')) event.preventDefault()
+        row.removeAttribute('data-older')
+        requestAnimationFrame(() => {
+          button.closest('li')?.scrollIntoView({ block: 'start' })
+          button.focus({ preventScroll: true })
+        })
+      }, { signal })
+    }
 
     // Videos play only while on screen, and never for reduced motion or data saver.
     if (motion) {
@@ -450,9 +465,47 @@ export const Rails = clientEntry(import.meta.url, function Rails(handle: Handle)
       if (scrollY > 0 && innerHeight + scrollY >= document.documentElement.scrollHeight - 4) current = chapters.at(-1)?.id ?? current
       if (current === last) return
       last = current
-      for (let link of links) link.toggleAttribute('aria-current', link.dataset.chapterLink === current)
+      for (let link of links) {
+        if (link.dataset.chapterLink === current) link.setAttribute('aria-current', 'location')
+        else link.removeAttribute('aria-current')
+      }
+      // on phones the More button stands for the sections under it
+      toggle?.toggleAttribute('data-current', !!moreList?.querySelector(`[data-chapter-link="${current}"]`))
     }
     addEventListener('scroll', onScroll, { signal, passive: true })
+
+    // Phones: the More button in the menu opens the sections after the first two. Escape, a tap outside or
+    // picking one closes it; Escape gives focus back to the button.
+    let toggle = document.querySelector<HTMLButtonElement>('.menu-toggle')
+    let moreList = document.querySelector<HTMLElement>('#menu-more')
+    if (toggle && moreList) {
+      let button = toggle
+      let list = moreList
+      button.hidden = false
+      let setOpen = (open: boolean) => {
+        button.setAttribute('aria-expanded', String(open))
+        list.toggleAttribute('data-open', open)
+      }
+      button.addEventListener('click', () => {
+        let open = button.getAttribute('aria-expanded') !== 'true'
+        setOpen(open)
+        if (open) list.querySelector<HTMLElement>('a:not(.menu-wide), a')?.focus()
+      }, { signal })
+      list.addEventListener('click', (event) => { if ((event.target as Element).closest('a')) setOpen(false) }, { signal })
+      addEventListener('keydown', (event) => {
+        if (event.key !== 'Escape' || button.getAttribute('aria-expanded') !== 'true') return
+        setOpen(false)
+        button.focus()
+      }, { signal })
+      addEventListener('pointerdown', (event) => {
+        if (button.getAttribute('aria-expanded') === 'true' && !(event.target as Element).closest('.cin-menu')) setOpen(false)
+      }, { signal })
+      // focus leaving the menu (Tab past the last section) closes it too
+      list.addEventListener('focusout', (event) => {
+        let to = event.relatedTarget as Element | null
+        if (to && !to.closest('.cin-menu')) setOpen(false)
+      }, { signal })
+    }
     highlight()
 
     let flight = reduced ? null : setUpFlight()
