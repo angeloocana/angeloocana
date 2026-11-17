@@ -3,7 +3,7 @@ import { createController } from 'remix/router'
 
 import { assets } from '../assets.ts'
 import { routes } from '../routes.ts'
-import { HomePage } from './home-page.tsx'
+import { clipsJson, HomePage } from './home-page.tsx'
 import { PostPage } from './post-page.tsx'
 import { postAt } from '../content/posts.ts'
 import { ReviewPage, reviewEnabled, saveReview } from './review-page.tsx'
@@ -26,6 +26,9 @@ export default createController(routes, {
     },
     pt(context) {
       return context.render(<HomePage lang="pt" />)
+    },
+    clipsData() {
+      return Response.json(clipsJson())
     },
     postEn(context) {
       return post(context)

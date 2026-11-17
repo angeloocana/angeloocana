@@ -1,9 +1,10 @@
 import type { Handle, RemixNode } from 'remix/component'
 
 import { Document } from './document.tsx'
-import { careerFor, type Highlight } from '../content/career.ts'
+import { careerFor } from '../content/career.ts'
 import { learningFor, type Study } from '../content/learning.ts'
-import { CATEGORY_NAMES, clipUrl, homeOrder, instagramUrl } from '../content/clips.ts'
+import { CATEGORY_NAMES, clipUrl, homeOrder, instagramUrl, type Clip } from '../content/clips.ts'
+import { SITE, SOCIALS } from '../content.ts'
 import { postsFor } from '../content/posts.ts'
 import { GITHUB, projectsFor } from '../content/projects.ts'
 import { COPY, HREF, type Copy, type Lang } from '../copy.ts'
@@ -15,10 +16,168 @@ import { JojDesktop, JojPhone } from '../ui/joj-screens.tsx'
 import { JojDemo } from '../ui/public/joj-demo.tsx'
 import { TicTacToe } from '../ui/public/tic-tac-toe.tsx'
 import { PoolTiles } from '../ui/public/pool-tiles.tsx'
-import { COLORS, describeTile, sampleTiles } from '../ui/public/pool-tiles-domain.ts'
+import { COLORS, sampleTiles } from '../ui/public/pool-tiles-domain.ts'
 import { SocialIcon } from '../ui/social-icons.tsx'
 
 const M = '/media'
+const INSTAGRAM = SOCIALS.find((social) => social.id === 'instagram')!.url
+
+/** How many clips the page carries; rails.tsx fetches the rest from /data/clips.json as the row nears view. */
+export const CLIPS_IN_PAGE = 12
+
+// The Instagram mark, kept out of the Tab order: one link per row (the row's first card) is the keyboard's way there.
+function ClipSlide(handle: Handle<{ clip: Clip; lang: Lang; t: Copy }>) {
+  return () => {
+    let { clip, lang, t } = handle.props
+    let ig = instagramUrl(clip)
+    return (
+      <li class="slide clip" data-clip={clip.id} data-cat={clip.cat} data-star={String(clip.star)} data-score={String(clip.score)} data-poster={clipUrl(clip.id, 'jpg')} data-video={clipUrl(clip.id, 'mp4')}>
+        {/* a still; rails.tsx adds the video player only while the clip is near the screen,
+            because phones crash with a hundred video players on one page */}
+        <img class="clip-video" src={clipUrl(clip.id, 'jpg')} alt={clip.label[lang]} loading="lazy" decoding="async" width="540" height="960" />
+        <div class="clip-copy" aria-hidden="true">
+          <p class="clip-cat">{CATEGORY_NAMES[lang][clip.cat]}</p>
+          {!clip.captionRejected && <p class="clip-label">{clip.label[lang]}</p>}
+        </div>
+        {ig && (
+          <a class="clip-ig" href={ig} target="_blank" rel="noopener" tabIndex={-1} aria-label={`${t.hi.onInstagram}: ${clip.label[lang]} (${t.links.newTab})`} data-cursor="Instagram">
+            <SocialIcon id="instagram" />
+          </a>
+        )}
+      </li>
+    )
+  }
+}
+
+/** Every live clip, for rails.tsx to append the ones the page leaves out (served at /data/clips.json). */
+export function clipsJson() {
+  let clips = homeOrder().map((clip) => ({
+    id: clip.id,
+    cat: clip.cat,
+    star: clip.star,
+    score: clip.score,
+    label: clip.label,
+    captionRejected: clip.captionRejected || undefined,
+    ig: instagramUrl(clip),
+    poster: clipUrl(clip.id, 'jpg'),
+    video: clipUrl(clip.id, 'mp4'),
+  }))
+  return { names: CATEGORY_NAMES, clips }
+}
+
+// Plays and pauses every clip on the page; rails.tsx keeps all of them (and their aria-pressed) in step.
+function PauseButton(handle: Handle<{ label: string; class?: string }>) {
+  return () => (
+    <button type="button" class={`clip-pause ${handle.props.class ?? ''}`} data-pause aria-pressed="false" aria-label={handle.props.label} title={handle.props.label}>
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path class="i-pause" d="M8 5v14M16 5v14" /><path class="i-play" d="M8 5.5v13l11-6.5z" /></svg>
+    </button>
+  )
+}
+
+// The first screen, before any rows: who I am on the left, and three tiles that each open a row further
+// down. Career first and widest, then what I build, then one clip from outside work.
+function Hero(handle: Handle<{ lang: Lang; t: Copy; clips: Clip[] }>) {
+  return () => {
+    let { clips, lang, t } = handle.props
+    let career = careerFor(lang)
+    let now = career[0]
+    let first = Number(career[career.length - 1].start)
+    let year = new Date().getFullYear()
+    let at = (y: string) => `${(((y === 'Now' ? year : Number(y)) - first) / (year - first)) * 100}%`
+    let companies = new Set(career.map((job) => job.company)).size
+    let clip = clips[0]
+    let tiles = t.hi.tiles
+    return (
+      <section id="top" class="hero" aria-labelledby="hero-title">
+        <div class="hero-text">
+          <p class="cin-kicker hi-kicker">
+            <span>{t.hi.role}</span>
+            {/* rails.tsx flies the plane once the page has settled, and again on hover or tap */}
+            <span class="hi-route" data-flight>
+              <span>{t.hi.from}</span>
+              <svg class="hi-flight" viewBox="0 0 72 22" role="img" aria-label={t.hi.movedTo}>
+                {/* the dashed route appears behind the plane as it flies */}
+                <mask id="hi-trail" maskUnits="userSpaceOnUse" x="-4" y="-10" width="80" height="36">
+                  <path class="hi-reveal" d="M4 18 Q36 -6 68 18" />
+                </mask>
+                <path class="hi-arc" d="M4 18 Q36 -6 68 18" mask="url(#hi-trail)" />
+                <path class="hi-plane" d="M6 0 2 -1 -1 -5h-1.5l1.6 4H-4l-1.2-1.6H-6.2L-5.4 0l-.8 1.6h1L-4 1h3.1l-1.6 4H-1l3-4Z" />
+              </svg>
+              <span class="hi-to">{t.hi.place}</span>
+            </span>
+          </p>
+          <h1 id="hero-title">
+            <span class="hero-name">Ângelo <em>Ocanã</em></span>
+            <span class="hero-role">{t.hi.title[0]}<span class="hero-at">{t.hi.title[1]}</span></span>
+          </h1>
+          <p class="hero-proof">{t.hi.proof}</p>
+          <p class="hero-ctas">
+            <a class="cin-btn hero-mail" href={`mailto:${SITE.email}`} data-cursor={t.links.write}>
+              <SocialIcon id="email" />
+              <span>{SITE.email}</span>
+            </a>
+            <a class="cin-btn cin-btn-ghost" href="#projects">{t.hi.work} <span aria-hidden="true">↓</span></a>
+          </p>
+        </div>
+
+        <ul class="hero-tiles" aria-label={tiles.label}>
+          {/* Career: today's job, its projects lit one after another, and every company on one line */}
+          <li class="tile tile-career">
+            <p class="tile-kicker">{tiles.career.kicker}</p>
+            <h2 class="tile-title"><a href="#career" class="tile-link">{now.company}<span class="tile-go" aria-hidden="true">→</span></a></h2>
+            <p class="tile-meta"><span class="tile-now">{tiles.career.now}</span> · {tiles.career.role}</p>
+            <ol class="tile-projects">
+              {(now.highlights ?? []).map((h, i) => <li key={h.title} style={`--i:${i}`}>{h.title}</li>)}
+            </ol>
+            <div class="tile-line" aria-hidden="true">
+              <span class="tl-track">
+                {career.map((job) => <i key={job.id} class={job.end === 'Now' ? 'tl-now' : ''} style={`left:${at(job.start)}`} />)}
+                <b style={`left:${at(now.start)}`} />
+              </span>
+              <span class="tl-years"><span>{first}</span><span style={`left:${at(now.start)}`}>{now.start}</span><span>{t.career.now}</span></span>
+            </div>
+            <p class="tile-foot">{tiles.career.since(companies, String(first))}</p>
+          </li>
+
+          {/* What I build: the two products, each named in its own typeface, on the devices they run on */}
+          <li class="tile tile-build">
+            <p class="tile-kicker">{tiles.build.kicker}</p>
+            <h2 class="tile-title tile-brands">
+              <a href="#projects" class="tile-link">
+                <span class="brand-t2f">track<sup>2</sup>.fit</span>
+                <span class="brand-joj">Jump <em>Over</em> Jump</span>
+              </a>
+            </h2>
+            <p class="tile-body">{tiles.build.body}</p>
+            <div class="tile-devices" aria-hidden="true">
+              <IPhone class="td-phone">
+                <Screens srcs={['home', 'session', 'history'].map((s) => `${M}/t2f/phone-${s}.webp`)} alt="" />
+              </IPhone>
+              <AppleWatch class="td-watch">
+                <Screens srcs={['log-set', 'rest', 'record'].map((s) => `${M}/t2f/watch-${s}.webp`)} alt="" />
+              </AppleWatch>
+            </div>
+          </li>
+
+          {/* Outside work: the row's first clip, playing (the only video on the first screen) */}
+          {clip && (
+            <li class="tile tile-life">
+              <video class="tile-video" data-autoplay muted loop playsInline preload="none" poster={clipUrl(clip.id, 'jpg')} aria-hidden="true">
+                <source src={clipUrl(clip.id, 'mp4')} type="video/mp4" />
+              </video>
+              <div class="tile-life-copy">
+                <p class="tile-kicker">{tiles.life.kicker}</p>
+                <h2 class="tile-title"><a href="#outside" class="tile-link">{CATEGORY_NAMES[lang][clip.cat]}<span class="tile-go" aria-hidden="true">→</span></a></h2>
+                <p class="tile-foot">{tiles.life.count(clips.length)}</p>
+              </div>
+              <PauseButton label={t.hi.pause} class="tile-pause" />
+            </li>
+          )}
+        </ul>
+      </section>
+    )
+  }
+}
 
 // One section = one row: scroll down between rows, sideways inside one (see app/ui/public/rails.tsx).
 // A big arrow on the right edge pulls you along the row; the prompt at the bottom names the next row.
@@ -33,18 +192,23 @@ function Row(
     chapter?: boolean
     backdrop?: boolean
     shuffle?: boolean
+    /** JSON with the rest of the row's clips, appended as the row nears view (rails.tsx). */
+    more?: string
+    words?: Record<string, string>
   }>,
 ) {
   return () => {
-    let { backdrop, chapter, children, class: className, id, label, next, shuffle, t } = handle.props
+    let { backdrop, chapter, children, class: className, id, label, more, next, shuffle, t, words } = handle.props
     return (
       <section id={id} class={`row ${className}`} data-rail data-chapter={chapter ? '' : undefined} aria-label={label}>
         {backdrop && <div class="row-bg" data-rail-bg aria-hidden="true" />}
         <div class="rail-wrap">
-          <ul class="rail" data-rail-track data-shuffle={shuffle ? '' : undefined} tabIndex={0} aria-label={label}>
+          {/* the section carries the name; the list is focusable so arrow keys scroll it */}
+          <ul class="rail" data-rail-track data-shuffle={shuffle ? '' : undefined} data-more={more} data-words={words && JSON.stringify(words)} tabIndex={0}>
             {children}
           </ul>
-          <button type="button" class="rail-arrow rail-prev" data-rail-prev aria-label={t.prev}>
+          {/* rails.tsx disables the one that has nowhere to go, which also takes it out of the Tab order */}
+          <button type="button" class="rail-arrow rail-prev" data-rail-prev aria-label={t.prev} disabled>
             <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7" /></svg>
           </button>
           <button type="button" class="rail-arrow rail-next" data-rail-next aria-label={t.next}>
@@ -150,13 +314,11 @@ function PoolCard(handle: Handle<{ t: Copy }>) {
               <button key={color} type="button" data-pool-color={color} aria-pressed={i === 0 ? 'true' : 'false'} aria-label={t.pool.names[i]} title={t.pool.names[i]} style={`--c:${color}`} />
             ))}
           </div>
-          {/* a frame of fixed height, so resizing the tiles never moves the buttons under them */}
+          {/* a frame of fixed height, so resizing the tiles never moves the buttons under them. The
+              162 tiles are drawn by ui/public/pool-tiles.tsx (it rebuilds the grid on load anyway): as
+              buttons in the page they were a sixth of its weight. */}
           <div class="pool-frame">
-            <div class="pool-grid" role="group" aria-label={t.pool.tiles} data-pool-grid style={`--rows:${nRows};--cols:${nCols}`}>
-              {tiles.rows.flat().map((tile) => (
-                <button key={`${tile.x}-${tile.y}`} type="button" tabIndex={tile.x + tile.y === 0 ? 0 : -1} data-x={String(tile.x)} data-y={String(tile.y)} style={`--c:${tile.color}`} aria-label={describeTile(t.pool.cell, t.pool.names, tile)} />
-              ))}
-            </div>
+            <div class="pool-grid" role="group" aria-label={t.pool.tiles} data-pool-grid style={`--rows:${nRows};--cols:${nCols}`} />
           </div>
           <div class="pool-foot">
             {sizes.map(([key, label, value]) => (
@@ -175,23 +337,6 @@ function PoolCard(handle: Handle<{ t: Copy }>) {
   }
 }
 
-// Highlights share a card until it holds about 500 characters of text, or four highlights (their titles
-// take room too), which still fits the row's height on a phone: Shopify's five take two cards, Kinaxis's
-// three take one, and the six from freelancing's comeback take two.
-function packHighlights(list: Highlight[], budget = 500, most = 4) {
-  let cards: { h: Highlight; n: number }[][] = []
-  let used = Infinity
-  list.forEach((h, n) => {
-    if (used + h.body.length > budget || cards[cards.length - 1].length === most) {
-      cards.push([])
-      used = 0
-    }
-    cards[cards.length - 1].push({ h, n })
-    used += h.body.length
-  })
-  return cards
-}
-
 export function formatDate(date: string, lang: Lang) {
   return new Intl.DateTimeFormat(lang === 'pt' ? 'pt-BR' : 'en-CA', { year: 'numeric', month: 'short', day: 'numeric', timeZone: 'UTC' }).format(new Date(`${date}T12:00:00Z`))
 }
@@ -204,7 +349,6 @@ export function HomePage(handle: Handle<{ lang: Lang }>) {
     let learning = learningFor(lang)
     let projects = projectsFor(lang)
     let clips = homeOrder()
-    let names = CATEGORY_NAMES[lang]
     return (
       <Document
         lang={lang}
@@ -215,6 +359,7 @@ export function HomePage(handle: Handle<{ lang: Lang }>) {
         fonts={FONTS}
         styles={['/styles/fonts.css', '/styles/base.css', '/styles/devices.css', '/styles/site.css']}
         themeColor="#070707"
+        intro
       >
         <Rails />
         <JojDemo />
@@ -231,43 +376,67 @@ export function HomePage(handle: Handle<{ lang: Lang }>) {
 
         <SiteNav lang={lang} t={t} home langHref={HREF} />
 
-        <main>
-          {/* Hi: who I am, then everything I do outside work, one clip after another */}
-          <Row id="top" class="row-hi" label={t.nav.hi} t={t.rail} next={{ href: '#track2fit', label: 'track2.fit' }} chapter backdrop shuffle>
-            <li class="slide hi">
-              <p class="cin-kicker hi-kicker">
-                <span>{t.hi.role}</span>
-                {/* rails.tsx flies the plane once the title has landed, and again on hover or tap */}
-                <span class="hi-route" data-flight>
-                  <span>{t.hi.from}</span>
-                  <svg class="hi-flight" viewBox="0 0 72 22" role="img" aria-label={t.hi.movedTo}>
-                    {/* the dashed route appears behind the plane as it flies */}
-                    <mask id="hi-trail" maskUnits="userSpaceOnUse" x="-4" y="-10" width="80" height="36">
-                      <path class="hi-reveal" d="M4 18 Q36 -6 68 18" />
-                    </mask>
-                    <path class="hi-arc" d="M4 18 Q36 -6 68 18" mask="url(#hi-trail)" />
-                    <path class="hi-plane" d="M6 0 2 -1 -1 -5h-1.5l1.6 4H-4l-1.2-1.6H-6.2L-5.4 0l-.8 1.6h1L-4 1h3.1l-1.6 4H-1l3-4Z" />
-                  </svg>
-                  <span class="hi-to">{t.hi.place}</span>
-                </span>
-              </p>
-              <h1>Ângelo <em>Ocanã</em></h1>
-              <p class="hi-tldr">{t.hi.tldr}</p>
-              <SocialLinks class="hi-links" t={t.links} />
+        <main id="main" tabIndex={-1}>
+          <Hero lang={lang} t={t} clips={clips} />
+
+          {/* Career: today first, then back to the start */}
+          <Row id="career" class="row-career" label={t.nav.chapters[1].label} t={t.rail} next={{ href: '#projects', label: t.nav.chapters[0].label }} chapter>
+            <li class="slide intro intro-career">
+              <p class="cin-kicker">{t.career.kicker}</p>
+              <h2>{t.career.title[0]}<em>{t.career.title[1]}</em>{t.career.title[2]}</h2>
+              {/* counted by company, so the two freelance chapters count once */}
+              <p>{t.career.sub(new Set(career.map((job) => job.company)).size, career[career.length - 1].start)}</p>
+              {/* a way straight to any job, so the older ones are a tap away; rails.tsx slides the row,
+                  rolls the names in like credits and keeps the last one picked lit */}
+              <ol class="career-index" aria-label={t.career.jump} data-reveal>
+                {career.map((job, i) => (
+                  <li key={job.id} style={`--i:${i}`}>
+                    <a href={`#job-${job.id}`} data-rail-jump>
+                      <b>{job.short ?? job.company}</b>
+                      <span>
+                        {job.start}
+                        {job.end !== job.start && '–'}
+                        {job.end === 'Now' ? <em>{t.career.now}</em> : job.end !== job.start && job.end.slice(2)}
+                        {job.end === 'Now' && <i aria-hidden="true" />}
+                        {job.chapter && ` · ${job.chapter}`}
+                      </span>
+                    </a>
+                  </li>
+                ))}
+              </ol>
             </li>
-            {clips.map((clip, i) => (
-              <li key={clip.id} class="slide clip" data-cat={clip.cat} data-star={String(clip.star)} data-score={String(clip.score)} data-poster={clipUrl(clip.id, 'jpg')} data-video={clipUrl(clip.id, 'mp4')}>
-                {/* a still; rails.tsx adds the video player only while the clip is near the screen,
-                    because phones crash with a hundred video players on one page */}
-                <img class="clip-video" src={clipUrl(clip.id, 'jpg')} alt={clip.label[lang]} loading={i < 6 ? 'eager' : 'lazy'} decoding="async" width="540" height="960" />
-                <div class="clip-copy" aria-hidden="true">
-                  <p class="clip-cat">{names[clip.cat]}</p>
-                  {!clip.captionRejected && <p class="clip-label">{clip.label[lang]}</p>}
-                </div>
-                {instagramUrl(clip) && (
-                  <a class="clip-ig" href={instagramUrl(clip)} target="_blank" rel="noopener" aria-label={`${t.hi.onInstagram}: ${clip.label[lang]} (${t.links.newTab})`} data-cursor="Instagram">
-                    <SocialIcon id="instagram" />
-                  </a>
+            {career.map((job) => (
+              <li key={job.id} id={`job-${job.id}`} class={`slide job${job.featured ? ' job-featured' : ''}${job.highlights?.length ? ' job-wide' : ''}`}>
+                <p class="job-years">
+                  <span>{job.start}</span>
+                  {job.start !== job.end && <i aria-hidden="true" />}
+                  {job.start !== job.end && <span>{job.end === 'Now' ? t.career.now : job.end}</span>}
+                  {job.featured && <span class="job-badge">{t.career.today}</span>}
+                </p>
+                <h3>
+                  {job.url ? <TitleLink href={job.url} label={t.career.visit} text={job.company} /> : job.company}
+                  {job.chapter && <> <em>{job.chapter}</em></>}
+                </h3>
+                {(job.role || job.place) && <p class="job-meta">{[job.role, job.place].filter(Boolean).join(' · ')}</p>}
+                <p class="job-label">{t.career.built}</p>
+                {job.built ? <p class="job-built">{job.built}</p> : <p class="job-built job-empty">{t.career.empty}</p>}
+                {(job.featured || !!job.highlights?.length) && (
+                  <ol class="job-highlights">
+                    {(job.highlights?.length ? job.highlights : [null, null, null]).map((h, n) => (
+                      <li key={n} class={h ? '' : 'is-empty'}>
+                        <b>{h ? (h.url ? <a href={h.url} rel="noopener" target="_blank">{h.title} <i aria-hidden="true">↗</i></a> : h.title) : t.career.highlightTitle}</b>
+                        <small>{h ? h.body : t.career.highlightBody}</small>
+                      </li>
+                    ))}
+                  </ol>
+                )}
+                {job.clients && <p class="job-clients"><span>{t.career.for}</span> {job.clients.join(' · ')}</p>}
+                {job.tech.length > 0 && (
+                  <ul class="job-tech" aria-label={t.career.tech}>
+                    {job.tech.map((tech) => (
+                      <li key={tech}>{tech}</li>
+                    ))}
+                  </ul>
                 )}
               </li>
             ))}
@@ -513,7 +682,7 @@ c_sharp_phaser/JumpOverJump`}</pre>
             </Row>
 
             {/* More projects: open source and smaller builds (content/projects.ts), then GitHub for the rest */}
-            <Row id="more-projects" class="row-more" label={t.more.label} t={t.rail} next={{ href: '#career', label: t.nav.chapters[1].label }}>
+            <Row id="more-projects" class="row-more" label={t.more.label} t={t.rail} next={{ href: '#outside', label: t.outside.label }}>
               <li class="slide intro intro-career">
                 <p class="cin-kicker">{t.more.kicker}</p>
                 <h2>{t.more.title[0]}<em>{t.more.title[1]}</em>{t.more.title[2]}</h2>
@@ -529,85 +698,19 @@ c_sharp_phaser/JumpOverJump`}</pre>
             </Row>
           </div>
 
-          {/* Career: today first, then back to the start */}
-          <Row id="career" class="row-career" label={t.nav.chapters[1].label} t={t.rail} next={{ href: '#learning', label: t.learning.label }} chapter>
-            <li class="slide intro intro-career">
-              <p class="cin-kicker">{t.career.kicker}</p>
-              <h2>{t.career.title[0]}<em>{t.career.title[1]}</em>{t.career.title[2]}</h2>
-              {/* counted by company, so the two freelance chapters count once */}
-              <p>{t.career.sub(new Set(career.map((job) => job.company)).size, career[career.length - 1].start)}</p>
-              {/* a way straight to any job, so the older ones are a tap away; rails.tsx slides the row,
-                  rolls the names in like credits and keeps the last one picked lit */}
-              <ol class="career-index" aria-label={t.career.jump} data-reveal>
-                {career.map((job, i) => (
-                  <li key={job.id} style={`--i:${i}`}>
-                    <a href={`#job-${job.id}`} data-rail-jump>
-                      <b>{job.short ?? job.company}</b>
-                      <span>
-                        {job.start}
-                        {job.end !== job.start && '–'}
-                        {job.end === 'Now' ? <em>{t.career.now}</em> : job.end !== job.start && job.end.slice(2)}
-                        {job.end === 'Now' && <i aria-hidden="true" />}
-                        {job.chapter && ` · ${job.chapter}`}
-                      </span>
-                    </a>
-                  </li>
-                ))}
-              </ol>
+          {/* Outside work: the clips, hobbies taking turns. The page carries the first few; rails.tsx fetches
+              the rest (data-more) as the row comes near. */}
+          <Row id="outside" class="row-outside" label={t.outside.label} t={t.rail} next={{ href: '#learning', label: t.learning.label }} backdrop shuffle more="/data/clips.json" words={{ ig: t.hi.onInstagram, newTab: t.links.newTab }}>
+            <li class="slide intro intro-outside">
+              <p class="cin-kicker">{t.outside.kicker}</p>
+              <h2>{t.outside.title[0]}<em>{t.outside.title[1]}</em>{t.outside.title[2]}</h2>
+              <p>{t.outside.body(clips.length)}</p>
+              <p class="cap-ctas">
+                <a class="cin-btn" href={INSTAGRAM} rel="me noopener" target="_blank" data-cursor="Instagram">{t.outside.instagram} <span aria-hidden="true">↗</span></a>
+                <PauseButton label={t.hi.pause} />
+              </p>
             </li>
-            {career.flatMap((job) => [
-              <li key={job.id} id={`job-${job.id}`} class={`slide job${job.featured ? ' job-featured' : ''}${job.highlights?.length ? ' job-wide' : ''}`}>
-                <p class="job-years">
-                  <span>{job.start}</span>
-                  {job.start !== job.end && <i aria-hidden="true" />}
-                  {job.start !== job.end && <span>{job.end === 'Now' ? t.career.now : job.end}</span>}
-                  {job.featured && <span class="job-badge">{t.career.today}</span>}
-                </p>
-                <h3>
-                  {job.url ? <TitleLink href={job.url} label={t.career.visit} text={job.company} /> : job.company}
-                  {job.chapter && <> <em>{job.chapter}</em></>}
-                </h3>
-                {(job.role || job.place) && <p class="job-meta">{[job.role, job.place].filter(Boolean).join(' · ')}</p>}
-                <p class="job-label">{t.career.built}</p>
-                {job.built ? <p class="job-built">{job.built}</p> : <p class="job-built job-empty">{t.career.empty}</p>}
-                {(job.featured || !!job.highlights?.length) && (
-                  <ol class="job-highlights">
-                    {(job.highlights?.length ? job.highlights : [null, null, null]).map((h, n) => (
-                      <li key={n} class={h ? '' : 'is-empty'}>
-                        <b>{h ? (h.url ? <a href={h.url} rel="noopener" target="_blank">{h.title} <i aria-hidden="true">↗</i></a> : h.title) : t.career.highlightTitle}</b>
-                        <small>{h ? h.body : t.career.highlightBody}</small>
-                      </li>
-                    ))}
-                  </ol>
-                )}
-                {job.clients && <p class="job-clients"><span>{t.career.for}</span> {job.clients.join(' · ')}</p>}
-                {job.tech.length > 0 && (
-                  <ul class="job-tech" aria-label={t.career.tech}>
-                    {job.tech.map((tech) => (
-                      <li key={tech}>{tech}</li>
-                    ))}
-                  </ul>
-                )}
-              </li>,
-              // Below 900px the highlights don't fit beside the story, and stacked under it they made the
-              // card (and so the whole row) a screen taller than the rest. There, they move to cards of their own.
-              ...packHighlights(job.highlights ?? []).map((group) => (
-                <li key={`${job.id}-${group[0].n}`} class={`slide job-hl${job.featured ? ' job-hl-featured' : ''}`}>
-                  <p class="job-label">{[job.company, job.chapter, t.career.highlights].filter(Boolean).join(' · ')}</p>
-                  <ol class="job-hl-list">
-                    {group.map(({ h, n }) => (
-                      <li key={n}>
-                        <h3>
-                          <span class="job-hl-n">{String(n + 1).padStart(2, '0')}</span>{' '}
-                          {h.url ? <a href={h.url} rel="noopener" target="_blank">{h.title} <i aria-hidden="true">↗</i></a> : h.title}
-                        </h3>
-                        <p>{h.body}</p>
-                      </li>
-                    ))}
-                  </ol>
-                </li>
-              )),
-            ])}
+            {clips.slice(0, CLIPS_IN_PAGE).map((clip) => <ClipSlide key={clip.id} clip={clip} lang={lang} t={t} />)}
           </Row>
 
           {/* Education & more: the rest of the old résumés, in the career's card style. Part of the Career chapter. */}

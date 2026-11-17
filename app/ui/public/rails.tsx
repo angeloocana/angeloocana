@@ -3,19 +3,28 @@ import type { Handle } from 'remix/component'
 
 // Every section is a row: scroll down to move between sections, sideways (trackpad, swipe, drag,
 // the arrow buttons or the keyboard) to see more inside one. For each [data-rail] this script:
-//   - drives the arrows ([data-rail-prev] / [data-rail-next]) and marks the row's start and end
+//   - drives the arrows ([data-rail-prev] / [data-rail-next]), disabling the one with nowhere to go, and
+//     marks the row's start and end
+//   - appends the rest of a row's clips from its [data-more] JSON when the row comes near
 //   - lets a mouse drag the row (touch and trackpads scroll natively); a press on text selects it instead
 //   - slides the row to a card when a [data-rail-jump] link to it is clicked, and keeps that link lit
 //   - shuffles the home row's clips so hobbies take turns ([data-shuffle]); starred clips stay first
 //   - fades the row's backdrop ([data-rail-bg]) to the poster of the slide in view
-// It also plays [data-autoplay] videos only while they are on screen, highlights the menu link of the
-// section in view, and cross-fades [data-cycle] screen stacks. Without JS the rows still scroll.
+// It also plays [data-autoplay] videos only while they are on screen (and not paused with a [data-pause]
+// button), highlights the menu link of the section in view, and cross-fades [data-cycle] screen stacks.
+// Without JS the rows still scroll.
 export const Rails = clientEntry(import.meta.url, function Rails(handle: Handle) {
   handle.queueTask(() => {
     let signal = handle.signal
     let root = document.documentElement
     root.classList.add('js-rails')
     let reduced = matchMedia('(prefers-reduced-motion: reduce)').matches
+    let saveData = (navigator as Navigator & { connection?: { saveData?: boolean } }).connection?.saveData
+    let motion = !reduced && !saveData
+    // a pause button stops every clip on the page, and keeps them stopped across visits in this tab
+    let paused = sessionStorage.getItem('ao-paused') === '1'
+    // new clip slides (from [data-more]) are handed to the video code below once it is set up
+    let onNewSlides: (slides: HTMLElement[]) => void = () => {}
 
     for (let rail of document.querySelectorAll<HTMLElement>('[data-rail]')) setUpRail(rail)
 
@@ -24,7 +33,20 @@ export const Rails = clientEntry(import.meta.url, function Rails(handle: Handle)
       let bg = rail.querySelector<HTMLElement>('[data-rail-bg]')
       let slides = () => [...track.children].filter((el) => !(el as HTMLElement).hidden) as HTMLElement[]
 
-      if (track.hasAttribute('data-shuffle')) shuffle(track)
+      let prev = rail.querySelector<HTMLButtonElement>('[data-rail-prev]')
+      let next = rail.querySelector<HTMLButtonElement>('[data-rail-next]')
+      let more = track.dataset.more
+      // a row with more clips to come is dealt once they are all in, before it scrolls into view
+      if (track.hasAttribute('data-shuffle') && !more) shuffle(track)
+      if (more) {
+        let near = new IntersectionObserver(([entry]) => {
+          if (!entry.isIntersecting) return
+          near.disconnect()
+          appendClips(track, more!).then(() => { if (track.hasAttribute('data-shuffle')) shuffle(track); request() })
+        }, { rootMargin: '150% 0px' })
+        near.observe(rail)
+        signal.addEventListener('abort', () => near.disconnect())
+      }
 
       let queued = false
       let lastBg = ''
@@ -32,8 +54,15 @@ export const Rails = clientEntry(import.meta.url, function Rails(handle: Handle)
         queued = false
         let list = slides()
         let max = track.scrollWidth - track.clientWidth
-        rail.toggleAttribute('data-at-start', track.scrollLeft < 8)
-        rail.toggleAttribute('data-at-end', track.scrollLeft > max - 8)
+        let atStart = track.scrollLeft < 8
+        let atEnd = track.scrollLeft > max - 8
+        rail.toggleAttribute('data-at-start', atStart)
+        rail.toggleAttribute('data-at-end', atEnd)
+        // a disabled arrow leaves the Tab order; if it had focus, the other one takes it
+        let lost = (atStart && document.activeElement === prev) || (atEnd && document.activeElement === next)
+        if (prev) prev.disabled = atStart
+        if (next) next.disabled = atEnd
+        if (lost) (atStart ? next : prev)?.focus({ preventScroll: true })
         if (bg) {
           // backdrop follows the first video slide that is mostly in view
           let view = track.getBoundingClientRect()
@@ -69,7 +98,9 @@ export const Rails = clientEntry(import.meta.url, function Rails(handle: Handle)
         // a jump link ([data-rail-jump], like the career intro's list) slides the row to its card, page staying put
         let jump = target.closest<HTMLAnchorElement>('a[data-rail-jump]')
         let slide = jump && track.querySelector<HTMLElement>(`[id="${jump.hash.slice(1)}"]`)
-        if (slide) {
+        // a row stacked top to bottom (the career on phones) has nothing to slide: the link just scrolls the page
+        let sideways = track.scrollWidth > track.clientWidth + 8
+        if (slide && sideways) {
           event.preventDefault()
           // snapping is off for the trip: off screen the card is still shrunk by its slide-in animation,
           // and the browser would line up with that smaller box, a few pixels short
@@ -110,6 +141,55 @@ export const Rails = clientEntry(import.meta.url, function Rails(handle: Handle)
           track.addEventListener('click', (e) => { e.preventDefault(); e.stopPropagation() }, { capture: true, once: true })
         }
       }, { signal })
+    }
+
+    // The rest of a row's clips, from the JSON the build writes (scripts/build.ts): the same cards the
+    // page renders (ClipSlide in home-page.tsx), skipping the ones already there.
+    async function appendClips(track: HTMLElement, url: string) {
+      let data: { names: Record<string, Record<string, string>>; clips: { id: string; cat: string; star: number; score: number; label: Record<string, string>; captionRejected?: boolean; ig?: string; poster: string; video: string }[] }
+      try {
+        data = await (await fetch(url, { signal })).json()
+      } catch {
+        return
+      }
+      let lang = root.lang === 'pt-BR' ? 'pt' : 'en'
+      let words = JSON.parse(track.dataset.words ?? '{}') as Record<string, string>
+      let have = new Set([...track.querySelectorAll<HTMLElement>('[data-clip]')].map((el) => el.dataset.clip))
+      let icon = track.querySelector('.clip-ig svg')
+      let added: HTMLElement[] = []
+      for (let clip of data.clips) {
+        if (have.has(clip.id)) continue
+        let li = document.createElement('li')
+        li.className = 'slide clip'
+        Object.assign(li.dataset, { clip: clip.id, cat: clip.cat, star: String(clip.star), score: String(clip.score), poster: clip.poster, video: clip.video })
+        let img = document.createElement('img')
+        Object.assign(img, { className: 'clip-video', src: clip.poster, alt: clip.label[lang], loading: 'lazy', decoding: 'async', width: 540, height: 960 })
+        let copy = document.createElement('div')
+        copy.className = 'clip-copy'
+        copy.setAttribute('aria-hidden', 'true')
+        let cat = document.createElement('p')
+        cat.className = 'clip-cat'
+        cat.textContent = data.names[lang][clip.cat]
+        copy.append(cat)
+        if (!clip.captionRejected) {
+          let label = document.createElement('p')
+          label.className = 'clip-label'
+          label.textContent = clip.label[lang]
+          copy.append(label)
+        }
+        li.append(img, copy)
+        if (clip.ig) {
+          let a = document.createElement('a')
+          Object.assign(a, { className: 'clip-ig', href: clip.ig, target: '_blank', rel: 'noopener', tabIndex: -1 })
+          a.setAttribute('aria-label', `${words.ig}: ${clip.label[lang]} (${words.newTab})`)
+          a.dataset.cursor = 'Instagram'
+          if (icon) a.append(icon.cloneNode(true))
+          li.append(a)
+        }
+        added.push(li)
+      }
+      track.append(...added)
+      onNewSlides(added)
     }
 
     // Is the pointer over the letters of some text (not just inside a box that holds text)?
@@ -171,16 +251,35 @@ export const Rails = clientEntry(import.meta.url, function Rails(handle: Handle)
     for (let list of document.querySelectorAll('[data-reveal]')) reveal.observe(list)
     signal.addEventListener('abort', () => reveal.disconnect())
 
+    // Pause buttons: every one on the page shows the same state. Without motion there is nothing to pause.
+    let pauseButtons = [...document.querySelectorAll<HTMLButtonElement>('[data-pause]')]
+    let showPaused = () => pauseButtons.forEach((b) => b.setAttribute('aria-pressed', String(paused)))
+    if (!motion) pauseButtons.forEach((b) => (b.hidden = true))
+    showPaused()
+
     // Videos play only while on screen, and never for reduced motion or data saver.
-    let saveData = (navigator as Navigator & { connection?: { saveData?: boolean } }).connection?.saveData
-    if (!reduced && !saveData) {
+    if (motion) {
+      let onScreen = new Set<HTMLVideoElement>()
       let watcher = new IntersectionObserver((entries) => {
         for (let { target, isIntersecting } of entries) {
           let video = target as HTMLVideoElement
-          if (isIntersecting) video.play().catch(() => {})
+          if (isIntersecting) onScreen.add(video)
+          else onScreen.delete(video)
+          if (isIntersecting && !paused) video.play().catch(() => {})
           else video.pause()
         }
       }, { threshold: 0.35 })
+      for (let button of pauseButtons) {
+        button.addEventListener('click', () => {
+          paused = !paused
+          sessionStorage.setItem('ao-paused', paused ? '1' : '0')
+          showPaused()
+          for (let video of onScreen) {
+            if (paused) video.pause()
+            else video.play().catch(() => {})
+          }
+        }, { signal })
+      }
       for (let video of document.querySelectorAll<HTMLVideoElement>('video[data-autoplay]')) watcher.observe(video)
       signal.addEventListener('abort', () => watcher.disconnect())
 
@@ -218,6 +317,7 @@ export const Rails = clientEntry(import.meta.url, function Rails(handle: Handle)
           }
         }, { root: track, rootMargin: '0px 60%' })
         for (let slide of track.querySelectorAll<HTMLElement>('[data-video]')) players.observe(slide)
+        onNewSlides = (slides) => slides.forEach((slide) => players.observe(slide))
         signal.addEventListener('abort', () => players.disconnect())
       }
 
@@ -272,7 +372,8 @@ export const Rails = clientEntry(import.meta.url, function Rails(handle: Handle)
     }
     let highlight = () => {
       pending = false
-      let current = chapters[0]?.id ?? ''
+      // nothing is lit on the first screen, above the first chapter
+      let current = ''
       for (let chapter of chapters) if (chapter.getBoundingClientRect().top <= innerHeight / 2) current = chapter.id
       if (current === last) return
       last = current
@@ -292,9 +393,9 @@ export const Rails = clientEntry(import.meta.url, function Rails(handle: Handle)
       addEventListener(type, skip, { signal, once: true, passive: true })
     }
 
-    // The plane in "Brazil ✈ Ottawa" takes off once the title, the text and the clips have settled, so
-    // it is the only thing moving: 5s after load, or soon after the intro is skipped. It waits while the
-    // tab is hidden or the route is off screen, and flies again on hover or tap.
+    // The plane in "Brazil ✈ Ottawa" takes off once the page has settled, so it is the only thing moving:
+    // 2.5s after load. It waits while the tab is hidden or the route is off screen, and flies again on
+    // hover or tap.
     function setUpFlight() {
       let route = document.querySelector<HTMLElement>('[data-flight]')
       let plane = route?.querySelector('.hi-plane')
@@ -324,7 +425,7 @@ export const Rails = clientEntry(import.meta.url, function Rails(handle: Handle)
         clearTimeout(timer)
         timer = window.setTimeout(() => { due = true; flyIfReady() }, Math.max(0, ms))
       }
-      takeOffIn(5000 - performance.now())
+      takeOffIn(2500 - performance.now())
       signal.addEventListener('abort', () => clearTimeout(timer))
 
       let seen = new IntersectionObserver((entries) => {
@@ -341,10 +442,9 @@ export const Rails = clientEntry(import.meta.url, function Rails(handle: Handle)
       el.addEventListener('click', fly, { signal })
 
       return {
-        // A skip ends the intro at once, so the plane can go after a short beat (the title still needs
-        // until about 2s after load to settle when the intro is skipped straight away).
+        // A skip ends the intro at once, so the plane can go after a short beat.
         skipped() {
-          if (!due) takeOffIn(Math.min(5000, Math.max(performance.now() + 600, 2000)) - performance.now())
+          if (!due) takeOffIn(Math.max(performance.now() + 600, 1200) - performance.now())
         },
       }
     }

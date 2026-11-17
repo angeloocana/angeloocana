@@ -10,9 +10,11 @@ import { router } from '../app/router.ts'
 
 const ORIGIN = 'http://localhost'
 const OUT = 'dist'
-const PAGES: Record<string, string> = { '/': 'index.html', '/pt': 'pt/index.html' }
+// the home pages' clips JSON is built like a page: the router answers it
+const PAGES: Record<string, string> = { '/': 'index.html', '/pt': 'pt/index.html', '/data/clips.json': 'data/clips.json' }
 // every post keeps the URL it had on the old site: /en/blog/git/git-setup/ → en/blog/git/git-setup/index.html
 for (let post of allPosts()) PAGES[post.url] = `${post.url.slice(1)}index.html`
+const SITEMAP = Object.keys(PAGES).filter((path) => !path.endsWith('.json'))
 
 await rm(OUT, { recursive: true, force: true })
 // public/ first, then the rendered pages and scripts on top.
@@ -134,7 +136,7 @@ await save('offline-plugin-app-shell-fallback/index.html', (await (await get('/'
 const SITE_ORIGIN = 'https://angeloocana.com'
 await save(
   'sitemap.xml',
-  `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${Object.keys(PAGES)
+  `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${SITEMAP
     .map((path) => `  <url><loc>${SITE_ORIGIN}${path}</loc></url>`)
     .join('\n')}\n</urlset>\n`,
 )

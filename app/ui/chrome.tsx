@@ -67,13 +67,11 @@ export function SiteNav(handle: Handle<{ lang: Lang; t: Copy; home?: boolean; la
     let base = home ? '' : lang === 'pt' ? '/pt' : '/'
     return (
       <header class="cin-nav">
-        <a href={home ? '#top' : base} class="cin-mark" data-cursor={t.nav.top}>ÂO</a>
+        {home && <a class="skip-link" href="#main">{t.nav.skip}</a>}
+        <a href={home ? '#top' : base} class="cin-mark" aria-label={`Ângelo Ocanã · ${t.nav.top}`} data-cursor={t.nav.top}>ÂO</a>
         <nav class="cin-menu" aria-label={t.nav.label}>
           {t.nav.chapters.map((chapter) => (
-            <a key={chapter.href} href={`${base}${chapter.href}`} data-chapter-link={chapter.href.slice(1)}>
-              <span class="ch-long">{chapter.label}</span>
-              <span class="ch-short">{chapter.short}</span>
-            </a>
+            <a key={chapter.href} href={`${base}${chapter.href}`} data-chapter-link={chapter.href.slice(1)}>{chapter.label}</a>
           ))}
         </nav>
         {/* the two flags as a small hand of cards: the current one stands taller and ringed */}

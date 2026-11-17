@@ -1,8 +1,12 @@
 import * as assert from 'remix/assert'
 import { describe, it } from 'remix/test'
 
+import { loadClips } from '../content/clips.ts'
 import { router } from '../router.ts'
 import { routes } from '../routes.ts'
+
+// The home page's weight on a phone: the clips past the first few come from /data/clips.json instead.
+const HOME_BUDGET = 130_000
 
 describe('root controller', () => {
   it('GET / returns the home page', async () => {
@@ -12,7 +16,26 @@ describe('root controller', () => {
     assert.match(response.headers.get('Content-Type') ?? '', /text\/html/)
     let html = await response.text()
     assert.match(html, /<html[\s>]/)
-    assert.match(html, /id="projects"/)
+    assert.match(html, /Staff software engineer/)
+    // work first: hero, career, projects, then the clips, learning, posts and contact
+    let order = ['top', 'career', 'projects', 'outside', 'learning', 'posts', 'contact'].map((id) => html.indexOf(`id="${id}"`))
+    assert.ok(order.every((at, i) => at > 0 && (i === 0 || at > order[i - 1])), `sections out of order: ${order}`)
+  })
+
+  it('keeps both home pages under the size budget', async () => {
+    for (let path of [routes.home.href(), routes.pt.href()]) {
+      let html = await (await router.fetch(new URL(path, 'http://localhost'))).text()
+      let bytes = new TextEncoder().encode(html).length
+      assert.ok(bytes <= HOME_BUDGET, `${path} is ${bytes} bytes, over ${HOME_BUDGET}`)
+    }
+  })
+
+  it('serves every live clip in /data/clips.json', async () => {
+    let response = await router.fetch(new URL(routes.clipsData.href(), 'http://localhost'))
+    assert.equal(response.status, 200)
+    let { clips } = (await response.json()) as { clips: { id: string }[] }
+    let live = loadClips().filter((clip) => !clip.rejected).map((clip) => clip.id).sort()
+    assert.deepEqual(clips.map((clip) => clip.id).sort(), live)
   })
 
   it('GET /pt returns the Portuguese page', async () => {
@@ -21,7 +44,7 @@ describe('root controller', () => {
     assert.equal(response.status, 200)
     let html = await response.text()
     assert.match(html, /<html lang="pt-BR"/)
-    assert.match(html, /Projetos pessoais/)
+    assert.match(html, /Engenheiro de software staff/)
   })
 
   it('keeps old post URLs, in English, Portuguese and the 2015 tutorials', async () => {
