@@ -43,10 +43,15 @@ function frontMatter(text: string) {
   return { title: field('title'), date: field('date').slice(0, 10), youtubeId: field('youtubeId') || undefined, tags, body: match ? text.slice(match[0].length) : text }
 }
 
-function plain(markdown: string) {
+/** The words of a post, for its excerpt and reading time: no Markdown, no HTML tags or comments. */
+export function plain(markdown: string) {
   return markdown
     .replace(/```[\s\S]*?```/g, ' ')
     .replace(/^ {4}.*$/gm, ' ')
+    .replace(/<!--[\s\S]*?-->/g, ' ')
+    .replace(/<(script|style)\b[\s\S]*?<\/\1>/gi, ' ')
+    .replace(/<\/?[a-z][^>]*>/gi, ' ')
+    .replace(/&nbsp;/g, ' ')
     .replace(/!\[[^\]]*\]\([^)]*\)/g, ' ')
     .replace(/\[([^\]]*)\]\([^)]*\)/g, '$1')
     .replace(/[#>*_`|-]/g, ' ')
