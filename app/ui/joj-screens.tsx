@@ -7,11 +7,9 @@ import type { Handle } from 'remix/component'
 export function JojBoard() {
   return () => (
     <div class="jd-board" data-joj-demo aria-hidden="true">
-      <div class="jd-squares">
-        {Array.from({ length: 64 }, (_, i) => (
-          <i key={i} class={(i + Math.floor(i / 8)) % 2 ? 'jd-dark' : 'jd-light'} data-sq={i} />
-        ))}
-      </div>
+      {/* the squares are a CSS checkerboard; the demo (ui/public/joj-demo.tsx) adds one cell per square
+          to mark routes on, so the page doesn't carry 64 empty tags per board */}
+      <div class="jd-squares" />
       {Array.from({ length: 16 }, (_, i) => {
         let black = i < 8
         let x = i % 8

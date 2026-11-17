@@ -302,10 +302,8 @@ html:not(.js-rails) .rail-arrow { display: none; }
 /* tilted like the site's 3D board: the far edge recedes a little */
 .jd-board { position: relative; aspect-ratio: 1; border-radius: 1.5%; background: #4a433b; box-shadow: 0 1.1cqmin 0 #2b2622, 0 3cqmin 5cqmin rgb(0 0 0 / 0.55); transform: perspective(250cqmin) rotateX(10deg); transform-origin: 50% 58%; }
 .jd-board::before { content: ''; position: absolute; z-index: 1; left: 0; right: 0; top: 0; height: 1.2%; border-radius: 2px; background: #ee9b6b; opacity: 0.75; }
-.jd-squares { position: absolute; inset: 0; display: grid; grid-template-columns: repeat(8, 1fr); grid-template-rows: repeat(8, 1fr); border-radius: inherit; overflow: hidden; }
+.jd-squares { position: absolute; inset: 0; display: grid; grid-template-columns: repeat(8, 1fr); grid-template-rows: repeat(8, 1fr); border-radius: inherit; overflow: hidden; background: repeating-conic-gradient(#3b352f 0 25%, #51493f 0 50%) 0 0 / 25% 25%; }
 .jd-squares > i { position: relative; transition: background 0.4s; }
-.jd-light { background: #51493f; }
-.jd-dark { background: #3b352f; }
 /* the last route: where the piece left, where it touched down, strongest where it stands */
 .jd-squares > [data-route]::after { content: ''; position: absolute; inset: 0; background: #86b56b; opacity: 0.46; }
 .jd-squares > [data-route='hop']::after { opacity: 0.38; }
@@ -595,7 +593,7 @@ html:not(.js-rails) .rail-arrow { display: none; }
   .cin::after { animation: none; }
   .cin-intro { display: none; }
   .js-rails .slide { animation: none; }
-  .rail-next, .row-down svg, .row-hi .clip, .hv, .room-chip, .ranks-you, .jd-pill i, .career-index i, .career-index[data-shown] li { animation: none; }
+  .rail-next, .row-down svg, .hv, .room-chip, .ranks-you, .jd-pill i, .career-index i, .career-index[data-shown] li { animation: none; }
   .js-rails .career-index:not([data-shown]) li { opacity: 1; }
 }
 

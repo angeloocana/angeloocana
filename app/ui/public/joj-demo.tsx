@@ -94,7 +94,9 @@ export const JojDemo = clientEntry(import.meta.url, function JojDemo(handle: Han
           setTimeout(finish, ms)
         })
 
-      let squares = [...board.querySelectorAll<HTMLElement>('[data-sq]')]
+      let grid = board.querySelector<HTMLElement>('.jd-squares')!
+      let squares = Array.from({ length: 64 }, () => document.createElement('i'))
+      grid.append(...squares)
       let pieces: Piece[] = [...board.querySelectorAll<HTMLElement>('.jd-piece')].map((el, i) => ({ el, x: i % 8, y: i < 8 ? 0 : 7, white: i >= 8 }))
       let at = (p: Sq) => pieces.find((q) => q.x === p.x && q.y === p.y)
       let place = (piece: Piece, p: Sq) => {
