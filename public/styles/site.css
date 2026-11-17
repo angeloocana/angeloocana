@@ -162,6 +162,8 @@ main:focus { outline: none; }
 .row-learning .rail { display: grid; grid-template-rows: auto auto; grid-auto-flow: column dense; grid-auto-columns: max-content; }
 .row-learning .slide { grid-row: span 2; }
 .row-learning .study:not(:has(.job-highlights)) { grid-row: span 1; width: min(22rem, 78vw); }
+/* More projects: a card with one paragraph and no list (Polutz) is narrower, so it isn't half empty */
+.row-more .study:not(:has(.job-highlights)):not(.pool-card) { width: min(22rem, 66vw); }
 /* on phones (and wider) a supporting row's opening words are its first card; on phones they sit above
    the row instead (below), so its first card shows at once. The same words are in both places. */
 .intro.row-head { display: none; }
@@ -782,6 +784,8 @@ pre.rf-code { margin: 0; width: 100%; height: 100%; padding: 1.2rem 1.4rem; font
   [data-at-start] .rail-prev, [data-at-end] .rail-next, .rail-arrow:disabled { transform: scale(0.7); }
   .rail-prev { display: grid; }
   .rail-wrap::after { bottom: 4rem; }
+  /* the count sits between the two arrows, in the band they already use */
+  .rail-foot { position: relative; z-index: 6; margin-top: -2.9rem; margin-bottom: 1.4rem; pointer-events: none; }
   /* intro cards: as tall as their words, not a full stage */
   .slide.intro:not(.intro-wide) { min-height: 0; }
   /* the supporting rows' opening words go above the row, so its first card shows at once */

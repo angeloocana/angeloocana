@@ -61,6 +61,18 @@ describe('root controller', () => {
     assert.ok(at.every((pos, i) => pos > 0 && (i === 0 || pos > at[i - 1])), `menu out of page order: ${at}`)
   })
 
+  it('links each product in the hero to its own row, with its own name', async () => {
+    for (let path of [routes.home.href(), routes.pt.href()]) {
+      let html = await (await router.fetch(new URL(path, 'http://localhost'))).text()
+      let tile = html.match(/<li class="tile tile-build"[^]*?<\/ul>/)![0]
+      let links = [...tile.matchAll(/<a href="([^"]+)"[^>]*aria-label="([^"]+)"/g)].map(([, href, name]) => ({ href, name }))
+      assert.deepEqual(links.map((link) => link.href), ['#track2fit', '#jumpoverjump'], path)
+      assert.match(links[0].name, /^track2\.fit: /)
+      assert.match(links[1].name, /^Jump Over Jump: /)
+      for (let { href } of links) assert.ok(html.includes(`id="${href.slice(1)}"`), `${path}: no ${href} on the page`)
+    }
+  })
+
   it('GET /pt returns the Portuguese page', async () => {
     let response = await router.fetch(new URL(routes.pt.href(), 'http://localhost'))
 
