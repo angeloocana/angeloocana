@@ -84,6 +84,16 @@ describe('root controller', () => {
     }
   })
 
+  it('gives phones the lighter cut of the hero clip, before the full one', async () => {
+    let html = await (await router.fetch(new URL(routes.home.href(), 'http://localhost'))).text()
+    let video = html.match(/<video [^>]*tile-video[\s\S]*?<\/video>/)?.[0] ?? ''
+    let sources = [...video.matchAll(/<source ([^>]*)>/g)].map((m) => m[1])
+    assert.equal(sources.length, 2, 'the hero video should have a phone source and the full one')
+    assert.match(sources[0], /src="\/media\/hero\/[^"]+-phone\.mp4\?v=/)
+    assert.match(sources[0], /media="\(max-width: 760px\)"/)
+    assert.match(sources[1], /src="\/media\/clips\//)
+  })
+
   it('names every row’s list and arrows for that row, never the same words twice', async () => {
     for (let path of [routes.home.href(), routes.pt.href()]) {
       let html = await (await router.fetch(new URL(path, 'http://localhost'))).text()

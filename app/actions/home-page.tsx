@@ -3,7 +3,7 @@ import type { Handle, RemixNode } from 'remix/component'
 import { Document } from './document.tsx'
 import { careerFor } from '../content/career.ts'
 import { learningFor, type Study } from '../content/learning.ts'
-import { CATEGORIES, CATEGORY_NAMES, clipUrl, homeOrder, instagramUrl, type Clip } from '../content/clips.ts'
+import { CATEGORIES, CATEGORY_NAMES, clipUrl, homeOrder, instagramUrl, phoneClipUrl, type Clip } from '../content/clips.ts'
 import { SITE, SOCIALS } from '../content.ts'
 import { postsFor } from '../content/posts.ts'
 import { GITHUB, projectsFor } from '../content/projects.ts'
@@ -187,6 +187,8 @@ function Hero(handle: Handle<{ lang: Lang; t: Copy; clips: Clip[] }>) {
           {clip && (
             <li class="tile tile-life">
               <video class="tile-video" data-autoplay="idle" muted loop playsInline preload="none" poster={clipUrl(clip.id, 'jpg')} aria-hidden="true">
+                {/* phones get the lighter cut when there is one; the browser picks the first source that matches */}
+                {phoneClipUrl(clip.id) && <source src={phoneClipUrl(clip.id)} type="video/mp4" media="(max-width: 760px)" />}
                 <source src={clipUrl(clip.id, 'mp4')} type="video/mp4" />
               </video>
               <div class="tile-life-copy">

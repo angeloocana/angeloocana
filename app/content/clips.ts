@@ -77,6 +77,19 @@ export function clipUrl(id: string, ext: 'mp4' | 'jpg') {
   return `/media/clips/${id}.${ext}?v=${version ?? '0'}`
 }
 
+/**
+ * A lighter cut of the hero tile's clip for phones (360x640, about 400 KB instead of 1.7 MB), cut by
+ * hand into media/hero/<id>-phone.mp4 and pushed with the rest. Only the clip that opens the row has
+ * one; when another clip takes its place there is none, and phones play the full clip.
+ */
+export function phoneClipUrl(id: string) {
+  let key = `hero/${id}-phone.mp4`
+  let version = MEDIA_VERSIONS[key]
+  let file = join(MEDIA_DIR, 'media', key)
+  if ((!version || process.env.NODE_ENV === 'development') && existsSync(file)) version = Math.round(statSync(file).mtimeMs / 1000).toString(36)
+  return version ? `/media/${key}?v=${version}` : undefined
+}
+
 /** The clip's Instagram post, when it has one. */
 export const instagramUrl = (clip: Clip) => (clip.ig ? `https://www.instagram.com${clip.ig}` : undefined)
 
