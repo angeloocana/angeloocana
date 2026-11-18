@@ -48,7 +48,7 @@ export const CAREER: Job[] = [
     place: 'Ottawa, Canada',
     url: 'https://www.shopify.com',
     built:
-      'On every team I joined I was the team lead: I championed the projects, designed their architecture and brought together the people they needed, across Shopify teams and partner companies like Amazon, to ship them for millions of merchants.',
+      'On every team I joined, I was the team lead: I championed the projects and designed their architecture. I brought together the people they needed, across Shopify teams and partner companies like Amazon, to ship them for millions of merchants.',
     tech: ['Ruby', 'TypeScript', 'Rust', 'GraphQL', 'React', 'Remix', 'MySQL', 'BigQuery'],
     featured: true,
     // in the order I worked on them
@@ -81,7 +81,7 @@ export const CAREER: Job[] = [
     pt: {
       role: 'Engenheiro de software staff',
       built:
-        'Em todos os times em que entrei fui o líder técnico: defendi os projetos, desenhei a arquitetura e reuni as pessoas de que eles precisavam, entre times da Shopify e empresas parceiras como a Amazon, para entregá-los a milhões de lojistas.',
+        'Em todos os times em que entrei, fui o líder técnico: defendi os projetos e desenhei a arquitetura. Reuni as pessoas de que eles precisavam, entre times da Shopify e empresas parceiras como a Amazon, para entregá-los a milhões de lojistas.',
       highlights: [
         {
           title: 'Rollouts',

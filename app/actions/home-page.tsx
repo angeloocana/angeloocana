@@ -3,7 +3,7 @@ import type { Handle, RemixNode } from 'remix/component'
 import { Document } from './document.tsx'
 import { careerFor } from '../content/career.ts'
 import { learningFor, type Study } from '../content/learning.ts'
-import { CATEGORY_NAMES, clipUrl, homeOrder, instagramUrl, type Clip } from '../content/clips.ts'
+import { CATEGORIES, CATEGORY_NAMES, clipUrl, homeOrder, instagramUrl, type Clip } from '../content/clips.ts'
 import { SITE, SOCIALS } from '../content.ts'
 import { postsFor } from '../content/posts.ts'
 import { GITHUB, projectsFor } from '../content/projects.ts'
@@ -27,6 +27,16 @@ export const CLIPS_IN_PAGE = 12
 
 /** On phones the career shows this many recent jobs in full; the older ones fold behind one button. */
 const RECENT_JOBS = 2
+
+/** The hobby chips over the clips row leave out the ones with fewer clips than this. */
+const CHIP_MIN = 3
+
+// "Personal projects · track2.fit": the product's name never breaks across two lines
+function kicker(text: string) {
+  let at = text.lastIndexOf(' · ')
+  if (at < 0) return text
+  return <>{text.slice(0, at + 3)}<span class="kick-name">{text.slice(at + 3)}</span></>
+}
 
 // The Instagram mark, out of the Tab order: rails.tsx makes only the clip in view tabbable (a roving
 // tabindex), and the arrow keys move between clips from there.
@@ -116,7 +126,7 @@ function Hero(handle: Handle<{ lang: Lang; t: Copy; clips: Clip[] }>) {
               <SocialIcon id="email" />
               <span>{SITE.email}</span>
             </a>
-            <a class="cin-btn cin-btn-ghost" href="#projects">{t.hi.work} <span aria-hidden="true">↓</span></a>
+            <a class="cin-btn cin-btn-ghost hero-projects" href="#projects">{t.hi.work} <span aria-hidden="true">↓</span></a>
           </p>
         </div>
 
@@ -194,7 +204,7 @@ function Hero(handle: Handle<{ lang: Lang; t: Copy; clips: Clip[] }>) {
 }
 
 // One section = one row: scroll down between rows, sideways inside one (see app/ui/public/rails.tsx).
-// A big arrow on the right edge pulls you along the row; the prompt at the bottom names the next row.
+// Two quiet arrows over the row's right end move along it; the prompt at the bottom names the next row.
 function Row(
   handle: Handle<{
     id?: string
@@ -213,42 +223,55 @@ function Row(
         so the first card shows at once there. Rendered in both places; CSS shows one (the other is display: none). */
     intro?: RemixNode
     introClass?: string
-    /** The arrows' names, for this row's things ("Next clip"), in place of the generic ones. */
-    arrows?: { prev: string; next: string }
+    /** The arrows' names, for this row's things ("More clips"); never "Next", which is the pill under the row. */
+    arrows: { prev: string; next: string }
     /** Shows "3 / 115" under the row (rails.tsx counts the slides of this class). */
     count?: string
+    /** How many of them there are in all, when the page carries only some (the clips). */
+    total?: number
     /** A hint for keyboard users, shown under the row while it has keyboard focus. */
     keys?: string
+    /** Something over the row, after its opening words on phones (the clips' hobby chips). */
+    head?: RemixNode
   }>,
 ) {
   return () => {
-    let { arrows, backdrop, chapter, children, class: className, count, id, intro, introClass = '', keys, label, more, next, shuffle, t, words } = handle.props
+    let { arrows, backdrop, chapter, children, class: className, count, head, id, intro, introClass = '', keys, label, more, next, shuffle, t, total, words } = handle.props
+    let keysId = keys && id ? `${id}-keys` : undefined
     return (
       <section id={id} class={`row ${className}`} data-rail data-chapter={chapter ? '' : undefined} aria-label={label}>
         {backdrop && <div class="row-bg" data-rail-bg aria-hidden="true" />}
         {intro && <div class={`intro row-head ${introClass}`}>{intro}</div>}
-        <div class="rail-wrap">
-          {/* the section carries the name; the list is focusable so arrow keys scroll it */}
-          <ul class="rail" data-rail-track data-shuffle={shuffle ? '' : undefined} data-more={more} data-words={words && JSON.stringify(words)} data-count={count} tabIndex={0}>
-            {intro && <li class={`slide intro intro-slide ${introClass}`}>{intro}</li>}
-            {children}
-          </ul>
+        {/* the row's controls, over its right end and never on a card: anything for the row (the hobby
+            chips), where you are in a long row and the arrows. Needs JS (rails.tsx), so it's hidden without. */}
+        <div class="rail-bar">
+          {head}
+          {/* where you are in a long row, and how much is left (rails.tsx fills it in); in its place while
+              the row has keyboard focus, the keys that move through it */}
+          {count && (
+            <div class="rail-foot">
+              <p class="rail-count" data-rail-count aria-hidden="true" />
+              {keys && <p class="rail-keys" id={keysId} aria-hidden="true">{keys}</p>}
+            </div>
+          )}
           {/* rails.tsx disables the one that has nowhere to go, which also takes it out of the Tab order */}
-          <button type="button" class="rail-arrow rail-prev" data-rail-prev aria-label={arrows?.prev ?? t.prev} disabled>
+          <button type="button" class="rail-arrow rail-prev" data-rail-prev aria-label={arrows.prev} disabled>
             <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7" /></svg>
           </button>
-          <button type="button" class="rail-arrow rail-next" data-rail-next aria-label={arrows?.next ?? t.next}>
+          <button type="button" class="rail-arrow rail-next" data-rail-next aria-label={arrows.next}>
             <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7" /></svg>
           </button>
         </div>
-        {/* where you are in a long row, and how much is left (rails.tsx fills it in); in its place while
-            the row has keyboard focus, the keys that move through it */}
-        {count && (
-          <div class="rail-foot">
-            <p class="rail-count" data-rail-count aria-hidden="true" />
-            {keys && <p class="rail-keys" aria-hidden="true">{keys}</p>}
-          </div>
-        )}
+        <div class="rail-wrap">
+          {/* focusable so the arrow keys scroll it, and named for itself (not by reading all its cards) */}
+          <ul class="rail" data-rail-track data-shuffle={shuffle ? '' : undefined} data-more={more} data-words={words && JSON.stringify(words)} data-count={count} data-total={total} data-at={JSON.stringify(t.at)} tabIndex={0} aria-label={label} aria-describedby={keysId}>
+            {intro && <li class={`slide intro intro-slide ${introClass}`}>{intro}</li>}
+            {children}
+          </ul>
+          {/* where the row has come to rest ("3 to 4 of 9"), said politely once scrolling settles, and only
+              while focus is in the row (rails.tsx) */}
+          <p class="sr-only" data-rail-live aria-live="polite" />
+        </div>
         {next && (
           <a class="row-down" href={next.href}>
             <span>{t.down}</span>
@@ -365,8 +388,33 @@ function PoolCard(handle: Handle<{ t: Copy }>) {
             ))}
             <button type="button" class="cin-btn pool-clear" data-pool-clear>{t.pool.clear}</button>
           </div>
+          {/* phones: the tiles are small in the card, so this opens the designer full screen, tiles 36px
+              (pool-tiles.tsx moves it into the dialog below and back) */}
+          <button type="button" class="cin-btn cin-btn-ghost pool-big" data-pool-big>{t.pool.bigger}</button>
+          <p class="pool-name" aria-hidden="true">{t.pool.title}</p>
+          <button type="button" class="cin-btn pool-done" data-pool-done>{t.pool.done}</button>
         </div>
+        <dialog class="pool-dialog" aria-label={t.pool.title} data-pool-dialog />
       </li>
+    )
+  }
+}
+
+// Over the clips row: a quiet chip per hobby (the ones with a few clips), each sliding the row to its first
+// clip (rails.tsx; it loads the rest of the clips first when it has to). Needs JS, so it is hidden without.
+function HobbyChips(handle: Handle<{ clips: Clip[]; lang: Lang; t: Copy }>) {
+  return () => {
+    let { clips, lang, t } = handle.props
+    let counts = new Map(CATEGORIES.map((cat) => [cat, clips.filter((clip) => clip.cat === cat).length]))
+    let cats = CATEGORIES.filter((cat) => counts.get(cat)! >= CHIP_MIN).sort((a, b) => counts.get(b)! - counts.get(a)!)
+    return (
+      <ul class="clip-chips" aria-label={t.outside.jump}>
+        {cats.map((cat) => (
+          <li key={cat}>
+            <button type="button" data-rail-cat={cat}>{CATEGORY_NAMES[lang][cat]} <small>{counts.get(cat)}</small></button>
+          </li>
+        ))}
+      </ul>
     )
   }
 }
@@ -416,7 +464,7 @@ export function HomePage(handle: Handle<{ lang: Lang }>) {
           <Hero lang={lang} t={t} clips={clips} />
 
           {/* Career: today first, then back to the start */}
-          <Row id="career" class="row-career" label={nav('#career')} t={t.rail} next={{ href: '#projects', label: nav('#projects') }} chapter>
+          <Row id="career" class="row-career" label={nav('#career')} t={t.rail} arrows={t.rail.career} next={{ href: '#projects', label: nav('#projects') }} chapter>
             <li class="slide intro intro-career">
               <p class="cin-kicker">{t.career.kicker}</p>
               <h2>{t.career.title[0]}<em>{t.career.title[1]}</em>{t.career.title[2]}</h2>
@@ -450,6 +498,14 @@ export function HomePage(handle: Handle<{ lang: Lang }>) {
                   <a href={`#job-${job.id}`} data-career-more>
                     <b>{t.career.earlier(career.length - RECENT_JOBS)} <span aria-hidden="true">↓</span></b>
                     <span>{career[career.length - 1].start}–{job.end} · {[...new Set(career.slice(RECENT_JOBS).map((old) => old.short ?? old.company))].join(', ')}</span>
+                  </a>
+                </li>
+              ),
+              // ...and once they are open, the way to fold them again sits at their top as well as after the last
+              i === RECENT_JOBS && (
+                <li key="less-top" class="slide career-less career-less-top">
+                  <a href="#career-more" data-career-less>
+                    <span aria-hidden="true">↑</span> {t.career.hide}
                   </a>
                 </li>
               ),
@@ -499,11 +555,11 @@ export function HomePage(handle: Handle<{ lang: Lang }>) {
 
           {/* Personal projects: one row each */}
           <div id="projects" data-chapter>
-            <Row id="track2fit" class="row-t2f" label="track2.fit" t={t.rail} next={{ href: '#jumpoverjump', label: 'Jump Over Jump' }}>
+            <Row id="track2fit" class="row-t2f" label="track2.fit" t={t.rail} arrows={t.rail.t2f} next={{ href: '#jumpoverjump', label: 'Jump Over Jump' }}>
               {/* the hero card: what it is, and every device it runs on, before any scrolling */}
               <li class="slide intro intro-wide intro-t2f">
                 <div class="intro-text">
-                  <p class="cin-kicker">{t.t2f.kickerFirst}</p>
+                  <p class="cin-kicker">{kicker(t.t2f.kickerFirst)}</p>
                   <h2>{t.t2f.captions[0].title}</h2>
                   <p>{t.t2f.captions[0].body}</p>
                   <p class="cap-ctas">
@@ -555,10 +611,10 @@ export function HomePage(handle: Handle<{ lang: Lang }>) {
                       </animateMotion>
                     </circle>
                   ))}
-                  <g class="sync-cloud"><rect x="80" y="20" width="80" height="36" rx="18" /><text x="121" y="42.5">SYNC</text></g>
-                  <g class="sync-node"><rect x="8" y="156" width="64" height="32" rx="9" /><text x="40.5" y="176">WATCH</text></g>
-                  <g class="sync-node"><rect x="88" y="156" width="64" height="32" rx="9" /><text x="120.5" y="176">PHONE</text></g>
-                  <g class="sync-node"><rect x="168" y="156" width="64" height="32" rx="9" /><text x="200.5" y="176">WEB</text></g>
+                  <g class="sync-cloud"><rect x="80" y="20" width="80" height="36" rx="18" /><text x="121" y="42.5">{t.t2f.diagram.cloud}</text></g>
+                  <g class="sync-node"><rect x="8" y="156" width="64" height="32" rx="9" /><text x="40.5" y="176">{t.t2f.diagram.watch}</text></g>
+                  <g class="sync-node"><rect x="88" y="156" width="64" height="32" rx="9" /><text x="120.5" y="176">{t.t2f.diagram.phone}</text></g>
+                  <g class="sync-node"><rect x="168" y="156" width="64" height="32" rx="9" /><text x="200.5" y="176">{t.t2f.diagram.web}</text></g>
                 </svg>
               </Card>
               <Card class="card-soon" title={t.t2f.cards.soon.title} body={t.t2f.cards.soon.body}>
@@ -575,10 +631,10 @@ export function HomePage(handle: Handle<{ lang: Lang }>) {
               </Card>
             </Row>
 
-            <Row id="jumpoverjump" class="row-joj" label="Jump Over Jump" t={t.rail} next={{ href: '#tictactoe', label: 'Tic Tac Toe AI' }}>
+            <Row id="jumpoverjump" class="row-joj" label="Jump Over Jump" t={t.rail} arrows={t.rail.joj} next={{ href: '#tictactoe', label: 'Tic Tac Toe AI' }}>
               <li class="slide intro intro-wide intro-joj">
                 <div class="intro-text">
-                  <p class="cin-kicker">{t.joj.kickerFirst}</p>
+                  <p class="cin-kicker">{kicker(t.joj.kickerFirst)}</p>
                   <h2>{t.joj.title[0]}<em>{t.joj.title[1]}</em></h2>
                   <p>{t.joj.body}</p>
                   <p class="intro-note">{t.joj.title2}</p>
@@ -683,12 +739,12 @@ c_sharp_phaser/JumpOverJump`}</pre>
             </Row>
 
             {/* Tic Tac Toe AI: the 2017 game, playable here (ui/public/tic-tac-toe.tsx runs it) */}
-            <Row id="tictactoe" class="row-ttt" label="Tic Tac Toe AI" t={t.rail} next={{ href: '#more-projects', label: t.more.label }}>
+            <Row id="tictactoe" class="row-ttt" label="Tic Tac Toe AI" t={t.rail} arrows={t.rail.ttt} next={{ href: '#more-projects', label: t.more.label }}>
               {/* the board sits in the first card, beside the story on wide screens and above it on phones,
                   so it's playable before any sideways scrolling */}
               <li class="slide intro intro-wide intro-ttt">
                 <div class="intro-text">
-                  <p class="cin-kicker">{t.ttt.kicker}</p>
+                  <p class="cin-kicker">{kicker(t.ttt.kicker)}</p>
                   <h2>{t.ttt.title[0]}<em>{t.ttt.title[1]}</em>{t.ttt.title[2]}</h2>
                   <p>{t.ttt.body}</p>
                 </div>
@@ -746,7 +802,7 @@ c_sharp_phaser/JumpOverJump`}</pre>
               next={{ href: '#outside', label: nav('#outside') }}
               introClass="intro-career"
               intro={<>
-                <p class="cin-kicker">{t.more.kicker}</p>
+                <p class="cin-kicker">{kicker(t.more.kicker)}</p>
                 <h2>{t.more.title[0]}<em>{t.more.title[1]}</em>{t.more.title[2]}</h2>
                 <p>{t.more.body}</p>
                 <p class="cap-ctas">
@@ -770,6 +826,7 @@ c_sharp_phaser/JumpOverJump`}</pre>
             t={t.rail}
             arrows={t.rail.clips}
             count="clip"
+            total={clips.length}
             next={{ href: '#learning', label: nav('#learning') }}
             chapter
             backdrop
@@ -787,6 +844,7 @@ c_sharp_phaser/JumpOverJump`}</pre>
               </p>
             </>}
             keys={t.outside.keys}
+            head={<HobbyChips clips={clips} lang={lang} t={t} />}
           >
             {clips.slice(0, CLIPS_IN_PAGE).map((clip) => <ClipSlide key={clip.id} clip={clip} lang={lang} t={t} />)}
           </Row>
@@ -797,6 +855,7 @@ c_sharp_phaser/JumpOverJump`}</pre>
             class="row-learning"
             label={nav('#learning')}
             t={t.rail}
+            arrows={t.rail.learning}
             next={{ href: '#posts', label: nav('#posts') }}
             chapter
             introClass="intro-career"

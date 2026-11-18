@@ -149,6 +149,27 @@ export const PoolTiles = clientEntry(import.meta.url, function PoolTiles(handle:
         build()
       }, { signal })
 
+      // ---------- phones: paint bigger ----------
+      // The designer moves into a full-screen dialog (the top layer, clear of the row's transforms), where
+      // the tiles are big enough for a finger and the board scrolls sideways. Done, Escape or closing it
+      // puts the designer back in its card and focus back on the button.
+      let dialog = root.parentElement?.querySelector<HTMLDialogElement>('[data-pool-dialog]')
+      let big = root.querySelector<HTMLButtonElement>('[data-pool-big]')
+      if (dialog && big) {
+        let home = document.createComment('pool')
+        big.addEventListener('click', () => {
+          root.before(home)
+          dialog.append(root)
+          dialog.showModal()
+          at(focus)?.focus()
+        }, { signal })
+        root.querySelector('[data-pool-done]')?.addEventListener('click', () => dialog.close(), { signal })
+        dialog.addEventListener('close', () => {
+          home.replaceWith(root)
+          big.focus()
+        }, { signal })
+      }
+
       build()
     }
   })

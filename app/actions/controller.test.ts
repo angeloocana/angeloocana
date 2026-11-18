@@ -73,6 +73,32 @@ describe('root controller', () => {
     }
   })
 
+  it('names the hero’s second button for where it goes, the projects', async () => {
+    let expected = { [routes.home.href()]: 'See my projects', [routes.pt.href()]: 'Ver meus projetos' }
+    for (let [path, label] of Object.entries(expected)) {
+      let html = await (await router.fetch(new URL(path, 'http://localhost'))).text()
+      let cta = html.match(/<a ([^>]*hero-projects[^>]*)>([^<]+)/)
+      assert.ok(cta, `${path}: no projects button in the hero`)
+      assert.match(cta[1], /href="#projects"/)
+      assert.equal(cta[2].trim(), label)
+    }
+  })
+
+  it('names every row’s list and arrows for that row, never the same words twice', async () => {
+    for (let path of [routes.home.href(), routes.pt.href()]) {
+      let html = await (await router.fetch(new URL(path, 'http://localhost'))).text()
+      let rows = [...html.matchAll(/<section [^>]*data-rail[^>]*aria-label="([^"]+)"[^]*?<\/section>/g)]
+      assert.ok(rows.length >= 8, `${path}: ${rows.length} rows`)
+      let names: string[] = []
+      for (let [section, label] of rows) {
+        let rail = section.match(/<ul [^>]*data-rail-track[^>]*>/)![0]
+        assert.match(rail, new RegExp(`aria-label="${label.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}"`), `${path}: the ${label} list is not named ${label}`)
+        for (let [button] of section.matchAll(/<button [^>]*data-rail-(?:prev|next)[^>]*>/g)) names.push(button.match(/aria-label="([^"]+)"/)![1])
+      }
+      assert.equal(new Set(names).size, names.length, `${path}: arrows share a name: ${names}`)
+    }
+  })
+
   it('GET /pt returns the Portuguese page', async () => {
     let response = await router.fetch(new URL(routes.pt.href(), 'http://localhost'))
 

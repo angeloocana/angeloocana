@@ -20,7 +20,9 @@ export const Rails = clientEntry(import.meta.url, function Rails(handle: Handle)
     let signal = handle.signal
     let root = document.documentElement
     root.classList.add('js-rails')
-    let reduced = matchMedia('(prefers-reduced-motion: reduce)').matches
+    // reduced motion can be turned on (or off) while the page is open: setMotion() below follows it live
+    let reducedQuery = matchMedia('(prefers-reduced-motion: reduce)')
+    let reduced = reducedQuery.matches
     let saveData = (navigator as Navigator & { connection?: { saveData?: boolean } }).connection?.saveData
     let motion = !reduced && !saveData
     // a pause button stops all motion on the page, and keeps it stopped across visits in this tab;
@@ -42,6 +44,19 @@ export const Rails = clientEntry(import.meta.url, function Rails(handle: Handle)
     showMotion()
     // new clip slides (from [data-more]) are handed to the video code below once it is set up
     let onNewSlides: (slides: HTMLElement[]) => void = () => {}
+    // the rest of the clips, loaded once for a row (the row coming near, or a hobby chip, whichever is first)
+    let loading = new Map<HTMLElement, Promise<void>>()
+    let loadMore = (track: HTMLElement) => {
+      let more = track.dataset.more
+      if (!more) return Promise.resolve()
+      if (!loading.has(track)) {
+        loading.set(track, appendClips(track, more).then(() => {
+          if (track.hasAttribute('data-shuffle')) shuffle(track)
+          track.dispatchEvent(new Event('scroll'))
+        }))
+      }
+      return loading.get(track)!
+    }
 
     for (let rail of document.querySelectorAll<HTMLElement>('[data-rail]')) setUpRail(rail)
 
@@ -59,28 +74,61 @@ export const Rails = clientEntry(import.meta.url, function Rails(handle: Handle)
         let near = new IntersectionObserver(([entry]) => {
           if (!entry.isIntersecting) return
           near.disconnect()
-          appendClips(track, more!).then(() => { if (track.hasAttribute('data-shuffle')) shuffle(track); request() })
+          loadMore(track)
         }, { rootMargin: '150% 0px' })
         near.observe(rail)
         signal.addEventListener('abort', () => near.disconnect())
       }
 
-      // "12 / 115" under a long row: the last of its things ([data-count] names their class) that is
-      // mostly in view, out of all of them, and a thin bar that fills as you go
-      let count = rail.querySelector<HTMLElement>('[data-rail-count]')
+      // How much of a slide shows inside the row (0 to 1).
+      let shown = (el: Element, view: DOMRect) => {
+        let r = el.getBoundingClientRect()
+        return r.width ? Math.max(0, Math.min(r.right, view.right) - Math.max(r.left, view.left)) / r.width : 0
+      }
+      // the row's things: the slides of its [data-count] class, or every slide; the page may carry only
+      // some of them, and data-total says how many there are in all (the clips: known when the page is built)
       let kind = track.dataset.count
+      let things = () => (kind ? ([...track.getElementsByClassName(kind)] as HTMLElement[]) : slides().filter((el) => getComputedStyle(el).display !== 'none'))
+      let totalOf = (items: HTMLElement[]) => Math.max(items.length, Number(track.dataset.total) || 0)
+
+      // "12 / 115" under a long row: the last of its things that is mostly in view, out of all of them,
+      // and a thin bar that fills as you go
+      let count = rail.querySelector<HTMLElement>('[data-rail-count]')
       let showCount = (atEnd: boolean) => {
         if (!count || !kind) return
-        let items = [...track.getElementsByClassName(kind)] as HTMLElement[]
+        let items = things()
         if (!items.length) return
+        let total = totalOf(items)
         let right = track.getBoundingClientRect().right
         let seen = atEnd ? items.length : items.filter((el) => el.getBoundingClientRect().left + el.offsetWidth * 0.6 <= right).length
-        let text = `${seen} / ${items.length}`
+        let text = `${seen} / ${total}`
         if (count.dataset.text === text) return
         count.dataset.text = text
         count.innerHTML = `<span>${text}</span><i></i>`
-        count.style.setProperty('--done', `${(seen / items.length) * 100}%`)
+        count.style.setProperty('--done', `${(seen / total) * 100}%`)
       }
+
+      // Where the row came to rest, for screen readers: "3 to 4 of 9", said once scrolling settles (not on
+      // every frame of it), and only while focus is in this row.
+      let live = rail.querySelector<HTMLElement>('[data-rail-live]')
+      let at = JSON.parse(track.dataset.at ?? '{}') as { one?: string; some?: string }
+      let settled = 0
+      let announce = () => {
+        if (!live || !at.one || !rail.contains(document.activeElement)) return
+        let items = things()
+        let view = track.getBoundingClientRect()
+        let inView = items.map((el, i) => (shown(el, view) >= 0.6 ? i + 1 : 0)).filter(Boolean)
+        if (!inView.length) return
+        let [a, b] = [inView[0], inView.at(-1)!]
+        let text = (a === b ? at.one : at.some!).replace('{a}', String(a)).replace('{b}', String(b)).replace('{n}', String(totalOf(items)))
+        if (live.textContent !== text) live.textContent = text
+      }
+      let settle = () => {
+        clearTimeout(settled)
+        settled = window.setTimeout(announce, 250)
+      }
+      track.addEventListener('scroll', settle, { signal, passive: true })
+      signal.addEventListener('abort', () => clearTimeout(settled))
 
       let queued = false
       let lastBg = ''
@@ -98,9 +146,23 @@ export const Rails = clientEntry(import.meta.url, function Rails(handle: Handle)
         if (prev) prev.disabled = atStart
         if (next) next.disabled = atEnd
         if (lost) (atStart ? next : prev)?.focus({ preventScroll: true })
+        // only a card that peeks in at an edge fades out (--peek-l and --peek-r: how much of it shows); a
+        // card that is mostly in view never does
+        let view = track.getBoundingClientRect()
+        let peekAt = (side: 'left' | 'right') => {
+          let x = view[side]
+          let edge = list.find((s) => {
+            let r = s.getBoundingClientRect()
+            return r.left < x - 1 && r.right > x + 1
+          })
+          if (!edge || shown(edge, view) >= 0.6) return 0
+          let r = edge.getBoundingClientRect()
+          return Math.round(side === 'right' ? x - r.left : r.right - x)
+        }
+        track.style.setProperty('--peek-l', `${peekAt('left')}px`)
+        track.style.setProperty('--peek-r', `${peekAt('right')}px`)
         if (bg) {
           // backdrop follows the first video slide that is mostly in view
-          let view = track.getBoundingClientRect()
           let shown = list.find((s) => {
             let r = s.getBoundingClientRect()
             return s.dataset.poster && r.left >= view.left - r.width * 0.3 && r.right <= view.right + r.width * 0.3
@@ -123,6 +185,20 @@ export const Rails = clientEntry(import.meta.url, function Rails(handle: Handle)
       track.addEventListener('scroll', request, { signal, passive: true })
       addEventListener('resize', request, { signal })
       update()
+
+      // Hobby chips over the row ([data-rail-cat]): each slides the row to the first clip of its hobby,
+      // loading the rest of the clips first when they aren't in yet.
+      for (let chip of rail.querySelectorAll<HTMLButtonElement>('[data-rail-cat]')) {
+        chip.addEventListener('click', async () => {
+          chip.setAttribute('aria-busy', 'true')
+          await loadMore(track)
+          chip.removeAttribute('aria-busy')
+          let first = track.querySelector<HTMLElement>(`[data-cat="${chip.dataset.railCat}"]`)
+          if (!first) return
+          for (let other of rail.querySelectorAll('[data-rail-cat]')) other.toggleAttribute('data-picked', other === chip)
+          slideTo(first)
+        }, { signal })
+      }
 
       // The clips' Instagram links: one Tab stop for the whole row, on the clip in view (a roving tabindex).
       // From there the left and right arrows move to the clip before or after it, and Enter opens its post.
@@ -152,6 +228,18 @@ export const Rails = clientEntry(import.meta.url, function Rails(handle: Handle)
         }, { signal })
       }
 
+      // Slides the row so a card starts at its left edge, the page staying put. Snapping is off for the trip:
+      // off screen the card is still shrunk by its slide-in animation, and the browser would line up with
+      // that smaller box, a few pixels short.
+      function slideTo(slide: HTMLElement) {
+        track.classList.add('is-jumping')
+        let landed = () => track.classList.remove('is-jumping')
+        track.addEventListener('scrollend', landed, { once: true, signal })
+        setTimeout(landed, 1500)
+        let first = slides()[0]
+        track.scrollTo({ left: slide.offsetLeft - first.offsetLeft, behavior: reduced ? 'auto' : 'smooth' })
+      }
+
       // arrows: page by the width of what is visible
       rail.addEventListener('click', (event) => {
         let target = event.target as Element
@@ -165,14 +253,7 @@ export const Rails = clientEntry(import.meta.url, function Rails(handle: Handle)
         let sideways = track.scrollWidth > track.clientWidth + 8
         if (slide && sideways) {
           event.preventDefault()
-          // snapping is off for the trip: off screen the card is still shrunk by its slide-in animation,
-          // and the browser would line up with that smaller box, a few pixels short
-          track.classList.add('is-jumping')
-          let landed = () => track.classList.remove('is-jumping')
-          track.addEventListener('scrollend', landed, { once: true, signal })
-          setTimeout(landed, 1500)
-          let first = slides()[0]
-          track.scrollTo({ left: slide.offsetLeft - first.offsetLeft, behavior: reduced ? 'auto' : 'smooth' })
+          slideTo(slide)
           // the last one picked stays lit, so swiping back to the list shows where you were
           for (let link of rail.querySelectorAll('a[data-rail-jump]')) link.toggleAttribute('data-picked', link === jump)
           slide.tabIndex = -1
@@ -315,11 +396,27 @@ export const Rails = clientEntry(import.meta.url, function Rails(handle: Handle)
     for (let list of document.querySelectorAll('[data-reveal]')) reveal.observe(list)
     signal.addEventListener('abort', () => reveal.disconnect())
 
-    // Pause buttons: every one on the page shows the same state. Without motion there is nothing to pause.
+    // Pause buttons: every one on the page shows the same state. Without motion there is nothing to pause,
+    // so they are hidden (and out of the Tab order) then.
     let pauseButtons = [...document.querySelectorAll<HTMLButtonElement>('[data-pause]')]
     let showPaused = () => pauseButtons.forEach((b) => b.setAttribute('aria-pressed', String(paused)))
-    if (!motion) pauseButtons.forEach((b) => (b.hidden = true))
+    // the videos below are set up only when the page opens with motion on
+    let canPlay = motion
+    let onScreen = new Set<HTMLVideoElement>()
+    let showPauseButtons = () => pauseButtons.forEach((b) => (b.hidden = !(motion && canPlay)))
+    showPauseButtons()
     showPaused()
+    // Reduced motion turned on while the page is open stops everything at once: videos, the SVG timelines,
+    // the cycling screens, the demo and the CSS loops. Turned off again, it all picks up (the videos only
+    // if the page opened with motion on; otherwise on the next visit).
+    reducedQuery.addEventListener('change', () => {
+      reduced = reducedQuery.matches
+      motion = !reduced && !saveData
+      showMotion()
+      showPauseButtons()
+      if (!motion) for (let video of document.querySelectorAll('video')) video.pause()
+      else if (!paused) for (let video of onScreen) video.play().catch(() => {})
+    }, { signal })
 
     // The career's older jobs (phones fold them after the recent ones): one tap opens them all and moves
     // focus to the first. Without JS the link's #hash does the same through :target (site.css).
@@ -353,13 +450,12 @@ export const Rails = clientEntry(import.meta.url, function Rails(handle: Handle)
 
     // Videos play only while on screen, and never for reduced motion or data saver.
     if (motion) {
-      let onScreen = new Set<HTMLVideoElement>()
       let watcher = new IntersectionObserver((entries) => {
         for (let { target, isIntersecting } of entries) {
           let video = target as HTMLVideoElement
           if (isIntersecting) onScreen.add(video)
           else onScreen.delete(video)
-          if (isIntersecting && !paused) video.play().catch(() => {})
+          if (isIntersecting && !paused && motion) video.play().catch(() => {})
           else video.pause()
         }
       }, { threshold: 0.35 })
@@ -435,7 +531,7 @@ export const Rails = clientEntry(import.meta.url, function Rails(handle: Handle)
       }
 
       let timer = setInterval(() => {
-        if (document.hidden || paused) return
+        if (document.hidden || paused || !motion) return
         for (let stack of document.querySelectorAll<HTMLElement>('[data-cycle]')) {
           let rect = stack.getBoundingClientRect()
           if (rect.bottom < 0 || rect.top > innerHeight || rect.right < 0 || rect.left > innerWidth) continue
@@ -519,6 +615,28 @@ export const Rails = clientEntry(import.meta.url, function Rails(handle: Handle)
       toggle?.toggleAttribute('data-current', !!moreList?.querySelector(`[data-chapter-link="${current}"]`))
     }
     addEventListener('scroll', onScroll, { signal, passive: true })
+
+    // The language flags take you to the same section in the other language: their links carry the #id of
+    // the row in the middle of the screen, kept up to date as you scroll (so a copied link works too).
+    // Without JS they open the other language's page at the top.
+    let langLinks = [...document.querySelectorAll<HTMLAnchorElement>('.lang-card')]
+    let places = [...document.querySelectorAll<HTMLElement>('main section[id], footer[id]')]
+    let carryPlace = () => {
+      let here = ''
+      for (let place of places) if (place.getBoundingClientRect().top <= innerHeight / 2) here = place.id
+      if (scrollY > 0 && innerHeight + scrollY >= root.scrollHeight - 4) here = places.at(-1)?.id ?? here
+      if (here === 'top') here = ''
+      for (let link of langLinks) if (link.hash.slice(1) !== here) link.hash = here
+    }
+    let placePending = false
+    let queuePlace = () => {
+      if (!placePending) { placePending = true; requestAnimationFrame(() => { placePending = false; carryPlace() }) }
+    }
+    addEventListener('scroll', queuePlace, { signal, passive: true })
+    // a page opened at a #section scrolls there after this script has run
+    addEventListener('load', queuePlace, { signal, once: true })
+    addEventListener('hashchange', queuePlace, { signal })
+    carryPlace()
 
     // Phones: the More button in the menu opens the sections after the first two. Escape, a tap outside or
     // picking one closes it; Escape gives focus back to the button.
