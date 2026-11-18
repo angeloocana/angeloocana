@@ -170,6 +170,13 @@ export const PoolTiles = clientEntry(import.meta.url, function PoolTiles(handle:
       }
       frame?.addEventListener('scroll', cue, { signal, passive: true })
       addEventListener('resize', cue, { signal })
+      // measured again once the frame has its size in the dialog (it fires after layout), so the cue is
+      // right as it opens, not only after the first swipe
+      if (frame) {
+        let sized = new ResizeObserver(cue)
+        sized.observe(frame)
+        signal.addEventListener('abort', () => sized.disconnect())
+      }
       for (let el of [...steppers, root.querySelector('[data-pool-clear]')]) el?.addEventListener('click', () => requestAnimationFrame(cue), { signal })
       if (dialog && big) {
         let home = document.createComment('pool')

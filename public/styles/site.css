@@ -710,18 +710,21 @@ pre.rf-code { margin: 0; width: 100%; height: 100%; padding: 1.2rem 1.4rem; font
 .pool-big, .pool-done { display: none; min-height: 2.75rem; padding: 0.7rem 1.15rem; font-size: 0.75rem; }
 /* its room is kept before the script runs (and without it), so nothing under it moves when it appears */
 @media (max-width: 760px) { .pool-big { display: inline-flex; } html:not(.js-rails) .pool-big { visibility: hidden; } }
-/* the screen is filled top to bottom: the name and Done, the colors, the board in the middle of what is
-   left, then the size and Clear at the bottom, under the thumb. The tiles fit the screen's width while they
+/* the name and Done at the top; the colors, the board, its cue, the size and Clear as one group in the
+   middle of the rest (the empty rows 2 and 6 share what is left), so nothing floats apart. The tiles fit the screen's width while they
    stay 28px or more (up to 36px); below that the board scrolls sideways and says so (pool-tiles.tsx). */
 .pool-dialog { width: 100%; max-width: none; height: 100dvh; max-height: none; margin: 0; padding: 1rem 1rem max(1rem, env(safe-area-inset-bottom)); border: 0; background: #0b0b0b; color: var(--text); overflow: hidden; }
 .pool-dialog::backdrop { background: rgb(0 0 0 / 0.8); }
-.pool-dialog .pool { --pool-h: auto; height: 100%; margin: 0; grid-template-columns: minmax(0, 1fr) auto; grid-template-rows: auto auto minmax(0, 1fr) auto; align-content: stretch; }
+.pool-dialog .pool { --pool-h: auto; height: 100%; margin: 0; grid-template-columns: minmax(0, 1fr) auto; grid-template-rows: auto minmax(0, 1fr) auto minmax(0, auto) auto minmax(0, 1fr); align-content: stretch; }
+.pool-dialog .pool-colors { grid-row: 3; }
+.pool-dialog .pool-board { grid-row: 4; }
+.pool-dialog .pool-foot { grid-row: 5; }
 .pool-dialog .pool-big { display: none; }
 .pool-dialog .pool > :not(.pool-name):not(.pool-done) { grid-column: 1 / -1; }
 .pool-dialog .pool-done { display: inline-flex; grid-row: 1; grid-column: 2; }
-/* the board and its cue, together in the middle of the space between the colors and the size */
+/* the board and its cue */
 .pool-board { display: contents; }
-.pool-dialog .pool-board { display: grid; justify-self: stretch; grid-template-columns: minmax(0, 1fr); grid-template-rows: minmax(0, auto) auto; align-content: center; gap: 0.75rem; min-height: 0; }
+.pool-dialog .pool-board { display: grid; justify-self: stretch; grid-template-columns: minmax(0, 1fr); grid-template-rows: minmax(0, auto) auto; gap: 0.75rem; min-height: 0; }
 .pool-dialog .pool-frame { position: relative; height: auto; max-height: 100%; overflow: auto; overscroll-behavior: contain; scrollbar-width: none; }
 .pool-dialog .pool-frame::-webkit-scrollbar { display: none; }
 .pool-dialog .pool-grid { width: min(100%, calc(var(--cols) * 2.25rem)); margin-inline: auto; }
@@ -732,9 +735,11 @@ pre.rf-code { margin: 0; width: 100%; height: 100%; padding: 1.2rem 1.4rem; font
 .pool-dialog .pool-frame[data-more-left] { -webkit-mask-image: linear-gradient(to left, #000 82%, rgb(0 0 0 / 0.25)); mask-image: linear-gradient(to left, #000 82%, rgb(0 0 0 / 0.25)); }
 .pool-dialog .pool-frame[data-more-left][data-more-right] { -webkit-mask-image: linear-gradient(to right, rgb(0 0 0 / 0.25), #000 18% 82%, rgb(0 0 0 / 0.25)); mask-image: linear-gradient(to right, rgb(0 0 0 / 0.25), #000 18% 82%, rgb(0 0 0 / 0.25)); }
 .pool-swipe { display: none; }
-.pool-dialog .pool-swipe { display: block; visibility: hidden; justify-self: center; font: 500 0.75rem/1.2 var(--sans); letter-spacing: 0.08em; color: var(--dim); }
+.pool-dialog .pool-swipe { display: flex; gap: 0.4em; visibility: hidden; justify-self: center; font: 500 0.75rem/1.2 var(--sans); letter-spacing: 0.08em; color: var(--dim); }
 .pool-dialog .pool-swipe span { color: var(--amber); }
 .pool-dialog:has(.pool-frame[data-scrolls]) .pool-swipe { visibility: visible; }
+/* at the last column the cue points back, the way the rest of the board is */
+.pool-dialog:has(.pool-frame[data-more-left]:not([data-more-right])) .pool-swipe span { order: -1; rotate: 180deg; }
 .pool-dialog .pool-step { letter-spacing: 0.1em; }
 @media (min-width: 900px) {
   .job.pool-card { --pool-h: calc(var(--row-h) - 11rem); display: grid; grid-template-columns: minmax(0, 18rem) minmax(0, 1fr); grid-auto-rows: min-content; align-content: start; column-gap: 2.4rem; width: min(60rem, 90vw); }
