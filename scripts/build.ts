@@ -11,7 +11,8 @@ import { router } from '../app/router.ts'
 const ORIGIN = 'http://localhost'
 const OUT = 'dist'
 // the home pages' clips JSON is built like a page: the router answers it
-const PAGES: Record<string, string> = { '/': 'index.html', '/pt': 'pt/index.html', '/data/clips.json': 'data/clips.json' }
+// /pt/, not /pt: the host serves pt/index.html there, and its own /pt → /pt/ redirect drops any #section
+const PAGES: Record<string, string> = { '/': 'index.html', '/pt/': 'pt/index.html', '/data/clips.json': 'data/clips.json' }
 // every post keeps the URL it had on the old site: /en/blog/git/git-setup/ → en/blog/git/git-setup/index.html
 for (let post of allPosts()) PAGES[post.url] = `${post.url.slice(1)}index.html`
 const SITEMAP = Object.keys(PAGES).filter((path) => !path.endsWith('.json'))
@@ -110,15 +111,15 @@ await save(
     '/en / 301',
     '/en/ / 301',
     '/en/blog/ /#posts 301',
-    '/pt/blog/ /pt#posts 301',
+    '/pt/blog/ /pt/#posts 301',
     '/en/tags/* /#posts 301',
-    '/pt/tags/* /pt#posts 301',
+    '/pt/tags/* /pt/#posts 301',
     '/en/resume/* /#career 301',
-    '/pt/resume/* /pt#career 301',
+    '/pt/resume/* /pt/#career 301',
     '/en/about/ / 301',
-    '/pt/about/ /pt 301',
+    '/pt/about/ /pt/ 301',
     '/en/contact/ /#contact 301',
-    '/pt/contact/ /pt#contact 301',
+    '/pt/contact/ /pt/#contact 301',
     '/fr/blog/* /en/blog/:splat 301',
     '/fr / 301',
     '/fr/ / 301',
