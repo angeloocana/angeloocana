@@ -78,12 +78,13 @@ export function clipUrl(id: string, ext: 'mp4' | 'jpg') {
 }
 
 /**
- * A lighter cut of the hero tile's clip for phones (360x640, about 400 KB instead of 1.7 MB), cut by
- * hand into media/hero/<id>-phone.mp4 and pushed with the rest. Only the clip that opens the row has
- * one; when another clip takes its place there is none, and phones play the full clip.
+ * Lighter cuts of the hero tile's clip, cut by hand into media/hero/ and pushed with the rest: `phone`
+ * (360x640, about 400 KB) and `tile` (540x960 at a lower bitrate, about 700 KB, for wider screens),
+ * instead of the 1.7 MB clip the Outside work row plays. Only the clip that opens the row has them;
+ * when another clip takes its place there are none, and the tile plays the full clip.
  */
-export function phoneClipUrl(id: string) {
-  let key = `hero/${id}-phone.mp4`
+export function heroClipUrl(id: string, cut: 'phone' | 'tile') {
+  let key = `hero/${id}-${cut}.mp4`
   let version = MEDIA_VERSIONS[key]
   let file = join(MEDIA_DIR, 'media', key)
   if ((!version || process.env.NODE_ENV === 'development') && existsSync(file)) version = Math.round(statSync(file).mtimeMs / 1000).toString(36)

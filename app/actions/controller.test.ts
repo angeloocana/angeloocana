@@ -95,14 +95,14 @@ describe('root controller', () => {
     }
   })
 
-  it('gives phones the lighter cut of the hero clip, before the full one', async () => {
+  it('plays the lighter cuts of the hero clip: the phone one first, then the tile one', async () => {
     let html = await (await router.fetch(new URL(routes.home.href(), 'http://localhost'))).text()
     let video = html.match(/<video [^>]*tile-video[\s\S]*?<\/video>/)?.[0] ?? ''
     let sources = [...video.matchAll(/<source ([^>]*)>/g)].map((m) => m[1])
-    assert.equal(sources.length, 2, 'the hero video should have a phone source and the full one')
+    assert.equal(sources.length, 2, 'the hero video should have a phone source and a tile source')
     assert.match(sources[0], /src="\/media\/hero\/[^"]+-phone\.mp4\?v=/)
     assert.match(sources[0], /media="\(max-width: 760px\)"/)
-    assert.match(sources[1], /src="\/media\/clips\//)
+    assert.match(sources[1], /src="\/media\/hero\/[^"]+-tile\.mp4\?v=/)
   })
 
   it('names every row’s list and arrows for that row, never the same words twice', async () => {
