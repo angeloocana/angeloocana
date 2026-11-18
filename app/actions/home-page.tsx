@@ -691,7 +691,8 @@ export function HomePage(handle: Handle<{ lang: Lang }>) {
                   <p class="ranks-tabs">{t.joj.ranks.tabs.map((tab, i) => <span key={tab} class={i === 0 ? 'on' : ''}>{tab}</span>)}</p>
                   <ol>
                     <li class="ranks-you"><span>1</span><b>{t.joj.ranks.you}</b><i>🏆</i></li>
-                    {['Neural', 'Master', 'Expert'].map((bot, i) => (
+                    {/* the three strongest bots, by the names the bot list gives them (Mestre, Especialista in PT) */}
+                    {t.joj.bots.slice(-3).reverse().map(([bot], i) => (
                       <li key={bot}><span>{i + 2}</span><b>{bot}</b><small>{t.joj.ranks.ai}</small></li>
                     ))}
                   </ol>

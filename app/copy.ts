@@ -12,7 +12,7 @@ const en = {
   meta: {
     title: 'Ângelo Ocanã · Staff software engineer',
     description:
-      'Staff software engineer at Shopify, in Ottawa. I build a workout tracker, a twelve-year-old board game and other things for the web, since 2007.',
+      'Staff software engineer at Shopify, in Ottawa, building for the web since 2007. I also build a workout tracker, a twelve-year-old board game and other things.',
     locale: 'en_CA',
   },
   intro: 'presents',
@@ -292,7 +292,7 @@ const pt: Copy = {
   meta: {
     title: 'Ângelo Ocanã · Engenheiro de software staff',
     description:
-      'Engenheiro de software staff na Shopify, em Ottawa. Construo um app de treino, um jogo de tabuleiro de doze anos e outras coisas para a web, desde 2007.',
+      'Engenheiro de software staff na Shopify, em Ottawa, construindo para a web desde 2007. Também construo um app de treino, um jogo de tabuleiro de doze anos e outras coisas.',
     locale: 'pt_BR',
   },
   intro: 'apresenta',
