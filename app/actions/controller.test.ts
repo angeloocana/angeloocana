@@ -47,8 +47,25 @@ describe('root controller', () => {
       }
     }
     let html = await (await router.fetch(new URL(routes.home.href(), 'http://localhost'))).text()
-    for (let [, excerpt] of html.matchAll(/<p class="post-excerpt">([^]*?)<\/p>/g)) {
+    for (let [, excerpt] of html.matchAll(/<p class="post-excerpt"[^>]*>([^]*?)<\/p>/g)) {
       assert.ok(!/&lt;|src=/.test(excerpt), excerpt)
+    }
+  })
+
+  it('marks the other language’s post titles and excerpts with lang', async () => {
+    for (let [path, lang, other] of [[routes.pt.href(), 'pt', 'en'], [routes.home.href(), 'en', 'pt-BR']] as const) {
+      let html = await (await router.fetch(new URL(path, 'http://localhost'))).text()
+      let cards = [...html.matchAll(/<li class="slide post-card">([^]*?)<\/li>/g)].map((m) => m[1])
+      let foreign = postsFor(lang).filter((post) => post.lang !== lang)
+      assert.ok(cards.length === postsFor(lang).length, `${path}: ${cards.length} post cards`)
+      if (lang === 'pt') assert.ok(foreign.length > 0, 'the PT page shows English posts')
+      for (let [i, post] of postsFor(lang).entries()) {
+        let want = post.lang === lang ? undefined : other
+        let title = cards[i].match(/<h3([^>]*)>/)![1]
+        let excerpt = cards[i].match(/<p([^>]*class="post-excerpt"[^>]*)>/)![1]
+        assert.equal(title.match(/lang="([^"]+)"/)?.[1], want, `${path} ${post.url}: title`)
+        assert.equal(excerpt.match(/lang="([^"]+)"/)?.[1], want, `${path} ${post.url}: excerpt`)
+      }
     }
   })
 

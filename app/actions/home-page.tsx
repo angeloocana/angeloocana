@@ -901,7 +901,11 @@ c_sharp_phaser/JumpOverJump`}</pre>
               <p>{t.posts.body}</p>
             </>}
           >
-            {postsFor(lang).map((post) => (
+            {postsFor(lang).map((post) => {
+              // a post in the other language says so on its title and excerpt, for screen readers and
+              // translation (hrefLang only describes where the link goes)
+              let postLang = post.lang === lang ? undefined : post.lang === 'pt' ? 'pt-BR' : 'en'
+              return (
               <li key={post.key} class="slide post-card">
                 <a href={post.url} hrefLang={post.lang} data-cursor={t.posts.kicker}>
                   <p class="post-year">{post.date.slice(0, 4)}</p>
@@ -910,8 +914,8 @@ c_sharp_phaser/JumpOverJump`}</pre>
                     <span>{post.youtubeId ? t.posts.video : t.posts.read(post.minutes)}</span>
                     {post.lang !== lang && <span class="post-lang">{t.posts.other[post.lang]}</span>}
                   </p>
-                  <h3>{post.title}</h3>
-                  <p class="post-excerpt">{post.excerpt}</p>
+                  <h3 lang={postLang}>{post.title}</h3>
+                  <p class="post-excerpt" lang={postLang}>{post.excerpt}</p>
                   {post.tags.length > 0 && (
                     <ul class="post-tags">
                       {post.tags.slice(0, 3).map((tag) => <li key={tag}>{tag}</li>)}
@@ -919,7 +923,8 @@ c_sharp_phaser/JumpOverJump`}</pre>
                   )}
                 </a>
               </li>
-            ))}
+              )
+            })}
           </Row>
         </main>
 
