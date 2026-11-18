@@ -5,7 +5,8 @@ export type Lang = 'en' | 'pt'
 
 export const LANGS: Lang[] = ['en', 'pt']
 
-export const HREF: Record<Lang, string> = { en: '/', pt: '/pt' }
+// /pt/, not /pt: the static host redirects /pt to /pt/, and the redirect drops the #section
+export const HREF: Record<Lang, string> = { en: '/', pt: '/pt/' }
 
 const en = {
   meta: {
@@ -45,12 +46,13 @@ const en = {
     work: 'See my projects',
     tiles: {
       label: 'A little of everything',
-      career: { kicker: 'Career', now: '2021–now', role: 'Staff software engineer · team lead', since: (count: number, since: string) => `${count} jobs since ${since}` },
+      career: { kicker: 'Career', now: '2021–now', role: 'Team lead', since: (count: number, since: string) => `${count} jobs since ${since}` },
       build: { kicker: 'Projects', title: 'track2.fit · Jump Over Jump', body: 'My own apps, end to end.', t2f: 'Workout tracker', joj: 'Board game' },
       life: { kicker: 'Outside work', count: (count: number) => `${count} videos` },
     },
     onInstagram: 'Watch the full video on Instagram',
-    pause: 'Pause motion',
+    // the pause button's name says what a press does
+    motion: { pause: 'Pause motion', play: 'Play motion' },
   },
   // the clips row, after the projects
   outside: {
@@ -77,7 +79,7 @@ const en = {
     learning: { prev: 'Back in Learning', next: 'More of Learning' },
     posts: { prev: 'Previous posts', next: 'More posts' },
   },
-  links: { elsewhere: 'Elsewhere', newTab: 'opens in a new tab', write: 'Write' },
+  links: { elsewhere: 'Elsewhere', newTab: 'opens in a new tab' },
   t2f: {
     kickerFirst: 'Personal projects · track2.fit',
     kicker: 'track2.fit',
@@ -184,7 +186,7 @@ const en = {
   ttt: {
     kicker: 'Personal projects · Tic Tac Toe AI',
     title: ['Beat my ', 'AI', '.'],
-    body: 'I built it by hand in 2017 for my interview at Kinaxis, whose challenge was a game on the HTML5 canvas: three days from the first commit to the demo. The AI came after, with six more weeks of polish.',
+    body: 'I had three days to build a canvas game for my Kinaxis interview, in 2017, and I built it by hand. The AI came after the interview, with six more weeks of polish.',
     storyTitle: 'How it plays',
     note: 'Simple rules make the moves: win if it can, block if it must, otherwise any free square. A small neural network (18 inputs, 9 hidden, 9 out) trains on every game too. That was the experiment, and it never learned to play: it always reaches for the same square, and the rules step in.',
     builtWith: 'Built in 2017 with',
@@ -231,6 +233,7 @@ const en = {
     // phones: the tiles are small there, so they open bigger, in a layer of their own
     bigger: 'Paint bigger',
     done: 'Done',
+    swipe: 'Swipe for more columns',
   },
   // the last projects row: everything smaller, in Education's cards (content/projects.ts)
   more: {
@@ -319,12 +322,12 @@ const pt: Copy = {
     work: 'Ver meus projetos',
     tiles: {
       label: 'Um pouco de tudo',
-      career: { kicker: 'Carreira', now: '2021–hoje', role: 'Engenheiro de software staff · líder técnico', since: (count: number, since: string) => `${count} trabalhos desde ${since}` },
+      career: { kicker: 'Carreira', now: '2021–hoje', role: 'Líder técnico', since: (count: number, since: string) => `${count} trabalhos desde ${since}` },
       build: { kicker: 'Projetos', title: 'track2.fit · Jump Over Jump', body: 'Meus apps, de ponta a ponta.', t2f: 'App de treino', joj: 'Jogo de tabuleiro' },
       life: { kicker: 'Fora do trabalho', count: (count: number) => `${count} vídeos` },
     },
     onInstagram: 'Ver o vídeo completo no Instagram',
-    pause: 'Pausar animações',
+    motion: { pause: 'Pausar animações', play: 'Retomar animações' },
   },
   outside: {
     label: 'Fora do trabalho',
@@ -347,7 +350,7 @@ const pt: Copy = {
     learning: { prev: 'Voltar em Estudos', next: 'Mais estudos' },
     posts: { prev: 'Posts anteriores', next: 'Mais posts' },
   },
-  links: { elsewhere: 'Em outros lugares', newTab: 'abre em uma nova aba', write: 'Escrever' },
+  links: { elsewhere: 'Em outros lugares', newTab: 'abre em uma nova aba' },
   t2f: {
     kickerFirst: 'Projetos pessoais · track2.fit',
     kicker: 'track2.fit',
@@ -450,7 +453,7 @@ const pt: Copy = {
   ttt: {
     kicker: 'Projetos pessoais · Tic Tac Toe AI',
     title: ['Vença a minha ', 'IA', '.'],
-    body: 'Fiz à mão em 2017 para a minha entrevista na Kinaxis, cujo desafio era um jogo no canvas do HTML5: três dias do primeiro commit até a demo. A IA veio depois, com mais seis semanas de acabamento.',
+    body: 'Eu tinha três dias para fazer um jogo em canvas para a minha entrevista na Kinaxis, em 2017, e fiz tudo à mão. A IA veio depois da entrevista, com mais seis semanas de acabamento.',
     storyTitle: 'Como ela joga',
     note: 'Regras simples fazem as jogadas: ganhar se puder, bloquear se precisar, senão qualquer casa livre. Uma pequena rede neural (18 entradas, 9 neurônios ocultos e 9 saídas) também treina a cada partida. Esse era o experimento, e ela nunca aprendeu a jogar: sempre tenta a mesma casa, e as regras entram em cena.',
     builtWith: 'Feito em 2017 com',
@@ -493,8 +496,9 @@ const pt: Copy = {
     more: { nRows: 'Mais linhas', nCols: 'Mais colunas' },
     clear: 'Limpar',
     cell: 'Linha {r}, coluna {c}: {color}',
-    bigger: 'Pintar maior',
+    bigger: 'Pintar em tela cheia',
     done: 'Pronto',
+    swipe: 'Deslize para ver mais colunas',
   },
   more: {
     label: 'Mais projetos',

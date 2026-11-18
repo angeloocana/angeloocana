@@ -14,7 +14,7 @@ export const FONTS = ['/fonts/inter.woff2', '/fonts/instrument-serif.woff2']
 export function SocialLinks(handle: Handle<{ class: string; t: Copy['links'] }>) {
   return () => (
     <div class={`links ${handle.props.class}`}>
-      <a class="link-email" href={`mailto:${SITE.email}`} data-cursor={handle.props.t.write}>
+      <a class="link-email" href={`mailto:${SITE.email}`} data-cursor="none">
         <SocialIcon id="email" />
         <span>{SITE.email}</span>
       </a>
@@ -64,7 +64,7 @@ function Flag(handle: Handle<{ lang: Lang }>) {
 export function SiteNav(handle: Handle<{ lang: Lang; t: Copy; home?: boolean; langHref: Record<Lang, string> }>) {
   return () => {
     let { home, lang, langHref, t } = handle.props
-    let base = home ? '' : lang === 'pt' ? '/pt' : '/'
+    let base = home ? '' : lang === 'pt' ? '/pt/' : '/'
     return (
       <header class="cin-nav">
         {home && <a class="skip-link" href="#main">{t.nav.skip}</a>}
@@ -96,6 +96,9 @@ export function SiteNav(handle: Handle<{ lang: Lang; t: Copy; home?: boolean; la
               key={code}
               class={`lang-card lang-${code}`}
               href={langHref[code]}
+              // a full page load, not client navigation: the browser then lands on the #section the link
+              // carries (rails.tsx keeps it current), where client navigation scrolled back to the top
+              data-rmx-document
               hrefLang={code}
               lang={code}
               aria-label={t.nav.langs[code]}

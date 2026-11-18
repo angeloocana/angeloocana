@@ -155,17 +155,35 @@ export const PoolTiles = clientEntry(import.meta.url, function PoolTiles(handle:
       // puts the designer back in its card and focus back on the button.
       let dialog = root.parentElement?.querySelector<HTMLDialogElement>('[data-pool-dialog]')
       let big = root.querySelector<HTMLButtonElement>('[data-pool-big]')
+      // When the board is wider than the screen (tiles stay 28px or more), the frame says so: a fade on the
+      // side with more tiles, and a line under the board (CSS reads data-scrolls, data-more-left/right)
+      let frame = root.querySelector<HTMLElement>('.pool-frame')
+      let cue = () => {
+        if (!frame) return
+        // in the dialog the tiles fit the screen's width while that leaves them 28px or more; otherwise
+        // they are 36px and the board scrolls
+        frame.toggleAttribute('data-wide', !!dialog?.open && frame.clientWidth / tiles.size.nCols < 28)
+        let max = frame.scrollWidth - frame.clientWidth
+        frame.toggleAttribute('data-scrolls', max > 2)
+        frame.toggleAttribute('data-more-left', frame.scrollLeft > 2)
+        frame.toggleAttribute('data-more-right', frame.scrollLeft < max - 2)
+      }
+      frame?.addEventListener('scroll', cue, { signal, passive: true })
+      addEventListener('resize', cue, { signal })
+      for (let el of [...steppers, root.querySelector('[data-pool-clear]')]) el?.addEventListener('click', () => requestAnimationFrame(cue), { signal })
       if (dialog && big) {
         let home = document.createComment('pool')
         big.addEventListener('click', () => {
           root.before(home)
           dialog.append(root)
           dialog.showModal()
-          at(focus)?.focus()
+          cue()
+          at(focus)?.focus({ preventScroll: true })
         }, { signal })
         root.querySelector('[data-pool-done]')?.addEventListener('click', () => dialog.close(), { signal })
         dialog.addEventListener('close', () => {
           home.replaceWith(root)
+          cue()
           big.focus()
         }, { signal })
       }

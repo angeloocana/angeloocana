@@ -31,11 +31,11 @@ const RECENT_JOBS = 2
 /** The hobby chips over the clips row leave out the ones with fewer clips than this. */
 const CHIP_MIN = 3
 
-// "Personal projects · track2.fit": the product's name never breaks across two lines
+// "Personal projects · track2.fit": a line may break only before a separator, never after it, and never
+// inside the part that follows it (the product's name stays whole, the "·" goes down with it)
 function kicker(text: string) {
-  let at = text.lastIndexOf(' · ')
-  if (at < 0) return text
-  return <>{text.slice(0, at + 3)}<span class="kick-name">{text.slice(at + 3)}</span></>
+  let [first, ...rest] = text.split(' · ')
+  return <>{first}{rest.flatMap((part) => [' ', <span key={part} class="kick-name">· {part}</span>])}</>
 }
 
 // The Instagram mark, out of the Tab order: rails.tsx makes only the clip in view tabbable (a roving
@@ -79,10 +79,11 @@ export function clipsJson() {
   return { names: CATEGORY_NAMES, clips }
 }
 
-// Plays and pauses every clip on the page; rails.tsx keeps all of them (and their aria-pressed) in step.
-function PauseButton(handle: Handle<{ label: string; class?: string }>) {
+// Plays and pauses every clip on the page; rails.tsx keeps all of them (and their names) in step.
+// Its name says what a press does: "Pause motion", then "Play motion" while paused (rails.tsx swaps them).
+function PauseButton(handle: Handle<{ label: { pause: string; play: string }; class?: string }>) {
   return () => (
-    <button type="button" class={`clip-pause ${handle.props.class ?? ''}`} data-pause aria-pressed="false" aria-label={handle.props.label} title={handle.props.label}>
+    <button type="button" class={`clip-pause ${handle.props.class ?? ''}`} data-pause data-play={handle.props.label.play} data-pause-label={handle.props.label.pause} aria-label={handle.props.label.pause} title={handle.props.label.pause}>
       <svg viewBox="0 0 24 24" aria-hidden="true"><path class="i-pause" d="M8 5v14M16 5v14" /><path class="i-play" d="M8 5.5v13l11-6.5z" /></svg>
     </button>
   )
@@ -122,7 +123,7 @@ function Hero(handle: Handle<{ lang: Lang; t: Copy; clips: Clip[] }>) {
           <h1 id="hero-title" class="hero-role">Ângelo <em>Ocanã</em></h1>
           <p class="hero-proof">{t.hi.proof}</p>
           <p class="hero-ctas">
-            <a class="cin-btn hero-mail" href={`mailto:${SITE.email}`} data-cursor={t.links.write}>
+            <a class="cin-btn hero-mail" href={`mailto:${SITE.email}`} data-cursor="none">
               <SocialIcon id="email" />
               <span>{SITE.email}</span>
             </a>
@@ -196,7 +197,7 @@ function Hero(handle: Handle<{ lang: Lang; t: Copy; clips: Clip[] }>) {
                 <h2 class="tile-title"><a href="#outside" class="tile-link">{CATEGORY_NAMES[lang][clip.cat]}<span class="tile-go" aria-hidden="true">→</span></a></h2>
                 <p class="tile-foot">{tiles.life.count(clips.length)}</p>
               </div>
-              <PauseButton label={t.hi.pause} class="tile-pause" />
+              <PauseButton label={t.hi.motion} class="tile-pause" />
             </li>
           )}
         </ul>
@@ -376,8 +377,12 @@ function PoolCard(handle: Handle<{ t: Copy }>) {
           {/* a frame of fixed height, so resizing the tiles never moves the buttons under them. The
               162 tiles are drawn by ui/public/pool-tiles.tsx (it rebuilds the grid on load anyway): as
               buttons in the page they were a sixth of its weight. */}
-          <div class="pool-frame">
-            <div class="pool-grid" role="group" aria-label={t.pool.tiles} data-pool-grid style={`--rows:${nRows};--cols:${nCols}`} />
+          <div class="pool-board">
+            <div class="pool-frame">
+              <div class="pool-grid" role="group" aria-label={t.pool.tiles} data-pool-grid style={`--rows:${nRows};--cols:${nCols}`} />
+            </div>
+            {/* full screen on a phone, when the board is wider than the screen (pool-tiles.tsx) */}
+            <p class="pool-swipe" aria-hidden="true">{t.pool.swipe} <span>→</span></p>
           </div>
           <div class="pool-foot">
             {sizes.map(([key, label, value]) => (
@@ -409,14 +414,19 @@ function HobbyChips(handle: Handle<{ clips: Clip[]; lang: Lang; t: Copy }>) {
     let { clips, lang, t } = handle.props
     let counts = new Map(CATEGORIES.map((cat) => [cat, clips.filter((clip) => clip.cat === cat).length]))
     let cats = CATEGORIES.filter((cat) => counts.get(cat)! >= CHIP_MIN).sort((a, b) => counts.get(b)! - counts.get(a)!)
+    // a visible name first, so the chips read as places to jump to, not filters; the one picked stays
+    // pressed only while the row shows its hobby (rails.tsx)
     return (
-      <ul class="clip-chips" aria-label={t.outside.jump}>
-        {cats.map((cat) => (
-          <li key={cat}>
-            <button type="button" data-rail-cat={cat}>{CATEGORY_NAMES[lang][cat]} <small>{counts.get(cat)}</small></button>
-          </li>
-        ))}
-      </ul>
+      <div class="clip-jump">
+        <p class="clip-jump-label" id="clip-jump-label">{t.outside.jump}</p>
+        <ul class="clip-chips" aria-labelledby="clip-jump-label">
+          {cats.map((cat) => (
+            <li key={cat}>
+              <button type="button" data-rail-cat={cat} aria-pressed="false">{CATEGORY_NAMES[lang][cat]} <small>{counts.get(cat)}</small></button>
+            </li>
+          ))}
+        </ul>
+      </div>
     )
   }
 }
@@ -468,7 +478,7 @@ export function HomePage(handle: Handle<{ lang: Lang }>) {
           {/* Career: today first, then back to the start */}
           <Row id="career" class="row-career" label={nav('#career')} t={t.rail} arrows={t.rail.career} next={{ href: '#projects', label: nav('#projects') }} chapter>
             <li class="slide intro intro-career">
-              <p class="cin-kicker">{t.career.kicker}</p>
+              <p class="cin-kicker">{kicker(t.career.kicker)}</p>
               <h2>{t.career.title[0]}<em>{t.career.title[1]}</em>{t.career.title[2]}</h2>
               {/* counted by job, like the list below it (the two freelance stretches are two) */}
               <p>{t.career.sub(career.length, career[career.length - 1].start)} <span class="career-pick">{t.career.pick}</span></p>
@@ -625,9 +635,9 @@ export function HomePage(handle: Handle<{ lang: Lang }>) {
                     <div class="soon-screen"><b>TRACK<sup>2</sup>.FIT</b><span>Android</span><small>{t.t2f.androidSoon}</small></div>
                   </Pixel>
                   <WearWatch class="c-dev" label={t.t2f.wear}>
-                    <video data-autoplay muted loop playsInline preload="none" aria-hidden="true">
-                      <source src={`${M}/t2f/wear.mp4`} type="video/mp4" />
-                    </video>
+                    {/* the file waits in data-src until the video first comes on screen (rails.tsx): with a
+                        <source>, phones fetched it on load, rows before it was near */}
+                    <video data-autoplay muted loop playsInline preload="none" aria-hidden="true" data-src={`${M}/t2f/wear.mp4`} />
                   </WearWatch>
                 </div>
               </Card>
@@ -694,7 +704,7 @@ export function HomePage(handle: Handle<{ lang: Lang }>) {
                 </ul>
               </Card>
               <li class="slide intro intro-reel">
-                <p class="cin-kicker">{t.reel.kicker}</p>
+                <p class="cin-kicker">{kicker(t.reel.kicker)}</p>
                 <h2>{t.reel.title[0]}<em>{t.reel.title[1]}</em></h2>
                 <p>{t.reel.body}</p>
                 <p class="intro-note">{t.joj.body2}</p>
@@ -842,7 +852,7 @@ c_sharp_phaser/JumpOverJump`}</pre>
               <p>{t.outside.body(clips.length)}</p>
               <p class="cap-ctas">
                 <a class="cin-btn" href={INSTAGRAM} rel="me noopener" target="_blank" data-cursor="Instagram">{t.outside.instagram} <span aria-hidden="true">↗</span></a>
-                <PauseButton label={t.hi.pause} />
+                <PauseButton label={t.hi.motion} />
               </p>
             </>}
             keys={t.outside.keys}
@@ -862,7 +872,7 @@ c_sharp_phaser/JumpOverJump`}</pre>
             chapter
             introClass="intro-career"
             intro={<>
-              <p class="cin-kicker">{t.learning.kicker}</p>
+              <p class="cin-kicker">{kicker(t.learning.kicker)}</p>
               <h2>{t.learning.title[0]}<em>{t.learning.title[1]}</em>{t.learning.title[2]}</h2>
               <p>{t.learning.body}</p>
             </>}

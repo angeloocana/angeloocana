@@ -70,7 +70,7 @@ export const CAREER: Job[] = [
       },
       {
         title: 'Buy with Prime',
-        body: 'The Amazon integration that brings Prime delivery options to Prime members in Shopify checkout, paying with their Amazon or Shop Pay wallet.',
+        body: 'The Amazon integration: Prime members see Prime delivery options in Shopify checkout and pay with their Amazon or Shop Pay wallet.',
         url: 'https://help.shopify.com/en/manual/payments/accelerated-checkouts/amazonpay/buy-with-prime',
       },
       {
@@ -100,7 +100,7 @@ export const CAREER: Job[] = [
         },
         {
           title: 'Buy with Prime',
-          body: 'A integração com a Amazon que leva as opções de entrega Prime aos membros Prime no checkout da Shopify, pagando com a carteira da Amazon ou do Shop Pay.',
+          body: 'A integração com a Amazon: membros Prime veem as opções de entrega Prime no checkout da Shopify e pagam com a carteira da Amazon ou do Shop Pay.',
           url: 'https://help.shopify.com/en/manual/payments/accelerated-checkouts/amazonpay/buy-with-prime',
         },
         {

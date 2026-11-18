@@ -3,6 +3,7 @@ import type { Handle } from 'remix/component'
 
 // A soft ring that trails the pointer and grows over links, showing the link's data-cursor label
 // ("Play", "Open"...). Only for fine pointers; the system cursor stays visible for accessibility.
+// data-cursor="none" hides the ring over that element (the email buttons: the address must stay readable).
 export const CineCursor = clientEntry(import.meta.url, function CineCursor(handle: Handle) {
   handle.queueTask(() => {
     let signal = handle.signal
@@ -42,7 +43,7 @@ export const CineCursor = clientEntry(import.meta.url, function CineCursor(handl
         let mode = target ? target.dataset.cursor || 'link' : ''
         if (cursor.dataset.mode !== mode) {
           cursor.dataset.mode = mode
-          text.textContent = mode && mode !== 'link' ? mode : ''
+          text.textContent = mode && mode !== 'link' && mode !== 'none' ? mode : ''
         }
       },
       { signal, passive: true },

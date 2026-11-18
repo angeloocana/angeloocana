@@ -188,14 +188,33 @@ export const Rails = clientEntry(import.meta.url, function Rails(handle: Handle)
 
       // Hobby chips over the row ([data-rail-cat]): each slides the row to the first clip of its hobby,
       // loading the rest of the clips first when they aren't in yet.
-      for (let chip of rail.querySelectorAll<HTMLButtonElement>('[data-rail-cat]')) {
+      // The chip stays lit (aria-pressed) only while the clip it jumped to is in view: hobbies take turns
+      // in the row, so once you move on it goes out, and never reads as a filter on the whole row.
+      let chips = [...rail.querySelectorAll<HTMLButtonElement>('[data-rail-cat]')]
+      let picked: HTMLElement | null = null
+      let pick = (chip: HTMLButtonElement | null, clip: HTMLElement | null = null) => {
+        picked = clip
+        for (let other of chips) other.setAttribute('aria-pressed', String(other === chip))
+      }
+      let checkPicked = () => {
+        if (!picked || track.classList.contains('is-jumping')) return
+        if (shown(picked, track.getBoundingClientRect()) < 0.5) pick(null)
+      }
+      let unpickTimer = 0
+      if (chips.length) {
+        track.addEventListener('scroll', () => {
+          clearTimeout(unpickTimer)
+          unpickTimer = window.setTimeout(checkPicked, 200)
+        }, { signal, passive: true })
+      }
+      for (let chip of chips) {
         chip.addEventListener('click', async () => {
           chip.setAttribute('aria-busy', 'true')
           await loadMore(track)
           chip.removeAttribute('aria-busy')
           let first = track.querySelector<HTMLElement>(`[data-cat="${chip.dataset.railCat}"]`)
           if (!first) return
-          for (let other of rail.querySelectorAll('[data-rail-cat]')) other.toggleAttribute('data-picked', other === chip)
+          pick(chip, first)
           slideTo(first)
         }, { signal })
       }
@@ -396,26 +415,28 @@ export const Rails = clientEntry(import.meta.url, function Rails(handle: Handle)
     for (let list of document.querySelectorAll('[data-reveal]')) reveal.observe(list)
     signal.addEventListener('abort', () => reveal.disconnect())
 
-    // Pause buttons: every one on the page shows the same state. Without motion there is nothing to pause,
-    // so they are hidden (and out of the Tab order) then.
+    // Pause buttons: every one on the page shows the same state, and says what a press does ("Pause motion",
+    // or "Play motion" once paused). Without motion there is nothing to pause, so they are hidden (and out
+    // of the Tab order) then.
     let pauseButtons = [...document.querySelectorAll<HTMLButtonElement>('[data-pause]')]
-    let showPaused = () => pauseButtons.forEach((b) => b.setAttribute('aria-pressed', String(paused)))
-    // the videos below are set up only when the page opens with motion on
-    let canPlay = motion
-    let onScreen = new Set<HTMLVideoElement>()
-    let showPauseButtons = () => pauseButtons.forEach((b) => (b.hidden = !(motion && canPlay)))
+    // (no aria-pressed: with a name that changes, "Play motion, pressed" would contradict itself)
+    let showPaused = () => pauseButtons.forEach((b) => {
+      let label = (paused ? b.dataset.play : b.dataset.pauseLabel) ?? ''
+      b.toggleAttribute('data-paused', paused)
+      b.setAttribute('aria-label', label)
+      b.title = label
+    })
+    let showPauseButtons = () => pauseButtons.forEach((b) => (b.hidden = !motion))
     showPauseButtons()
     showPaused()
-    // Reduced motion turned on while the page is open stops everything at once: videos, the SVG timelines,
-    // the cycling screens, the demo and the CSS loops. Turned off again, it all picks up (the videos only
-    // if the page opened with motion on; otherwise on the next visit).
+    // Reduced motion can be turned on or off while the page is open; both ways run setMotion(), set up with
+    // the videos below: videos, the SVG timelines, the cycling screens, the demo, the CSS loops and the pause
+    // buttons all follow the current preference.
+    let setMotion = () => {}
     reducedQuery.addEventListener('change', () => {
       reduced = reducedQuery.matches
       motion = !reduced && !saveData
-      showMotion()
-      showPauseButtons()
-      if (!motion) for (let video of document.querySelectorAll('video')) video.pause()
-      else if (!paused) for (let video of onScreen) video.play().catch(() => {})
+      setMotion()
     }, { signal })
 
     // The career's older jobs (phones fold them after the recent ones): one tap opens them all and moves
@@ -448,17 +469,47 @@ export const Rails = clientEntry(import.meta.url, function Rails(handle: Handle)
       }, { signal })
     }
 
-    // Videos play only while on screen, and never for reduced motion or data saver.
-    if (motion) {
+    // Videos play only while on screen, and never for reduced motion or data saver. (Data saver can't change
+    // while the page is open; reduced motion can, so all of this is set up and checks `motion` as it goes.)
+    if (!saveData) {
+      let onScreen = new Set<HTMLVideoElement>()
+      let watched = new Set<HTMLVideoElement>()
       let watcher = new IntersectionObserver((entries) => {
         for (let { target, isIntersecting } of entries) {
           let video = target as HTMLVideoElement
           if (isIntersecting) onScreen.add(video)
           else onScreen.delete(video)
-          if (isIntersecting && !paused && motion) video.play().catch(() => {})
+          if (isIntersecting && !paused && motion) play(video)
           else video.pause()
         }
       }, { threshold: 0.35 })
+      // a video kept out of the page's first loads ([data-src], the Wear OS one) gets its file the first time it plays
+      let play = (video: HTMLVideoElement) => {
+        if (video.dataset.src) {
+          video.src = video.dataset.src
+          delete video.dataset.src
+        }
+        video.play().catch(() => {})
+      }
+      let watch = (video: HTMLVideoElement) => { watched.add(video); watcher.observe(video) }
+      let unwatch = (video: HTMLVideoElement) => { watched.delete(video); onScreen.delete(video); watcher.unobserve(video) }
+      // the clips' players: only near the screen, and only while there is motion
+      let playerSlides = new Set<HTMLElement>()
+      let playerObservers: IntersectionObserver[] = []
+      setMotion = () => {
+        showMotion()
+        showPauseButtons()
+        if (!motion) {
+          for (let video of document.querySelectorAll('video')) video.pause()
+          return
+        }
+        // observing again reports where each one is now: the clips near the screen get players, and the
+        // videos on screen play
+        for (let video of watched) { watcher.unobserve(video); watcher.observe(video) }
+        for (let players of playerObservers) for (let slide of playerSlides) {
+          if (!slide.querySelector('video.clip-video')) { players.unobserve(slide); players.observe(slide) }
+        }
+      }
       for (let button of pauseButtons) {
         button.addEventListener('click', () => {
           paused = !paused
@@ -467,16 +518,16 @@ export const Rails = clientEntry(import.meta.url, function Rails(handle: Handle)
           showMotion()
           for (let video of onScreen) {
             if (paused) video.pause()
-            else video.play().catch(() => {})
+            else play(video)
           }
         }, { signal })
       }
       // [data-autoplay="idle"] (the hero's clip, the biggest file on the first screen) waits until the page
       // has loaded and the browser is idle, so it never competes with the first paint; its poster shows until then
       let videos = [...document.querySelectorAll<HTMLVideoElement>('video[data-autoplay]')]
-      videos.filter((v) => v.dataset.autoplay !== 'idle').forEach((v) => watcher.observe(v))
+      videos.filter((v) => v.dataset.autoplay !== 'idle').forEach(watch)
       let whenIdle = () => {
-        let go = () => videos.filter((v) => v.dataset.autoplay === 'idle').forEach((v) => watcher.observe(v))
+        let go = () => videos.filter((v) => v.dataset.autoplay === 'idle').forEach(watch)
         if ('requestIdleCallback' in window) requestIdleCallback(go, { timeout: 2000 })
         else setTimeout(go, 200)
       }
@@ -494,8 +545,9 @@ export const Rails = clientEntry(import.meta.url, function Rails(handle: Handle)
         let rowNear = new IntersectionObserver(([entry]) => {
           if (!entry.isIntersecting) return
           rowNear.disconnect()
-          for (let slide of track.querySelectorAll<HTMLElement>('[data-video]')) players.observe(slide)
-          onNewSlides = (slides) => slides.forEach((slide) => players.observe(slide))
+          let add = (slide: HTMLElement) => { playerSlides.add(slide); players.observe(slide) }
+          track.querySelectorAll<HTMLElement>('[data-video]').forEach(add)
+          onNewSlides = (slides) => slides.forEach(add)
         }, { rootMargin: '100% 0px' })
         rowNear.observe(track)
         signal.addEventListener('abort', () => rowNear.disconnect())
@@ -505,7 +557,7 @@ export const Rails = clientEntry(import.meta.url, function Rails(handle: Handle)
             let video = slide.querySelector<HTMLVideoElement>('video.clip-video')
             // only clips near the screen run the slide-in animation: 114 of them scrolling with the page cost frames
             slide.toggleAttribute('data-near', isIntersecting)
-            if (isIntersecting && !video) {
+            if (isIntersecting && !video && motion) {
               video = document.createElement('video')
               video.className = 'clip-video'
               video.muted = true
@@ -517,9 +569,9 @@ export const Rails = clientEntry(import.meta.url, function Rails(handle: Handle)
               video.poster = slide.dataset.poster ?? ''
               video.src = slide.dataset.video!
               slide.querySelector('img.clip-video')?.after(video)
-              watcher.observe(video)
+              watch(video)
             } else if (!isIntersecting && video) {
-              watcher.unobserve(video)
+              unwatch(video)
               video.pause()
               video.removeAttribute('src')
               video.load()
@@ -527,6 +579,7 @@ export const Rails = clientEntry(import.meta.url, function Rails(handle: Handle)
             }
           }
         }, { root: track, rootMargin: '0px 60%' })
+        playerObservers.push(players)
         signal.addEventListener('abort', () => players.disconnect())
       }
 

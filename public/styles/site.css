@@ -37,7 +37,9 @@ main:focus { outline: none; }
 .cur { position: fixed; z-index: 1500; left: 0; top: 0; width: 34px; height: 34px; margin: -17px 0 0 -17px; border-radius: 50%; border: 1px solid rgb(236 231 223 / 0.6); pointer-events: none; opacity: 0; display: grid; place-items: center; transition: width 0.35s var(--ease), height 0.35s var(--ease), margin 0.35s var(--ease), background 0.3s, border-color 0.3s, opacity 0.3s; mix-blend-mode: difference; }
 .cur[data-on='true'] { opacity: 1; }
 .cur[data-mode='link'] { width: 56px; height: 56px; margin: -28px 0 0 -28px; border-color: #fff; }
-.cur[data-mode]:not([data-mode='']):not([data-mode='link']) { width: 84px; height: 84px; margin: -42px 0 0 -42px; background: #fff; mix-blend-mode: normal; border-color: #fff; }
+/* over the email buttons only the system pointer shows: the ring would cover the address */
+.cur[data-mode='none'] { opacity: 0; }
+.cur[data-mode]:not([data-mode='']):not([data-mode='link']):not([data-mode='none']) { width: 84px; height: 84px; margin: -42px 0 0 -42px; background: #fff; mix-blend-mode: normal; border-color: #fff; }
 .cur-label { font: 600 0.62rem/1 var(--sans); letter-spacing: 0.2em; text-transform: uppercase; color: #111; }
 
 /* ---------- fixed navigation: logo, three links and the language switch ---------- */
@@ -180,7 +182,9 @@ main:focus { outline: none; }
 /* The row's controls: a quiet bar over its right end (the hobby chips, where you are, the two arrows), in
    the row's top padding, so an arrow never sits on a card. Needs JS; without it the rows just scroll. */
 .rail-bar { position: relative; z-index: 5; display: flex; align-items: center; justify-content: flex-end; gap: 0.5rem; min-height: 2.75rem; margin: -0.75rem var(--gut) -0.25rem; }
-html:not(.js-rails) .rail-bar { display: none; }
+/* hidden without JS, but its room is kept: rows that grew once the script ran moved everything under them,
+   and a page opened at a #section (the language flags) landed short of it */
+html:not(.js-rails) .rail-bar { visibility: hidden; }
 /* a row that fits on the screen has nowhere to go: no arrows */
 [data-at-start][data-at-end] .rail-arrow { display: none; }
 .rail-arrow { position: relative; flex: none; display: grid; place-items: center; width: 2.75rem; height: 2.75rem; border-radius: 50%; border: 1px solid rgb(236 231 223 / 0.22); background: rgb(14 14 14 / 0.6); color: var(--text); cursor: pointer; transition: opacity 0.3s, border-color 0.3s, color 0.3s, background 0.3s; }
@@ -211,11 +215,13 @@ html:not(.js-rails) .rail-bar { display: none; }
 /* read by screen readers only (the row's resting place, rails.tsx) */
 .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
 /* the hobbies over the clips row: each chip slides the row to that hobby's first clip */
-.clip-chips { display: flex; flex: 1; gap: 0.4rem; min-width: 0; margin-right: auto; overflow-x: auto; scrollbar-width: none; padding-block: 2px; }
+.clip-jump { display: flex; align-items: center; gap: 0.8rem; flex: 1; min-width: 0; margin-right: auto; }
+.clip-jump-label { flex: none; font: 500 0.75rem/1.2 var(--sans); letter-spacing: 0.12em; text-transform: uppercase; color: var(--dim); }
+.clip-chips { display: flex; flex: 1; gap: 0.4rem; min-width: 0; overflow-x: auto; scrollbar-width: none; padding-block: 2px; }
 .clip-chips::-webkit-scrollbar { display: none; }
 .clip-chips button { all: unset; box-sizing: border-box; display: inline-flex; align-items: center; gap: 0.45rem; min-height: 2.75rem; padding: 0 0.95rem; border-radius: 999px; border: 1px solid var(--line); color: #d9d3c8; font: 500 0.78rem/1 var(--sans); white-space: nowrap; cursor: pointer; transition: border-color 0.3s, color 0.3s, background 0.3s; }
 .clip-chips small { color: var(--dim); font-size: 0.7rem; font-variant-numeric: tabular-nums; }
-.clip-chips button:hover, .clip-chips button[data-picked] { border-color: rgb(232 184 106 / 0.55); color: var(--amber); }
+.clip-chips button:hover, .clip-chips button[aria-pressed='true'] { border-color: rgb(232 184 106 / 0.55); color: var(--amber); }
 .clip-chips button:focus-visible { outline: 2px solid var(--amber); outline-offset: -2px; }
 .clip-chips button[aria-busy='true'] { opacity: 0.6; cursor: progress; }
 .rail-count:empty { display: none; }
@@ -326,8 +332,8 @@ html:not(.js-rails) .rail-bar { display: none; }
 .clip-pause:hover { border-color: var(--amber); }
 .clip-pause svg { width: 1.05rem; height: 1.05rem; fill: none; stroke: currentColor; stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; }
 .clip-pause .i-play { display: none; fill: currentColor; stroke-width: 1.5; }
-.clip-pause[aria-pressed='true'] .i-pause { display: none; }
-.clip-pause[aria-pressed='true'] .i-play { display: block; }
+.clip-pause[data-paused] .i-pause { display: none; }
+.clip-pause[data-paused] .i-play { display: block; }
 .tile-pause { position: absolute; top: 0.8rem; right: 0.8rem; }
 /* nothing to pause (no JS, or reduced motion): gone, not just inert. [hidden] alone loses to display: grid. */
 html:not(.js-rails) .clip-pause, .clip-pause[hidden] { display: none; }
@@ -359,7 +365,8 @@ html:not(.js-rails) .clip-pause, .clip-pause[hidden] { display: none; }
   .tile-line { margin-top: auto; padding-top: 0.6rem; }
   .tl-years { letter-spacing: 0.04em; }
   .tl-years span:nth-child(2) { display: none; }
-  .tile-foot { letter-spacing: 0.08em; }
+  /* like the kickers: sentence case, so "8 trabalhos desde 2007" stays on one line */
+  .tile-foot { font-weight: 600; letter-spacing: 0.02em; text-transform: none; white-space: nowrap; }
   .tile-career .tile-foot { margin-top: 0.15rem; }
   .brand-t2f { font-size: 1.35rem; }
   .brand-joj { font-size: 1rem; }
@@ -418,7 +425,9 @@ html:not(.js-rails) .clip-pause, .clip-pause[hidden] { display: none; }
 
 /* hero cards: text beside a cluster of devices, so the whole product shows before any scrolling.
    --u is the cluster's unit: the row height on wide screens, smaller on phones. */
-.intro-wide { --u: var(--row-h); width: auto; max-width: none; grid-template-columns: minmax(0, 25rem) auto; align-items: center; column-gap: clamp(1.5rem, 3vw, 3.5rem); }
+/* the content hangs from the card's top, right under the row's controls (the rail stretches the card to
+   its tallest neighbour; centred in it, the devices started ~100px below the arrows) */
+.intro-wide { --u: var(--row-h); width: auto; max-width: none; grid-template-columns: minmax(0, 25rem) auto; align-content: start; align-items: center; column-gap: clamp(1.5rem, 3vw, 3.5rem); }
 .intro-text { display: grid; justify-items: start; gap: 1.1rem; }
 .intro-text > p:not(.cin-kicker):not(.cap-ctas) { color: #c9c2b6; max-width: 34ch; }
 .intro-text .intro-note { font: italic 400 clamp(1.1rem, 1rem + 0.4vw, 1.35rem)/1.35 var(--serif); color: var(--text); }
@@ -432,7 +441,7 @@ html:not(.js-rails) .clip-pause, .clip-pause[hidden] { display: none; }
 .hv-watch { --depth: 34; }
 /* the device under the mouse comes forward */
 @media (hover: hover) { .hv:hover { scale: 1.06; z-index: 6 !important; } }
-.hv-laptop { left: 0; top: 9%; width: var(--u); }
+.hv-laptop { left: 0; top: 3%; width: var(--u); }
 .hv-t2f .hv-phone { left: calc(var(--u) * 0.6); bottom: 1%; width: calc(var(--u) * 0.37); z-index: 2; rotate: -3deg; animation: float 7s ease-in-out infinite; }
 .hv-t2f .hv-watch { left: calc(var(--u) * 0.98); bottom: 5%; width: calc(var(--u) * 0.26); z-index: 3; rotate: 6deg; animation: float 6s ease-in-out -2s infinite; }
 .hv-joj .hv-phone { left: calc(var(--u) * 0.8); bottom: 1%; width: calc(var(--u) * 0.34); z-index: 2; rotate: 3deg; animation: float 7s ease-in-out infinite; }
@@ -699,16 +708,34 @@ pre.rf-code { margin: 0; width: 100%; height: 100%; padding: 1.2rem 1.4rem; font
 .pool-name { display: none; }
 .pool-dialog .pool-name { display: block; grid-row: 1; align-self: center; font: 400 1.6rem/1 var(--serif); }
 .pool-big, .pool-done { display: none; min-height: 2.75rem; padding: 0.7rem 1.15rem; font-size: 0.75rem; }
-@media (max-width: 760px) { .js-rails .pool-big { display: inline-flex; } }
-.pool-dialog { width: 100vw; max-width: none; height: 100dvh; max-height: none; margin: 0; padding: 1.25rem 1rem; border: 0; background: #0b0b0b; color: var(--text); }
+/* its room is kept before the script runs (and without it), so nothing under it moves when it appears */
+@media (max-width: 760px) { .pool-big { display: inline-flex; } html:not(.js-rails) .pool-big { visibility: hidden; } }
+/* the screen is filled top to bottom: the name and Done, the colors, the board in the middle of what is
+   left, then the size and Clear at the bottom, under the thumb. The tiles fit the screen's width while they
+   stay 28px or more (up to 36px); below that the board scrolls sideways and says so (pool-tiles.tsx). */
+.pool-dialog { width: 100%; max-width: none; height: 100dvh; max-height: none; margin: 0; padding: 1rem 1rem max(1rem, env(safe-area-inset-bottom)); border: 0; background: #0b0b0b; color: var(--text); overflow: hidden; }
 .pool-dialog::backdrop { background: rgb(0 0 0 / 0.8); }
-.pool-dialog .pool { --pool-h: auto; height: 100%; margin: 0; align-content: start; }
+.pool-dialog .pool { --pool-h: auto; height: 100%; margin: 0; grid-template-columns: minmax(0, 1fr) auto; grid-template-rows: auto auto minmax(0, 1fr) auto; align-content: stretch; }
 .pool-dialog .pool-big { display: none; }
-.pool-dialog .pool { grid-template-columns: minmax(0, 1fr) auto; }
 .pool-dialog .pool > :not(.pool-name):not(.pool-done) { grid-column: 1 / -1; }
 .pool-dialog .pool-done { display: inline-flex; grid-row: 1; grid-column: 2; }
-.pool-dialog .pool-frame { height: auto; overflow-x: auto; overscroll-behavior-x: contain; }
-.pool-dialog .pool-grid { width: calc(var(--cols) * 2.25rem); }
+/* the board and its cue, together in the middle of the space between the colors and the size */
+.pool-board { display: contents; }
+.pool-dialog .pool-board { display: grid; justify-self: stretch; grid-template-columns: minmax(0, 1fr); grid-template-rows: minmax(0, auto) auto; align-content: center; gap: 0.75rem; min-height: 0; }
+.pool-dialog .pool-frame { position: relative; height: auto; max-height: 100%; overflow: auto; overscroll-behavior: contain; scrollbar-width: none; }
+.pool-dialog .pool-frame::-webkit-scrollbar { display: none; }
+.pool-dialog .pool-grid { width: min(100%, calc(var(--cols) * 2.25rem)); margin-inline: auto; }
+/* fitted, the tiles would be under 28px: 36px instead, and the board scrolls (pool-tiles.tsx sets it) */
+.pool-dialog .pool-frame[data-wide] .pool-grid { width: calc(var(--cols) * 2.25rem); }
+/* more tiles past an edge: that edge fades */
+.pool-dialog .pool-frame[data-more-right] { -webkit-mask-image: linear-gradient(to right, #000 82%, rgb(0 0 0 / 0.25)); mask-image: linear-gradient(to right, #000 82%, rgb(0 0 0 / 0.25)); }
+.pool-dialog .pool-frame[data-more-left] { -webkit-mask-image: linear-gradient(to left, #000 82%, rgb(0 0 0 / 0.25)); mask-image: linear-gradient(to left, #000 82%, rgb(0 0 0 / 0.25)); }
+.pool-dialog .pool-frame[data-more-left][data-more-right] { -webkit-mask-image: linear-gradient(to right, rgb(0 0 0 / 0.25), #000 18% 82%, rgb(0 0 0 / 0.25)); mask-image: linear-gradient(to right, rgb(0 0 0 / 0.25), #000 18% 82%, rgb(0 0 0 / 0.25)); }
+.pool-swipe { display: none; }
+.pool-dialog .pool-swipe { display: block; visibility: hidden; justify-self: center; font: 500 0.75rem/1.2 var(--sans); letter-spacing: 0.08em; color: var(--dim); }
+.pool-dialog .pool-swipe span { color: var(--amber); }
+.pool-dialog:has(.pool-frame[data-scrolls]) .pool-swipe { visibility: visible; }
+.pool-dialog .pool-step { letter-spacing: 0.1em; }
 @media (min-width: 900px) {
   .job.pool-card { --pool-h: calc(var(--row-h) - 11rem); display: grid; grid-template-columns: minmax(0, 18rem) minmax(0, 1fr); grid-auto-rows: min-content; align-content: start; column-gap: 2.4rem; width: min(60rem, 90vw); }
   .job.pool-card > * { grid-column: 1; }
@@ -808,8 +835,12 @@ pre.rf-code { margin: 0; width: 100%; height: 100%; padding: 1.2rem 1.4rem; font
   .rail-count { width: min(9rem, 34vw); }
   /* the hobby chips take a line of their own above the count and the arrows */
   .rail-bar:has(.clip-chips) { flex-wrap: wrap; }
+  .clip-jump { flex-basis: 100%; flex-wrap: wrap; gap: 0.35rem; }
   .clip-chips { flex-basis: 100%; margin-inline: calc(var(--gut) * -1); padding-inline: var(--gut); }
   .rail-foot { margin-right: auto; }
+  /* the keys line starts where the count starts and wraps before the arrows, so a longer one (PT) stays
+     on the screen */
+  .rail-foot .rail-keys { left: 0; right: auto; width: calc(100vw - 2 * var(--gut) - 6.5rem); white-space: normal; letter-spacing: 0.06em; }
   /* intro cards: as tall as their words, not a full stage */
   .slide.intro:not(.intro-wide) { min-height: 0; }
   /* the supporting rows' opening words go above the row, so its first card shows at once */
@@ -857,6 +888,12 @@ pre.rf-code { margin: 0; width: 100%; height: 100%; padding: 1.2rem 1.4rem; font
   .job-wide .job-highlights { grid-column: 2; grid-row: 1 / span 7; margin-top: 0; gap: 0.45rem; }
   .job-wide .job-highlights li { padding: 0.7rem 0.9rem; }
   .job-wide .job-highlights small { font-size: 0.94rem; line-height: 1.45; }
+  /* the career row keeps the height of its tallest card, but every card ends where its content ends (top
+     aligned): stretched, the shorter ones showed a dark slab under their words. On a card with a short list
+     of highlights (four or fewer) the tags go under them, so the two columns come out close in height
+     (Kinaxis left 360px empty under its three highlights otherwise). */
+  .row-career .slide.job { align-self: flex-start; min-height: 0; }
+  .row-career .job-wide:not(.job-featured):not(:has(.job-highlights > li:nth-child(5))) .job-tech { grid-column: 2; }
   /* seven or more (freelancing's comeback): a wider card with two columns of them, so it's no taller than the rest */
   .job-wide:not(.job-featured):has(.job-highlights > li:nth-child(7)) { width: min(64rem, 92vw); }
   .job-wide .job-highlights:has(> li:nth-child(7)) { grid-template-columns: repeat(2, minmax(0, 1fr)); align-content: start; }

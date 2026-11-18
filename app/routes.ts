@@ -3,7 +3,8 @@ import { get, route } from 'remix/routes'
 export const routes = route({
   assets: get('/assets/*path'),
   home: '/',
-  pt: get('/pt'),
+  // /pt/ is the one the static host serves (it redirects /pt there, dropping any #section)
+  pt: get('/pt(/)'),
   // every live clip, for the home page's Outside work row to append (the page itself carries the first few)
   clipsData: get('/data/clips.json'),
   // Posts keep the URLs they had on the old site.

@@ -73,6 +73,17 @@ describe('root controller', () => {
     }
   })
 
+  it('points the language flags at /pt/ and /, with full page loads, so a #section survives the switch', async () => {
+    for (let path of [routes.home.href(), routes.pt.href()]) {
+      let html = await (await router.fetch(new URL(path, 'http://localhost'))).text()
+      let flags = [...html.matchAll(/<a ([^>]*class="lang-card[^"]*"[^>]*)>/g)].map(([, attrs]) => attrs)
+      assert.deepEqual(flags.map((attrs) => attrs.match(/href="([^"]+)"/)![1]), ['/', '/pt/'], path)
+      for (let attrs of flags) assert.match(attrs, /data-rmx-document/, path)
+    }
+    // the static host serves /pt/ (and redirects /pt there, losing the #section)
+    assert.equal(routes.pt.href(), '/pt/')
+  })
+
   it('names the hero’s second button for where it goes, the projects', async () => {
     let expected = { [routes.home.href()]: 'See my projects', [routes.pt.href()]: 'Ver meus projetos' }
     for (let [path, label] of Object.entries(expected)) {
