@@ -37,7 +37,7 @@ main:focus { outline: none; }
 .cur { position: fixed; z-index: 1500; left: 0; top: 0; width: 34px; height: 34px; margin: -17px 0 0 -17px; border-radius: 50%; border: 1px solid rgb(236 231 223 / 0.6); pointer-events: none; opacity: 0; display: grid; place-items: center; transition: width 0.35s var(--ease), height 0.35s var(--ease), margin 0.35s var(--ease), background 0.3s, border-color 0.3s, opacity 0.3s; mix-blend-mode: difference; }
 .cur[data-on='true'] { opacity: 1; }
 .cur[data-mode='link'] { width: 56px; height: 56px; margin: -28px 0 0 -28px; border-color: #fff; }
-/* over the email buttons only the system pointer shows: the ring would cover the address */
+/* over buttons with words (.cin-btn, the email links) only the system pointer shows: the ring would cover them */
 .cur[data-mode='none'] { opacity: 0; }
 .cur[data-mode]:not([data-mode='']):not([data-mode='link']):not([data-mode='none']) { width: 84px; height: 84px; margin: -42px 0 0 -42px; background: #fff; mix-blend-mode: normal; border-color: #fff; }
 .cur-label { font: 600 0.62rem/1 var(--sans); letter-spacing: 0.2em; text-transform: uppercase; color: #111; }

@@ -2,17 +2,22 @@ import { clientEntry } from 'remix/component'
 import type { Handle } from 'remix/component'
 
 // A soft ring that trails the pointer and grows over links, showing the link's data-cursor label
-// ("Play", "Open"...). Only for fine pointers; the system cursor stays visible for accessibility.
-// data-cursor="none" hides the ring over that element (the email buttons: the address must stay readable).
+// ("Instagram" on a clip, "Posts" on a post card). Only for fine pointers; the system cursor stays visible
+// for accessibility. Labels are only for things without words of their own (cards, images): the filled
+// ring would cover a button's label, so the ring hides over buttons (.cin-btn, or data-cursor="none")
+// and text links get no label (a thin outline that leaves the words readable). Reduced motion hides the ring, and follows
+// the preference live, both ways.
 export const CineCursor = clientEntry(import.meta.url, function CineCursor(handle: Handle) {
   handle.queueTask(() => {
     let signal = handle.signal
-    if (!matchMedia('(pointer: fine)').matches || matchMedia('(prefers-reduced-motion: reduce)').matches) return
+    if (!matchMedia('(pointer: fine)').matches) return
     let ring = document.querySelector<HTMLElement>('.cur')
     let label = ring?.querySelector<HTMLElement>('.cur-label')
     if (!ring || !label) return
     let cursor = ring
     let text = label
+    let reducedQuery = matchMedia('(prefers-reduced-motion: reduce)')
+    let reduced = reducedQuery.matches
     let x = innerWidth / 2
     let y = innerHeight / 2
     let tx = x
@@ -32,15 +37,27 @@ export const CineCursor = clientEntry(import.meta.url, function CineCursor(handl
       cursor.style.transform = `translate3d(${x}px, ${y}px, 0)`
     }
 
+    reducedQuery.addEventListener('change', () => {
+      reduced = reducedQuery.matches
+      if (!reduced) return
+      cancelAnimationFrame(raf)
+      raf = 0
+      cursor.dataset.on = 'false'
+    }, { signal })
+
     addEventListener(
       'pointermove',
       (event) => {
         tx = event.clientX
         ty = event.clientY
+        if (reduced) return
+        // back from reduced motion (or the first move): start where the pointer is, not where it was
+        if (cursor.dataset.on !== 'true') { x = tx; y = ty }
         if (!raf) { then = performance.now(); raf = requestAnimationFrame(loop) }
         cursor.dataset.on = 'true'
         let target = event.target instanceof Element ? event.target.closest<HTMLElement>('a, button, [data-cursor]') : null
-        let mode = target ? target.dataset.cursor || 'link' : ''
+        // a button with its own words (.cin-btn: the email, See my projects, Open, Play, GitHub...) hides it
+        let mode = !target ? '' : target.dataset.cursor || (target.classList.contains('cin-btn') ? 'none' : 'link')
         if (cursor.dataset.mode !== mode) {
           cursor.dataset.mode = mode
           text.textContent = mode && mode !== 'link' && mode !== 'none' ? mode : ''

@@ -68,7 +68,7 @@ export function SiteNav(handle: Handle<{ lang: Lang; t: Copy; home?: boolean; la
     return (
       <header class="cin-nav">
         {home && <a class="skip-link" href="#main">{t.nav.skip}</a>}
-        <a href={home ? '#top' : base} class="cin-mark" aria-label={`Ângelo Ocanã · ${t.nav.top}`} data-cursor={t.nav.top}>ÂO</a>
+        <a href={home ? '#top' : base} class="cin-mark" aria-label={`Ângelo Ocanã · ${t.nav.top}`}>ÂO</a>
         {/* Phones show the first two sections and a More button; the rest open under it as a small list
             (rails.tsx toggles it, closes it on Escape, a tap outside or a pick). Wide screens show all six in
             one line: the list is display: contents there and the button is hidden. Without JS, phones keep

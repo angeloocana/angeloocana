@@ -123,7 +123,7 @@ function Hero(handle: Handle<{ lang: Lang; t: Copy; clips: Clip[] }>) {
           <h1 id="hero-title" class="hero-role">Ângelo <em>Ocanã</em></h1>
           <p class="hero-proof">{t.hi.proof}</p>
           <p class="hero-ctas">
-            <a class="cin-btn hero-mail" href={`mailto:${SITE.email}`} data-cursor="none">
+            <a class="cin-btn hero-mail" href={`mailto:${SITE.email}`}>
               <SocialIcon id="email" />
               <span>{SITE.email}</span>
             </a>
@@ -302,12 +302,12 @@ function Card(handle: Handle<{ class: string; title: string; body: string; child
 
 // A card's title, when it links somewhere: the same ↗ as the links in the card's list, so it reads as a
 // link before you hover it, and like them it opens in a new tab. The ↗ stays on the line of the last word.
-function TitleLink(handle: Handle<{ href: string; label: string; text: string }>) {
+function TitleLink(handle: Handle<{ href: string; text: string }>) {
   return () => {
     let words = handle.props.text.split(' ')
     let last = words.pop()
     return (
-      <a href={handle.props.href} rel="noopener" target="_blank" data-cursor={handle.props.label}>
+      <a href={handle.props.href} rel="noopener" target="_blank">
         {words.length > 0 && `${words.join(' ')} `}
         <span class="title-end">{last}<i class="title-arrow" aria-hidden="true">↗</i></span>
       </a>
@@ -327,7 +327,7 @@ function studyCard(study: Study, t: Copy) {
           {study.end && study.end !== study.start && <span>{study.end === 'Now' ? t.career.now : study.end}</span>}
         </p>
       )}
-      <h3>{study.url ? <TitleLink href={study.url} label={t.career.visit} text={study.title} /> : study.title}</h3>
+      <h3>{study.url ? <TitleLink href={study.url} text={study.title} /> : study.title}</h3>
       {study.meta && <p class="job-meta">{study.meta}</p>}
       {study.body && <p class="job-built">{study.body}</p>}
       {study.items && (
@@ -361,7 +361,7 @@ function PoolCard(handle: Handle<{ t: Copy }>) {
     return (
       <li class="slide job study pool-card">
         <p class="job-years"><span>2017</span></p>
-        <h3><TitleLink href="https://github.com/angeloocana/pool-tile-designer" label="GitHub" text={t.pool.title} /></h3>
+        <h3><TitleLink href="https://github.com/angeloocana/pool-tile-designer" text={t.pool.title} /></h3>
         <p class="job-meta">{t.pool.meta}</p>
         <p class="job-built">{t.pool.body} <span class="pool-drag">{t.pool.drag}</span></p>
         <p class="pool-note">{t.pool.note}</p>
@@ -529,7 +529,7 @@ export function HomePage(handle: Handle<{ lang: Lang }>) {
                   {job.featured && <span class="job-badge">{t.career.today}</span>}
                 </p>
                 <h3>
-                  {job.url ? <TitleLink href={job.url} label={t.career.visit} text={job.company} /> : job.company}
+                  {job.url ? <TitleLink href={job.url} text={job.company} /> : job.company}
                   {job.chapter && <> <em>{job.chapter}</em></>}
                 </h3>
                 {(job.role || job.place) && <p class="job-meta">{[job.role, job.place].filter(Boolean).join(' · ')}</p>}
@@ -575,7 +575,7 @@ export function HomePage(handle: Handle<{ lang: Lang }>) {
                   <h2>{t.t2f.captions[0].title}</h2>
                   <p>{t.t2f.captions[0].body}</p>
                   <p class="cap-ctas">
-                    <a class="cin-btn" href="https://track2.fit" data-cursor="Open">{t.t2f.open} <span aria-hidden="true">→</span></a>
+                    <a class="cin-btn" href="https://track2.fit">{t.t2f.open} <span aria-hidden="true">→</span></a>
                     <span class="cin-soon">{t.t2f.soon}</span>
                   </p>
                 </div>
@@ -651,7 +651,7 @@ export function HomePage(handle: Handle<{ lang: Lang }>) {
                   <p>{t.joj.body}</p>
                   <p class="intro-note">{t.joj.title2}</p>
                   <p class="cap-ctas">
-                    <a class="cin-btn cin-btn-joj" href="https://jumpoverjump.com" data-cursor="Play">{t.joj.play} <span aria-hidden="true">→</span></a>
+                    <a class="cin-btn cin-btn-joj" href="https://jumpoverjump.com">{t.joj.play} <span aria-hidden="true">→</span></a>
                     <span class="cin-soon">{t.t2f.soon}</span>
                   </p>
                 </div>
@@ -785,7 +785,7 @@ c_sharp_phaser/JumpOverJump`}</pre>
                 <p class="job-built">{t.ttt.note}</p>
                 <p class="ttt-ported">{t.ttt.ported}</p>
                 <p class="cap-ctas">
-                  <a class="cin-btn" href="https://github.com/angeloocana/tic-tac-toe-ai" data-cursor="GitHub">{t.ttt.code} <span aria-hidden="true">→</span></a>
+                  <a class="cin-btn" href="https://github.com/angeloocana/tic-tac-toe-ai">{t.ttt.code} <span aria-hidden="true">→</span></a>
                 </p>
                 <ul class="job-tech" aria-label={t.ttt.builtWith}>
                   {t.ttt.stack.map((tech) => <li key={tech}>{tech}</li>)}
@@ -819,7 +819,7 @@ c_sharp_phaser/JumpOverJump`}</pre>
                 <h2>{t.more.title[0]}<em>{t.more.title[1]}</em>{t.more.title[2]}</h2>
                 <p>{t.more.body}</p>
                 <p class="cap-ctas">
-                  <a class="cin-btn" href={GITHUB} data-cursor="GitHub">{t.more.github} <span aria-hidden="true">→</span></a>
+                  <a class="cin-btn" href={GITHUB}>{t.more.github} <span aria-hidden="true">→</span></a>
                 </p>
               </>}
             >
@@ -852,7 +852,7 @@ c_sharp_phaser/JumpOverJump`}</pre>
               <h2>{t.outside.title[0]}<em>{t.outside.title[1]}</em>{t.outside.title[2]}</h2>
               <p>{t.outside.body(clips.length)}</p>
               <p class="cap-ctas">
-                <a class="cin-btn" href={INSTAGRAM} rel="me noopener" target="_blank" data-cursor="Instagram">{t.outside.instagram} <span aria-hidden="true">↗</span></a>
+                <a class="cin-btn" href={INSTAGRAM} rel="me noopener" target="_blank">{t.outside.instagram} <span aria-hidden="true">↗</span></a>
                 <PauseButton label={t.hi.motion} />
               </p>
             </>}
