@@ -65,6 +65,7 @@ export const Rails = clientEntry(import.meta.url, function Rails(handle: Handle)
       let bg = rail.querySelector<HTMLElement>('[data-rail-bg]')
       let slides = () => [...track.children].filter((el) => !(el as HTMLElement).hidden) as HTMLElement[]
 
+      let intro = track.querySelector<HTMLElement>(':scope > .intro-slide')
       let prev = rail.querySelector<HTMLButtonElement>('[data-rail-prev]')
       let next = rail.querySelector<HTMLButtonElement>('[data-rail-next]')
       let more = track.dataset.more
@@ -161,6 +162,15 @@ export const Rails = clientEntry(import.meta.url, function Rails(handle: Handle)
         }
         track.style.setProperty('--peek-l', `${peekAt('left')}px`)
         track.style.setProperty('--peek-r', `${peekAt('right')}px`)
+        // the row's opening card ("More on Instagram"), once scrolled away, leaves the Tab order: Tab into the
+        // row goes on from the cards in view instead of scrolling it back to the start
+        if (intro) {
+          let away = shown(intro, view) < 0.5
+          for (let a of intro.querySelectorAll<HTMLElement>('a, button')) {
+            if (away && a !== document.activeElement) a.tabIndex = -1
+            else if (!away) a.removeAttribute('tabindex')
+          }
+        }
         if (bg) {
           // backdrop follows the first video slide that is mostly in view
           let shown = list.find((s) => {

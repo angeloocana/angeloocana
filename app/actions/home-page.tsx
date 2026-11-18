@@ -236,10 +236,12 @@ function Row(
     keys?: string
     /** Something over the row, after its opening words on phones (the clips' hobby chips). */
     head?: RemixNode
+    /** A pause button beside the arrows, which stay put, so it is in reach wherever the row has moved to. */
+    pause?: Copy['hi']['motion']
   }>,
 ) {
   return () => {
-    let { arrows, backdrop, chapter, children, class: className, count, head, id, intro, introClass = '', keys, label, more, next, shuffle, t, total, words } = handle.props
+    let { arrows, backdrop, chapter, children, class: className, count, head, id, intro, introClass = '', keys, label, more, next, pause, shuffle, t, total, words } = handle.props
     let keysId = keys && id ? `${id}-keys` : undefined
     return (
       <section id={id} class={`row ${className}`} data-rail data-chapter={chapter ? '' : undefined} aria-label={label}>
@@ -257,6 +259,7 @@ function Row(
               {keys && <p class="rail-keys" id={keysId} aria-hidden="true">{keys}</p>}
             </div>
           )}
+          {pause && <PauseButton label={pause} class="rail-pause" />}
           {/* rails.tsx disables the one that has nowhere to go, which also takes it out of the Tab order */}
           <button type="button" class="rail-arrow rail-prev" data-rail-prev aria-label={arrows.prev} disabled>
             <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7" /></svg>
@@ -853,10 +856,10 @@ c_sharp_phaser/JumpOverJump`}</pre>
               <p>{t.outside.body(clips.length)}</p>
               <p class="cap-ctas">
                 <a class="cin-btn" href={INSTAGRAM} rel="me noopener" target="_blank">{t.outside.instagram} <span aria-hidden="true">↗</span></a>
-                <PauseButton label={t.hi.motion} />
               </p>
             </>}
             keys={t.outside.keys}
+            pause={t.hi.motion}
             head={<HobbyChips clips={clips} lang={lang} t={t} />}
           >
             {clips.slice(0, CLIPS_IN_PAGE).map((clip) => <ClipSlide key={clip.id} clip={clip} lang={lang} t={t} />)}

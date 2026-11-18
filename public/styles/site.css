@@ -193,6 +193,8 @@ html:not(.js-rails) .rail-bar { visibility: hidden; }
 .rail-next { border-color: rgb(236 231 223 / 0.4); background: rgb(236 231 223 / 0.08); }
 .rail-arrow:hover, .rail-arrow:focus-visible { border-color: var(--amber); color: var(--amber); background: rgb(232 184 106 / 0.1); }
 .rail-arrow:focus-visible { outline-offset: 2px; }
+/* the clips' pause, beside the arrows: their size and outline, a little apart from them */
+.rail-pause { flex: none; width: 2.75rem; height: 2.75rem; margin-right: 0.35rem; border-color: rgb(236 231 223 / 0.22); background: rgb(14 14 14 / 0.6); }
 .rail-arrow:disabled { opacity: 0.3; cursor: default; border-color: rgb(236 231 223 / 0.22); color: var(--text); background: transparent; }
 
 /* The row fades out only over a card that peeks in at an edge (rails.tsx sets --peek-l and --peek-r to how
