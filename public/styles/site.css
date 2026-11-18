@@ -127,8 +127,9 @@ main:focus { outline: none; }
    reduced motion it just sits in Ottawa. */
 .hi-kicker { display: flex; flex-wrap: wrap; align-items: center; gap: 0.35rem 0.9rem; }
 .hi-kicker > span:first-child::after { content: '·'; margin-left: 0.9rem; opacity: 0.7; }
-.hi-route { display: inline-flex; align-items: center; gap: 0.6rem; }
-.hi-flight { width: 4.6rem; height: 1.4rem; overflow: visible; }
+/* a short hop: parked in Brazil before take-off, the undrawn route is the gap before Ottawa */
+.hi-route { display: inline-flex; align-items: center; gap: 0.45rem; }
+.hi-flight { width: 3.3rem; height: 1rem; overflow: visible; }
 .hi-arc { fill: none; stroke: currentColor; stroke-width: 1.3; stroke-dasharray: 2.5 3.5; opacity: 0.6; }
 .hi-reveal { fill: none; stroke: #fff; stroke-width: 8; stroke-dasharray: 70 70; }
 .hi-plane { fill: currentColor; offset-path: path('M4 18 Q36 -6 68 18'); offset-rotate: auto; offset-distance: 100%; transform: scale(1.2); }
@@ -287,9 +288,11 @@ html:not(.js-rails) .rail-bar { visibility: hidden; }
 /* Career: what I built at today's job, as a labelled list (text, not links: the tile itself is the one
    link, to the Career row), over the whole career on one line */
 .tile-career { grid-row: 1 / 3; background: radial-gradient(90% 55% at 0% 0%, rgb(232 184 106 / 0.1), transparent 70%), linear-gradient(170deg, #15120e, #0b0b0b 60%); border-color: rgb(232 184 106 / 0.3); }
-.tile-built { display: grid; gap: 0.7rem; margin-block: auto 0; padding-top: 1.2rem; }
+/* the list starts under the meta and takes the tile's spare height, its lines spread over it (up to a
+   point), so no hole opens between "Team lead" and the list on a tall tile */
+.tile-built { flex: 1; display: grid; grid-template-rows: auto minmax(0, 1fr); gap: 0.7rem; padding-top: 1.6rem; }
 .tile-label { font: 500 0.75rem/1 var(--sans); letter-spacing: 0.2em; text-transform: uppercase; color: var(--dim); }
-.tile-projects { display: grid; gap: 0.25rem; }
+.tile-projects { display: grid; gap: 0.25rem; align-content: space-evenly; max-height: 15rem; }
 .tile-projects li { font: 400 clamp(1.25rem, 0.8rem + 1vw, 1.8rem)/1.15 var(--serif); color: #c9c2b6; }
 .tile-projects li::before { content: ''; display: inline-block; width: 6px; height: 6px; margin-right: 0.7rem; vertical-align: 0.2em; border-radius: 50%; background: rgb(232 184 106 / 0.55); }
 /* the timeline follows the list (not pinned to the tile's foot), so the two read as one */
@@ -360,7 +363,8 @@ html:not(.js-rails) .clip-pause, .clip-pause[hidden] { display: none; }
   /* in sentence case on phones, so "Fora do trabalho" fits its narrow tile on one line */
   .tile .tile-kicker { font-weight: 600; letter-spacing: 0.04em; text-transform: none; white-space: nowrap; }
   .tile-title { font-size: 1.75rem; }
-  .tile-meta { display: none; }
+  /* compact, under the company: the years and the role, in sentence case like the kickers */
+  .tile-meta { font-weight: 600; letter-spacing: 0.02em; text-transform: none; white-space: nowrap; margin-top: -0.15rem; }
   .tile-built { gap: 0.45rem; margin-top: 0; padding-block: 0.6rem 0; }
   .tile-projects { gap: 0.15rem; }
   .tile-projects li { font-size: 1.05rem; line-height: 1.2; }
@@ -904,6 +908,9 @@ pre.rf-code { margin: 0; width: 100%; height: 100%; padding: 1.2rem 1.4rem; font
   .row-career .slide.job { align-self: flex-start; min-height: 0; }
   /* opened at #job-… (the other language's flag carries it): the row's arrows show above the card, clear of the menu */
   .row-career .job { scroll-margin-top: 7.5rem; }
+  /* the row is as tall as its tallest card; where the cards in view are shorter (the last stop), the Next
+     pill moves up under them (rails.tsx sets --lift), as a transform so nothing under it moves */
+  .row-career .row-down { translate: 0 calc(var(--lift, 0px) * -1); transition: translate 0.5s var(--ease), border-color 0.3s, background 0.3s; }
   .row-career .job-wide:not(.job-featured):not(:has(.job-highlights > li:nth-child(5))) .job-tech { grid-column: 2; }
   /* seven or more (freelancing's comeback): a wider card with two columns of them, so it's no taller than the rest */
   .job-wide:not(.job-featured):has(.job-highlights > li:nth-child(7)) { width: min(64rem, 92vw); }

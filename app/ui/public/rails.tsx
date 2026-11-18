@@ -162,6 +162,11 @@ export const Rails = clientEntry(import.meta.url, function Rails(handle: Handle)
         }
         track.style.setProperty('--peek-l', `${peekAt('left')}px`)
         track.style.setProperty('--peek-r', `${peekAt('right')}px`)
+        // how much shorter the tallest card in view is than the row (which keeps its tallest card's height):
+        // the career's "Next" pill moves up by that much (site.css, a transform, so the page never moves)
+        let tallest = Math.max(0, ...list.map((s) => s.offsetHeight))
+        let inView = Math.max(0, ...list.filter((s) => shown(s, view) > 0).map((s) => s.offsetHeight))
+        rail.style.setProperty('--lift', `${tallest - inView}px`)
         // the row's opening card ("More on Instagram"), once scrolled away, leaves the Tab order: Tab into the
         // row goes on from the cards in view instead of scrolling it back to the start
         if (intro) {
