@@ -674,11 +674,28 @@ export const Rails = clientEntry(import.meta.url, function Rails(handle: Handle)
     // Without JS they open the other language's page at the top.
     let langLinks = [...document.querySelectorAll<HTMLAnchorElement>('.lang-card')]
     let places = [...document.querySelectorAll<HTMLElement>('main section[id], footer[id]')]
+    // In the career, the job in view instead (#job-…): the other language opens at that job, an earlier one
+    // with the fold open (its :target, site.css). Sideways (wide screens) it's the first card mostly in
+    // view; stacked (phones), the job across the middle of the screen. The intro or the fold: no job.
+    let careerTrack = document.querySelector<HTMLElement>('#career [data-rail-track]')
+    let jobInView = () => {
+      if (!careerTrack) return ''
+      let cards = ([...careerTrack.children] as HTMLElement[]).filter((el) => el.getClientRects().length)
+      let card: HTMLElement | undefined
+      if (careerTrack.scrollWidth > careerTrack.clientWidth + 8) {
+        let left = careerTrack.getBoundingClientRect().left
+        card = cards.find((el) => { let r = el.getBoundingClientRect(); return r.right - left > r.width * 0.6 })
+      } else {
+        card = cards.find((el) => { let r = el.getBoundingClientRect(); return r.top <= innerHeight / 2 && r.bottom > innerHeight / 2 })
+      }
+      return card?.id.startsWith('job-') ? card.id : ''
+    }
     let carryPlace = () => {
       let here = ''
       for (let place of places) if (place.getBoundingClientRect().top <= innerHeight / 2) here = place.id
       if (scrollY > 0 && innerHeight + scrollY >= root.scrollHeight - 4) here = places.at(-1)?.id ?? here
       if (here === 'top') here = ''
+      if (here === 'career') here = jobInView() || here
       for (let link of langLinks) if (link.hash.slice(1) !== here) link.hash = here
     }
     let placePending = false
@@ -686,6 +703,7 @@ export const Rails = clientEntry(import.meta.url, function Rails(handle: Handle)
       if (!placePending) { placePending = true; requestAnimationFrame(() => { placePending = false; carryPlace() }) }
     }
     addEventListener('scroll', queuePlace, { signal, passive: true })
+    careerTrack?.addEventListener('scroll', queuePlace, { signal, passive: true })
     // a page opened at a #section scrolls there after this script has run
     addEventListener('load', queuePlace, { signal, once: true })
     addEventListener('hashchange', queuePlace, { signal })

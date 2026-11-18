@@ -893,6 +893,8 @@ pre.rf-code { margin: 0; width: 100%; height: 100%; padding: 1.2rem 1.4rem; font
      of highlights (four or fewer) the tags go under them, so the two columns come out close in height
      (Kinaxis left 360px empty under its three highlights otherwise). */
   .row-career .slide.job { align-self: flex-start; min-height: 0; }
+  /* opened at #job-… (the other language's flag carries it): the row's arrows show above the card, clear of the menu */
+  .row-career .job { scroll-margin-top: 7.5rem; }
   .row-career .job-wide:not(.job-featured):not(:has(.job-highlights > li:nth-child(5))) .job-tech { grid-column: 2; }
   /* seven or more (freelancing's comeback): a wider card with two columns of them, so it's no taller than the rest */
   .job-wide:not(.job-featured):has(.job-highlights > li:nth-child(7)) { width: min(64rem, 92vw); }
