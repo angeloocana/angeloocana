@@ -727,10 +727,19 @@ export const Rails = clientEntry(import.meta.url, function Rails(handle: Handle)
       let button = toggle
       let list = moreList
       button.hidden = false
+      // a faint scrim under the header while the list is open: the page reads as covered, and a tap on it
+      // closes the list (and only that: the tap doesn't reach the page under it)
+      let scrim = document.createElement('div')
+      scrim.className = 'menu-scrim'
+      scrim.setAttribute('aria-hidden', 'true')
+      document.body.append(scrim)
       let setOpen = (open: boolean) => {
         button.setAttribute('aria-expanded', String(open))
         list.toggleAttribute('data-open', open)
+        scrim.toggleAttribute('data-open', open)
       }
+      // focus was in the list, which hides: it goes back to the button
+      scrim.addEventListener('click', () => { setOpen(false); button.focus({ preventScroll: true }) }, { signal })
       button.addEventListener('click', () => {
         let open = button.getAttribute('aria-expanded') !== 'true'
         setOpen(open)
@@ -743,7 +752,7 @@ export const Rails = clientEntry(import.meta.url, function Rails(handle: Handle)
         button.focus()
       }, { signal })
       addEventListener('pointerdown', (event) => {
-        if (button.getAttribute('aria-expanded') === 'true' && !(event.target as Element).closest('.cin-menu')) setOpen(false)
+        if (button.getAttribute('aria-expanded') === 'true' && !(event.target as Element).closest('.cin-menu, .menu-scrim')) setOpen(false)
       }, { signal })
       // focus leaving the menu (Tab past the last section) closes it too
       list.addEventListener('focusout', (event) => {
