@@ -136,9 +136,6 @@ describe('root controller', () => {
       assert.match(canvas, /class="ice"/, `${path}: no ice canvas in the hero`)
       assert.match(canvas, /aria-hidden="true"/)
       assert.doesNotMatch(canvas, /tabindex/i)
-      // the sound toggle is a real button, off until pressed, hidden until the ice is up
-      let sound = hero.match(/<button [^>]*class="ice-sound"[^>]*>[\s\S]*?<\/button>/)?.[0] ?? ''
-      for (let part of ['aria-pressed="false"', ' hidden', `<span>${t.hi.sound}</span>`]) assert.ok(sound.includes(part), `${path}: sound toggle without ${part}`)
     }
   })
 

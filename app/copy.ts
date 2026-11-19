@@ -52,8 +52,6 @@ const en = {
     onInstagram: 'Watch the full video on Instagram',
     // the pause button's name says what a press does
     motion: { pause: 'Pause motion', play: 'Play motion' },
-    // the hero's ice: a quiet toggle for the crack's sound, off until pressed (aria-pressed says which)
-    sound: 'Sound',
   },
   // the clips row, after the projects
   outside: {
@@ -327,7 +325,6 @@ const pt: Copy = {
     },
     onInstagram: 'Ver o vídeo completo no Instagram',
     motion: { pause: 'Pausar animações', play: 'Retomar animações' },
-    sound: 'Som',
   },
   outside: {
     label: 'Fora do trabalho',

@@ -357,18 +357,11 @@ html:not(.js-rails) .rail-bar { visibility: hidden; }
 .clip-pause[data-paused] .i-play { display: block; }
 .tile-pause { position: absolute; top: 0.8rem; right: 0.8rem; }
 /* The sheet of ice over the hero (ice.tsx, ice-gl.ts): it never takes a click, a tap or the focus, and fades
-   in once it has drawn. Its sound toggle sits quietly beside the email button, above the ice. Without WebGL the tiles get a still
+   in once it has drawn. Without WebGL the tiles get a still
    CSS frost along their edges instead. */
 .ice { position: absolute; inset: 0; z-index: 5; width: 100%; height: 100%; pointer-events: none; opacity: 0; transition: opacity 1s ease; }
 .ice[data-on] { opacity: 1; }
 .hero-ctas { position: relative; z-index: 6; align-items: center; }
-.ice-sound { display: inline-flex; align-items: center; gap: 0.45rem; min-height: 2.75rem; padding: 0 0.6rem; border: 0; background: none; color: rgb(199 219 230 / 0.55); font: 500 0.68rem/1 var(--sans); letter-spacing: 0.18em; text-transform: uppercase; cursor: pointer; transition: color 0.3s; }
-.ice-sound svg { width: 1rem; height: 1rem; fill: none; stroke: currentColor; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
-.ice-sound .ice-wave { opacity: 0.25; transition: opacity 0.3s; }
-.ice-sound:hover, .ice-sound:focus-visible { color: #e3eef4; }
-.ice-sound[aria-pressed='true'] { color: #e3eef4; }
-.ice-sound[aria-pressed='true'] .ice-wave { opacity: 1; }
-.ice-sound[hidden] { display: none; }
 .hero[data-ice='off'] .ice { display: none; }
 .hero[data-ice='off'] .tile { box-shadow: inset 0 0 0 1px rgb(199 219 230 / 0.2), inset 0 0 36px rgb(199 219 230 / 0.14); }
 

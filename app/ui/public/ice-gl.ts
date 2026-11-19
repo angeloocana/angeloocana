@@ -134,7 +134,7 @@ const HELD = '.tile-career, .tile-life, .brand'
 
 type Rect = [number, number, number, number]
 
-export async function mountIce(canvas: HTMLCanvasElement, sound: HTMLButtonElement | null, signal: AbortSignal) {
+export async function mountIce(canvas: HTMLCanvasElement, signal: AbortSignal) {
   let hero = canvas.parentElement!
   let gl = canvas.getContext('webgl', { premultipliedAlpha: true, antialias: false, alpha: true })
   if (!gl) return false
@@ -342,7 +342,6 @@ export async function mountIce(canvas: HTMLCanvasElement, sound: HTMLButtonEleme
     cracks.splice(next * 3, 3, x, H - y, t)
     next = (next + 1) % 4
     brush(x, y, 26, 0.8)
-    ping()
     stir()
   }, { signal })
 
@@ -440,7 +439,6 @@ export async function mountIce(canvas: HTMLCanvasElement, sound: HTMLButtonEleme
     let now = root.classList.contains('is-paused')
     if (now === still) return
     still = now
-    if (sound) sound.hidden = still
     if (still) {
       halt()
       melt.fill(0)
@@ -471,42 +469,7 @@ export async function mountIce(canvas: HTMLCanvasElement, sound: HTMLButtonEleme
   let wait = card ? Math.max(0, 0.7 - performance.now() / 1000) : 0
   frozenAt = still ? -99 : wait
   canvas.dataset.on = ''
-  if (sound) sound.hidden = still
   if (still) draw()
   else go()
-
-  // sound, off until asked: a short glassy crack (a burst of filtered noise and three bright partials)
-  let audio: AudioContext | null = null
-  let soundOn = false
-  function ping() {
-    if (!soundOn) return
-    audio ??= new AudioContext()
-    let ctx = audio, now = ctx.currentTime
-    let noise = ctx.createBuffer(1, ctx.sampleRate * 0.08, ctx.sampleRate)
-    let data = noise.getChannelData(0)
-    for (let i = 0; i < data.length; i++) data[i] = (Math.random() * 2 - 1) * (1 - i / data.length) ** 3
-    let src = ctx.createBufferSource(), hp = ctx.createBiquadFilter(), ng = ctx.createGain()
-    src.buffer = noise
-    hp.type = 'highpass'
-    hp.frequency.value = 2400
-    ng.gain.value = 0.12
-    src.connect(hp).connect(ng).connect(ctx.destination)
-    src.start(now)
-    for (let [f, d] of [[1975, 0], [3135, 0.02], [4186, 0.05]]) {
-      let o = ctx.createOscillator(), gain = ctx.createGain()
-      o.frequency.value = f
-      gain.gain.setValueAtTime(0.0001, now + d)
-      gain.gain.exponentialRampToValueAtTime(0.035, now + d + 0.004)
-      gain.gain.exponentialRampToValueAtTime(0.0001, now + d + 0.45)
-      o.connect(gain).connect(ctx.destination)
-      o.start(now + d)
-      o.stop(now + d + 0.5)
-    }
-  }
-  sound?.addEventListener('click', () => {
-    soundOn = sound.getAttribute('aria-pressed') !== 'true'
-    sound.setAttribute('aria-pressed', String(soundOn))
-    if (soundOn) ping()
-  }, { signal })
   return true
 }
