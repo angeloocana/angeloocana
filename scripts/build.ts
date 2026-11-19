@@ -38,7 +38,8 @@ await cp('public', OUT, {
 const TS_URL = /(\/assets\/[^"'`#?\s]+?\.tsx?)(?=["'`#?\s])/g
 // A module that imports a sibling (tic-tac-toe.tsx → ./tic-tac-toe-ai.ts) needs the same rename, or the
 // browser asks for the .ts name, which the import map no longer has, and the whole module fails to load.
-const RELATIVE_TS_IMPORT = /(\bfrom\s*|\bimport\s*\(?\s*)(["'])(\.{1,2}\/[^"']+?\.tsx?)\2/g
+// The minifier writes a dynamic import's name in backticks (import(`./ice-gl.ts`)), so those count too.
+const RELATIVE_TS_IMPORT = /(\bfrom\s*|\bimport\s*\(?\s*)(["'`])(\.{1,2}\/[^"'`]+?\.tsx?)\2/g
 const asJs = (path: string) => (/\.tsx?$/.test(path) ? `${path}.js` : path)
 // Cloudflare answers a path with a bare @ (rails.@a1b2c3.tsx) with a redirect to its %40 spelling,
 // one extra round trip per script, so references use that spelling from the start.
@@ -70,7 +71,7 @@ function collect(text: string, from: string) {
   // absolute /assets/ URLs (import maps, script tags, preloads)
   for (let [url] of text.matchAll(/\/assets\/[^"'`\s)]+/g)) queue.push(url)
   // relative imports inside scripts
-  for (let [, spec] of text.matchAll(/(?:\bfrom\s*|\bimport\s*\(?\s*)["'](\.{1,2}\/[^"']+)["']/g)) {
+  for (let [, spec] of text.matchAll(/(?:\bfrom\s*|\bimport\s*\(?\s*)["'`](\.{1,2}\/[^"'`]+)["'`]/g)) {
     queue.push(new URL(spec, new URL(from, ORIGIN)).pathname)
   }
 }
