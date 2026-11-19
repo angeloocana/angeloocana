@@ -127,7 +127,7 @@ function Hero(handle: Handle<{ lang: Lang; t: Copy; clips: Clip[] }>) {
               <SocialIcon id="email" />
               <span>{SITE.email}</span>
             </a>
-            <a class="cin-btn cin-btn-ghost hero-projects" href="#projects">{t.hi.work} <span aria-hidden="true">↓</span></a>
+            <a class="cin-btn cin-btn-ghost hero-projects" href="#projects" data-rmx-document>{t.hi.work} <span aria-hidden="true">↓</span></a>
           </p>
         </div>
 
@@ -135,7 +135,7 @@ function Hero(handle: Handle<{ lang: Lang; t: Copy; clips: Clip[] }>) {
           {/* Career: today's job, its projects, and every company on one line */}
           <li class="tile tile-career">
             <p class="tile-kicker">{tiles.career.kicker}</p>
-            <h2 class="tile-title"><a href="#career" class="tile-link">{now.company}<span class="tile-go" aria-hidden="true">→</span></a></h2>
+            <h2 class="tile-title"><a href="#career" class="tile-link" data-rmx-document>{now.company}<span class="tile-go" aria-hidden="true">→</span></a></h2>
             <p class="tile-meta"><span class="tile-now">{tiles.career.now}</span> · {tiles.career.role}</p>
             {/* what I built there, as plain text: the whole tile is one link, to the Career row */}
             <div class="tile-built">
@@ -160,13 +160,13 @@ function Hero(handle: Handle<{ lang: Lang; t: Copy; clips: Clip[] }>) {
             <h2 class="tile-kicker">{tiles.build.kicker}</h2>
             <ul class="tile-brands">
               <li>
-                <a href="#track2fit" class="brand-link" aria-label={`track2.fit: ${tiles.build.t2f}`}>
+                <a href="#track2fit" class="brand-link" data-rmx-document aria-label={`track2.fit: ${tiles.build.t2f}`}>
                   <span class="brand-t2f">track<sup>2</sup>.fit</span>
                   <small>{tiles.build.t2f}</small>
                 </a>
               </li>
               <li>
-                <a href="#jumpoverjump" class="brand-link" aria-label={`Jump Over Jump: ${tiles.build.joj}`}>
+                <a href="#jumpoverjump" class="brand-link" data-rmx-document aria-label={`Jump Over Jump: ${tiles.build.joj}`}>
                   <span class="brand-joj">Jump <em>Over</em> Jump</span>
                   <small>{tiles.build.joj}</small>
                 </a>
@@ -194,7 +194,7 @@ function Hero(handle: Handle<{ lang: Lang; t: Copy; clips: Clip[] }>) {
               </video>
               <div class="tile-life-copy">
                 <p class="tile-kicker">{tiles.life.kicker}</p>
-                <h2 class="tile-title"><a href="#outside" class="tile-link">{CATEGORY_NAMES[lang][clip.cat]}<span class="tile-go" aria-hidden="true">→</span></a></h2>
+                <h2 class="tile-title"><a href="#outside" class="tile-link" data-rmx-document>{CATEGORY_NAMES[lang][clip.cat]}<span class="tile-go" aria-hidden="true">→</span></a></h2>
                 <p class="tile-foot">{tiles.life.count(clips.length)}</p>
               </div>
               <PauseButton label={t.hi.motion} class="tile-pause" />
@@ -279,7 +279,7 @@ function Row(
           <p class="sr-only" data-rail-live aria-live="polite" />
         </div>
         {next && (
-          <a class="row-down" href={next.href}>
+          <a class="row-down" href={next.href} data-rmx-document>
             <span>{t.down}</span>
             <b>{next.label}</b>
             <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 9l7 7 7-7" /></svg>
@@ -491,7 +491,7 @@ export function HomePage(handle: Handle<{ lang: Lang }>) {
               <ol class="career-index" aria-label={t.career.jump} data-reveal>
                 {career.map((job, i) => (
                   <li key={job.id} style={`--i:${i}`}>
-                    <a href={`#job-${job.id}`} data-rail-jump>
+                    <a href={`#job-${job.id}`} data-rmx-document data-rail-jump>
                       <b>{job.short ?? job.company}</b>
                       <span>
                         {job.start}
@@ -510,7 +510,7 @@ export function HomePage(handle: Handle<{ lang: Lang }>) {
               // :target opens them, with no JS); rails.tsx keeps them open once opened.
               i === RECENT_JOBS && (
                 <li key="more" id="career-more" class="slide career-more">
-                  <a href={`#job-${job.id}`} data-career-more>
+                  <a href={`#job-${job.id}`} data-rmx-document data-career-more>
                     <b>{t.career.earlier(career.length - RECENT_JOBS)} <span aria-hidden="true">↓</span></b>
                     <span>{career[career.length - 1].start}–{job.end} · {[...new Set(career.slice(RECENT_JOBS).map((old) => old.short ?? old.company))].join(', ')}</span>
                   </a>
@@ -519,7 +519,7 @@ export function HomePage(handle: Handle<{ lang: Lang }>) {
               // ...and once they are open, the way to fold them again sits at their top as well as after the last
               i === RECENT_JOBS && (
                 <li key="less-top" class="slide career-less career-less-top">
-                  <a href="#career-more" data-career-less>
+                  <a href="#career-more" data-rmx-document data-career-less>
                     <span aria-hidden="true">↑</span> {t.career.hide}
                   </a>
                 </li>
@@ -562,7 +562,7 @@ export function HomePage(handle: Handle<{ lang: Lang }>) {
                 opened them (rails.tsx). Without JS it is a link back to that button, which also closes
                 them (the :target that opened them moves away). */}
             <li class="slide career-less">
-              <a href="#career-more" data-career-less>
+              <a href="#career-more" data-rmx-document data-career-less>
                 <span aria-hidden="true">↑</span> {t.career.hide}
               </a>
             </li>

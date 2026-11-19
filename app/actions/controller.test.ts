@@ -101,6 +101,18 @@ describe('root controller', () => {
     assert.equal(routes.pt.href(), '/pt/')
   })
 
+  // A #link to the URL the page is already on is no hash change, so Remix's client navigation would take it
+  // and reload the page's frame from the server (the career fold snapped shut: "the page refreshed").
+  // data-rmx-document leaves every in-page link to the browser, which only scrolls.
+  it('leaves every in-page #link on the home pages to the browser, never a frame reload', async () => {
+    for (let path of [routes.home.href(), routes.pt.href()]) {
+      let html = await (await router.fetch(new URL(path, 'http://localhost'))).text()
+      let links = [...html.matchAll(/<a ([^>]*)>/g)].map(([, attrs]) => attrs).filter((attrs) => /href="(?:\/(?:pt\/)?)?#/.test(attrs))
+      assert.ok(links.length >= 20, `${path}: only ${links.length} in-page links`)
+      for (let attrs of links) assert.match(attrs, /data-rmx-document/, `${path}: <a ${attrs}>`)
+    }
+  })
+
   it('names the hero’s second button for where it goes, the projects', async () => {
     let expected = { [routes.home.href()]: 'See my projects', [routes.pt.href()]: 'Ver meus projetos' }
     for (let [path, label] of Object.entries(expected)) {

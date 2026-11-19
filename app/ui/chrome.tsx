@@ -65,17 +65,23 @@ export function SiteNav(handle: Handle<{ lang: Lang; t: Copy; home?: boolean; la
   return () => {
     let { home, lang, langHref, t } = handle.props
     let base = home ? '' : lang === 'pt' ? '/pt/' : '/'
+    // On the home page these are #links within it, and data-rmx-document leaves them to the browser, which
+    // only scrolls. Without it Remix's client navigation takes a #link to the URL you are already on
+    // (no hash change) and reloads the page's frame from the server: the career fold snaps shut, a picked
+    // job goes out, the clips are dealt again. Every in-page link on the home page carries it
+    // (controller.test.ts checks). Elsewhere these lead home, and stay client navigations.
+    let inPage = home ? true : undefined
     return (
       <header class="cin-nav">
-        {home && <a class="skip-link" href="#main">{t.nav.skip}</a>}
-        <a href={home ? '#top' : base} class="cin-mark" aria-label={`Ângelo Ocanã · ${t.nav.top}`}>ÂO</a>
+        {home && <a class="skip-link" href="#main" data-rmx-document>{t.nav.skip}</a>}
+        <a href={home ? '#top' : base} data-rmx-document={inPage} class="cin-mark" aria-label={`Ângelo Ocanã · ${t.nav.top}`}>ÂO</a>
         {/* Phones show the first two sections and a More button; the rest open under it as a small list
             (rails.tsx toggles it, closes it on Escape, a tap outside or a pick). Wide screens show all six in
             one line: the list is display: contents there and the button is hidden. Without JS, phones keep
             the plain links to Career, Projects and Contact. */}
         <nav class="cin-menu" aria-label={t.nav.label}>
           {t.nav.chapters.filter((chapter) => chapter.phone !== false).slice(0, 2).map((chapter) => (
-            <a key={chapter.href} href={`${base}${chapter.href}`} data-chapter-link={chapter.href.slice(1)}>{chapter.label}</a>
+            <a key={chapter.href} href={`${base}${chapter.href}`} data-rmx-document={inPage} data-chapter-link={chapter.href.slice(1)}>{chapter.label}</a>
           ))}
           {home && (
             <button type="button" class="menu-toggle" aria-expanded="false" aria-controls="menu-more" hidden>
@@ -85,7 +91,7 @@ export function SiteNav(handle: Handle<{ lang: Lang; t: Copy; home?: boolean; la
           )}
           <div id="menu-more" class="menu-more">
             {t.nav.chapters.slice(2).map((chapter) => (
-              <a key={chapter.href} href={`${base}${chapter.href}`} class={chapter.phone === false ? 'menu-wide' : undefined} data-chapter-link={chapter.href.slice(1)}>{chapter.label}</a>
+              <a key={chapter.href} href={`${base}${chapter.href}`} data-rmx-document={inPage} class={chapter.phone === false ? 'menu-wide' : undefined} data-chapter-link={chapter.href.slice(1)}>{chapter.label}</a>
             ))}
           </div>
         </nav>
