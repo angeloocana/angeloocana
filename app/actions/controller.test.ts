@@ -113,17 +113,6 @@ describe('root controller', () => {
     }
   })
 
-  it('names the hero’s second button for where it goes, the projects', async () => {
-    let expected = { [routes.home.href()]: 'See my projects', [routes.pt.href()]: 'Ver meus projetos' }
-    for (let [path, label] of Object.entries(expected)) {
-      let html = await (await router.fetch(new URL(path, 'http://localhost'))).text()
-      let cta = html.match(/<a ([^>]*hero-projects[^>]*)>([^<]+)/)
-      assert.ok(cta, `${path}: no projects button in the hero`)
-      assert.match(cta[1], /href="#projects"/)
-      assert.equal(cta[2].trim(), label)
-    }
-  })
-
   it('plays the lighter cuts of the hero clip: the phone one first, then the tile one', async () => {
     let html = await (await router.fetch(new URL(routes.home.href(), 'http://localhost'))).text()
     let video = html.match(/<video [^>]*tile-video[\s\S]*?<\/video>/)?.[0] ?? ''

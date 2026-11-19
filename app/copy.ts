@@ -43,7 +43,6 @@ const en = {
     place: 'Ottawa',
     movedTo: 'moved to',
     proof: 'I work at Shopify, in Ottawa. I’ve been learning and building for the web since 2007, and I still try to learn something new every day. I like making hard things feel simple for the people who use them.',
-    work: 'See my projects',
     tiles: {
       label: 'A little of everything',
       career: { kicker: 'Career', now: '2021–now', role: 'Team lead', since: (count: number, since: string) => `${count} jobs since ${since}` },
@@ -318,7 +317,6 @@ const pt: Copy = {
     place: 'Ottawa',
     movedTo: 'mudou-se para',
     proof: 'Trabalho na Shopify, em Ottawa. Aprendo e construo para a web desde 2007, e ainda tento aprender algo novo todo dia. Gosto de fazer coisas complicadas parecerem simples para quem usa.',
-    work: 'Ver meus projetos',
     tiles: {
       label: 'Um pouco de tudo',
       career: { kicker: 'Carreira', now: '2021–hoje', role: 'Líder técnico', since: (count: number, since: string) => `${count} trabalhos desde ${since}` },

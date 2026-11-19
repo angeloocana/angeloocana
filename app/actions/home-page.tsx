@@ -127,7 +127,6 @@ function Hero(handle: Handle<{ lang: Lang; t: Copy; clips: Clip[] }>) {
               <SocialIcon id="email" />
               <span>{SITE.email}</span>
             </a>
-            <a class="cin-btn cin-btn-ghost hero-projects" href="#projects" data-rmx-document>{t.hi.work} <span aria-hidden="true">↓</span></a>
           </p>
         </div>
 
