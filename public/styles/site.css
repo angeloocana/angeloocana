@@ -304,31 +304,45 @@ html:not(.js-rails) .rail-bar { visibility: hidden; }
 .tl-years { position: relative; display: flex; justify-content: space-between; margin-top: 0.6rem; font: 500 0.75rem/1 var(--sans); letter-spacing: 0.12em; color: var(--dim); }
 .tl-years span:nth-child(2) { position: absolute; translate: -50% 0; color: var(--amber); }
 
-/* What I build: each product named in its own type, its devices peeking up from the bottom right */
-.tile-build { background: radial-gradient(80% 80% at 100% 100%, rgb(182 244 107 / 0.08), transparent 65%), linear-gradient(170deg, #121411, #0b0b0b 65%); }
-/* two links, one per product, each to its own row; the tile itself is not a link */
-.tile-brands { position: relative; z-index: 3; display: grid; gap: 0.55rem; }
-.brand-link { display: grid; gap: 0.25rem; padding-block: 0.15rem; color: inherit; text-decoration: none; }
+/* What I build: the tile is not a link itself. Under its kicker it splits into two halves, one per product,
+   each named in its own type; the whole half is the link to that product's row and lights up on hover.
+   track2.fit's devices peek up in its half. */
+.tile-build { padding: 0; gap: 0; background: radial-gradient(80% 80% at 100% 100%, rgb(182 244 107 / 0.06), transparent 65%), linear-gradient(170deg, #121411, #0b0b0b 65%); }
+.build-head { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 0.2rem 1rem; padding: 1.3rem 1.4rem 0.5rem; }
+.build-head .tile-body { max-width: none; font-size: 0.8rem; line-height: 1.3; color: var(--dim); }
+.tile-brands { flex: 1; min-height: 0; align-self: stretch; display: grid; grid-template-rows: repeat(2, minmax(0, 1fr)); }
+.brand { --tint: 182 244 107; position: relative; overflow: hidden; display: flex; align-items: center; padding: 0.6rem 1.4rem; transition: background-color 0.3s; }
+.brand-half-joj { --tint: 238 155 107; border-top: 1px solid var(--line); }
+.brand-link { display: grid; gap: 0.3rem; color: inherit; text-decoration: none; }
+/* the link covers its whole half */
+.brand-link::after { content: ''; position: absolute; inset: 0; z-index: 3; }
+.brand-link:focus-visible { outline: none; }
+.brand:has(.brand-link:focus-visible) { outline: 2px solid var(--amber); outline-offset: -3px; border-radius: 20px; }
 .brand-link small { font: 500 0.75rem/1.2 var(--sans); letter-spacing: 0.12em; text-transform: uppercase; color: var(--dim); transition: color 0.3s; }
-.brand-link small::after { content: ' →'; color: var(--amber); }
-.brand-link:hover small { color: var(--text); }
-.brand-link:focus-visible { outline-offset: 4px; border-radius: 4px; }
+.brand-link small::after { content: '→'; display: inline-block; margin-left: 0.4em; color: var(--amber); transition: transform 0.4s var(--ease); }
+@media (hover: hover) {
+  .brand:hover { background-color: rgb(var(--tint) / 0.07); }
+  .brand:hover small { color: var(--text); }
+  .brand:hover small::after { transform: translateX(4px); }
+}
 .brand-t2f { font: italic 800 clamp(1.5rem, 1.1rem + 1vw, 2.1rem)/0.95 var(--t2f); text-transform: uppercase; color: #b6f46b; }
 .brand-t2f sup { font-size: max(0.55em, 0.75rem); }
 .brand-joj { font: 600 clamp(1.2rem, 0.95rem + 0.7vw, 1.6rem)/1.05 var(--joj); letter-spacing: -0.02em; }
 .brand-joj em { color: #ee9b6b; font-style: normal; }
-.tile-build .tile-body { max-width: 11ch; margin-top: auto; }
-@media (hover: hover) { .tile-build:hover { translate: none; } }
-.tile-devices { position: absolute; right: 1rem; top: max(58%, 10rem); width: 44%; aspect-ratio: 0.8; pointer-events: none; transition: translate 0.6s var(--ease); }
+/* the tile stays put: only the half under the pointer reacts */
+@media (hover: hover) { .tile-build:hover { translate: none; border-color: var(--line); } }
+.tile-devices { position: absolute; right: 1rem; top: 38%; width: 34%; aspect-ratio: 0.8; pointer-events: none; transition: translate 0.6s var(--ease); }
 .td-phone { position: absolute; right: 26%; top: 0; width: 56%; rotate: -5deg; }
 .td-watch { position: absolute; right: -2%; top: 18%; width: 40%; rotate: 8deg; z-index: 2; }
-@media (hover: hover) { .tile-build:hover .tile-devices { translate: 0 -6%; } }
+@media (hover: hover) { .brand-half-t2f:hover .tile-devices { translate: 0 -10%; } }
 
-/* Outside work: the first clip, playing, the words over its foot */
-.tile-life { justify-content: flex-end; padding: 1.1rem 1.3rem; border-color: transparent; background: #111; }
-.tile-video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
-.tile-life::after { content: ''; position: absolute; inset: 0; background: linear-gradient(to top, rgb(0 0 0 / 0.85), rgb(0 0 0 / 0.1) 60%); pointer-events: none; }
-.tile-life-copy { position: relative; z-index: 2; display: grid; gap: 0.4rem; }
+/* Outside work: the first clip, playing, the words over its foot. The video and its shade sit under the
+   words by z-index (the tile isolates them), not by positioning the words: a positioned box there would
+   hold the title link's overlay to the words' height, and only the words would be clickable. */
+.tile-life { isolation: isolate; justify-content: flex-end; padding: 1.1rem 1.3rem; border-color: transparent; background: #111; }
+.tile-video { position: absolute; inset: 0; z-index: -1; width: 100%; height: 100%; object-fit: cover; }
+.tile-life::after { content: ''; position: absolute; inset: 0; z-index: -1; background: linear-gradient(to top, rgb(0 0 0 / 0.85), rgb(0 0 0 / 0.1) 60%); pointer-events: none; }
+.tile-life-copy { display: grid; gap: 0.4rem; }
 .tile-life .tile-title { font-size: clamp(1.6rem, 1.2rem + 1vw, 2.3rem); }
 .tile-life .tile-foot { color: #d9d3c8; }
 
@@ -380,8 +394,12 @@ html:not(.js-rails) .clip-pause, .clip-pause[hidden] { display: none; }
   .brand-joj { font-size: 1rem; }
   /* the names and what each one is fill the tile; the devices would sit on top of them */
   .tile-build .tile-body, .tile-devices { display: none; }
-  .tile-brands { gap: 0.45rem; margin-top: 0.15rem; }
-  .brand-link { min-height: 2.75rem; align-content: center; gap: 0.15rem; padding-block: 0; }
+  .tile-build { padding: 0; gap: 0; }
+  .build-head { padding: 0.9rem 0.85rem 0; }
+  .brand { padding: 0 0.85rem; }
+  .brand-link small { line-height: 1.1; }
+  .brand:has(.brand-link:focus-visible) { border-radius: 14px; }
+  .brand-link { gap: 0.15rem; }
   .brand-link small { letter-spacing: 0.04em; font-weight: 600; text-transform: none; }
   .tile-life { padding: 0.85rem; }
   .tile-life .tile-title { font-size: 1.3rem; line-height: 1.05; }

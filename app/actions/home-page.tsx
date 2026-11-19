@@ -154,33 +154,36 @@ function Hero(handle: Handle<{ lang: Lang; t: Copy; clips: Clip[] }>) {
             <p class="tile-foot">{tiles.career.since(career.length, String(first))}</p>
           </li>
 
-          {/* What I build: the two products, each named in its own typeface with what it is, on the devices
-              they run on. Each is its own link, to its own row. */}
+          {/* What I build: the two products, each named in its own typeface with what it is. The tile is split
+              in two halves, one per product, each a link to its own row (the whole half, which lights up on
+              hover); track2.fit's devices peek up in its half. */}
           <li class="tile tile-build">
-            <h2 class="tile-kicker">{tiles.build.kicker}</h2>
+            <div class="build-head">
+              <h2 class="tile-kicker">{tiles.build.kicker}</h2>
+              <p class="tile-body">{tiles.build.body}</p>
+            </div>
             <ul class="tile-brands">
-              <li>
+              <li class="brand brand-half-t2f">
                 <a href="#track2fit" class="brand-link" data-rmx-document aria-label={`track2.fit: ${tiles.build.t2f}`}>
                   <span class="brand-t2f">track<sup>2</sup>.fit</span>
                   <small>{tiles.build.t2f}</small>
                 </a>
+                <div class="tile-devices" aria-hidden="true">
+                  <IPhone class="td-phone">
+                    <Screens srcs={['home', 'session', 'history'].map((s) => `${M}/t2f/phone-${s}.webp`)} alt="" />
+                  </IPhone>
+                  <AppleWatch class="td-watch">
+                    <Screens srcs={['log-set', 'rest', 'record'].map((s) => `${M}/t2f/watch-${s}.webp`)} alt="" />
+                  </AppleWatch>
+                </div>
               </li>
-              <li>
+              <li class="brand brand-half-joj">
                 <a href="#jumpoverjump" class="brand-link" data-rmx-document aria-label={`Jump Over Jump: ${tiles.build.joj}`}>
                   <span class="brand-joj">Jump <em>Over</em> Jump</span>
                   <small>{tiles.build.joj}</small>
                 </a>
               </li>
             </ul>
-            <p class="tile-body">{tiles.build.body}</p>
-            <div class="tile-devices" aria-hidden="true">
-              <IPhone class="td-phone">
-                <Screens srcs={['home', 'session', 'history'].map((s) => `${M}/t2f/phone-${s}.webp`)} alt="" />
-              </IPhone>
-              <AppleWatch class="td-watch">
-                <Screens srcs={['log-set', 'rest', 'record'].map((s) => `${M}/t2f/watch-${s}.webp`)} alt="" />
-              </AppleWatch>
-            </div>
           </li>
 
           {/* Outside work: the row's first clip, playing (the only video on the first screen). rails.tsx
