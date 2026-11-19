@@ -9,6 +9,7 @@ import { postsFor } from '../content/posts.ts'
 import { GITHUB, projectsFor } from '../content/projects.ts'
 import { COPY, HREF, type Copy, type Lang } from '../copy.ts'
 import { CineCursor } from '../ui/public/cine-cursor.tsx'
+import { Ice } from '../ui/public/ice.tsx'
 import { Rails } from '../ui/public/rails.tsx'
 import { FONTS, SiteFoot, SiteNav, SocialLinks } from '../ui/chrome.tsx'
 import { AppleWatch, IPad, IPhone, Laptop, Pixel, Screens, WearWatch } from '../ui/devices.tsx'
@@ -127,6 +128,11 @@ function Hero(handle: Handle<{ lang: Lang; t: Copy; clips: Clip[] }>) {
               <SocialIcon id="email" />
               <span>{SITE.email}</span>
             </a>
+            {/* the ice's crack sound, off until pressed; ice.tsx shows it once the ice is up */}
+            <button type="button" class="ice-sound" aria-pressed="false" hidden>
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z" /><path class="ice-wave" d="M15.5 9a4 4 0 0 1 0 6M18 6.5a7.5 7.5 0 0 1 0 11" /></svg>
+              <span>{t.hi.sound}</span>
+            </button>
           </p>
         </div>
 
@@ -203,6 +209,9 @@ function Hero(handle: Handle<{ lang: Lang; t: Copy; clips: Clip[] }>) {
             </li>
           )}
         </ul>
+
+        {/* a sheet of ice over all of it, thin over the words, frosted around the tiles (ice.tsx) */}
+        <Ice />
       </section>
     )
   }

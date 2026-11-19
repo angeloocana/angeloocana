@@ -2,6 +2,7 @@ import * as assert from 'remix/assert'
 import { describe, it } from 'remix/test'
 
 import { loadClips } from '../content/clips.ts'
+import { COPY } from '../copy.ts'
 import { plain, postsFor } from '../content/posts.ts'
 import { router } from '../router.ts'
 import { routes } from '../routes.ts'
@@ -121,6 +122,24 @@ describe('root controller', () => {
     assert.match(sources[0], /src="\/media\/hero\/[^"]+-phone\.mp4\?v=/)
     assert.match(sources[0], /media="\(max-width: 760px\)"/)
     assert.match(sources[1], /src="\/media\/hero\/[^"]+-tile\.mp4\?v=/)
+  })
+
+  it('lays the ice over the hero without hiding it: the words and links are in the page, the canvas is out of reach', async () => {
+    for (let [path, lang] of [[routes.home.href(), 'en'], [routes.pt.href(), 'pt']] as const) {
+      let html = await (await router.fetch(new URL(path, 'http://localhost'))).text()
+      let hero = html.match(/<section id="top"[\s\S]*?<\/section>/)?.[0] ?? ''
+      let t = COPY[lang]
+      assert.match(hero, /<h1[^>]*>Ângelo <em>Ocanã<\/em><\/h1>/)
+      for (let words of [t.hi.role, t.hi.proof]) assert.ok(hero.includes(words), `${path}: ${words}`)
+      for (let href of ['mailto:', '#career', '#track2fit', '#jumpoverjump', '#outside']) assert.match(hero, new RegExp(`<a [^>]*href="${href}`), `${path}: ${href}`)
+      let canvas = hero.match(/<canvas [^>]*>/)?.[0] ?? ''
+      assert.match(canvas, /class="ice"/, `${path}: no ice canvas in the hero`)
+      assert.match(canvas, /aria-hidden="true"/)
+      assert.doesNotMatch(canvas, /tabindex/i)
+      // the sound toggle is a real button, off until pressed, hidden until the ice is up
+      let sound = hero.match(/<button [^>]*class="ice-sound"[^>]*>[\s\S]*?<\/button>/)?.[0] ?? ''
+      for (let part of ['aria-pressed="false"', ' hidden', `<span>${t.hi.sound}</span>`]) assert.ok(sound.includes(part), `${path}: sound toggle without ${part}`)
+    }
   })
 
   it('names every row’s list and arrows for that row, never the same words twice', async () => {
