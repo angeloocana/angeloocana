@@ -166,7 +166,7 @@ const LAYOUT = 8 // ...and of the thickness map
 // where the frost frames the work: the hero's tiles (each half of the split Projects tile) and every card
 const PANES = '.hero-tiles > .tile, .brand, .slide'
 // what stays clear, outside the cards: every line of text and every control
-const WORDS = '.hi-kicker, .hero-role, .hero-proof, .hero-ctas > *, .hero-socials, .tile-kicker, .tile-title, .tile-meta, .tile-label, .tile-projects, .tile-line, .tile-foot, .tile-body, .brand-link, .tile-pause, .row-head, .rail-bar > *, .row-down, .clip-copy, .clip-ig, .cin-foot > *'
+const WORDS = '.hi-kicker, .hero-role, .hero-proof, .hero-socials, .tile-kicker, .tile-title, .tile-meta, .tile-label, .tile-projects, .tile-line, .tile-foot, .tile-body, .brand-link, .tile-pause, .row-head, .rail-bar > *, .row-down, .clip-copy, .clip-ig, .cin-foot > *'
 // what stays melted while the pointer or the keyboard focus is on it
 const HELD = '.tile-career, .tile-life, .brand, .slide'
 // the sections, each with how thick the ice lies in its gaps: the Outside work row (ice swimming) the thickest

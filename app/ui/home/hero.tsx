@@ -41,14 +41,13 @@ export function Hero(handle: Handle<{ lang: Lang; t: Copy; clips: Clip[] }>) {
           </p>
           <h1 id="hero-title" class="hero-role">Ângelo <em>Ocanã</em></h1>
           <p class="hero-proof">{t.hi.proof}</p>
-          <p class="hero-ctas">
-            <a class="cin-btn hero-mail" href={`mailto:${SITE.email}`}>
-              <SocialIcon id="email" />
-              <span>{SITE.email}</span>
-            </a>
-          </p>
-          {/* elsewhere, right under the email: small icons, one line on a phone so the tiles keep the first screen */}
+          {/* how to reach me: the email first, then the social links, all the same small icons on one line */}
           <ul class="hero-socials" aria-label={t.links.elsewhere}>
+            <li>
+              <a href={`mailto:${SITE.email}`} aria-label={`${t.links.email}: ${SITE.email}`} title={SITE.email}>
+                <SocialIcon id="email" />
+              </a>
+            </li>
             {SOCIALS.map((social) => (
               <li key={social.id}>
                 <a href={social.url} rel="me noopener" target="_blank" aria-label={`${social.label} (${t.links.newTab})`} title={social.label}>

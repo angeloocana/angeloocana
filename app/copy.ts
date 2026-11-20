@@ -77,7 +77,7 @@ const en = {
     learning: { prev: 'Back in Learning', next: 'More of Learning' },
     posts: { prev: 'Previous posts', next: 'More posts' },
   },
-  links: { elsewhere: 'Elsewhere', newTab: 'opens in a new tab' },
+  links: { elsewhere: 'Find me', email: 'Email', newTab: 'opens in a new tab' },
   t2f: {
     kickerFirst: 'Personal projects · track2.fit',
     kicker: 'track2.fit',
@@ -339,7 +339,7 @@ const pt: Copy = {
     learning: { prev: 'Voltar em Estudos', next: 'Mais estudos' },
     posts: { prev: 'Posts anteriores', next: 'Mais posts' },
   },
-  links: { elsewhere: 'Em outros lugares', newTab: 'abre em uma nova aba' },
+  links: { elsewhere: 'Onde me encontrar', email: 'E-mail', newTab: 'abre em uma nova aba' },
   t2f: {
     kickerFirst: 'Projetos pessoais · track2.fit',
     kicker: 'track2.fit',
