@@ -243,7 +243,6 @@ const en = {
     title: ['Where I’ve ', 'built', ' things.'],
     sub: (count: number, since: string) => `${count} jobs since ${since}.`,
     pick: 'Pick one to jump to it.',
-    // phones: the older jobs fold behind one button
     today: 'Today',
     now: 'Now',
     built: 'What I built',

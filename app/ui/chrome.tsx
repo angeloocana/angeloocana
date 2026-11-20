@@ -67,7 +67,7 @@ export function SiteNav(handle: Handle<{ lang: Lang; t: Copy; home?: boolean; la
     let base = home ? '' : lang === 'pt' ? '/pt/' : '/'
     // On the home page these are #links within it, and data-rmx-document leaves them to the browser, which
     // only scrolls. Without it Remix's client navigation takes a #link to the URL you are already on
-    // (no hash change) and reloads the page's frame from the server: the career fold snaps shut, a picked
+    // (no hash change) and reloads the page's frame from the server: the rows jump back to their start, a picked
     // job goes out, the clips are dealt again. Every in-page link on the home page carries it
     // (controller.test.ts checks). Elsewhere these lead home, and stay client navigations.
     let inPage = home ? true : undefined

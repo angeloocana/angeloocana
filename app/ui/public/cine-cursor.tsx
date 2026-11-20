@@ -56,7 +56,7 @@ export const CineCursor = clientEntry(import.meta.url, function CineCursor(handl
         if (!raf) { then = performance.now(); raf = requestAnimationFrame(loop) }
         cursor.dataset.on = 'true'
         let target = event.target instanceof Element ? event.target.closest<HTMLElement>('a, button, [data-cursor]') : null
-        // a button with its own words (.cin-btn: the email, See my projects, Open, Play, GitHub...) hides it
+        // a button with its own words (.cin-btn: the email, Open, Play, GitHub...) hides it
         let mode = !target ? '' : target.dataset.cursor || (target.classList.contains('cin-btn') ? 'none' : 'link')
         if (cursor.dataset.mode !== mode) {
           cursor.dataset.mode = mode
