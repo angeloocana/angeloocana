@@ -49,7 +49,9 @@ function arcFrames(x: number, y: number, r: number, step: number): Frame[] {
 }
 
 export function playTicTacToe(signal: AbortSignal) {
-  let reduced = matchMedia('(prefers-reduced-motion: reduce)').matches
+  // read as each move draws: reduced motion can be turned on or off while the page is open
+  let reducedQuery = matchMedia('(prefers-reduced-motion: reduce)')
+  let reduced = () => reducedQuery.matches
   for (let root of document.querySelectorAll<HTMLElement>('[data-ttt]')) setUp(root)
 
   function setUp(root: HTMLElement) {
@@ -118,11 +120,13 @@ export function playTicTacToe(signal: AbortSignal) {
 
     /** Play frames one per animation frame; all at once when motion is reduced or `now` is set. */
     function animate(list: Frame[], pen: Pen, now = false) {
-      if (reduced || now) return list.forEach((f) => drawFrame(f, pen))
+      if (reduced() || now) return list.forEach((f) => drawFrame(f, pen))
       let mine = drawing
       let n = 0
       let step = () => {
         if (mine !== drawing) return
+        // turned on mid-stroke: the rest of it at once
+        if (reduced()) return list.slice(n).forEach((f) => drawFrame(f, pen))
         drawFrame(list[n], pen)
         n += 1
         if (n < list.length) frame(step)
@@ -172,7 +176,7 @@ export function playTicTacToe(signal: AbortSignal) {
       if (winners) {
         let mine = drawing
         let line = () => mine === drawing && animate(lineFrames(...winLine(winners), 10), PEN.win, !animated)
-        animated && !reduced ? timer(500, line) : line()
+        animated && !reduced() ? timer(500, line) : line()
       }
     }
 
