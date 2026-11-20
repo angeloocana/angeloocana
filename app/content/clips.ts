@@ -4,6 +4,7 @@ import { existsSync, readFileSync, statSync, writeFileSync } from 'node:fs'
 import { join } from 'node:path'
 
 import type { Lang } from '../copy.ts'
+import { takeTurns } from '../ui/public/take-turns.ts'
 import { MEDIA_DIR } from './media-dir.ts'
 
 export const CATEGORIES = ['ice', 'gym', 'wood', 'camping', 'food', 'snow', 'bike', 'travel', 'nature', 'music', 'other'] as const
@@ -108,17 +109,11 @@ export function saveClips(clips: Clip[]) {
 /**
  * The order the home row starts in: starred first, then the best clip that keeps the mix going.
  * A category waits until two others have had a turn, so hobbies alternate. `jitter` (0 on the server)
- * lets the browser deal a slightly different order each visit (see rails.tsx, which uses the same rule).
+ * lets the browser deal a slightly different order each visit (rails/clips.ts deals with the same takeTurns).
  */
 export function homeOrder(clips: Clip[] = loadClips(), jitter = 0): Clip[] {
   let live = clips.filter((clip) => !clip.rejected)
   let starred = live.filter((c) => c.star > 0).sort((a, b) => b.star - a.star || b.score - a.score)
-  let pool = live.filter((c) => c.star === 0).map((clip) => ({ clip, rank: clip.score + Math.random() * jitter }))
-  let order: Clip[] = []
-  while (pool.length) {
-    let recent = [...starred, ...order].slice(-2).map((c) => c.cat)
-    pool.sort((a, b) => b.rank - (recent.includes(b.clip.cat) ? 10 : 0) - (a.rank - (recent.includes(a.clip.cat) ? 10 : 0)))
-    order.push(pool.shift()!.clip)
-  }
-  return [...starred, ...order]
+  let rest = live.filter((c) => c.star === 0)
+  return [...starred, ...takeTurns(rest, (c) => c.score + Math.random() * jitter, (c) => c.cat, starred)]
 }

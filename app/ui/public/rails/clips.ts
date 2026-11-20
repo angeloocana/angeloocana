@@ -1,6 +1,7 @@
 import type { Lang } from '../../../copy.ts'
 import { clipView, type ClipData } from '../clip-card.ts'
 import type { Media } from './media.ts'
+import { takeTurns } from '../take-turns.ts'
 
 // The clips row carries its first few clips in the page; the rest come from the JSON the build writes
 // (scripts/build.ts), loaded once for a row: the row coming near, or a hobby chip, whichever is first.
@@ -71,14 +72,8 @@ export function setUpClips(signal: AbortSignal, media: Media) {
 export function shuffle(track: HTMLElement) {
   let clips = [...track.querySelectorAll<HTMLElement>('[data-cat]')]
   let fixed = clips.filter((c) => c.dataset.star && c.dataset.star !== '0')
-  let pool = clips.filter((c) => !fixed.includes(c)).map((el) => ({ el, rank: Number(el.dataset.score || 0) + Math.random() * 2.2 }))
-  let order: HTMLElement[] = []
-  while (pool.length) {
-    let recent = [...fixed, ...order].slice(-2).map((c) => c.dataset.cat)
-    let score = (p: { el: HTMLElement; rank: number }) => p.rank - (recent.includes(p.el.dataset.cat) ? 10 : 0)
-    pool.sort((a, b) => score(b) - score(a))
-    order.push(pool.shift()!.el)
-  }
+  let rest = clips.filter((c) => !fixed.includes(c))
+  let order = takeTurns(rest, (el) => Number(el.dataset.score || 0) + Math.random() * 2.2, (el) => el.dataset.cat ?? '', fixed)
   let after: Element | null = fixed.at(-1) ?? clips[0]?.previousElementSibling ?? null
   for (let clip of order) {
     if (after) after.after(clip)
