@@ -74,10 +74,15 @@ async function carryClip(page: Page, flag: string, url: RegExp) {
   await scrollTo(page, 'outside')
   await page.click('#outside [data-rail-cat="travel"]')
   await page.waitForFunction(() => document.querySelector('#outside [data-rail-cat="travel"]')!.getAttribute('aria-pressed') === 'true')
-  // the row has slid to the hobby: its first card is a Travel clip
-  await page.waitForFunction(() => !document.querySelector('#outside [data-rail-track]')!.classList.contains('is-jumping'))
+  // the row has slid to the hobby: its first card is a Travel clip, and the row is at rest
+  await page.waitForFunction(() => {
+    let track = document.querySelector<HTMLElement>('#outside [data-rail-track]')!
+    let cards = ([...track.children] as HTMLElement[]).filter((el) => el.offsetWidth)
+    let start = track.getBoundingClientRect().left + cards[0].offsetLeft - track.offsetLeft
+    let first = cards.find((el) => Math.abs(el.getBoundingClientRect().left - start) < 8)
+    return first?.dataset.cat === 'travel' && !track.classList.contains('is-jumping')
+  }, null, { timeout: 6000 })
   let clip = (await firstCard(page, 'outside'))!
-  assert.equal(await page.evaluate((clip) => document.getElementById(clip)!.dataset.cat, clip), 'travel')
   await page.waitForFunction(({ flag, clip }) => document.querySelector<HTMLAnchorElement>(flag)!.hash === `#${clip}`, { flag, clip })
   await page.click(flag)
   await page.waitForURL(url)
