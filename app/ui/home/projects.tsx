@@ -217,7 +217,10 @@ c_sharp_phaser/JumpOverJump`}</pre>
                 <div class="ttt-board">
                   <canvas aria-hidden="true" />
                   <div class="ttt-cells">
-                    {[0, 1, 2, 3, 4, 5, 6, 7, 8].map((i) => <button key={i} type="button" data-ttt-cell={i} aria-disabled="true" />)}
+                    {/* named from the start ("Row 1, column 1: empty"); tic-tac-toe-game.ts keeps the names current */}
+                    {[0, 1, 2, 3, 4, 5, 6, 7, 8].map((i) => (
+                      <button key={i} type="button" data-ttt-cell={i} aria-disabled="true" aria-label={`${t.ttt.words.cell.replace('{r}', String(Math.floor(i / 3) + 1)).replace('{c}', String((i % 3) + 1))}: ${t.ttt.words.empty}`} />
+                    ))}
                   </div>
                 </div>
                 <div class="ttt-foot">

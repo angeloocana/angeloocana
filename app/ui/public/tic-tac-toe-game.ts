@@ -66,11 +66,27 @@ export function playTicTacToe(signal: AbortSignal) {
     let size = 0
     let drawing = 0 // bumps on every redraw, so an old animation stops
     let round = 0 // bumps on every new game, so a timer from the last one does nothing
-    let timers: ReturnType<typeof setTimeout>[] = []
-    signal.addEventListener('abort', () => timers.forEach(clearTimeout))
+    // the work still to come (timers, animation frames): each forgets itself once it runs, and an unmount
+    // (the abort) cancels whatever is left, so nothing draws or moves after it
+    let timers = new Set<number>()
+    let frames = new Set<number>()
+    let timer = (ms: number, fn: () => void) => {
+      let id = window.setTimeout(() => { timers.delete(id); fn() }, ms)
+      timers.add(id)
+    }
+    let frame = (fn: () => void) => {
+      let id = requestAnimationFrame(() => { frames.delete(id); fn() })
+      frames.add(id)
+    }
+    signal.addEventListener('abort', () => {
+      timers.forEach(clearTimeout)
+      frames.forEach(cancelAnimationFrame)
+      timers.clear()
+      frames.clear()
+    })
     let later = (ms: number, fn: () => void) => {
       let r = round
-      timers.push(setTimeout(() => r === round && fn(), ms))
+      timer(ms, () => r === round && fn())
     }
 
     // ---------- drawing ----------
@@ -101,17 +117,17 @@ export function playTicTacToe(signal: AbortSignal) {
     }
 
     /** Play frames one per animation frame; all at once when motion is reduced or `now` is set. */
-    function animate(frames: Frame[], pen: Pen, now = false) {
-      if (reduced || now) return frames.forEach((f) => drawFrame(f, pen))
+    function animate(list: Frame[], pen: Pen, now = false) {
+      if (reduced || now) return list.forEach((f) => drawFrame(f, pen))
       let mine = drawing
       let n = 0
       let step = () => {
         if (mine !== drawing) return
-        drawFrame(frames[n], pen)
+        drawFrame(list[n], pen)
         n += 1
-        if (n < frames.length) requestAnimationFrame(step)
+        if (n < list.length) frame(step)
       }
-      requestAnimationFrame(step)
+      frame(step)
     }
 
     let boardLines = (): [Point, Point][] => [
@@ -156,7 +172,7 @@ export function playTicTacToe(signal: AbortSignal) {
       if (winners) {
         let mine = drawing
         let line = () => mine === drawing && animate(lineFrames(...winLine(winners), 10), PEN.win, !animated)
-        animated && !reduced ? setTimeout(line, 500) : line()
+        animated && !reduced ? timer(500, line) : line()
       }
     }
 
@@ -216,11 +232,13 @@ export function playTicTacToe(signal: AbortSignal) {
     let started = false
     fit()
     show()
-    new ResizeObserver(() => {
+    let resized = new ResizeObserver(() => {
       if (canvas.clientWidth === size) return
       fit()
       if (started) draw(false)
-    }).observe(canvas)
+    })
+    resized.observe(canvas)
+    signal.addEventListener('abort', () => resized.disconnect())
 
     // the first game starts once half the board is on screen
     let seen = new IntersectionObserver((entries) => {
