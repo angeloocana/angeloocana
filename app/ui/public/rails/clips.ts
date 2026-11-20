@@ -4,16 +4,22 @@ import type { Media } from './media.ts'
 // (scripts/build.ts), loaded once for a row: the row coming near, or a hobby chip, whichever is first.
 export function setUpClips(signal: AbortSignal, media: Media) {
   let root = document.documentElement
-  let loading = new Map<HTMLElement, Promise<void>>()
+  let loading = new Map<HTMLElement, Promise<boolean>>()
 
+  // A failed load is forgotten, so the next try (the row coming near again, a hobby chip) fetches again.
   let loadMore = (track: HTMLElement) => {
     let more = track.dataset.more
-    if (!more) return Promise.resolve()
+    if (!more) return Promise.resolve(true)
     if (!loading.has(track)) {
-      loading.set(track, appendClips(track, more).then(() => {
+      let load = appendClips(track, more).then(() => {
         if (track.hasAttribute('data-shuffle')) shuffle(track)
         track.dispatchEvent(new Event('scroll'))
-      }))
+        return true
+      }, () => {
+        loading.delete(track)
+        return false
+      })
+      loading.set(track, load)
     }
     return loading.get(track)!
   }
@@ -22,11 +28,9 @@ export function setUpClips(signal: AbortSignal, media: Media) {
   // ones already there.
   async function appendClips(track: HTMLElement, url: string) {
     let data: { names: Record<string, Record<string, string>>; clips: { id: string; cat: string; star: number; score: number; label: Record<string, string>; captionRejected?: boolean; ig?: string; poster: string; video: string }[] }
-    try {
-      data = await (await fetch(url, { signal })).json()
-    } catch {
-      return
-    }
+    let response = await fetch(url, { signal })
+    if (!response.ok) throw new Error(`${url}: ${response.status}`)
+    data = await response.json()
     let lang = root.lang === 'pt-BR' ? 'pt' : 'en'
     let words = JSON.parse(track.dataset.words ?? '{}') as Record<string, string>
     let have = new Set([...track.querySelectorAll<HTMLElement>('[data-clip]')].map((el) => el.dataset.clip))

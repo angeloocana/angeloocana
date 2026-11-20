@@ -25,12 +25,17 @@ export function setUpRail(rail: HTMLElement, { signal, motion, clips }: { signal
   // a row with more clips to come is dealt once they are all in, before it scrolls into view
   if (track.hasAttribute('data-shuffle') && !more) clips.shuffle(track)
   if (more) {
-    let near = new IntersectionObserver(([entry]) => {
-      if (!entry.isIntersecting) return
-      near.disconnect()
-      clips.loadMore(track)
-    }, { rootMargin: '150% 0px' })
+    // the row coming near loads them; after a failed load the row coming near again, or coming to rest
+    // after a sideways scroll, tries again (and so does a hobby chip)
+    let loaded = false
+    let load = async () => {
+      if (loaded) return
+      loaded = await clips.loadMore(track)
+      if (loaded) { near.disconnect(); track.removeEventListener('scrollend', load) }
+    }
+    let near = new IntersectionObserver(([entry]) => { if (entry.isIntersecting) load() }, { rootMargin: '150% 0px' })
     near.observe(rail)
+    track.addEventListener('scrollend', load, { signal, passive: true })
     signal.addEventListener('abort', () => near.disconnect())
   }
 
