@@ -62,9 +62,10 @@ export function Hero(handle: Handle<{ lang: Lang; t: Copy; clips: Clip[] }>) {
           {/* Career: today's job, its projects, and every company on one line */}
           <li class="tile tile-career">
             <p class="tile-kicker">{tiles.career.kicker}</p>
-            <h2 class="tile-title"><a href="#career" class="tile-link" data-rmx-document>{now.company}<span class="tile-go" aria-hidden="true">→</span></a></h2>
+            {/* straight to today's job in the Career row (on a phone the row would open at its list of companies) */}
+            <h2 class="tile-title"><a href={`#job-${now.id}`} class="tile-link" data-rmx-document>{now.company}<span class="tile-go" aria-hidden="true">→</span></a></h2>
             <p class="tile-meta"><span class="tile-now">{tiles.career.now}</span> · {tiles.career.role}</p>
-            {/* what I built there, as plain text: the whole tile is one link, to the Career row */}
+            {/* what I built there, as plain text: the whole tile is one link, to that job in the Career row */}
             <div class="tile-built">
               <p class="tile-label">{t.career.built}</p>
               <ul class="tile-projects">

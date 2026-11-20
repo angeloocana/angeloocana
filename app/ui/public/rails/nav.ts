@@ -5,67 +5,83 @@ export function setUpNav(signal: AbortSignal) {
   let toggle = document.querySelector<HTMLButtonElement>('.menu-toggle')
   let moreList = document.querySelector<HTMLElement>('#menu-more')
 
-  // The menu link of the section that holds the middle of the screen.
+  // Two things follow the scroll: the menu link of the section that holds the middle of the screen, and
+  // the language flags, whose links carry the #id of the row there (so the other language opens at the same
+  // row; a copied link works too; without JS they open the other page at the top). In the career, the
+  // flags carry the job in view (#job-…), and in Outside work the clip in view (#clip-…): the other language
+  // opens at that card.
   let chapters = [...document.querySelectorAll<HTMLElement>('[data-chapter][id]')]
+  let places = [...document.querySelectorAll<HTMLElement>('main section[id], footer[id]')]
   let links = [...document.querySelectorAll<HTMLElement>('[data-chapter-link]')]
-  let last = ''
-  let pending = false
-  let onScroll = () => {
-    if (!pending) { pending = true; requestAnimationFrame(highlight) }
+  let langLinks = [...document.querySelectorAll<HTMLAnchorElement>('.lang-card')]
+  let careerTrack = document.querySelector<HTMLElement>('#career [data-rail-track]')
+  let clipsTrack = document.querySelector<HTMLElement>('#outside [data-rail-track]')
+
+  // Where each section starts on the page, measured once and again only when the page changes size (rows
+  // growing, fonts, clips appended): a scroll frame then reads scrollY and nothing else.
+  let tops = new Map<HTMLElement, number>()
+  let pageHeight = 0
+  let stale = true
+  let measure = () => {
+    stale = false
+    for (let el of new Set([...chapters, ...places])) tops.set(el, el.getBoundingClientRect().top + scrollY)
+    pageHeight = root.scrollHeight
   }
-  let highlight = () => {
+  let sized = new ResizeObserver(() => { stale = true; queue() })
+  sized.observe(document.body)
+  signal.addEventListener('abort', () => sized.disconnect())
+  addEventListener('resize', () => { stale = true; queue() }, { signal })
+
+  // the last section whose top has passed the middle of the screen; at the very bottom, the last one (the
+  // footer is too short to reach the middle)
+  let at = (list: HTMLElement[]) => {
+    let mid = scrollY + innerHeight / 2
+    let here = ''
+    for (let el of list) if (tops.get(el)! <= mid) here = el.id
+    if (scrollY > 0 && innerHeight + scrollY >= pageHeight - 4) here = list.at(-1)?.id ?? here
+    return here
+  }
+  // the first card mostly in view in a sideways row, by its id: a job, a clip; the row's opening card: none
+  let cardInView = (track: HTMLElement | null, prefix: string) => {
+    if (!track) return ''
+    // (offsetLeft, like rails/rows.ts: the layout's place, not the slide-in animation's)
+    let left = track.scrollLeft + track.offsetLeft + track.clientLeft
+    let card = ([...track.children] as HTMLElement[]).find((el) => el.offsetWidth && el.offsetLeft + el.offsetWidth - left > el.offsetWidth * 0.6)
+    return card?.id.startsWith(prefix) ? card.id : ''
+  }
+
+  // one pass a frame: the reads first, then only the writes that change something
+  let lastChapter: string | null = null
+  let pending = false
+  let queue = () => {
+    if (!pending) { pending = true; requestAnimationFrame(update) }
+  }
+  let update = () => {
     pending = false
-    // nothing is lit on the first screen, above the first chapter; at the very bottom it's the last one
-    // (the footer is too short to reach the middle of the screen)
-    let current = ''
-    for (let chapter of chapters) if (chapter.getBoundingClientRect().top <= innerHeight / 2) current = chapter.id
-    if (scrollY > 0 && innerHeight + scrollY >= root.scrollHeight - 4) current = chapters.at(-1)?.id ?? current
-    if (current === last) return
-    last = current
+    if (stale) measure()
+    // nothing is lit on the first screen, above the first chapter
+    let chapter = at(chapters)
+    let place = at(places)
+    if (place === 'top') place = ''
+    if (place === 'career') place = cardInView(careerTrack, 'job-') || place
+    if (place === 'outside') place = cardInView(clipsTrack, 'clip-') || place
+
+    for (let link of langLinks) if (link.hash.slice(1) !== place) link.hash = place
+    if (chapter === lastChapter) return
+    lastChapter = chapter
     for (let link of links) {
-      if (link.dataset.chapterLink === current) link.setAttribute('aria-current', 'location')
+      if (link.dataset.chapterLink === chapter) link.setAttribute('aria-current', 'location')
       else link.removeAttribute('aria-current')
     }
     // on phones the More button stands for the sections under it
-    toggle?.toggleAttribute('data-current', !!moreList?.querySelector(`[data-chapter-link="${current}"]`))
+    toggle?.toggleAttribute('data-current', !!moreList?.querySelector(`[data-chapter-link="${chapter}"]`))
   }
-  addEventListener('scroll', onScroll, { signal, passive: true })
-
-  // The language flags take you to the same section in the other language: their links carry the #id of
-  // the row in the middle of the screen, kept up to date as you scroll (so a copied link works too).
-  // Without JS they open the other language's page at the top.
-  let langLinks = [...document.querySelectorAll<HTMLAnchorElement>('.lang-card')]
-  let places = [...document.querySelectorAll<HTMLElement>('main section[id], footer[id]')]
-  // In the career, the job in view instead (#job-…): the other language opens at that job. It's the first
-  // card mostly in view (the row scrolls sideways); the intro: no job.
-  let careerTrack = document.querySelector<HTMLElement>('#career [data-rail-track]')
-  let jobInView = () => {
-    if (!careerTrack) return ''
-    let left = careerTrack.getBoundingClientRect().left
-    let card = ([...careerTrack.children] as HTMLElement[]).find((el) => {
-      let r = el.getBoundingClientRect()
-      return r.width && r.right - left > r.width * 0.6
-    })
-    return card?.id.startsWith('job-') ? card.id : ''
-  }
-  let carryPlace = () => {
-    let here = ''
-    for (let place of places) if (place.getBoundingClientRect().top <= innerHeight / 2) here = place.id
-    if (scrollY > 0 && innerHeight + scrollY >= root.scrollHeight - 4) here = places.at(-1)?.id ?? here
-    if (here === 'top') here = ''
-    if (here === 'career') here = jobInView() || here
-    for (let link of langLinks) if (link.hash.slice(1) !== here) link.hash = here
-  }
-  let placePending = false
-  let queuePlace = () => {
-    if (!placePending) { placePending = true; requestAnimationFrame(() => { placePending = false; carryPlace() }) }
-  }
-  addEventListener('scroll', queuePlace, { signal, passive: true })
-  careerTrack?.addEventListener('scroll', queuePlace, { signal, passive: true })
+  addEventListener('scroll', queue, { signal, passive: true })
+  careerTrack?.addEventListener('scroll', queue, { signal, passive: true })
+  clipsTrack?.addEventListener('scroll', queue, { signal, passive: true })
   // a page opened at a #section scrolls there after this script has run
-  addEventListener('load', queuePlace, { signal, once: true })
-  addEventListener('hashchange', queuePlace, { signal })
-  carryPlace()
+  addEventListener('load', queue, { signal, once: true })
+  addEventListener('hashchange', queue, { signal })
 
   // Phones: the More button in the menu opens the sections after the first two. Escape, a tap outside or
   // picking one closes it; Escape gives focus back to the button.
@@ -108,5 +124,5 @@ export function setUpNav(signal: AbortSignal) {
       if (to && !to.closest('.cin-menu')) setOpen(false)
     }, { signal })
   }
-  highlight()
+  update()
 }

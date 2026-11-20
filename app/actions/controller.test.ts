@@ -154,7 +154,7 @@ describe('root controller', () => {
       let t = COPY[lang]
       assert.match(hero, /<h1[^>]*>Ângelo <em>Ocanã<\/em><\/h1>/)
       for (let words of [t.hi.role, t.hi.proof]) assert.ok(hero.includes(words), `${path}: ${words}`)
-      for (let href of ['mailto:', '#career', '#track2fit', '#jumpoverjump', '#outside']) assert.match(hero, new RegExp(`<a [^>]*href="${href}`), `${path}: ${href}`)
+      for (let href of ['mailto:', '#job-shopify', '#track2fit', '#jumpoverjump', '#outside']) assert.match(hero, new RegExp(`<a [^>]*href="${href}`), `${path}: ${href}`)
       // the main social links sit on the first screen too; the footer lists them all
       let foot = html.match(/<footer[\s\S]*?<\/footer>/)?.[0] ?? ''
       for (let social of SOCIALS) {

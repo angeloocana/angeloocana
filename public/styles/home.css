@@ -803,9 +803,12 @@ pre.rf-code { margin: 0; width: 100%; height: 100%; padding: 1.2rem 1.4rem; font
 /* opened at #job-… (the other language's flag carries it): the card's years and the row's arrows show
    under the menu, at every width */
 .row-career .job { scroll-margin-top: 7.5rem; }
-/* the row is as tall as its tallest card; where the cards in view are shorter (the last stop), the Next
-   pill moves up under them (rails/rows.ts sets --lift), as a transform so nothing under it moves */
-.row-career .row-down { translate: 0 calc(var(--lift, 0px) * -1); transition: translate 0.5s var(--ease), border-color 0.3s, background 0.3s; }
+/* the row is as tall as its tallest card; where the cards in view are shorter, it gives that space back:
+   rails/rows.ts sets --lift once the row comes to rest (never during a swipe, so the page under it holds
+   still), the rail's foot is clipped by that much and everything after it (the Next pill, the next row)
+   eases up under the cards in view. A taller card swiped in shows cut short until the row comes to rest. */
+.row-career .rail-wrap { overflow-y: clip; }
+.row-career .rail { margin-bottom: calc(var(--lift, 0px) * -1); transition: margin-bottom 0.45s var(--ease), --peek-l 0.3s, --peek-r 0.3s; }
 
 /* phones and narrow windows: the career scrolls sideways like every other row, one job per card; each card
    ends where its content ends instead of stretching to the tallest */

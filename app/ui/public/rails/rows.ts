@@ -109,10 +109,25 @@ export function setUpRail(rail: HTMLElement, { signal, motion, clips }: { signal
   track.addEventListener('scroll', settle, { signal, passive: true })
   signal.addEventListener('abort', () => clearTimeout(settled))
 
-  // the career's "Next" pill moves up under the cards in view when they are shorter than the row (which
-  // keeps its tallest card's height), by --lift (home.css, a transform, so the page never moves). No other
-  // row uses it.
+  // The career's cards differ a lot in height (on a phone, 360 to 1,330 px), and the row is as tall as its
+  // tallest. Where the cards in view are shorter, the row gives the difference back: --lift (home.css) clips
+  // the row by that much and pulls what follows it up, so the row ends under its tallest card in view.
+  // It changes only once the row comes to rest, never during a swipe, so the page under it never moves while
+  // the row scrolls; then it eases to the new height (a taller card swiped in shows cut short until then).
+  // No other row uses it.
   let lifts = rail.classList.contains('row-career')
+  let liftTimer = 0
+  let settleLift = () => {
+    clearTimeout(liftTimer)
+    liftTimer = window.setTimeout(() => {
+      if (stale) measure()
+      let v = view()
+      // every card with any of it in view, the slice of one peeking in at a side too: none is ever cut short
+      let lift = Math.round(tallest - Math.max(0, ...boxes.filter((b) => shownBox(b, v) > 0).map((b) => b.h)))
+      if (lift !== last.lift) rail.style.setProperty('--lift', `${(last.lift = lift)}px`)
+    }, 160)
+  }
+  signal.addEventListener('abort', () => clearTimeout(liftTimer))
   let queued = false
   let lastBg = ''
   let last = { peekL: -1, peekR: -1, lift: -1, start: false, end: false, introAway: false, text: '' }
@@ -133,7 +148,6 @@ export function setUpRail(rail: HTMLElement, { signal, motion, clips }: { signal
     }
     let peekL = peekAt('l')
     let peekR = peekAt('r')
-    let lift = lifts ? tallest - Math.max(0, ...boxes.filter((b) => shownBox(b, v) > 0).map((b) => b.h)) : 0
     let introAway = intro ? shownBox(byEl.get(intro), v) < 0.5 : false
     let counted = countText(atEnd, v)
     // backdrop follows the first video slide that is mostly in view
@@ -162,7 +176,7 @@ export function setUpRail(rail: HTMLElement, { signal, motion, clips }: { signal
     }
     if (peekL !== last.peekL) track.style.setProperty('--peek-l', `${(last.peekL = peekL)}px`)
     if (peekR !== last.peekR) track.style.setProperty('--peek-r', `${(last.peekR = peekR)}px`)
-    if (lifts && lift !== last.lift) rail.style.setProperty('--lift', `${(last.lift = lift)}px`)
+    if (lifts) settleLift()
     // the row's opening card ("More on Instagram"), once scrolled away, leaves the Tab order: Tab into the
     // row goes on from the cards in view instead of scrolling it back to the start
     if (intro && introAway !== last.introAway) {
@@ -273,12 +287,32 @@ export function setUpRail(rail: HTMLElement, { signal, motion, clips }: { signal
     let first = slides()[0]
     track.scrollTo({ left: slide.offsetLeft - first.offsetLeft, behavior: motion.reduced ? 'auto' : 'smooth' })
   }
-  // the page opened at one of this row's cards (#job-…, carried by the other language's flag): the browser
-  // only scrolls the row until the card is somewhere in view, often at its right edge with the card before
-  // it taking the screen; the row slides on so that card is the first one, at once
-  let toHash = () => {
-    let slide = location.hash.length > 1 ? track.querySelector<HTMLElement>(`:scope > [id="${CSS.escape(location.hash.slice(1))}"]`) : null
-    if (!slide) return
+  // Tab onto a link or a button in a card the row shows only part of (the next job, peeking in at the
+  // edge): the browser brings just that link into view, leaving the card a sliver, so the row slides to the
+  // card instead. Keyboard focus only (a click on a card's link leaves the row where it is); the clips have
+  // their own keys (above), and a jump link moves the row itself.
+  track.addEventListener('focusin', (event) => {
+    let target = event.target as HTMLElement
+    let slide = target.closest<HTMLElement>('.slide')
+    if (!slide || slide === target || slide.dataset.clip || !target.matches(':focus-visible')) return
+    // (a card wider than the row never shows whole: the browser's own scrolling to the link does better)
+    if (shown(slide) < 0.98 && slide.offsetWidth <= track.clientWidth) slideTo(slide)
+  }, { signal })
+
+  // the page opened at one of this row's cards (#job-… or #clip-…, carried by the other language's flag):
+  // the browser only scrolls the row until the card is somewhere in view, often at its right edge with the
+  // card before it taking the screen; the row slides on so that card is the first one, at once. A clip may
+  // not be in the page yet (it carries the first few), and the row deals its clips again once they are all
+  // in, so a clip waits for the whole row; one the browser couldn't find brings the page to the row too.
+  let toHash = async () => {
+    let id = location.hash.slice(1)
+    if (!id) return
+    let find = () => track.querySelector<HTMLElement>(`:scope > [id="${CSS.escape(id)}"]`)
+    let missing = !find()
+    if (more && id.startsWith('clip-')) await clips.loadMore(track)
+    let slide = find()
+    if (!slide || location.hash.slice(1) !== id) return
+    if (missing) rail.scrollIntoView({ block: 'start', behavior: 'instant' })
     track.classList.add('is-jumping')
     track.scrollLeft = slide.offsetLeft - slides()[0].offsetLeft
     requestAnimationFrame(() => track.classList.remove('is-jumping'))

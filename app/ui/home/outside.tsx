@@ -111,8 +111,9 @@ function ClipCard(handle: Handle<{ view?: ReturnType<typeof clipView> }>) {
   return () => {
     let { view } = handle.props
     let data = view && Object.fromEntries(Object.entries(view.data).map(([k, v]) => [`data-${k}`, v]))
+    // its id (#clip-…) is what the language flags carry, so the other language opens at this clip (rails/nav.ts)
     return (
-      <li class="slide clip" {...data}>
+      <li class="slide clip" id={view && `clip-${view.data.clip}`} {...data}>
         <img class="clip-video" src={view?.poster} alt={view?.alt ?? ''} loading="lazy" decoding="async" width="540" height="960" />
         <div class="clip-copy" aria-hidden="true">
           <p class="clip-cat">{view?.cat}</p>

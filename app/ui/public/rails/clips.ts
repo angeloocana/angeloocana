@@ -45,6 +45,7 @@ export function setUpClips(signal: AbortSignal, media: Media) {
       let view = clipView(clip, lang, words)
       let li = (template.content.firstElementChild as HTMLElement).cloneNode(true) as HTMLElement
       Object.assign(li.dataset, view.data)
+      li.id = `clip-${clip.id}`
       let img = li.querySelector('img')!
       img.src = view.poster
       img.alt = view.alt
