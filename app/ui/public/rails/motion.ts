@@ -54,6 +54,8 @@ export function setUpMotion(signal: AbortSignal): Motion {
     b.toggleAttribute('data-paused', paused)
     b.setAttribute('aria-label', label)
     b.title = label
+    let text = b.querySelector('[data-pause-text]')
+    if (text) text.textContent = label
   })
   let showPauseButtons = () => pauseButtons.forEach((b) => (b.hidden = !motion))
   showPauseButtons()

@@ -75,6 +75,16 @@ main:focus { outline: none; }
 /* wide screens: all six in one line (the More list is just part of it there, and its button is hidden) */
 .menu-more { display: contents; }
 .menu-toggle { display: none; }
+/* the page's pause, at the end of the line: a quiet icon as dim as the links, its words only on phones */
+.menu-pause { all: unset; box-sizing: border-box; position: relative; display: inline-flex; align-items: center; justify-content: center; gap: 0.6rem; min-width: 2.75rem; min-height: 2.75rem; margin-inline: -0.5rem; color: inherit; opacity: 0.62; cursor: pointer; transition: opacity 0.3s; }
+.menu-pause:hover, .menu-pause:focus-visible { opacity: 1; }
+.menu-pause:focus-visible { outline: 2px solid var(--amber); outline-offset: -4px; border-radius: 999px; }
+.menu-pause svg { width: 0.95rem; height: 0.95rem; fill: none; stroke: currentColor; stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; }
+.menu-pause .i-play { display: none; fill: currentColor; stroke-width: 1.5; }
+.menu-pause[data-paused] .i-pause { display: none; }
+.menu-pause[data-paused] .i-play { display: block; }
+.menu-pause span { display: none; }
+html:not(.js-rails) .menu-pause, .menu-pause[hidden] { display: none; }
 /* between phones and wide screens the menu loses its letter-spacing before anything else */
 @media (max-width: 1100px) { .cin-menu { gap: 1.1rem; } .cin-menu a { letter-spacing: 0.1em; } }
 /* phones: Career, Projects and a More button; the other four open in a short list under the header
@@ -96,9 +106,13 @@ main:focus { outline: none; }
   .menu-toggle[data-current]::after { transform: scaleX(1); }
   /* the list: a quiet panel under the header, one section per line */
   .js-rails .cin-menu:has(.menu-toggle:not([hidden])) .menu-more { position: absolute; top: 100%; left: 0; right: 0; display: none; padding: 0.35rem 1rem 0.75rem; background: #0a0a0a; border-bottom: 1px solid rgb(255 255 255 / 0.08); box-shadow: 0 24px 40px -20px rgb(0 0 0 / 0.9); }
-  .js-rails .menu-more[data-open] { display: grid !important; }
+  .js-rails .cin-menu:has(.menu-toggle:not([hidden])) .menu-more[data-open] { display: grid; }
   .js-rails .menu-more[data-open] a { display: flex; min-height: 3rem; padding-inline: 0.2rem; border-top: 1px solid rgb(255 255 255 / 0.06); font-size: 0.8rem; letter-spacing: 0.14em; }
   .js-rails .menu-more[data-open] a:first-child { border-top: 0; }
+  /* the pause: the list's last line, its words beside the icon */
+  .js-rails .menu-more[data-open] .menu-pause { justify-content: flex-start; min-height: 3rem; margin: 0; padding-inline: 0.2rem; border-top: 1px solid rgb(255 255 255 / 0.06); font: 500 0.8rem/1 var(--sans); letter-spacing: 0.14em; text-transform: uppercase; }
+  .js-rails .menu-more[data-open] .menu-pause span { display: inline; }
+  .js-rails .menu-more[data-open] .menu-pause:focus-visible { outline-offset: -2px; border-radius: 6px; }
   .js-rails .menu-more[data-open] a::after { left: 0.2rem; right: auto; width: 1.5rem; bottom: 0.6rem; }
   .js-rails .menu-more[data-open] a[aria-current] { color: var(--amber); }
   /* under the header, over the page: a tap on it closes the list (rails.tsx) */

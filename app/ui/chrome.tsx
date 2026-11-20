@@ -93,6 +93,15 @@ export function SiteNav(handle: Handle<{ lang: Lang; t: Copy; home?: boolean; la
             {t.nav.chapters.slice(2).map((chapter) => (
               <a key={chapter.href} href={`${base}${chapter.href}`} data-rmx-document={inPage} class={chapter.phone === false ? 'menu-wide' : undefined} data-chapter-link={chapter.href.slice(1)}>{chapter.label}</a>
             ))}
+            {/* the page's one pause, in reach from anywhere: an icon at the end of the line on wide screens, the
+                last line of the More list on phones, with its words. Every pause on the page shows the same
+                state (rails.tsx), and they hide without motion to pause. */}
+            {home && (
+              <button type="button" class="menu-pause" data-pause data-play={t.hi.motion.play} data-pause-label={t.hi.motion.pause} aria-label={t.hi.motion.pause} title={t.hi.motion.pause}>
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path class="i-pause" d="M8 5v14M16 5v14" /><path class="i-play" d="M8 5.5v13l11-6.5z" /></svg>
+                <span data-pause-text aria-hidden="true">{t.hi.motion.pause}</span>
+              </button>
+            )}
           </div>
         </nav>
         {/* the two flags as a small hand of cards: the current one stands taller and ringed */}
