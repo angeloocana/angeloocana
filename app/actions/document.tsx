@@ -33,9 +33,11 @@ export interface DocumentProps {
 const OG_IMAGE = `/media/t2f/desktop.webp?v=${MEDIA_VERSIONS['t2f/desktop.webp'] ?? '0'}`
 
 // Runs before the first paint: the title card shows once per browser. Later visits (and blocked
-// storage, which throws) mark the page seen, so the card never covers it.
+// storage, which throws) mark the page seen, so the card never covers it. A key, a focus or a press
+// before the scripts have loaded skips it too, so a fast first Tab never lands on the skip link under it.
 const INTRO_ONCE = unsafeHTML(
-  "try{localStorage.getItem('ao-intro')?document.documentElement.classList.add('cin-seen'):localStorage.setItem('ao-intro','1')}catch(e){document.documentElement.classList.add('cin-seen')}",
+  "(function(d){var h=d.documentElement;try{localStorage.getItem('ao-intro')?h.classList.add('cin-seen'):localStorage.setItem('ao-intro','1')}catch(e){h.classList.add('cin-seen')}" +
+    "function s(){h.classList.add('cin-skip')}['keydown','focusin','pointerdown'].forEach(function(t){d.addEventListener(t,s,{once:true,capture:true})})})(document)",
 )
 
 // Cache-busting for files in public/: the version is the file's last-modified time, so editing a
