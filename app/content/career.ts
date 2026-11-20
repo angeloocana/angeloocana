@@ -66,7 +66,7 @@ export const CAREER: Job[] = [
       {
         title: 'Delivery promise',
         body: 'Delivery dates buyers can trust, on product pages and in checkout, worked out from where the stock is, where the buyer is and real transit times.',
-        url: 'https://help.shopify.com/manual/shipping/shopify-fulfillment-network/sfn-overview/delivery-promise',
+        url: 'https://help.shopify.com/en/manual/fulfillment/setup/delivery-expectations/automated-delivery-dates',
       },
       {
         title: 'Buy with Prime',
@@ -90,13 +90,13 @@ export const CAREER: Job[] = [
         },
         {
           title: 'SimGym',
-          body: 'Compradores de IA que visitam a loja antes dos clientes reais. Eles navegam, colocam no carrinho e contam o que os confundiu, para o lojista comparar um tema novo com o atual antes de publicar.',
+          body: 'Compradores simulados por IA que visitam a loja antes dos clientes reais. Eles navegam, colocam no carrinho e contam o que os confundiu, para o lojista comparar um tema novo com o atual antes de publicar.',
           url: 'https://apps.shopify.com/simgym',
         },
         {
           title: 'Promessa de entrega',
           body: 'Datas de entrega confiáveis, na página do produto e no checkout, calculadas a partir de onde está o estoque, onde está o comprador e dos tempos reais de transporte.',
-          url: 'https://help.shopify.com/manual/shipping/shopify-fulfillment-network/sfn-overview/delivery-promise',
+          url: 'https://help.shopify.com/pt-BR/manual/fulfillment/setup/delivery-expectations/automated-delivery-dates',
         },
         {
           title: 'Buy with Prime',
