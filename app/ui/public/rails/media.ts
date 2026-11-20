@@ -10,6 +10,7 @@ export interface Media {
 
 export function setUpMedia(signal: AbortSignal, motion: Motion): Media {
   let media: Media = { addSlides: () => {} }
+  loadNear(signal)
   // (data saver can't change while the page is open; reduced motion can, so all of this is set up and
   // checks motion.motion as it goes)
   if (motion.saveData) return media
@@ -141,13 +142,32 @@ export function setUpMedia(signal: AbortSignal, motion: Motion): Media {
   return media
 }
 
+// The project rows' screenshots (devices.tsx Screens near) get their files once they come within a screen
+// and a half of view, down the page or along their row: in time to be there when the row arrives, and never
+// on the first screen of a phone, 2,400 px above them.
+function loadNear(signal: AbortSignal) {
+  let near = new IntersectionObserver((entries) => {
+    for (let { target, isIntersecting } of entries) {
+      if (!isIntersecting) continue
+      let img = target as HTMLImageElement
+      img.src = img.dataset.near!
+      delete img.dataset.near
+      near.unobserve(img)
+    }
+  }, { rootMargin: '150% 100%' })
+  for (let img of document.querySelectorAll<HTMLImageElement>('img[data-near]')) near.observe(img)
+  signal.addEventListener('abort', () => near.disconnect())
+}
+
 // A cycling stack's next screen: shown, and the one after it starts loading (devices.tsx leaves all but
 // the first in data-src).
 function loadShot(shot: Element | undefined) {
   let img = shot as HTMLImageElement | undefined
-  if (img?.dataset.src) {
-    img.src = img.dataset.src
+  let src = img?.dataset.src ?? img?.dataset.near
+  if (img && src) {
+    img.src = src
     delete img.dataset.src
+    delete img.dataset.near
   }
 }
 

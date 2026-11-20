@@ -29,34 +29,34 @@ export function Projects(handle: Handle<{ lang: Lang; t: Copy; nav: (href: strin
             </div>
             <div class="intro-visual hv-t2f">
               <Laptop class="hv hv-laptop" label={t.t2f.web}>
-                <Screens srcs={[`${M}/t2f/desktop.webp`]} alt={t.t2f.webAlt} />
+                <Screens near srcs={[`${M}/t2f/desktop.webp`]} alt={t.t2f.webAlt} />
               </Laptop>
               <IPhone class="hv hv-phone" label={t.t2f.iphone}>
-                <Screens srcs={['session', 'home', 'history', 'records'].map((s) => `${M}/t2f/phone-${s}.webp`)} alt={t.t2f.iphoneAlt} />
+                <Screens near srcs={['session', 'home', 'history', 'records'].map((s) => `${M}/t2f/phone-${s}.webp`)} alt={t.t2f.iphoneAlt} />
               </IPhone>
               <AppleWatch class="hv hv-watch" label={t.t2f.watch}>
-                <Screens srcs={['log-set', 'rest', 'record', 'go'].map((s) => `${M}/t2f/watch-${s}.webp`)} alt={t.t2f.watchAlt} />
+                <Screens near srcs={['log-set', 'rest', 'record', 'go'].map((s) => `${M}/t2f/watch-${s}.webp`)} alt={t.t2f.watchAlt} />
               </AppleWatch>
             </div>
           </li>
           <Card class="card-phone" title={t.t2f.cards.phone.title} body={t.t2f.cards.phone.body}>
             <IPhone class="c-dev" label={t.t2f.iphone}>
-              <Screens srcs={['home', 'session', 'history', 'body', 'records'].map((s) => `${M}/t2f/phone-${s}.webp`)} alt={t.t2f.iphoneAlt} />
+              <Screens near srcs={['home', 'session', 'history', 'body', 'records'].map((s) => `${M}/t2f/phone-${s}.webp`)} alt={t.t2f.iphoneAlt} />
             </IPhone>
           </Card>
           <Card class="card-watch" title={t.t2f.cards.watch.title} body={t.t2f.cards.watch.body}>
             <AppleWatch class="c-dev" label={t.t2f.watch}>
-              <Screens srcs={['go', 'log-set', 'rest', 'record'].map((s) => `${M}/t2f/watch-${s}.webp`)} alt={t.t2f.watchAlt} />
+              <Screens near srcs={['go', 'log-set', 'rest', 'record'].map((s) => `${M}/t2f/watch-${s}.webp`)} alt={t.t2f.watchAlt} />
             </AppleWatch>
           </Card>
           <Card class="card-ipad" title={t.t2f.cards.ipad.title} body={t.t2f.cards.ipad.body}>
             <IPad class="c-dev" label={t.t2f.ipad}>
-              <Screens srcs={[`${M}/t2f/ipad-history.webp`]} alt={t.t2f.ipadAlt} />
+              <Screens near srcs={[`${M}/t2f/ipad-history.webp`]} alt={t.t2f.ipadAlt} />
             </IPad>
           </Card>
           <Card class="card-laptop" title={t.t2f.cards.web.title} body={t.t2f.cards.web.body}>
             <Laptop class="c-dev" label={t.t2f.web}>
-              <Screens srcs={[`${M}/t2f/desktop.webp`]} alt={t.t2f.webAlt} />
+              <Screens near srcs={[`${M}/t2f/desktop.webp`]} alt={t.t2f.webAlt} />
             </Laptop>
           </Card>
           <Card class="card-sync" title={t.t2f.cards.sync.title} body={t.t2f.cards.sync.body}>

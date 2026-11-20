@@ -3,11 +3,11 @@ import type { Handle, RemixNode } from 'remix/component'
 // Device frames drawn in CSS (public/styles/devices.css) around real app screens.
 // Screens are plain <img>/<video>; several images in one <Screens> cross-fade in a loop.
 
-type DeviceProps = { children?: RemixNode; class?: string; style?: string; label?: string; tag?: string }
+type DeviceProps = { children?: RemixNode; class?: string; style?: string; label?: string }
 
 function Frame(handle: Handle<DeviceProps & { kind: string; extra?: RemixNode }>) {
   return () => {
-    let { children, class: className = '', extra, kind, label, style, tag } = handle.props
+    let { children, class: className = '', extra, kind, label, style } = handle.props
     return (
       <figure class={`dev dev-${kind} ${className}`} style={style} aria-label={label}>
         {extra}
@@ -15,7 +15,6 @@ function Frame(handle: Handle<DeviceProps & { kind: string; extra?: RemixNode }>
           <div class="dev-screen">{children}</div>
           <i class="dev-sensor" aria-hidden="true" />
         </div>
-        {tag && <figcaption class="dev-tag">{tag}</figcaption>}
       </figure>
     )
   }
@@ -107,7 +106,7 @@ function WatchDefs(handle: Handle<{ id: string }>) {
 export function AppleWatch(handle: Handle<DeviceProps>) {
   let id = `aw${Math.random().toString(36).slice(2, 7)}`
   return () => {
-    let { children, class: className = '', label, style, tag } = handle.props
+    let { children, class: className = '', label, style } = handle.props
     return (
       <figure class={`dev dev-watch ${className}`} style={style} aria-label={label}>
         <svg class="dev-art" viewBox="0 0 200 400" aria-hidden="true">
@@ -164,7 +163,6 @@ export function AppleWatch(handle: Handle<DeviceProps>) {
         </svg>
         <div class="dev-screen">{children}</div>
         <span class="watch-glare" aria-hidden="true" />
-        {tag && <figcaption class="dev-tag">{tag}</figcaption>}
       </figure>
     )
   }
@@ -173,7 +171,7 @@ export function AppleWatch(handle: Handle<DeviceProps>) {
 export function WearWatch(handle: Handle<DeviceProps>) {
   let id = `wo${Math.random().toString(36).slice(2, 7)}`
   return () => {
-    let { children, class: className = '', label, style, tag } = handle.props
+    let { children, class: className = '', label, style } = handle.props
     return (
       <figure class={`dev dev-wear ${className}`} style={style} aria-label={label}>
         <svg class="dev-art" viewBox="0 0 200 400" aria-hidden="true">
@@ -188,7 +186,6 @@ export function WearWatch(handle: Handle<DeviceProps>) {
           <circle cx="100" cy="200" r="72" fill={`url(#${id}-glass)`} />
         </svg>
         <div class="dev-screen">{children}</div>
-        {tag && <figcaption class="dev-tag">{tag}</figcaption>}
       </figure>
     )
   }
@@ -202,17 +199,22 @@ export function Laptop(handle: Handle<DeviceProps>) {
 
 /** One or more screenshots; the first is shown without JS, the rest cross-fade when cycled. The rest wait
     in data-src until the stack starts cycling (rails.tsx loads each one a step ahead), so the first screen
-    doesn't download pictures it never shows (and reduced motion, which doesn't cycle, never loads them). */
-export function Screens(handle: Handle<{ srcs: string[]; alt: string; position?: string }>) {
+    doesn't download pictures it never shows (and reduced motion, which doesn't cycle, never loads them).
+    `near` (the project rows, far down the page) holds the first one in data-near too, until its row comes
+    within a screen and a half (rails/media.ts): a phone's browser fetched loading="lazy" images 2,400 px
+    down on the first screen. Without JS they never come, so a <noscript> copy shows them. */
+export function Screens(handle: Handle<{ srcs: string[]; alt: string; position?: string; near?: boolean }>) {
   return () => {
-    let { alt, position, srcs } = handle.props
+    let { alt, near, position, srcs } = handle.props
     return (
       <div class="screens" data-cycle={srcs.length > 1 ? '' : undefined}>
+        {near && <noscript><img class="screen on" src={srcs[0]} alt={alt} /></noscript>}
         {srcs.map((src, i) => (
           <img
             key={src}
             class={i === 0 ? 'screen on' : 'screen'}
-            src={i === 0 ? src : undefined}
+            src={i === 0 && !near ? src : undefined}
+            data-near={i === 0 && near ? src : undefined}
             data-src={i === 0 ? undefined : src}
             alt={i === 0 ? alt : ''}
             aria-hidden={i === 0 ? undefined : 'true'}
