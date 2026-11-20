@@ -23,7 +23,9 @@ served by Cloudflare. English at `/`, Portuguese at `/pt`. Read this before chan
 ```sh
 npm i
 npm run dev        # http://localhost:44100, restarts on change (npm run hmr for live reload)
-npm test
+npm test           # fast: the router and the logic, no browser
+npm run test:browser # builds, then drives the built dist/ in Chromium (app/*.test.e2e.ts; Playwright,
+                   # once per machine: npx playwright install chromium)
 npm run typecheck
 npm run build      # prerender to dist/ (from git alone; media comes from R2, see below)
 npm run preview    # build, then serve dist/ the way Cloudflare will (media from the real bucket)
