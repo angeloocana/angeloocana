@@ -134,7 +134,7 @@ export function setUpMedia(signal: AbortSignal, motion: Motion): Media {
   let preload = () => {
     for (let stack of document.querySelectorAll<HTMLElement>('[data-cycle]')) {
       let rect = stack.getBoundingClientRect()
-      if (rect.bottom > 0 && rect.top < innerHeight) loadShot(stack.children[1])
+      if (rect.bottom > 0 && rect.top < innerHeight) loadShot(shotsOf(stack)[1])
     }
   }
   if (document.readyState === 'complete') preload()
@@ -171,9 +171,12 @@ function loadShot(shot: Element | undefined) {
   }
 }
 
+// a stack's screenshots: its own .screen images, not the <noscript> copy that may come first (devices.tsx)
+let shotsOf = (stack: Element) => [...stack.querySelectorAll(':scope > img.screen')]
+
 export function advance(stack: Element | null) {
   if (!stack) return
-  let shots = [...stack.children]
+  let shots = shotsOf(stack)
   let i = shots.findIndex((s) => s.classList.contains('on'))
   let next = shots[(i + 1) % shots.length]
   loadShot(next)
