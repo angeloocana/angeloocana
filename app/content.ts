@@ -16,13 +16,15 @@ export const STORY = [
 ]
 
 
-export type SocialId = 'github' | 'instagram' | 'x' | 'youtube'
+export type SocialId = 'github' | 'instagram' | 'x' | 'youtube' | 'facebook' | 'pluralsight'
 
-// Social links. Most come from the old site (2017); Instagram added in 2026. Facebook and Pluralsight
-// went in 2026 (Ângelo's call); Pluralsight lives on in the Learning row (content/learning.ts).
-export const SOCIALS: { id: SocialId; label: string; url: string }[] = [
+// Social links. Most come from the old site (2017); Instagram added in 2026. The hero shows the main
+// ones; `footOnly` ones (Facebook, Pluralsight) are listed only in the footer (Ângelo's call).
+export const SOCIALS: { id: SocialId; label: string; url: string; footOnly?: boolean }[] = [
   { id: 'github', label: 'GitHub', url: 'https://github.com/angeloocana' },
   { id: 'instagram', label: 'Instagram', url: 'https://www.instagram.com/angeloocanamartins' },
   { id: 'x', label: 'X · Twitter', url: 'https://x.com/ocanaangelo' },
   { id: 'youtube', label: 'YouTube', url: 'https://youtube.com/ocanaangelo' },
+  { id: 'facebook', label: 'Facebook', url: 'https://facebook.com/angeloocanadev', footOnly: true },
+  { id: 'pluralsight', label: 'Pluralsight', url: 'https://pluralsight.com/profile/ocanaangelo', footOnly: true },
 ]

@@ -48,7 +48,7 @@ export function Hero(handle: Handle<{ lang: Lang; t: Copy; clips: Clip[] }>) {
                 <SocialIcon id="email" />
               </a>
             </li>
-            {SOCIALS.map((social) => (
+            {SOCIALS.filter((social) => !social.footOnly).map((social) => (
               <li key={social.id}>
                 <a href={social.url} rel="me noopener" target="_blank" aria-label={`${social.label} (${t.links.newTab})`} title={social.label}>
                   <SocialIcon id={social.id} />
