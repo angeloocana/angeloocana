@@ -97,7 +97,7 @@ export function setUpRail(rail: HTMLElement, { signal, motion, clips }: { signal
   // Where the row came to rest, for screen readers: "3 to 4 of 9", said once scrolling settles (not on
   // every frame of it), and only while focus is in this row.
   let live = rail.querySelector<HTMLElement>('[data-rail-live]')
-  let at = JSON.parse(track.dataset.at ?? '{}') as { one?: string; some?: string }
+  let at = JSON.parse(document.querySelector<HTMLElement>('main')?.dataset.at ?? '{}') as { one?: string; some?: string }
   let settled = 0
   let announce = () => {
     if (!live || !at.one || !rail.contains(document.activeElement)) return

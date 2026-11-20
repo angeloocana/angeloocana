@@ -55,7 +55,8 @@ export function HomePage(handle: Handle<{ lang: Lang }>) {
 
         <SiteNav lang={lang} t={t} home langHref={HREF} />
 
-        <main id="main" tabIndex={-1}>
+        {/* what a row says to screen readers once it settles, for every row (rails/rows.ts) */}
+        <main id="main" tabIndex={-1} data-at={JSON.stringify(t.rail.at)}>
           <Hero lang={lang} t={t} clips={clips} />
           <Career lang={lang} t={t} nav={nav} />
           <Projects lang={lang} t={t} nav={nav} />

@@ -90,7 +90,7 @@ export function Row(
         </div>
         <div class="rail-wrap">
           {/* focusable so the arrow keys scroll it, and named for itself (not by reading all its cards) */}
-          <ul class="rail" data-rail-track data-shuffle={shuffle ? '' : undefined} data-more={more} data-words={words && JSON.stringify(words)} data-count={count} data-total={total} data-at={JSON.stringify(t.at)} tabIndex={0} aria-label={label} aria-describedby={keysId}>
+          <ul class="rail" data-rail-track data-shuffle={shuffle ? '' : undefined} data-more={more} data-words={words && JSON.stringify(words)} data-count={count} data-total={total} tabIndex={0} aria-label={label} aria-describedby={keysId}>
             {intro && <li class={`slide intro intro-slide ${introClass}`}>{intro}</li>}
             {children}
           </ul>
