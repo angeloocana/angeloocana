@@ -6,7 +6,7 @@ import type { Handle } from 'remix/component'
 // the page has loaded and the browser is idle, so the hero's words paint first, and fades in. While the
 // page's motion is off (reduced motion, data saver, or paused with a pause button: html.is-paused, set by
 // rails.tsx) it doesn't load at all; the screen's edges get a plain CSS frost (html[data-ice="off"] in
-// site.css), as they do without WebGL, and the sheet comes the first time the motion is turned on.
+// home.css), as they do without WebGL, and the sheet comes the first time the motion is turned on.
 export const Ice = clientEntry(import.meta.url, function Ice(handle: Handle) {
   handle.queueTask(() => {
     let signal = handle.signal

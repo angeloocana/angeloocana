@@ -110,7 +110,7 @@ export function setUpRail(rail: HTMLElement, { signal, motion, clips }: { signal
   signal.addEventListener('abort', () => clearTimeout(settled))
 
   // the career's "Next" pill moves up under the cards in view when they are shorter than the row (which
-  // keeps its tallest card's height), by --lift (site.css, a transform, so the page never moves). No other
+  // keeps its tallest card's height), by --lift (home.css, a transform, so the page never moves). No other
   // row uses it.
   let lifts = rail.classList.contains('row-career')
   let queued = false
@@ -297,7 +297,7 @@ export function setUpRail(rail: HTMLElement, { signal, motion, clips }: { signal
     // a jump link ([data-rail-jump], like the career intro's list) slides the row to its card, page staying put
     let jump = target.closest<HTMLAnchorElement>('a[data-rail-jump]')
     let slide = jump && track.querySelector<HTMLElement>(`[id="${jump.hash.slice(1)}"]`)
-    // a row stacked top to bottom (the career on phones) has nothing to slide: the link just scrolls the page
+    // a row that fits on the screen has nothing to slide: the link just scrolls the page
     let sideways = track.scrollWidth > track.clientWidth + 8
     if (slide && sideways) {
       event.preventDefault()

@@ -1,22 +1,6 @@
-/* A personal site told like a film. Every section is a row: scroll down to move between rows,
-   sideways inside a row to see more (app/ui/public/rails.tsx). Without JS the rows still scroll. */
-.cin {
-  --bg: #070707; --text: #ece7df; --dim: #9a948a; --amber: #e8b86a; --teal: #6fb7c4; --line: rgb(236 231 223 / 0.14);
-  --serif: 'Instrument Serif', 'Iowan Old Style', Georgia, serif;
-  --sans: 'Inter', system-ui, sans-serif;
-  --t2f: 'Barlow Condensed', 'Arial Narrow', sans-serif;
-  --joj: 'Fraunces', Georgia, serif;
-  --ease: cubic-bezier(0.16, 1, 0.3, 1);
-  --move: 1s cubic-bezier(0.22, 1, 0.36, 1);
-  background: var(--bg); color: var(--text); font: 300 1.0625rem/1.7 var(--sans);
-}
-.cin ::selection { background: var(--amber); color: #111; }
-.cin h1, .cin h2, .cin h3 { font-family: var(--serif); font-weight: 400; line-height: 0.98; letter-spacing: -0.01em; }
-.cin em { font-style: italic; color: var(--amber); }
-.cin a { text-decoration-color: rgb(232 184 106 / 0.5); text-underline-offset: 0.2em; }
-.cin-kicker { font: 500 0.75rem/1 var(--sans); letter-spacing: 0.28em; text-transform: uppercase; color: var(--amber); }
-.cin-lede { font-family: var(--serif); font-size: clamp(1.3rem, 1rem + 1.3vw, 1.9rem); line-height: 1.35; color: var(--text); max-width: 34ch; }
-
+/* The home page, told like a film: every section is a row. Scroll down to move between rows, sideways
+   inside a row to see more (app/ui/public/rails.tsx). Without JS the rows still scroll. What it shares with
+   the posts (colours, type, menu, footer) is in chrome.css. */
 /* ---------- title intro ---------- */
 .cin-intro { position: fixed; inset: 0; z-index: 2000; display: grid; place-items: center; background: #000; pointer-events: none; animation: intro-out 0.35s ease 0.65s forwards; }
 .cin-intro p { display: grid; justify-items: center; gap: 0.6rem; }
@@ -27,114 +11,6 @@
 @keyframes intro-in { from { opacity: 0; letter-spacing: 0.3em; filter: blur(10px); } to { opacity: 1; filter: none; } }
 @keyframes intro-out { to { opacity: 0; visibility: hidden; } }
 .cin-skip .cin-intro, .cin-seen .cin-intro { display: none; }
-/* ---------- keyboard: a skip link, and one visible focus ring everywhere ---------- */
-.cin :focus-visible { outline: 2px solid var(--amber); outline-offset: 3px; }
-.skip-link { position: absolute; z-index: 70; left: 1rem; top: 0.6rem; display: inline-flex; align-items: center; min-height: 2.75rem; padding: 0.7rem 1rem; border-radius: 999px; background: var(--amber); color: #111; font: 600 0.8rem/1 var(--sans); text-decoration: none; transform: translateY(-200%); }
-.skip-link:focus { transform: none; }
-main:focus { outline: none; }
-
-/* ---------- cursor ---------- */
-.cur { position: fixed; z-index: 1500; left: 0; top: 0; width: 34px; height: 34px; margin: -17px 0 0 -17px; border-radius: 50%; border: 1px solid rgb(236 231 223 / 0.6); pointer-events: none; opacity: 0; display: grid; place-items: center; transition: width 0.35s var(--ease), height 0.35s var(--ease), margin 0.35s var(--ease), background 0.3s, border-color 0.3s, opacity 0.3s; mix-blend-mode: difference; }
-.cur[data-on='true'] { opacity: 1; }
-.cur[data-mode='link'] { width: 56px; height: 56px; margin: -28px 0 0 -28px; border-color: #fff; }
-/* over buttons with words (.cin-btn, the email links) only the system pointer shows: the ring would cover them */
-.cur[data-mode='none'] { opacity: 0; }
-.cur[data-mode]:not([data-mode='']):not([data-mode='link']):not([data-mode='none']) { width: 84px; height: 84px; margin: -42px 0 0 -42px; background: #fff; mix-blend-mode: normal; border-color: #fff; }
-.cur-label { font: 600 0.62rem/1 var(--sans); letter-spacing: 0.2em; text-transform: uppercase; color: #111; }
-
-/* ---------- fixed navigation: logo, three links and the language switch ---------- */
-.cin-nav { position: fixed; z-index: 60; inset: 0 0 auto 0; display: flex; justify-content: space-between; align-items: center; gap: 1rem; padding: 0.9rem clamp(1rem, 3vw, 2.5rem); color: #fff; background: linear-gradient(rgb(7 7 7 / 0.82), rgb(7 7 7 / 0.55)); backdrop-filter: blur(14px) saturate(1.2); -webkit-backdrop-filter: blur(14px) saturate(1.2); border-bottom: 1px solid rgb(255 255 255 / 0.06); }
-.cin-mark { display: inline-grid; place-items: center; min-width: 2.75rem; min-height: 2.75rem; margin-left: -0.6rem; font: 400 1.5rem/1 var(--serif); letter-spacing: 0.04em; text-decoration: none; }
-.cin-menu { display: flex; margin-left: auto; gap: clamp(0.9rem, 2.4vw, 2.4rem); }
-/* language switch: two flag cards fanned like a hand. Each card (the link) stays put so its hover
-   area never moves; only the face inside it moves. Entering the hand gives both cards a jiggle;
-   the card under the pointer pops up and stands straight. The current language is ringed. */
-.cin-langs { position: relative; flex: none; width: 4.2rem; height: 2.5rem; margin: 0; }
-/* the link is the 2rem-wide tap target; the flag face inside it stays card-sized */
-.lang-card { --lean: 8deg; position: absolute; top: 0.25rem; left: 50%; width: 2rem; height: 2rem; margin-left: -1rem; display: grid; place-items: center; transform-origin: 50% 135%; transition: transform 0.45s cubic-bezier(0.3, 1.5, 0.5, 1); }
-.lang-en { transform: translateX(-0.55rem) rotate(calc(var(--lean) * -1)); }
-.lang-pt { transform: translateX(0.55rem) rotate(var(--lean)); }
-.lang-card[aria-current] { --lean: 5deg; z-index: 2; }
-.lang-face { display: block; width: 1.4rem; height: 1.95rem; border-radius: 5px; overflow: hidden; box-shadow: 0 0 0 1.5px #0b0b0b; filter: saturate(0.45) brightness(0.85); transition: transform 0.4s cubic-bezier(0.3, 1.5, 0.5, 1), filter 0.3s, box-shadow 0.3s; }
-.lang-face .flag { display: block; width: 100%; height: 100%; }
-.lang-card[aria-current] .lang-face { filter: none; box-shadow: 0 0 0 1.5px #0b0b0b, 0 0 0 3px var(--amber); }
-.lang-card:focus-visible { outline-offset: 1px; border-radius: 6px; }
-@media (hover: hover) {
-  .cin-langs:hover .lang-face { animation: jiggle 0.6s ease-in-out; }
-  .cin-langs:hover .lang-pt .lang-face { animation-delay: 0.08s; }
-  .lang-card:hover { z-index: 3; }
-  .lang-en:hover .lang-face { transform: translateY(-6px) rotate(var(--lean)) scale(1.08); filter: none; }
-  .lang-pt:hover .lang-face { transform: translateY(-6px) rotate(calc(var(--lean) * -1)) scale(1.08); filter: none; }
-}
-@keyframes jiggle { 30% { translate: 0 -3px; rotate: -4deg; } 60% { translate: 0 0; rotate: 3deg; } }
-@media (prefers-reduced-motion: reduce) { .cin-langs:hover .lang-face { animation: none; } }
-.cin-menu a { position: relative; display: inline-flex; align-items: center; min-height: 2.75rem; text-decoration: none; font: 500 0.75rem/1 var(--sans); letter-spacing: 0.16em; text-transform: uppercase; padding-block: 0.4rem; opacity: 0.62; transition: opacity 0.3s; white-space: nowrap; }
-.cin-menu a::after { content: ''; position: absolute; left: 0; right: 0; bottom: 0.45rem; height: 1px; background: currentColor; transform: scaleX(0); transform-origin: left; transition: transform 0.6s var(--ease); }
-.cin-menu a:hover, .cin-menu a[aria-current], .cin-menu a:focus-visible { opacity: 1; }
-.cin-menu a[aria-current]::after { transform: scaleX(1); }
-/* wide screens: all six in one line (the More list is just part of it there, and its button is hidden) */
-.menu-more { display: contents; }
-.menu-toggle { display: none; }
-/* the page's pause, at the end of the line: a quiet icon as dim as the links, its words only on phones */
-.menu-pause { all: unset; box-sizing: border-box; position: relative; display: inline-flex; align-items: center; justify-content: center; gap: 0.6rem; min-width: 2.75rem; min-height: 2.75rem; margin-inline: -0.5rem; color: inherit; opacity: 0.62; cursor: pointer; transition: opacity 0.3s; }
-.menu-pause:hover, .menu-pause:focus-visible { opacity: 1; }
-.menu-pause:focus-visible { outline: 2px solid var(--amber); outline-offset: -4px; border-radius: 999px; }
-.menu-pause svg { width: 0.95rem; height: 0.95rem; fill: none; stroke: currentColor; stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; }
-.menu-pause .i-play { display: none; fill: currentColor; stroke-width: 1.5; }
-.menu-pause[data-paused] .i-pause { display: none; }
-.menu-pause[data-paused] .i-play { display: block; }
-.menu-pause span { display: none; }
-html:not(.js-rails) .menu-pause, .menu-pause[hidden] { display: none; }
-/* between phones and wide screens the menu loses its letter-spacing before anything else */
-@media (max-width: 1100px) { .cin-menu { gap: 1.1rem; } .cin-menu a { letter-spacing: 0.1em; } }
-/* phones: Career, Projects and a More button; the other four open in a short list under the header
-   (rails.tsx). Without JS there's no button, and Contact stands in for it. The links keep 44px of height
-   to tap, and spread across the space between the logo and the flags. */
-@media (max-width: 760px) {
-  .cin-nav { gap: 0.25rem; padding-block: 0.4rem; padding-inline: 1rem 0.5rem; }
-  .cin-menu { gap: 0; justify-content: center; flex: 1; }
-  .cin-menu .menu-wide { display: none; }
-  .cin-menu a, .menu-toggle { padding-inline: 0.45rem; letter-spacing: 0.06em; }
-  .cin-menu a::after { left: 0.45rem; right: 0.45rem; }
-  .js-rails .menu-toggle:not([hidden]) { all: unset; position: relative; display: inline-flex; align-items: center; gap: 0.3rem; min-height: 2.75rem; padding-inline: 0.45rem; font: 500 0.75rem/1 var(--sans); letter-spacing: 0.06em; text-transform: uppercase; opacity: 0.62; cursor: pointer; transition: opacity 0.3s; }
-  .menu-toggle svg { width: 0.9rem; height: 0.9rem; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; transition: rotate 0.3s var(--ease); }
-  .js-rails .menu-toggle:hover, .js-rails .menu-toggle:focus-visible, .js-rails .menu-toggle[aria-expanded='true'], .js-rails .menu-toggle[data-current] { opacity: 1; }
-  .js-rails .menu-toggle:focus-visible { outline: 2px solid var(--amber); outline-offset: -2px; border-radius: 6px; }
-  .menu-toggle[aria-expanded='true'] svg { rotate: 180deg; }
-  /* the section in view is one of the four under More: the button is underlined like a link would be */
-  .menu-toggle::after { content: ''; position: absolute; left: 0.45rem; right: 0.45rem; bottom: 0.45rem; height: 1px; background: currentColor; transform: scaleX(0); transform-origin: left; transition: transform 0.6s var(--ease); }
-  .menu-toggle[data-current]::after { transform: scaleX(1); }
-  /* the list: a quiet panel under the header, one section per line */
-  .js-rails .cin-menu:has(.menu-toggle:not([hidden])) .menu-more { position: absolute; top: 100%; left: 0; right: 0; display: none; padding: 0.35rem 1rem 0.75rem; background: #0a0a0a; border-bottom: 1px solid rgb(255 255 255 / 0.08); box-shadow: 0 24px 40px -20px rgb(0 0 0 / 0.9); }
-  .js-rails .cin-menu:has(.menu-toggle:not([hidden])) .menu-more[data-open] { display: grid; }
-  .js-rails .menu-more[data-open] a { display: flex; min-height: 3rem; padding-inline: 0.2rem; border-top: 1px solid rgb(255 255 255 / 0.06); font-size: 0.8rem; letter-spacing: 0.14em; }
-  .js-rails .menu-more[data-open] a:first-child { border-top: 0; }
-  /* the pause: the list's last line, its words beside the icon */
-  .js-rails .menu-more[data-open] .menu-pause { justify-content: flex-start; min-height: 3rem; margin: 0; padding-inline: 0.2rem; border-top: 1px solid rgb(255 255 255 / 0.06); font: 500 0.8rem/1 var(--sans); letter-spacing: 0.14em; text-transform: uppercase; }
-  .js-rails .menu-more[data-open] .menu-pause span { display: inline; }
-  .js-rails .menu-more[data-open] .menu-pause:focus-visible { outline-offset: -2px; border-radius: 6px; }
-  .js-rails .menu-more[data-open] a::after { left: 0.2rem; right: auto; width: 1.5rem; bottom: 0.6rem; }
-  .js-rails .menu-more[data-open] a[aria-current] { color: var(--amber); }
-  /* under the header, over the page: a tap on it closes the list (rails.tsx) */
-  .menu-scrim[data-open] { position: fixed; z-index: 55; inset: 0; background: rgb(0 0 0 / 0.55); animation: fade 0.2s ease-out; }
-  /* the flags: each card's tap area is 44px square and they sit side by side; the faces still fan */
-  .cin-langs { width: 5.5rem; height: 2.75rem; }
-  .lang-card { top: 0; width: 2.75rem; height: 2.75rem; margin-left: -1.375rem; }
-  .lang-en { transform: translateX(-1.375rem) rotate(calc(var(--lean) * -1)); }
-  .lang-pt { transform: translateX(1.375rem) rotate(var(--lean)); }
-  .lang-en .lang-face { translate: 0.8rem 0; }
-  .lang-pt .lang-face { translate: -0.8rem 0; }
-}
-
-/* ---------- buttons ---------- */
-.cin-btn { display: inline-flex; align-items: center; gap: 0.7rem; padding: 0.95rem 1.5rem; border-radius: 999px; background: var(--text); color: #0b0b0b; text-decoration: none; font: 600 0.82rem/1 var(--sans); letter-spacing: 0.08em; text-transform: uppercase; transition: transform 0.5s var(--ease), box-shadow 0.5s var(--ease); }
-.cin-btn:hover { transform: translateY(-3px); box-shadow: 0 16px 40px -14px rgb(236 231 223 / 0.5); }
-.cin-btn span { transition: transform 0.4s var(--ease); }
-.cin-btn:hover span { transform: translateX(5px); }
-.cin-btn-joj { background: #ee9b6b; }
-/* "How I built it · soon": a note beside the button, not a second button */
-.cin-soon { font: italic 400 1.05rem/1.3 var(--serif); color: var(--dim); }
-
 /* "Software engineer · Brazil ✈ Ottawa". rails.tsx sets data-flight: "wait" parks the plane in Brazil
    with no route drawn, "fly" flies it to Ottawa, drawing the dashed route behind it (the mask's dash is
    the arc's length, 70), and Ottawa lights up as it lands. Without JS the plane flies once at 5s; with
@@ -157,11 +33,9 @@ html:not(.js-rails) .menu-pause, .menu-pause[hidden] { display: none; }
 @keyframes hi-trail { from { stroke-dashoffset: 70; } to { stroke-dashoffset: 0; } }
 @keyframes hi-land { 20% { color: #fff; text-shadow: 0 0 14px rgb(244 210 142 / 0.95), 0 0 3px rgb(244 210 142 / 0.7); } }
 @media (max-width: 720px) { .hi-kicker > span:first-child::after { display: none; } .hi-kicker { flex-direction: column; align-items: start; } }
-@keyframes title-in { from { opacity: 0; transform: translateY(40px); letter-spacing: 0.06em; filter: blur(8px); } to { opacity: 1; transform: none; filter: none; } }
-@keyframes fade { from { opacity: 0; } to { opacity: 1; } }
 
 /* ---------- rows: the one pattern every section uses ---------- */
-.cin { --gut: clamp(1.25rem, 4vw, 4rem); --row-h: min(62svh, 42rem); --vis: calc(var(--row-h) - 10.5rem); }
+.cin { --row-h: min(62svh, 42rem); --vis: calc(var(--row-h) - 10.5rem); }
 .row, #projects { scroll-margin-top: 3rem; }
 .row { position: relative; isolation: isolate; padding: clamp(2.5rem, 6vh, 4rem) 0 clamp(0.5rem, 2vh, 1.25rem); }
 .rail { display: flex; align-items: stretch; gap: clamp(0.75rem, 1.4vw, 1.25rem); overflow-x: auto; overflow-y: hidden; overscroll-behavior-x: contain; scroll-snap-type: x mandatory; scroll-padding-inline: var(--gut); padding: 0.75rem var(--gut) 1.25rem; scrollbar-width: none; outline: none; }
@@ -517,11 +391,10 @@ html:not(.js-rails) .clip-pause, .clip-pause[hidden] { display: none; }
 .card-ipad .c-dev { width: min(100%, calc(var(--vis) * 0.76)); }
 .card-laptop { width: min(88vw, 46rem); }
 .card-laptop .c-dev { width: min(86%, calc(var(--vis) * 1.3)); margin-bottom: 1.4rem; }
-.card-soon, .card-phones { width: min(86vw, max(20rem, calc(var(--vis) * 0.95 + 4rem))); }
+.card-soon { width: min(86vw, max(20rem, calc(var(--vis) * 0.95 + 4rem))); }
 .pair { display: flex; align-items: center; justify-content: center; gap: 8%; width: 100%; }
-.card-soon .dev-pixel, .card-phones .c-dev { width: min(44%, calc(var(--vis) * 0.43)); }
+.card-soon .dev-pixel { width: min(44%, calc(var(--vis) * 0.43)); }
 .card-soon .dev-wear { width: min(38%, calc(var(--vis) * 0.4)); }
-.card-phones .dev-pixel { transform: translateY(6%) rotate(3deg); }
 .card-sync { width: min(84vw, 24rem); }
 .sync-art { width: 100%; max-height: var(--vis); overflow: visible; }
 .sync-line { fill: none; stroke: rgb(182 244 107 / 0.35); stroke-width: 1.5; stroke-dasharray: 4 6; }
@@ -650,28 +523,6 @@ pre.rf-code { margin: 0; width: 100%; height: 100%; padding: 1.2rem 1.4rem; font
 .rf-year { font: italic 400 clamp(2.4rem, 2rem + 1.6vw, 3.4rem)/1 var(--serif); color: #ee9b6b; }
 .reel-frame h3 { font: 600 1.25rem/1.15 var(--joj); }
 .reel-frame p:last-child { color: #a9a296; font-size: 0.95rem; }
-
-/* ---------- Hi: links ---------- */
-/* contact links: email as the main button, then a row of equal social tiles (icon over label) */
-.links { display: grid; gap: 1.1rem; justify-items: start; margin-top: 0.6rem; }
-.foot-links { justify-items: center; }
-.link-email { display: inline-flex; align-items: center; gap: 0.7rem; padding: 0.9rem 1.4rem; border-radius: 999px; background: var(--amber); color: #111; text-decoration: none; font: 500 1rem/1 var(--sans); transition: transform 0.4s var(--ease), box-shadow 0.4s var(--ease); }
-.link-email:hover { transform: translateY(-2px); box-shadow: 0 14px 34px -12px rgb(232 184 106 / 0.7); }
-.link-email .social-icon { width: 1.35rem; height: 1.35rem; }
-.socials { display: grid; grid-template-columns: repeat(6, 5.6rem); gap: 0.6rem; }
-.socials a { display: grid; justify-items: center; align-content: center; gap: 0.6rem; height: 5.6rem; border-radius: 18px; border: 1px solid var(--line); background: rgb(255 255 255 / 0.025); color: var(--text); text-decoration: none; font: 500 0.75rem/1 var(--sans); letter-spacing: 0.04em; transition: color 0.3s, border-color 0.3s, background 0.3s, transform 0.4s var(--ease); }
-.socials a:hover { color: var(--amber); border-color: rgb(232 184 106 / 0.55); background: rgb(232 184 106 / 0.07); transform: translateY(-3px); }
-.socials .social-icon { width: 1.75rem; height: 1.75rem; }
-.social-icon { flex: none; display: block; }
-@media (max-width: 720px) {
-  .foot-links { width: min(100%, 26rem); }
-  .socials { grid-template-columns: repeat(6, minmax(2.75rem, 1fr)); justify-self: stretch; gap: 0.45rem; }
-  .socials a { height: auto; aspect-ratio: 1; border-radius: 16px; }
-  .socials span { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
-  .socials .social-icon { width: 1.55rem; height: 1.55rem; }
-  .link-email { font-size: 0.95rem; }
-}
-
 
 /* ---------- Tic Tac Toe AI: the 2017 game, playable (ui/public/tic-tac-toe.tsx) ---------- */
 .row-ttt { background: radial-gradient(60% 60% at 30% 50%, rgb(232 184 106 / 0.05), transparent 70%); }
@@ -833,9 +684,6 @@ pre.rf-code { margin: 0; width: 100%; height: 100%; padding: 1.2rem 1.4rem; font
 .job .job-tech { margin-top: auto; padding-top: 1.3rem; }
 .job-years { display: flex; align-items: center; gap: 1rem; font: italic 400 clamp(1.6rem, 1rem + 1.6vw, 2.6rem)/1 var(--serif); color: var(--amber); }
 .job-years i { width: clamp(2rem, 4vw, 3.4rem); height: 1px; background: currentColor; opacity: 0.6; }
-.film-panel h3 { font-size: clamp(2.8rem, 1.4rem + 4vw, 5.6rem); line-height: 0.95; margin-block: 0.9rem 0.8rem; letter-spacing: -0.02em; }
-.film-panel h3 a { text-decoration: none; background: linear-gradient(var(--amber), var(--amber)) 0 92% / 0 2px no-repeat; transition: background-size 0.7s var(--ease); }
-.film-panel h3 a:hover { background-size: 100% 2px; }
 .job-meta { font: 500 0.75rem/1.4 var(--sans); letter-spacing: 0.16em; text-transform: uppercase; color: var(--dim); margin-bottom: 1.8rem; }
 .job-label { font: 500 0.75rem/1 var(--sans); letter-spacing: 0.24em; text-transform: uppercase; color: var(--amber); margin-bottom: 0.9rem; }
 /* what I built, in the sans like the rest of the reading text: the display serif is for headings */
@@ -863,24 +711,10 @@ pre.rf-code { margin: 0; width: 100%; height: 100%; padding: 1.2rem 1.4rem; font
 .post-card > a { display: flex; flex-direction: column; gap: 0.6rem; height: 100%; padding: 1.4rem 1.4rem 1.3rem; border: 1px solid var(--line); border-radius: 22px; background: linear-gradient(170deg, #141312, #0b0b0b 60%); color: var(--text); text-decoration: none; transition: border-color 0.3s, translate 0.5s var(--ease), background 0.3s; }
 .post-card > a:hover { border-color: rgb(232 184 106 / 0.5); translate: 0 -4px; background: linear-gradient(170deg, #1a1714, #0d0c0b 60%); }
 .post-year { font: italic 400 2.6rem/1 var(--serif); color: var(--amber); }
-.post-meta { display: flex; flex-wrap: wrap; gap: 0.3rem 0.9rem; margin: 0; font: 500 0.75rem/1.3 var(--sans); letter-spacing: 0.14em; text-transform: uppercase; color: var(--dim); }
 .post-lang { color: #f4d28e; }
 .post-card h3 { font: 400 clamp(1.3rem, 1.1rem + 0.5vw, 1.6rem)/1.15 var(--serif); }
 .post-excerpt { color: #a9a296; font-size: 0.88rem; line-height: 1.5; display: -webkit-box; -webkit-line-clamp: 4; -webkit-box-orient: vertical; overflow: hidden; }
-.post-tags { display: flex; flex-wrap: wrap; gap: 0.35rem; }
 .post-card .post-tags { margin-top: auto; }
-.post-tags li { padding: 0.35rem 0.6rem; border-radius: 999px; border: 1px solid var(--line); color: #d9d3c8; font: 500 0.75rem/1 var(--sans); letter-spacing: 0.04em; }
-
-/* ---------- footer ---------- */
-.cin-foot { display: grid; justify-items: center; text-align: center; gap: 1.6rem; padding: clamp(6rem, 14vh, 9rem) 1.5rem 8rem; background: radial-gradient(70% 50% at 50% 0%, rgb(111 183 196 / 0.1), transparent 70%), #050505; }
-.cin-foot h2 { font-size: clamp(4rem, 2rem + 9vw, 10rem); }
-.foot-links { justify-content: center; }
-.cin-fine { font-size: 0.8rem; color: var(--dim); }
-
-/* ---------- film grain ---------- */
-.cin::after { content: ''; position: fixed; inset: 0; z-index: 900; pointer-events: none; opacity: 0.07; mix-blend-mode: overlay; background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 0.9 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>"); animation: grain 0.8s steps(4) infinite; }
-@keyframes grain { 0% { transform: translate(0, 0); } 25% { transform: translate(-3%, 2%); } 50% { transform: translate(2%, -3%); } 75% { transform: translate(-2%, -1%); } }
-
 
 @media (max-width: 640px) {
   .cin { --row-h: min(58svh, 32rem); }
@@ -919,11 +753,10 @@ pre.rf-code { margin: 0; width: 100%; height: 100%; padding: 1.2rem 1.4rem; font
 
 /* the pause button (rails.tsx sets html.is-paused): every looping animation holds still, the rail's tug
    and the grain included. One-off entrances still finish. */
-.is-paused .cin::after, .is-paused .row-down svg, .is-paused .hv, .is-paused .room-chip, .is-paused .ranks-you,
+.is-paused .row-down svg, .is-paused .hv, .is-paused .room-chip, .is-paused .ranks-you,
 .is-paused .jd-pill i, .is-paused .career-index i, .is-paused .tl-track i, .is-paused .job-badge::before { animation-play-state: paused; }
 
 @media (prefers-reduced-motion: reduce) {
-  .cin::after { animation: none; }
   .tl-track i.tl-now, .job-badge::before { animation: none; }
   .cin-intro { display: none; }
   .js-rails .slide { animation: none; }
@@ -982,3 +815,4 @@ pre.rf-code { margin: 0; width: 100%; height: 100%; padding: 1.2rem 1.4rem; font
   .row-career .job-tech li:nth-child(n+7) { display: none; }
   .row-career .job .job-tech { padding-top: 1rem; }
 }
+
