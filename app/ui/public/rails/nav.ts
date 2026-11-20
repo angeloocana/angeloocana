@@ -79,6 +79,8 @@ export function setUpNav(signal: AbortSignal) {
     scrim.className = 'menu-scrim'
     scrim.setAttribute('aria-hidden', 'true')
     document.body.append(scrim)
+    // a remount builds its own: this one goes with the script that made it
+    signal.addEventListener('abort', () => scrim.remove())
     let setOpen = (open: boolean) => {
       button.setAttribute('aria-expanded', String(open))
       list.toggleAttribute('data-open', open)
