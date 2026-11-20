@@ -947,11 +947,6 @@ pre.rf-code { margin: 0; width: 100%; height: 100%; padding: 1.2rem 1.4rem; font
      of highlights (four or fewer) the tags go under them, so the two columns come out close in height
      (Kinaxis left 360px empty under its three highlights otherwise). */
   .row-career .slide.job { align-self: flex-start; min-height: 0; }
-  /* opened at #job-… (the other language's flag carries it): the row's arrows show above the card, clear of the menu */
-  .row-career .job { scroll-margin-top: 7.5rem; }
-  /* the row is as tall as its tallest card; where the cards in view are shorter (the last stop), the Next
-     pill moves up under them (rails.tsx sets --lift), as a transform so nothing under it moves */
-  .row-career .row-down { translate: 0 calc(var(--lift, 0px) * -1); transition: translate 0.5s var(--ease), border-color 0.3s, background 0.3s; }
   .row-career .job-wide:not(.job-featured):not(:has(.job-highlights > li:nth-child(5))) .job-tech { grid-column: 2; }
   /* seven or more (freelancing's comeback): a wider card with two columns of them, so it's no taller than the rest */
   .job-wide:not(.job-featured):has(.job-highlights > li:nth-child(7)) { width: min(64rem, 92vw); }
@@ -964,6 +959,13 @@ pre.rf-code { margin: 0; width: 100%; height: 100%; padding: 1.2rem 1.4rem; font
 .job-highlights b a { color: inherit; text-decoration: none; background: linear-gradient(var(--amber), var(--amber)) 0 100% / 0 1px no-repeat; transition: background-size 0.5s var(--ease); }
 .job-highlights b a:hover { background-size: 100% 1px; }
 .job-highlights b a i { font-style: normal; font-size: 0.8em; color: var(--amber); }
+
+/* opened at #job-… (the other language's flag carries it): the card's years and the row's arrows show
+   under the menu, at every width */
+.row-career .job { scroll-margin-top: 7.5rem; }
+/* the row is as tall as its tallest card; where the cards in view are shorter (the last stop), the Next
+   pill moves up under them (rails/rows.ts sets --lift), as a transform so nothing under it moves */
+.row-career .row-down { translate: 0 calc(var(--lift, 0px) * -1); transition: translate 0.5s var(--ease), border-color 0.3s, background 0.3s; }
 
 /* phones and narrow windows: the career scrolls sideways like every other row, one job per card; each card
    ends where its content ends instead of stretching to the tallest */

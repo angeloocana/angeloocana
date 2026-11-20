@@ -273,6 +273,20 @@ export function setUpRail(rail: HTMLElement, { signal, motion, clips }: { signal
     let first = slides()[0]
     track.scrollTo({ left: slide.offsetLeft - first.offsetLeft, behavior: motion.reduced ? 'auto' : 'smooth' })
   }
+  // the page opened at one of this row's cards (#job-…, carried by the other language's flag): the browser
+  // only scrolls the row until the card is somewhere in view, often at its right edge with the card before
+  // it taking the screen; the row slides on so that card is the first one, at once
+  let toHash = () => {
+    let slide = location.hash.length > 1 ? track.querySelector<HTMLElement>(`:scope > [id="${CSS.escape(location.hash.slice(1))}"]`) : null
+    if (!slide) return
+    track.classList.add('is-jumping')
+    track.scrollLeft = slide.offsetLeft - slides()[0].offsetLeft
+    requestAnimationFrame(() => track.classList.remove('is-jumping'))
+    for (let link of rail.querySelectorAll<HTMLAnchorElement>('a[data-rail-jump]')) link.toggleAttribute('data-picked', link.hash === location.hash)
+  }
+  toHash()
+  addEventListener('load', toHash, { signal, once: true })
+  addEventListener('hashchange', toHash, { signal })
 
   // arrows: page by the width of what is visible
   rail.addEventListener('click', (event) => {
