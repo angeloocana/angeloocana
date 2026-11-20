@@ -356,14 +356,14 @@ html:not(.js-rails) .rail-bar { visibility: hidden; }
 .clip-pause[data-paused] .i-pause { display: none; }
 .clip-pause[data-paused] .i-play { display: block; }
 .tile-pause { position: absolute; top: 0.8rem; right: 0.8rem; }
-/* The sheet of ice over the hero (ice.tsx, ice-gl.ts): it never takes a click, a tap or the focus, and fades
-   in once it has drawn. Without WebGL the tiles get a still
-   CSS frost along their edges instead. */
-.ice { position: absolute; inset: 0; z-index: 5; width: 100%; height: 100%; pointer-events: none; opacity: 0; transition: opacity 1s ease; }
+/* One sheet of ice over the whole page (ice.tsx, ice-gl.ts), fixed to the screen while the page scrolls
+   under it, under the menu. It never takes a click, a tap or the focus, and fades in once it has drawn. As
+   tall as the screen gets (lvh), so a phone's toolbar coming and going never resizes it. Without WebGL the
+   screen's edges get a still CSS frost instead. */
+.ice { position: fixed; left: 0; top: 0; z-index: 50; width: 100%; height: 100lvh; pointer-events: none; opacity: 0; transition: opacity 1s ease; }
 .ice[data-on] { opacity: 1; }
-.hero-ctas { position: relative; z-index: 6; align-items: center; }
-.hero[data-ice='off'] .ice { display: none; }
-.hero[data-ice='off'] .tile { box-shadow: inset 0 0 0 1px rgb(199 219 230 / 0.2), inset 0 0 36px rgb(199 219 230 / 0.14); }
+.hero-ctas { align-items: center; }
+[data-ice='off'] .ice { opacity: 1; box-shadow: inset 0 0 0 1px rgb(199 219 230 / 0.06), inset 0 0 48px rgb(199 219 230 / 0.12); }
 
 /* nothing to pause (no JS, or reduced motion): gone, not just inert. [hidden] alone loses to display: grid. */
 html:not(.js-rails) .clip-pause, .clip-pause[hidden] { display: none; }

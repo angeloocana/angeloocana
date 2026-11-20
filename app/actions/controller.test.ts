@@ -124,7 +124,7 @@ describe('root controller', () => {
     assert.match(sources[1], /src="\/media\/hero\/[^"]+-tile\.mp4\?v=/)
   })
 
-  it('lays the ice over the hero without hiding it: the words and links are in the page, the canvas is out of reach', async () => {
+  it('lays one sheet of ice over the page without hiding it: the words and links are in the page, the canvas is out of reach', async () => {
     for (let [path, lang] of [[routes.home.href(), 'en'], [routes.pt.href(), 'pt']] as const) {
       let html = await (await router.fetch(new URL(path, 'http://localhost'))).text()
       let hero = html.match(/<section id="top"[\s\S]*?<\/section>/)?.[0] ?? ''
@@ -132,10 +132,15 @@ describe('root controller', () => {
       assert.match(hero, /<h1[^>]*>Ângelo <em>Ocanã<\/em><\/h1>/)
       for (let words of [t.hi.role, t.hi.proof]) assert.ok(hero.includes(words), `${path}: ${words}`)
       for (let href of ['mailto:', '#career', '#track2fit', '#jumpoverjump', '#outside']) assert.match(hero, new RegExp(`<a [^>]*href="${href}`), `${path}: ${href}`)
-      let canvas = hero.match(/<canvas [^>]*>/)?.[0] ?? ''
-      assert.match(canvas, /class="ice"/, `${path}: no ice canvas in the hero`)
+      // one canvas for the whole page, outside the hero and every row: a single fixed layer
+      assert.doesNotMatch(hero, /<canvas class="ice"/, `${path}: the ice canvas should not be inside the hero`)
+      let canvases = (html.match(/<canvas [^>]*>/g) ?? []).filter((c) => /class="ice"/.test(c))
+      assert.equal(canvases.length, 1, `${path}: one ice canvas`)
+      let [canvas] = canvases
       assert.match(canvas, /aria-hidden="true"/)
       assert.doesNotMatch(canvas, /tabindex/i)
+      let main = html.match(/<main[\s\S]*?<\/main>/)?.[0] ?? ''
+      assert.doesNotMatch(main, /<canvas class="ice"/, `${path}: the canvas sits over <main>, not in it`)
     }
   })
 

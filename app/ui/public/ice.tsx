@@ -1,10 +1,10 @@
 import { clientEntry } from 'remix/component'
 import type { Handle } from 'remix/component'
 
-// The hero's sheet of ice (ice-gl.ts): a canvas over the hero that never takes a click, a tap or the focus.
-// Nothing of it loads with the page: the WebGL code comes once
+// The home page's sheet of ice (ice-gl.ts): one canvas fixed over the screen, the page scrolling under it,
+// that never takes a click, a tap or the focus. Nothing of it loads with the page: the WebGL code comes once
 // the page has loaded and the browser is idle, so the hero's words paint first, and fades in. Without WebGL
-// the tiles get a plain CSS frost instead (.hero[data-ice="off"] in site.css).
+// the screen's edges get a plain CSS frost instead (html[data-ice="off"] in site.css).
 export const Ice = clientEntry(import.meta.url, function Ice(handle: Handle) {
   handle.queueTask(() => {
     let signal = handle.signal
@@ -18,7 +18,7 @@ export const Ice = clientEntry(import.meta.url, function Ice(handle: Handle) {
       try {
         on = !signal.aborted && (await mountIce(ice, signal))
       } catch {}
-      if (!on) ice.parentElement!.dataset.ice = 'off'
+      if (!on) document.documentElement.dataset.ice = 'off'
     }
     let whenIdle = () => {
       if ('requestIdleCallback' in window) requestIdleCallback(start, { timeout: 2000 })

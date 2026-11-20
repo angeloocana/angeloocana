@@ -1,15 +1,20 @@
-// A sheet of river ice over the hero, in plain WebGL (no library). ice.tsx imports this once the page has
-// loaded and gone idle. The pointer (or a swiping finger) melts clear holes with a wet rim, which freeze
-// back over about 4 s; a click cracks it; a tile under the pointer or the keyboard focus stays melted.
+// A sheet of river ice over the whole home page, in plain WebGL (no library). ice.tsx imports this once the
+// page has loaded and gone idle. The sheet is fixed to the screen and the page scrolls under it. The
+// pointer (or a swiping finger) melts clear holes with a wet rim, which freeze back over about 4 s; a click
+// on bare ice cracks it; a card under the pointer or the keyboard focus stays melted.
 //
-// How thick the ice is comes from the page itself (layout()): clear over every line of text, a thin glaze
-// inside the tiles, and frost thick at their edges, between them and around the hero, so the words are
-// always readable and the frost frames the work instead of covering it.
+// How thick the ice is comes from the page itself (layout()): clear over every line of text and every card,
+// a glaze inside the hero's tiles and over the clips, frost along the screen's edges and in the gaps
+// between sections, so the words are always readable and the frost frames the work instead of covering
+// it. The boxes it follows are measured once (measure(), again only when the page changes size) and moved
+// with the page's scroll and each row's sideways scroll, so a frame never asks the browser for layout.
+// Scrolling into a new section, the frost creeps in from the edges and settles.
 //
 // Two passes: the sheet's grain (frost, the crack network, the surface's tilt for the light) is drawn once
 // per size into a texture; each frame lays it over the page with the melt map, the light and fresh cracks.
-// Frames stop while the hero is off screen or the tab is hidden, drop to 15 a second when nothing moves,
-// and stop altogether while the page's motion is off (html.is-paused: reduced motion or the pause button).
+// Frames stop while the tab is hidden, drop to 12 a second when nothing moves, and stop altogether while
+// the page's motion is off (html.is-paused: reduced motion, data saver or the pause button), which leaves
+// one still frame of frost along the screen's edges.
 
 const VERT = 'attribute vec2 a;void main(){gl_Position=vec4(a,0.,1.);}'
 
@@ -47,11 +52,12 @@ void main(){
 }`
 
 // one frame: B the grain, L the thickness map, M the melt map; P the light (CSS px, y up), C the last
-// cracks (x, y, when), A how far the sheet has frozen in, T the time
+// cracks (x, y, when), A how far the sheet has frozen in, E how far a section's frost has crept in (1:
+// settled), T the time
 const ICE = `${NOISE}
 uniform sampler2D B, L, M;
 uniform vec2 R, P;
-uniform float S, T, A;
+uniform float S, T, A, E;
 uniform vec3 C[4];
 // rays out of a point: N sectors, each with one straight, slightly kinked ray of its own length
 float rays(vec2 d, float r, float N, float seed, float len, float wd){
@@ -81,6 +87,12 @@ void main(){
   vec4 b = texture2D(B, q);
   float l = texture2D(L, uv).r, m = texture2D(M, uv).r;
   vec3 n = normalize(vec3(b.zw*2. - 1., 1.));
+  // into a new section: a front of frost creeps in from the screen's edges and settles. It only thickens
+  // ice that is there (never over the words), and fades as it settles, so nothing flashes.
+  float ed = min(min(c.x, R.x/S - c.x), min(c.y, R.y/S - c.y));
+  float front = 30. + 230.*(1. - pow(1. - E, 3.));
+  float wave = (1. - smoothstep(front - 110., front, ed + (b.x - .5)*90.))*(1. - E);
+  l = min(1., l*(1. + 1.3*wave));
   // frost reaches in from the thick edges, and creeps a little back and forth while nobody touches it
   float creep = .05*sin(T*.09 + b.x*6.);
   float fr = smoothstep(.3, .78, l + (b.x - .5)*.5 + creep);
@@ -118,24 +130,34 @@ void main(){
   // freezing in from the thick edges, a glint running along the front
   float g = A*1.5 - (1. - l)*.9 - (1. - b.x)*.35;
   col += (smoothstep(0., .05, g) - smoothstep(.05, .2, g))*.6;
-  float gz = smoothstep(0., .1, g)*smoothstep(0., 48., c.y);
+  // ...and along the creeping front
+  float fg = (1. - smoothstep(0., 14., abs(ed + (b.x - .5)*90. - front)))*(1. - E)*smoothstep(.15, .4, l);
+  col += fg*.5; a += fg*.12;
+  float gz = smoothstep(0., .1, g);
   a = clamp(a*gz, 0., .9); dark = clamp(dark, 0., .6)*gz;
   gl_FragColor = vec4(min(col, 1.)*a*(1. - dark), a + dark*(1. - a));
 }`
 
 const MELT = 6 // CSS px per cell of the melt map
 const LAYOUT = 8 // ...and of the thickness map
-// where the frost frames the work: each tile, and each half of the split Projects tile
-const PANES = '.hero-tiles > .tile, .brand'
-// what stays clear: every line of text and every control
-const WORDS = '.hi-kicker, .hero-role, .hero-proof, .hero-ctas > *, .tile-kicker, .tile-title, .tile-meta, .tile-label, .tile-projects, .tile-line, .tile-foot, .tile-body, .brand-link, .tile-pause'
+// where the frost frames the work: the hero's tiles (each half of the split Projects tile) and every card
+const PANES = '.hero-tiles > .tile, .brand, .slide'
+// what stays clear, outside the cards: every line of text and every control
+const WORDS = '.hi-kicker, .hero-role, .hero-proof, .hero-ctas > *, .tile-kicker, .tile-title, .tile-meta, .tile-label, .tile-projects, .tile-line, .tile-foot, .tile-body, .brand-link, .tile-pause, .row-head, .rail-bar > *, .row-down, .career-more a, .career-less a, .clip-copy, .clip-ig, .cin-foot > *'
 // what stays melted while the pointer or the keyboard focus is on it
-const HELD = '.tile-career, .tile-life, .brand'
+const HELD = '.tile-career, .tile-life, .brand, .slide'
+// the sections, each with how thick the ice lies in its gaps: the Outside work row (ice swimming) the thickest
+const SECTIONS = '.hero, .row, .cin-foot'
+const GAP = 0.24
+const GAPS: Record<string, number> = { outside: 0.44 }
+// the glaze inside a card: thin over the hero's tiles, a real sheet over the clips (they stay in view)
+const GLAZE = (el: Element) => (el.classList.contains('clip') ? 0.24 : el.classList.contains('slide') ? 0.03 : 0.06)
 
 type Rect = [number, number, number, number]
+// a box measured on the page (CSS px from its top left), as if its row had not scrolled sideways
+type Box = { el: HTMLElement; l: number; t: number; r: number; b: number; track: Element | null; v: number }
 
 export async function mountIce(canvas: HTMLCanvasElement, signal: AbortSignal) {
-  let hero = canvas.parentElement!
   let gl = canvas.getContext('webgl', { premultipliedAlpha: true, antialias: false, alpha: true })
   if (!gl) return false
   let g = gl
@@ -168,7 +190,7 @@ export async function mountIce(canvas: HTMLCanvasElement, signal: AbortSignal) {
   let [base, ice] = programs
   let uniforms = (prog: WebGLProgram, names: string[]) => Object.fromEntries(names.map((k) => [k, g.getUniformLocation(prog, k)]))
   let ub = uniforms(base, ['S'])
-  let u = uniforms(ice, ['B', 'L', 'M', 'R', 'P', 'S', 'T', 'A', 'C'])
+  let u = uniforms(ice, ['B', 'L', 'M', 'R', 'P', 'S', 'T', 'A', 'E', 'C'])
   g.bindBuffer(g.ARRAY_BUFFER, g.createBuffer())
   g.bufferData(g.ARRAY_BUFFER, new Float32Array([-1, -1, 3, -1, -1, 3]), g.STATIC_DRAW)
   g.enableVertexAttribArray(0)
@@ -188,12 +210,14 @@ export async function mountIce(canvas: HTMLCanvasElement, signal: AbortSignal) {
   let meltTex = texture(2)
   let fbo = g.createFramebuffer()
 
-  // sizes: the canvas at a capped pixel ratio (1 on phones), and the two maps in coarse cells
+  // sizes: the canvas covers the screen (its tallest, so the phone's toolbar coming and going never resizes
+  // it) at a capped pixel ratio (1 on phones); the two maps in coarse cells
   let W = 0, H = 0, dpr = 1
   let mw = 0, mh = 0, melt = new Float32Array(0), spare = new Float32Array(0), meltBytes = new Uint8Array(0)
+  let lw = 0, lh = 0, map = new Float32Array(0), tmp = new Float32Array(0), mapBytes = new Uint8Array(0)
   function size() {
-    W = hero.clientWidth
-    H = hero.clientHeight
+    W = canvas.clientWidth
+    H = canvas.clientHeight
     dpr = Math.min(devicePixelRatio, phone ? 1 : 1.5)
     canvas.width = Math.round(W * dpr)
     canvas.height = Math.round(H * dpr)
@@ -202,6 +226,11 @@ export async function mountIce(canvas: HTMLCanvasElement, signal: AbortSignal) {
     melt = new Float32Array(mw * mh)
     spare = new Float32Array(mw * mh)
     meltBytes = new Uint8Array(mw * mh)
+    lw = Math.ceil(W / LAYOUT)
+    lh = Math.ceil(H / LAYOUT)
+    map = new Float32Array(lw * lh)
+    tmp = new Float32Array(lw * lh)
+    mapBytes = new Uint8Array(lw * lh)
     // the grain, drawn once for this size
     g.activeTexture(g.TEXTURE0)
     g.bindTexture(g.TEXTURE_2D, grainTex)
@@ -215,68 +244,120 @@ export async function mountIce(canvas: HTMLCanvasElement, signal: AbortSignal) {
     g.drawArrays(g.TRIANGLES, 0, 3)
     g.bindFramebuffer(g.FRAMEBUFFER, null)
     g.enable(g.BLEND)
-    layout()
+    dirty = true
   }
 
-  let local = (el: Element): Rect => {
-    let r = el.getBoundingClientRect(), o = hero.getBoundingClientRect()
-    return [r.left - o.left, r.top - o.top, r.right - o.left, r.bottom - o.top]
+  // Where things are on the page, measured once (and again only when the page changes size or a row gets
+  // new cards), from the layout alone: offsetLeft/Top ignore the cards' entry animation and the rows'
+  // sideways scroll. While the page scrolls, each box only moves by the page's scroll and its row's.
+  let panes: Box[] = [], words: Box[] = [], sections: (Box & { id: string })[] = []
+  let byEl = new Map<Element, Box>()
+  let offs = new Map<Element, number>() // each row's sideways scroll, from its scroll events
+  let sy = scrollY, navH = 0
+  let box = (el: HTMLElement, v = 0): Box | null => {
+    if (!el.offsetParent || !el.offsetWidth) return null
+    let x = 0, y = 0
+    for (let e: HTMLElement | null = el; e; e = e.offsetParent as HTMLElement | null) { x += e.offsetLeft; y += e.offsetTop }
+    let track = el.closest('[data-rail-track]')
+    return { el, l: x, t: y, r: x + el.offsetWidth, b: y + el.offsetHeight, track, v }
   }
-  // where the tiles are in the hero, measured with the layout (it changes only with the hero's size,
-  // which runs layout() again), so frames never ask the browser for layout
-  let rects = new Map<Element, Rect>()
-  let rect = (el: Element) => rects.get(el) ?? [0, 0, 0, 0]
-  // the thickness map: thin over the words' column, thick around the hero, between the tiles and along
-  // their edges, a glaze inside them; softened, then cleared over each line of text
+  let all = (sel: string, v?: (el: Element) => number) => [...document.querySelectorAll<HTMLElement>(sel)].map((el) => box(el, v?.(el))).filter((b) => b !== null)
+  function measure() {
+    for (let track of document.querySelectorAll('[data-rail-track]')) offs.set(track, track.scrollLeft)
+    sy = scrollY
+    navH = document.querySelector<HTMLElement>('.cin-nav')?.offsetHeight ?? 0
+    panes = all(PANES, GLAZE)
+    words = all(WORDS)
+    sections = all(SECTIONS, (el) => GAPS[el.id] ?? GAP).map((b) => ({ ...b, id: b.el.id }))
+    byEl = new Map(panes.map((b) => [b.el, b]))
+    remeasure = false
+    dirty = true
+  }
+  // a box where it is on the screen now
+  let shift = (b: Box) => (b.track ? offs.get(b.track) ?? 0 : 0)
+  let view = (b: Box): Rect => { let x = shift(b); return [b.l - x, b.t - sy, b.r - x, b.b - sy] }
+  let rect = (el: Element): Rect => { let b = byEl.get(el); return b ? view(b) : [0, 0, 0, 0] }
+
+  // the thickness map, in screen cells: a sheet over the gaps (thicker over the Outside work row), thick
+  // frost at the screen's edges, a glaze in each card with frost along its edges; softened, then cleared
+  // over every line of text, every control and each card in view. While the motion is off: only a thin
+  // frost at the screen's edges, which nothing on the page can come under.
+  let lastSy = 0, lastOffs = new Map<Element, number>()
   function layout() {
-    let lw = Math.ceil(W / LAYOUT), lh = Math.ceil(H / LAYOUT)
-    let map = new Float32Array(lw * lh)
-    let column = local(hero.querySelector('.hero-text')!)
-    for (let el of hero.querySelectorAll(`${PANES}, ${HELD}`)) rects.set(el, local(el))
-    let panes = [...hero.querySelectorAll(PANES)].map(rect)
-    let inside = ([l, t, r, b]: Rect, x: number, y: number, pad = 0) => x > l - pad && x < r + pad && y > t - pad && y < b + pad
-    let top = Math.min(...panes.map((p) => p[1]), column[1]) - 24
+    dirty = false
+    let fade = (y: number) => Math.min(1, Math.max(0, (y - navH + 16) / 40))
+    if (still) {
+      let k = phone ? 12 : 22
+      for (let j = 0; j < lh; j++) for (let i = 0; i < lw; i++) {
+        let x = (i + 0.5) * LAYOUT, y = (j + 0.5) * LAYOUT
+        map[j * lw + i] = 0.95 * Math.exp(-Math.max(0, Math.min(x, W - x, y - navH, H - y)) / k) * fade(y)
+      }
+      return upload()
+    }
+    let near = ([l, t, r, b]: Rect, pad = 0) => r > -pad && l < W + pad && b > -pad && t < H + pad
+    let gap = new Float32Array(lh).fill(GAP)
+    for (let s of sections) {
+      let [, t, , b] = view(s)
+      for (let j = Math.max(0, Math.floor(t / LAYOUT)); j < Math.min(lh, Math.ceil(b / LAYOUT)); j++) gap[j] = s.v
+    }
     for (let j = 0; j < lh; j++) for (let i = 0; i < lw; i++) {
       let x = (i + 0.5) * LAYOUT, y = (j + 0.5) * LAYOUT
-      // like frost on a window: thickest at the hero's edges and corners, under the menu it fades out
-      let edge = Math.min(x, W - x, y - top, H - y)
-      let v = (0.3 + 0.7 * Math.exp(-Math.max(0, edge) / 70)) * Math.min(1, Math.max(0, (y - top + 40) / 80))
-      // the words' column: a thin sheet that fades in over 90 px, so it has no visible edge
-      let out = Math.hypot(Math.max(column[0] - x, 0, x - column[2]), Math.max(column[1] - y, 0, y - column[3])) / 90
-      v *= 0.35 + 0.65 * Math.min(1, out) ** 2
-      for (let p of panes) if (inside(p, x, y)) v = 0.06 + 0.6 * Math.exp(-Math.min(x - p[0], p[2] - x, y - p[1], p[3] - y) / 12)
-      map[j * lw + i] = v
+      // like frost on a window: thickest at the screen's edges and corners; under the menu it fades out
+      let edge = Math.max(0, Math.min(x, W - x, y - navH, H - y))
+      map[j * lw + i] = Math.min(1, gap[j] + 0.6 * Math.exp(-edge / 60)) * fade(y)
     }
-    blur(map, lw, lh, 2)
-    blur(map, lw, lh, 2)
-    for (let w of hero.querySelectorAll(WORDS)) {
-      let [l, t, r, b] = local(w)
-      if (r - l < 1) continue
-      for (let j = Math.max(0, Math.floor((t - 60) / LAYOUT)); j < Math.min(lh, Math.ceil((b + 60) / LAYOUT)); j++)
-        for (let i = Math.max(0, Math.floor((l - 60) / LAYOUT)); i < Math.min(lw, Math.ceil((r + 60) / LAYOUT)); i++) {
-          let x = (i + 0.5) * LAYOUT, y = (j + 0.5) * LAYOUT
-          let d = Math.hypot(Math.max(l - x, 0, x - r), Math.max(t - y, 0, y - b)) - 4
-          let f = Math.min(1, Math.max(0, d / 52))
-          map[j * lw + i] *= f * f * (3 - 2 * f)
-        }
+    let cells = ([l, t, r, b]: Rect, pad: number, fn: (k: number, x: number, y: number) => void) => {
+      for (let j = Math.max(0, Math.floor((t - pad) / LAYOUT)); j < Math.min(lh, Math.ceil((b + pad) / LAYOUT)); j++)
+        for (let i = Math.max(0, Math.floor((l - pad) / LAYOUT)); i < Math.min(lw, Math.ceil((r + pad) / LAYOUT)); i++) fn(j * lw + i, (i + 0.5) * LAYOUT, (j + 0.5) * LAYOUT)
     }
-    let bytes = Uint8Array.from(map, (v) => v * 255)
+    let shown: [Box, Rect][] = []
+    for (let p of panes) {
+      let v = view(p)
+      if (!near(v, 80)) continue
+      shown.push([p, v])
+      let [l, t, r, b] = v
+      cells(v, 0, (k, x, y) => { if (x > l && x < r && y > t && y < b) map[k] = p.v + 0.6 * Math.exp(-Math.min(x - l, r - x, y - t, b - y) / 12) })
+    }
+    blur(2)
+    blur(2)
+    // A box scrolling fast is cleared a little wider, on all sides, so the words never slip under the frost
+    // between a scroll and the next frame.
+    let slack = (b: Box) => Math.min(64, 2 * Math.max(Math.abs(sy - lastSy), Math.abs(shift(b) - (b.track ? lastOffs.get(b.track) ?? 0 : 0))))
+    let clear = ([l, t, r, b]: Rect, inset: number, reach: number, strength: number) => {
+      if (strength <= 0) return
+      l += inset; t += inset; r -= inset; b -= inset
+      cells([l, t, r, b], reach + 8, (k, x, y) => {
+        let f = Math.min(1, Math.max(0, (Math.hypot(Math.max(l - x, 0, x - r), Math.max(t - y, 0, y - b)) - 4) / reach))
+        map[k] *= 1 - strength * (1 - f * f * (3 - 2 * f))
+      })
+    }
+    let grow = ([l, t, r, b]: Rect, s: number): Rect => [l - s, t - s, r + s, b + s]
+    for (let w of words) {
+      let v = view(w)
+      if (near(v, 60) && w.r - w.l > 1) clear(grow(v, slack(w)), 0, 52, 1)
+    }
+    // each card in view clears inside its frosted edge, the ones peeking in at the screen's sides too
+    for (let [p, v] of shown) if (p.el.classList.contains('slide') && !p.el.classList.contains('clip')) clear(grow(v, slack(p)), 18, 30, 1)
+    lastSy = sy
+    lastOffs = new Map(offs)
+    upload()
+  }
+  function upload() {
+    for (let k = 0; k < map.length; k++) mapBytes[k] = map[k] * 255
     g.activeTexture(g.TEXTURE1)
     g.bindTexture(g.TEXTURE_2D, layoutTex)
-    g.texImage2D(g.TEXTURE_2D, 0, g.LUMINANCE, lw, lh, 0, g.LUMINANCE, g.UNSIGNED_BYTE, bytes)
-    still ? draw() : go()
+    g.texImage2D(g.TEXTURE_2D, 0, g.LUMINANCE, lw, lh, 0, g.LUMINANCE, g.UNSIGNED_BYTE, mapBytes)
   }
-  function blur(map: Float32Array, w: number, h: number, r: number) {
-    let tmp = new Float32Array(map.length)
+  function blur(r: number) {
     for (let pass = 0; pass < 2; pass++) {
       let [from, to] = pass ? [tmp, map] : [map, tmp]
-      for (let j = 0; j < h; j++) for (let i = 0; i < w; i++) {
+      for (let j = 0; j < lh; j++) for (let i = 0; i < lw; i++) {
         let s = 0, n = 0
         for (let k = -r; k <= r; k++) {
           let x = pass ? i : i + k, y = pass ? j + k : j
-          if (x >= 0 && x < w && y >= 0 && y < h) { s += from[y * w + x]; n++ }
+          if (x >= 0 && x < lw && y >= 0 && y < lh) { s += from[y * lw + x]; n++ }
         }
-        to[j * w + i] = s / n
+        to[j * lw + i] = s / n
       }
     }
   }
@@ -301,25 +382,22 @@ export async function mountIce(canvas: HTMLCanvasElement, signal: AbortSignal) {
     last = [x, y]
     stir()
   }
-  // a tile held melted: the whole of it clears, the rim along its edges
+  // a card held melted: the whole of it clears, and the frost just around it
   let thaw = (el: Element, s: number) => {
     let [l, t, r, b] = rect(el)
-    for (let j = Math.max(0, Math.ceil(t / MELT)); j < Math.min(mh, Math.floor(b / MELT)); j++)
-      for (let i = Math.max(0, Math.ceil(l / MELT)); i < Math.min(mw, Math.floor(r / MELT)); i++) {
+    for (let j = Math.max(0, Math.ceil((t - 12) / MELT)); j < Math.min(mh, Math.floor((b + 12) / MELT)); j++)
+      for (let i = Math.max(0, Math.ceil((l - 12) / MELT)); i < Math.min(mw, Math.floor((r + 12) / MELT)); i++) {
         let k = j * mw + i
         melt[k] += (1 - melt[k]) * s
       }
   }
 
+  // the sheet is fixed to the screen: the pointer's place on it is its place on the screen
   let ptr = { x: -999, y: -999, at: -9 }
-  let near = (x: number, y: number) => x > -40 && y > -40 && x < W + 40 && y < H + 40
-  let at = (cx: number, cy: number) => { let o = hero.getBoundingClientRect(); return [cx - o.left, cy - o.top] as const }
   addEventListener('pointermove', (e) => {
     if (still) return
-    let [x, y] = at(e.clientX, e.clientY)
-    if (!near(x, y)) { last = null; return }
-    ptr.x = x; ptr.y = y; ptr.at = t
-    if (e.pointerType !== 'touch') warm(x, y)
+    ptr.x = e.clientX; ptr.y = e.clientY; ptr.at = t
+    if (e.pointerType !== 'touch') warm(e.clientX, e.clientY)
   }, { signal, passive: true })
   // a finger melts as it moves, while the page scrolls under it: passive, the canvas never takes a touch
   for (let type of ['touchstart', 'touchmove'] as const) {
@@ -327,45 +405,52 @@ export async function mountIce(canvas: HTMLCanvasElement, signal: AbortSignal) {
       if (still) return
       if (type === 'touchstart') last = null
       let touch = e.touches[0]
-      let [x, y] = at(touch.clientX, touch.clientY)
-      if (near(x, y)) { ptr.x = x; ptr.y = y; ptr.at = t; warm(x, y) }
+      ptr.x = touch.clientX; ptr.y = touch.clientY; ptr.at = t
+      warm(touch.clientX, touch.clientY)
     }, { signal, passive: true })
   }
-  // a click (or a tap, not a swipe) on the ice itself cracks it where it lands; one on a link or a button
-  // just does what it says
+  // a click (or a tap, not a swipe) on bare ice cracks it where it lands; one on a link, a button or a
+  // card's words just does what it says
   let cracks = [0, 0, -99, 0, 0, -99, 0, 0, -99, 0, 0, -99]
   let next = 0
   addEventListener('click', (e) => {
-    if (still || (e.target as Element).closest?.('a, button')) return
-    let [x, y] = at(e.clientX, e.clientY)
-    if (x < 0 || y < 0 || x > W || y > H) return
+    if (still || (e.target as Element).closest?.('a, button, input, label, video, [role="group"]')) return
+    let x = e.clientX, y = e.clientY
+    if (!(map[Math.floor(y / LAYOUT) * lw + Math.floor(x / LAYOUT)] > 0.3)) return
     cracks.splice(next * 3, 3, x, H - y, t)
     next = (next + 1) % 4
     brush(x, y, 26, 0.8)
     stir()
   }, { signal })
 
-  let held = new Set<Element>()
-  for (let el of hero.querySelectorAll(HELD)) {
-    el.addEventListener('pointerenter', (e) => { if ((e as PointerEvent).pointerType !== 'touch') { held.add(el); stir() } }, { signal })
-    el.addEventListener('pointerleave', () => held.delete(el), { signal })
-    el.addEventListener('focusin', () => { held.add(el); stir() }, { signal })
-    el.addEventListener('focusout', () => held.delete(el), { signal })
-  }
+  // the card under the pointer, and the one with the keyboard focus, stay melted
+  let hovered: Element | null = null, focused: Element | null = null
+  addEventListener('pointerover', (e) => {
+    if (e.pointerType === 'touch') return
+    let el = (e.target as Element).closest?.(HELD) ?? null
+    if (el !== hovered) { hovered = el; if (el) stir() }
+  }, { signal, passive: true })
+  document.documentElement.addEventListener('pointerleave', () => (hovered = null), { signal })
+  addEventListener('focusin', (e) => { focused = (e.target as Element).closest?.(HELD) ?? null; if (focused) stir() }, { signal })
+  addEventListener('focusout', () => (focused = null), { signal })
 
   // The first look: the sheet freezes in from the edges (as the title card lifts, on a first visit), then a
-  // breath of warmth crosses each tile in turn, so people see that it melts.
+  // breath of warmth crosses each of the hero's tiles in turn, so people see that it melts.
   let t = 0 // seconds of motion so far (it does not run while the motion is off)
   let frozenAt = 0 // when the freeze starts
   let FREEZE = 1.6
-  let breaths = [...hero.querySelectorAll('.tile-career, .brand-half-t2f, .brand-half-joj, .tile-life')].map((el, i) => ({ el, at: FREEZE + 0.3 + i * 0.35 }))
+  let breaths = [...document.querySelectorAll('.tile-career, .brand-half-t2f, .brand-half-joj, .tile-life')].map((el, i) => ({ el, at: FREEZE + 0.3 + i * 0.35 }))
+  // Into a new section, the frost creeps in from the screen's edges and settles (E in the shader), so going
+  // down the page feels like moving along a frozen river.
+  let CREEP = 0.8
+  let creepAt = -9, section = ''
 
-  // the melt map follows time in fixed steps: the held tiles and the breaths add warmth, then it spreads
+  // the melt map follows time in fixed steps: the held cards and the breaths add warmth, then it spreads
   // a little, and freezes back at a steady rate (clear water to ice in about 4 s)
   let warmUntil = 0 // something melted or moving until then: full frame rate
-  let stir = () => { warmUntil = t + 1.5; go() }
+  let stir = () => { warmUntil = Math.max(warmUntil, t + 1.5); go() }
   function step(dt: number) {
-    for (let el of held) thaw(el, 0.12)
+    for (let el of new Set([hovered, focused])) if (el) thaw(el, 0.12)
     let since = t - frozenAt
     for (let b of breaths) {
       let p = (since - b.at) / 0.7
@@ -375,17 +460,21 @@ export async function mountIce(canvas: HTMLCanvasElement, signal: AbortSignal) {
       brush(l + (r - l) * p, top + h / 2, Math.min(h * 0.6, 120), 0.07)
       warmUntil = t + 1.5
     }
-    let any = false
+    // still changing (not a card held melted that has settled): full frame rate a moment longer
+    let sum = 0
     for (let j = 0; j < mh; j++) for (let i = 0; i < mw; i++) {
       let k = j * mw + i, m = melt[k]
+      if (!m && !(i > 0 && melt[k - 1]) && !(i < mw - 1 && melt[k + 1]) && !(j > 0 && melt[k - mw]) && !(j < mh - 1 && melt[k + mw])) { spare[k] = 0; continue }
       let avg = ((i > 0 ? melt[k - 1] : m) + (i < mw - 1 ? melt[k + 1] : m) + (j > 0 ? melt[k - mw] : m) + (j < mh - 1 ? melt[k + mw] : m)) / 4
       let v = Math.max(0, m + (avg - m) * 0.2 - 0.25 * dt)
       spare[k] = v
-      if (v > 0) any = true
+      sum += v
     }
     ;[melt, spare] = [spare, melt]
-    if (any) warmUntil = Math.max(warmUntil, t + 0.2)
+    if (Math.abs(sum - meltSum) > 0.05 + sum * 0.002) warmUntil = Math.max(warmUntil, t + 0.2)
+    meltSum = sum
   }
+  let meltSum = 0
 
   let draw = () => {
     for (let k = 0; k < melt.length; k++) meltBytes[k] = melt[k] * 255
@@ -401,7 +490,8 @@ export async function mountIce(canvas: HTMLCanvasElement, signal: AbortSignal) {
     g.uniform1f(u.S, dpr)
     g.uniform1f(u.T, t)
     g.uniform1f(u.A, still ? 1 : Math.max(0, Math.min(1, (t - frozenAt) / FREEZE)))
-    // the light follows the pointer for a moment after it moves, then drifts slowly about the tiles
+    g.uniform1f(u.E, still ? 1 : Math.max(0, Math.min(1, (t - creepAt) / CREEP)))
+    // the light follows the pointer for a moment after it moves, then drifts slowly about the screen
     let away = Math.min(1, Math.max(0, t - ptr.at - 1.5))
     let dx = W * (0.7 + 0.2 * Math.sin(t * 0.07)), dy = H * (0.4 + 0.2 * Math.cos(t * 0.05))
     g.uniform2f(u.P, ptr.x + (dx - ptr.x) * away, H - (ptr.y + (dy - ptr.y) * away))
@@ -411,30 +501,58 @@ export async function mountIce(canvas: HTMLCanvasElement, signal: AbortSignal) {
     g.drawArrays(g.TRIANGLES, 0, 3)
   }
 
-  let visible = true
   let raf = 0, timer = 0, then = 0, acc = 0
+  let dirty = true, remeasure = true
   let still = root.classList.contains('is-paused')
   function go() {
-    if (raf || timer || still || !visible || document.hidden) return
+    if (raf || timer || still || document.hidden) return
     raf = requestAnimationFrame(frame)
+  }
+  // the page moved: the next frame comes at once, not at the idle rate, so the clear places keep up
+  let kick = () => {
+    if (still || document.hidden) return
+    if (timer) { clearTimeout(timer); timer = 0 }
+    warmUntil = Math.max(warmUntil, t + 0.3)
+    go()
   }
   function frame(now: number) {
     raf = 0
     let dt = then ? Math.min(0.1, (now - then) / 1000) : 1 / 60
     then = now
     t += dt
+    if (remeasure) measure()
+    if (dirty) layout()
     for (acc += dt; acc >= 1 / 60; acc -= 1 / 60) step(1 / 60)
     draw()
-    if (still || !visible || document.hidden) { then = 0; return }
-    // nothing melting, cracking or freezing in: 15 frames a second for the slow drift
-    let busy = t < warmUntil || t - frozenAt < FREEZE + 2 || cracks.some((c, i) => i % 3 === 2 && t - c < 9)
+    if (still || document.hidden) { then = 0; return }
+    // nothing melting, cracking, scrolling or freezing in: 12 frames a second for the slow drift
+    let busy = t < warmUntil || t - frozenAt < FREEZE + 2 || t - creepAt < CREEP || cracks.some((c, i) => i % 3 === 2 && t - c < 9)
     if (busy) raf = requestAnimationFrame(frame)
-    else timer = window.setTimeout(() => { timer = 0; then = performance.now() - 66; go() }, 66)
+    else timer = window.setTimeout(() => { timer = 0; go() }, 83)
   }
   let halt = () => { cancelAnimationFrame(raf); clearTimeout(timer); raf = timer = 0; then = 0 }
 
+  // the page's scroll and each row's sideways scroll, read where the browser hands them over (no layout)
+  addEventListener('scroll', (e) => {
+    if (still) return
+    let target = e.target
+    if (target === document) {
+      sy = scrollY
+      // the section in the middle of the screen; a new one brings the creep (not again until it settles)
+      let mid = sy + H / 2
+      let now = sections.find((s) => s.t <= mid && s.b > mid)?.id ?? section
+      if (now !== section) {
+        if (section && t - creepAt > CREEP) creepAt = t
+        section = now
+      }
+    } else if (offs.has(target as Element)) offs.set(target as Element, (target as Element).scrollLeft)
+    else return
+    dirty = true
+    kick()
+  }, { signal, capture: true, passive: true })
+
   // the page's motion (rails.tsx marks html.is-paused for reduced motion, data saver or the pause button):
-  // off, the ice settles into one still frame of frosted edges; on again, it moves on from there
+  // off, the ice settles into one still frame of frost along the screen's edges; on again, it moves on
   let setStill = () => {
     let now = root.classList.contains('is-paused')
     if (now === still) return
@@ -442,33 +560,42 @@ export async function mountIce(canvas: HTMLCanvasElement, signal: AbortSignal) {
     if (still) {
       halt()
       melt.fill(0)
-      held.clear()
+      hovered = focused = null
+      layout()
       draw()
-    } else go()
+    } else {
+      sy = scrollY
+      remeasure = true
+      go()
+    }
   }
   new MutationObserver(setStill).observe(root, { attributes: true, attributeFilter: ['class'] })
-  let seen = new IntersectionObserver(([e]) => {
-    visible = e.isIntersecting
-    visible ? go() : halt()
-  })
-  seen.observe(hero)
   document.addEventListener('visibilitychange', () => (document.hidden ? halt() : go()), { signal })
-  let resize = new ResizeObserver(() => {
-    if (hero.clientWidth === W && hero.clientHeight === H) return
+  // the screen changed size: a new sheet; the page changed size, or a row got new cards: measure again
+  let sized = new ResizeObserver(() => {
+    if (canvas.clientWidth === W && canvas.clientHeight === H) return
     size()
-    if (still) draw()
+    remeasure = true
+    if (still) { measure(); layout(); draw() } else kick()
   })
-  resize.observe(hero)
-  document.fonts?.ready.then(layout)
-  canvas.addEventListener('webglcontextlost', () => { halt(); canvas.hidden = true; hero.dataset.ice = 'off' }, { signal })
-  signal.addEventListener('abort', () => { halt(); seen.disconnect(); resize.disconnect() })
+  sized.observe(canvas)
+  let again = () => { remeasure = true; kick() }
+  let page = new ResizeObserver(again)
+  page.observe(document.body)
+  let rows = new MutationObserver(again)
+  for (let track of document.querySelectorAll('[data-rail-track]')) rows.observe(track, { childList: true })
+  document.fonts?.ready.then(again)
+  canvas.addEventListener('webglcontextlost', () => { halt(); canvas.hidden = true; root.dataset.ice = 'off' }, { signal })
+  signal.addEventListener('abort', () => { halt(); sized.disconnect(); page.disconnect(); rows.disconnect() })
 
   size()
+  measure()
   // On a first visit the title card ("Ângelo Ocanã presents") lifts at about 0.7 s: the freeze starts with it.
   let card = !root.matches('.cin-seen, .cin-skip') && !still
   let wait = card ? Math.max(0, 0.7 - performance.now() / 1000) : 0
   frozenAt = still ? -99 : wait
   canvas.dataset.on = ''
+  layout()
   if (still) draw()
   else go()
   return true

@@ -204,9 +204,6 @@ function Hero(handle: Handle<{ lang: Lang; t: Copy; clips: Clip[] }>) {
             </li>
           )}
         </ul>
-
-        {/* a sheet of ice over all of it, thin over the words, frosted around the tiles (ice.tsx) */}
-        <Ice />
       </section>
     )
   }
@@ -935,6 +932,10 @@ c_sharp_phaser/JumpOverJump`}</pre>
         </main>
 
         <SiteFoot t={t} />
+
+        {/* one sheet of ice over the whole page, fixed to the screen: frost on its edges and in the gaps
+            between sections, clear over the words and the cards (ice.tsx) */}
+        <Ice />
       </Document>
     )
   }
