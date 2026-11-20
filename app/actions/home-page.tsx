@@ -29,11 +29,11 @@ export const CLIPS_IN_PAGE = 12
 /** The hobby chips over the clips row leave out the ones with fewer clips than this. */
 const CHIP_MIN = 3
 
-// "Personal projects · track2.fit": a line may break only before a separator, never after it, and never
-// inside the part that follows it (the product's name stays whole, the "·" goes down with it)
+// "Personal projects · track2.fit": a line may break only after a separator, never before it (the "·" ends
+// the line it closes), and never inside the part that follows it (the product's name stays whole)
 function kicker(text: string) {
   let [first, ...rest] = text.split(' · ')
-  return <>{first}{rest.flatMap((part) => [' ', <span key={part} class="kick-name">· {part}</span>])}</>
+  return <>{first}{rest.flatMap((part) => ['\u00a0· ', <span key={part} class="kick-name">{part}</span>])}</>
 }
 
 // The Instagram mark, out of the Tab order: rails.tsx makes only the clip in view tabbable (a roving
