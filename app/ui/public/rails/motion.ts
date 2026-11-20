@@ -2,6 +2,7 @@
 // the looping CSS animations (html.is-paused) and the Jump Over Jump demo (it reads html.is-paused).
 // Reduced motion (or data saver) counts as paused for all of it, and reduced motion can be turned on or off
 // while the page is open: everything here follows it live.
+import { read, write } from './storage.ts'
 
 export interface Motion {
   /** The system asks for reduced motion. */
@@ -24,8 +25,9 @@ export function setUpMotion(signal: AbortSignal): Motion {
   let reduced = reducedQuery.matches
   let saveData = !!(navigator as Navigator & { connection?: { saveData?: boolean } }).connection?.saveData
   let motion = !reduced && !saveData
-  // a pause button stops all motion on the page, and keeps it stopped across visits in this tab
-  let paused = sessionStorage.getItem('ao-paused') === '1'
+  // a pause button stops all motion on the page, and keeps it stopped across visits in this tab (only on
+  // this page where storage is blocked)
+  let paused = read('session', 'ao-paused') === '1'
   let changed: (() => void)[] = []
   let pausedFns: (() => void)[] = []
 
@@ -68,7 +70,7 @@ export function setUpMotion(signal: AbortSignal): Motion {
   for (let button of pauseButtons) {
     button.addEventListener('click', () => {
       paused = !paused
-      sessionStorage.setItem('ao-paused', paused ? '1' : '0')
+      write('session', 'ao-paused', paused ? '1' : '0')
       showPaused()
       showMotion()
       pausedFns.forEach((fn) => fn())

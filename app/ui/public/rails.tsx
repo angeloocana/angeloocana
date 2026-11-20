@@ -20,12 +20,8 @@ export const Rails = clientEntry(import.meta.url, function Rails(handle: Handle)
   handle.queueTask(() => {
     let signal = handle.signal
     document.documentElement.classList.add('js-rails')
-    let motion = setUpMotion(signal)
-    let media = setUpMedia(signal, motion)
-    let clips = setUpClips(signal, media)
-    for (let rail of document.querySelectorAll<HTMLElement>('[data-rail]')) setUpRail(rail, { signal, motion, clips })
-
     // [data-reveal] lists (the career menu) roll in once, the first time a quarter of them is on screen.
+    // First, so nothing that fails after it can leave them hidden (html.js-rails hides them until then).
     let reveal = new IntersectionObserver((entries) => {
       for (let { target, isIntersecting } of entries) {
         if (!isIntersecting) continue
@@ -36,6 +32,10 @@ export const Rails = clientEntry(import.meta.url, function Rails(handle: Handle)
     for (let list of document.querySelectorAll('[data-reveal]')) reveal.observe(list)
     signal.addEventListener('abort', () => reveal.disconnect())
 
+    let motion = setUpMotion(signal)
+    let media = setUpMedia(signal, motion)
+    let clips = setUpClips(signal, media)
+    for (let rail of document.querySelectorAll<HTMLElement>('[data-rail]')) setUpRail(rail, { signal, motion, clips })
     setUpNav(signal)
     setUpHero(signal, motion)
   })
