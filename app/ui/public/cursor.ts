@@ -50,7 +50,7 @@ function follow(cursor: HTMLElement, text: HTMLElement) {
     if (cursor.dataset.on !== 'true') { x = tx; y = ty }
     if (!raf) { then = performance.now(); raf = requestAnimationFrame(loop) }
     cursor.dataset.on = 'true'
-    let target = event.target instanceof Element ? event.target.closest<HTMLElement>('a, button, [data-cursor]') : null
+    let target = event.target instanceof Element ? event.target.closest<HTMLElement>('a, button, summary, [data-cursor]') : null
     // a button with its own words (.cin-btn: the email, Open, Play, GitHub...) hides it
     let mode = !target ? '' : target.dataset.cursor || (target.classList.contains('cin-btn') ? 'none' : 'link')
     if (cursor.dataset.mode !== mode) {

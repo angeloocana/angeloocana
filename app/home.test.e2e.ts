@@ -130,9 +130,9 @@ describe('home page in a browser', () => {
     assert.equal(await toggle.isVisible(), true)
     assert.equal(await page.locator('#menu-more a[data-chapter-link="learning"]').isVisible(), false)
     await toggle.click()
-    assert.equal(await toggle.getAttribute('aria-expanded'), 'true')
+    assert.equal(await page.locator('.menu-drop').evaluate((d) => (d as HTMLDetailsElement).open), true)
     await page.locator('#menu-more a[data-chapter-link="learning"]').click()
-    assert.equal(await toggle.getAttribute('aria-expanded'), 'false')
+    assert.equal(await page.locator('.menu-drop').evaluate((d) => (d as HTMLDetailsElement).open), false)
     await page.waitForFunction(() => Math.abs(document.getElementById('learning')!.getBoundingClientRect().top) < 120, null, { timeout: 4000 })
     // Escape closes it and gives the focus back to the button
     await toggle.click()

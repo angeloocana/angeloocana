@@ -4,7 +4,7 @@ import type { Rail } from './rows.ts'
 
 export function setUpNav(signal: AbortSignal, rails: Map<HTMLElement, Rail>) {
   let root = document.documentElement
-  let toggle = document.querySelector<HTMLButtonElement>('.menu-toggle')
+  let toggle = document.querySelector<HTMLElement>('.menu-toggle')
   let moreList = document.querySelector<HTMLElement>('#menu-more')
 
   // Two things follow the scroll: the menu link of the section that holds the middle of the screen, and
@@ -74,7 +74,7 @@ export function setUpNav(signal: AbortSignal, rails: Map<HTMLElement, Rail>) {
       if (link.dataset.chapterLink === chapter) link.setAttribute('aria-current', 'location')
       else link.removeAttribute('aria-current')
     }
-    // on phones the More button stands for the sections under it
+    // on phones More stands for the sections under it
     toggle?.toggleAttribute('data-current', !!moreList?.querySelector(`[data-chapter-link="${chapter}"]`))
   }
   addEventListener('scroll', queue, { signal, passive: true })
@@ -84,12 +84,14 @@ export function setUpNav(signal: AbortSignal, rails: Map<HTMLElement, Rail>) {
   addEventListener('load', queue, { signal, once: true })
   addEventListener('hashchange', queue, { signal })
 
-  // Phones: the More button in the menu opens the sections after the first two. Escape, a tap outside or
-  // picking one closes it; Escape gives focus back to the button.
-  if (toggle && moreList) {
-    let button = toggle
+  // Phones: More (a native <details>, chrome.tsx) opens the sections after the first two, before this script
+  // and without it. Here: a scrim, focus on the first section, and Escape, a tap outside, focus leaving the
+  // menu or picking one close it; Escape gives focus back to More.
+  let drop = document.querySelector<HTMLDetailsElement>('.menu-drop')
+  if (drop && toggle && moreList) {
+    let details = drop
+    let summary = toggle
     let list = moreList
-    button.hidden = false
     // a faint scrim under the header while the list is open: the page reads as covered, and a tap on it
     // closes the list (and only that: the tap doesn't reach the page under it)
     let scrim = document.createElement('div')
@@ -98,31 +100,29 @@ export function setUpNav(signal: AbortSignal, rails: Map<HTMLElement, Rail>) {
     document.body.append(scrim)
     // a remount builds its own: this one goes with the script that made it
     signal.addEventListener('abort', () => scrim.remove())
-    let setOpen = (open: boolean) => {
-      button.setAttribute('aria-expanded', String(open))
-      list.toggleAttribute('data-open', open)
-      scrim.toggleAttribute('data-open', open)
-    }
-    // focus was in the list, which hides: it goes back to the button
-    scrim.addEventListener('click', () => { setOpen(false); button.focus({ preventScroll: true }) }, { signal })
-    button.addEventListener('click', () => {
-      let open = button.getAttribute('aria-expanded') !== 'true'
-      setOpen(open)
-      if (open) list.querySelector<HTMLElement>('a:not(.menu-wide), a')?.focus()
+    let close = () => { details.open = false }
+    let opened = (open: boolean) => scrim.toggleAttribute('data-open', open)
+    // opened before this script ran: the scrim comes now
+    opened(details.open)
+    details.addEventListener('toggle', () => {
+      opened(details.open)
+      if (details.open) list.querySelector<HTMLElement>('a:not(.menu-wide), a')?.focus()
     }, { signal })
-    list.addEventListener('click', (event) => { if ((event.target as Element).closest('a')) setOpen(false) }, { signal })
+    // focus was in the list, which hides: it goes back to More
+    scrim.addEventListener('click', () => { close(); summary.focus({ preventScroll: true }) }, { signal })
+    list.addEventListener('click', (event) => { if ((event.target as Element).closest('a')) close() }, { signal })
     addEventListener('keydown', (event) => {
-      if (event.key !== 'Escape' || button.getAttribute('aria-expanded') !== 'true') return
-      setOpen(false)
-      button.focus()
+      if (event.key !== 'Escape' || !details.open) return
+      close()
+      summary.focus()
     }, { signal })
     addEventListener('pointerdown', (event) => {
-      if (button.getAttribute('aria-expanded') === 'true' && !(event.target as Element).closest('.cin-menu, .menu-scrim')) setOpen(false)
+      if (details.open && !(event.target as Element).closest('.cin-menu, .menu-scrim')) close()
     }, { signal })
     // focus leaving the menu (Tab past the last section) closes it too
     list.addEventListener('focusout', (event) => {
       let to = event.relatedTarget as Element | null
-      if (to && !to.closest('.cin-menu')) setOpen(false)
+      if (to && !to.closest('.cin-menu')) close()
     }, { signal })
   }
   update()

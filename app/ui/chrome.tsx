@@ -80,19 +80,24 @@ export function SiteNav(handle: Handle<{ lang: Lang; t: Copy; home?: boolean; la
       <header class="cin-nav">
         {home && <a class="skip-link" href="#main" data-rmx-document>{t.nav.skip}</a>}
         <a href={home ? '#top' : base} data-rmx-document={inPage} class="cin-mark" aria-label={`Ângelo Ocanã · ${t.nav.top}`}>ÂO</a>
-        {/* Phones show the first two sections and a More button; the rest open under it as a small list
-            (rails.tsx toggles it, closes it on Escape, a tap outside or a pick). Wide screens show all six in
-            one line: the list is display: contents there and the button is hidden. Without JS, phones keep
-            the plain links to Career, Projects and Contact. */}
+        {/* Phones show the first two sections and More; the rest open under it as a small list. On the home
+            page More is a native <details>, so it opens before the scripts have loaded and without JS;
+            rails/nav.ts adds the scrim, Escape, a tap outside and the focus. Wide screens show all six in one
+            line: the list is display: contents there and More is hidden (home.css). Posts keep the plain
+            links to Career, Projects and Contact on phones. */}
         <nav class="cin-menu" aria-label={t.nav.label}>
           {t.nav.chapters.filter((chapter) => chapter.phone !== false).slice(0, 2).map((chapter) => (
             <a key={chapter.href} href={`${base}${chapter.href}`} data-rmx-document={inPage} data-chapter-link={chapter.href.slice(1)}>{chapter.label}</a>
           ))}
+          {/* (the list follows the <details> instead of sitting in it: closed, a <details> hides what it holds,
+              and on wide screens the list shows in the line whether it is open or not) */}
           {home && (
-            <button type="button" class="menu-toggle" aria-expanded="false" aria-controls="menu-more" hidden>
-              {t.nav.more}
-              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6" /></svg>
-            </button>
+            <details class="menu-drop">
+              <summary class="menu-toggle">
+                {t.nav.more}
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6" /></svg>
+              </summary>
+            </details>
           )}
           <div id="menu-more" class="menu-more">
             {t.nav.chapters.slice(2).map((chapter) => (
