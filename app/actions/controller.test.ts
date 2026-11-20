@@ -184,6 +184,18 @@ describe('root controller', () => {
     }
   })
 
+  // HREF.pt is '/pt/', so a link built as `${home}/#posts` came out as /pt//#posts
+  it('never links to a doubled slash, on the home pages or any post', async () => {
+    let paths = [routes.home.href(), routes.pt.href(), ...postsFor('en').map((post) => post.url), ...postsFor('pt').map((post) => post.url)]
+    for (let path of new Set(paths)) {
+      let html = await (await router.fetch(new URL(path, 'http://localhost'))).text()
+      for (let [, href] of html.matchAll(/\shref="([^"]*)"/g)) {
+        let local = href.replace(/^https?:\/\/[^/]+/, '')
+        assert.ok(!local.includes('//'), `${path}: href="${href}"`)
+      }
+    }
+  })
+
   it('sends old preview links to the home page', async () => {
     let response = await router.fetch(new URL('/concepts/cinematic', 'http://localhost'))
 
