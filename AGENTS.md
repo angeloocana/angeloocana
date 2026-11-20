@@ -78,7 +78,8 @@ Clip tools (cut, montage, contact sheets, Instagram links) are in `scripts/clips
   `app/ui/public/joj-demo.tsx`; devices are `app/ui/devices.tsx`.
 - `app/actions/post-page.tsx`: one blog post. `app/actions/review-page.tsx`: the review page.
   `app/actions/cut-page.tsx` + `app/ui/public/cut-editor.tsx` + `app/content/cuts.ts`: the cut editor.
-- `public/styles/`: the CSS. `scripts/build.ts`: prerender, redirects (`_redirects`), sitemap, cache headers.
+- `public/styles/`: the CSS, in parts; `app/styles.ts` puts each kind of page's parts into one stylesheet
+  (`/css/home.<hash>.css`). `scripts/build.ts`: prerender, redirects (`_redirects`), sitemap, cache headers.
 
 ## Things that look odd but are on purpose
 
@@ -89,6 +90,10 @@ Clip tools (cut, montage, contact sheets, Instagram links) are in `scripts/clips
 - **Script URLs carry a hash** (`rails.%40a1b2c3.tsx.js`, `fingerprint` in `app/assets.ts`) because
   `/assets/` is cached for a year without asking again. With plain names, phones that had visited kept
   running old scripts against new pages (the clips stayed still).
+- **The home page's scripts and most of its fonts wait for its first paint** (`app/actions/document.tsx`):
+  the Remix client, the islands and every font but Instrument Serif load after it, under the title card on a
+  first visit. Loaded with the page, they held the first paint back by about a second on phones. Posts load
+  no Remix client at all, only the pointer ring (`app/ui/public/cursor.ts`).
 - **`public/sw.js`** removes the old Gatsby site's offline service worker from returning visitors, and
   `/offline-plugin-app-shell-fallback/` serves the home page for the same reason. Keep both until 2027.
 - **Old URLs** (`/en/…`, `/fr/…`, tags, resume, about, contact) redirect in `scripts/build.ts`.
