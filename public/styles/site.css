@@ -951,45 +951,18 @@ pre.rf-code { margin: 0; width: 100%; height: 100%; padding: 1.2rem 1.4rem; font
 .job-highlights b a:hover { background-size: 100% 1px; }
 .job-highlights b a i { font-style: normal; font-size: 0.8em; color: var(--amber); }
 
-/* phones and narrow windows: the career reads top to bottom, each job with its highlights under it,
-   instead of sideways (the row's arrows and snapping go away there) */
+/* phones and narrow windows: the career scrolls sideways like every other row, one job per card; each card
+   ends where its content ends instead of stretching to the tallest */
 @media (max-width: 899.98px) {
-  .row-career .rail { flex-direction: column; overflow: visible; scroll-snap-type: none; padding-block: 0.5rem 0; }
-  .row-career .rail-bar { display: none; }
-  .row-career .slide { width: auto; max-width: 40rem; min-height: 0; animation: none; }
-  .row-career .intro { padding-right: 0; }
-  .row-career .job { scroll-margin-top: 4.5rem; }
-  .js-rails .row-career .career-index:not([data-shown]) li { opacity: 1; }
-  .row-career .career-index li { animation: none; }
-  /* highlights as a plain list with rules, not boxes: lighter in a long stack */
+  .row-career .slide.job { align-self: flex-start; min-height: 0; }
+  /* highlights as a plain list with rules, not boxes: lighter on a narrow card */
   .job-wide .job-highlights { gap: 0; margin-top: 1.2rem; }
   .job-wide .job-highlights li { padding: 0.65rem 0; border: 0; border-top: 1px solid var(--line); border-radius: 0; background: none; }
   .row-career .job-highlights small { font-size: 0.92rem; line-height: 1.45; }
   .row-career .job-built { font-size: 1rem; line-height: 1.55; }
   .row-career .job-meta { margin-bottom: 0.9rem; }
   .row-career .job h3 { margin-block: 0.6rem 0.5rem; }
-  /* the recent jobs in full, then one button for the rest: the list of companies would only repeat
-     what is right below it, so it goes. The older jobs open with the button (rails.tsx), or through
-     :target when a link points at one of them (that also works without JS). */
-  .row-career .career-index, .row-career .career-pick { display: none; }
-  .row-career .intro { gap: 0.8rem; }
-  .row-career:not([data-older]) .rail:not(:has(.job-older:target)) .job-older { display: none; }
-  .row-career[data-older] .career-more, .row-career .rail:has(.job-older:target) .career-more { display: none; }
-  .career-more { scroll-snap-align: none; scroll-margin-top: 4.5rem; }
-  /* the way back, under the last older job: shown only while they are open */
-  .row-career:not([data-older]) .rail:not(:has(.job-older:target)) .career-less { display: none; }
-  .career-less { scroll-snap-align: none; }
-  .career-less a { display: inline-flex; align-items: center; gap: 0.6rem; min-height: 2.75rem; padding: 0.7rem 1.2rem; border: 1px solid var(--line); border-radius: 999px; color: var(--text); text-decoration: none; font: 500 0.75rem/1 var(--sans); letter-spacing: 0.16em; text-transform: uppercase; transition: border-color 0.3s; }
-  .career-less a:hover { border-color: var(--amber); }
-  .career-less span { color: var(--amber); }
-  .career-more a { display: grid; gap: 0.45rem; padding: 1.1rem 1.2rem; border: 1px dashed rgb(232 184 106 / 0.45); border-radius: 18px; color: var(--text); text-decoration: none; transition: border-color 0.3s, background 0.3s; }
-  .career-more a:hover { border-color: var(--amber); background: rgb(232 184 106 / 0.06); }
-  .career-more b { font: 400 1.6rem/1.1 var(--serif); }
-  .career-more b span { color: var(--amber); font-size: 0.8em; }
-  .career-more a > span { font: 500 0.75rem/1.45 var(--sans); letter-spacing: 0.06em; color: var(--dim); }
   /* long tech lists fold to their first few on a phone, where they wrap into many lines */
   .row-career .job-tech li:nth-child(n+7) { display: none; }
   .row-career .job .job-tech { padding-top: 1rem; }
 }
-/* wide screens: the career is a sideways row, every job in it; the fold button is a phone thing */
-@media (min-width: 900px) { .career-more, .career-less { display: none; } }

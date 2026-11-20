@@ -12,8 +12,8 @@ import type { Handle } from 'remix/component'
 //   - fades the row's backdrop ([data-rail-bg]) to the poster of the slide in view
 // It also plays [data-autoplay] videos only while they are on screen (and not paused with a [data-pause]
 // button), highlights the menu link of the section in view, cross-fades [data-cycle] screen stacks, keeps
-// one clip's Instagram link in the Tab order (the arrow keys move it), and opens the career's older jobs
-// ([data-career-more]). One pause stops all of the automatic motion: videos, screens, looping animations.
+// one clip's Instagram link in the Tab order (the arrow keys move it). One pause stops all of the
+// automatic motion: videos, screens, looping animations.
 // Without JS the rows still scroll.
 export const Rails = clientEntry(import.meta.url, function Rails(handle: Handle) {
   handle.queueTask(() => {
@@ -454,36 +454,6 @@ export const Rails = clientEntry(import.meta.url, function Rails(handle: Handle)
       setMotion()
     }, { signal })
 
-    // The career's older jobs (phones fold them after the recent ones): one tap opens them all and moves
-    // focus to the first. Without JS the link's #hash does the same through :target (site.css).
-    for (let more of document.querySelectorAll<HTMLAnchorElement>('[data-career-more]')) {
-      more.addEventListener('click', (event) => {
-        let first = document.getElementById(more.hash.slice(1))
-        let row = more.closest('[data-rail]')
-        if (!first || !row) return
-        event.preventDefault()
-        row.setAttribute('data-older', 'open')
-        first.tabIndex = -1
-        first.focus({ preventScroll: true })
-        first.scrollIntoView({ block: 'start', behavior: reduced ? 'auto' : 'smooth' })
-      }, { signal })
-    }
-    // ...and "Hide earlier jobs" folds them again, scrolls back to the fold and gives its button focus.
-    // When a #link opened an older job (:target), the link's own #career-more navigation moves the target off it.
-    for (let less of document.querySelectorAll<HTMLAnchorElement>('[data-career-less]')) {
-      less.addEventListener('click', (event) => {
-        let row = less.closest('[data-rail]')
-        let button = document.querySelector<HTMLElement>('[data-career-more]')
-        if (!row || !button) return
-        if (!row.querySelector('.job-older:target')) event.preventDefault()
-        row.removeAttribute('data-older')
-        requestAnimationFrame(() => {
-          button.closest('li')?.scrollIntoView({ block: 'start' })
-          button.focus({ preventScroll: true })
-        })
-      }, { signal })
-    }
-
     // Videos play only while on screen, and never for reduced motion or data saver. (Data saver can't change
     // while the page is open; reduced motion can, so all of this is set up and checks `motion` as it goes.)
     if (!saveData) {
@@ -689,9 +659,8 @@ export const Rails = clientEntry(import.meta.url, function Rails(handle: Handle)
     // Without JS they open the other language's page at the top.
     let langLinks = [...document.querySelectorAll<HTMLAnchorElement>('.lang-card')]
     let places = [...document.querySelectorAll<HTMLElement>('main section[id], footer[id]')]
-    // In the career, the job in view instead (#job-…): the other language opens at that job, an earlier one
-    // with the fold open (its :target, site.css). Sideways (wide screens) it's the first card mostly in
-    // view; stacked (phones), the job across the middle of the screen. The intro or the fold: no job.
+    // In the career, the job in view instead (#job-…): the other language opens at that job. It's the first
+    // card mostly in view (the row scrolls sideways); the intro: no job.
     let careerTrack = document.querySelector<HTMLElement>('#career [data-rail-track]')
     let jobInView = () => {
       if (!careerTrack) return ''

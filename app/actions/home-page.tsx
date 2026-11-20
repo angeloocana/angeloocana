@@ -26,9 +26,6 @@ const INSTAGRAM = SOCIALS.find((social) => social.id === 'instagram')!.url
 /** How many clips the page carries; rails.tsx fetches the rest from /data/clips.json as the row nears view. */
 export const CLIPS_IN_PAGE = 12
 
-/** On phones the career shows this many recent jobs in full; the older ones fold behind one button. */
-const RECENT_JOBS = 2
-
 /** The hobby chips over the clips row leave out the ones with fewer clips than this. */
 const CHIP_MIN = 3
 
@@ -489,8 +486,7 @@ export function HomePage(handle: Handle<{ lang: Lang }>) {
               {/* counted by job, like the list below it (the two freelance stretches are two) */}
               <p>{t.career.sub(career.length, career[career.length - 1].start)} <span class="career-pick">{t.career.pick}</span></p>
               {/* a way straight to any job, so the older ones are a tap away; rails.tsx slides the row,
-                  rolls the names in like credits and keeps the last one picked lit. Phones stack the
-                  jobs instead and leave this out (the fold after the recent jobs does its work there). */}
+                  rolls the names in like credits and keeps the last one picked lit */}
               <ol class="career-index" aria-label={t.career.jump} data-reveal>
                 {career.map((job, i) => (
                   <li key={job.id} style={`--i:${i}`}>
@@ -508,26 +504,8 @@ export function HomePage(handle: Handle<{ lang: Lang }>) {
                 ))}
               </ol>
             </li>
-            {career.map((job, i) => [
-              // phones: the older jobs wait behind this one link. It works as a plain #link too (the
-              // :target opens them, with no JS); rails.tsx keeps them open once opened.
-              i === RECENT_JOBS && (
-                <li key="more" id="career-more" class="slide career-more">
-                  <a href={`#job-${job.id}`} data-rmx-document data-career-more>
-                    <b>{t.career.earlier(career.length - RECENT_JOBS)} <span aria-hidden="true">↓</span></b>
-                    <span>{career[career.length - 1].start}–{job.end} · {[...new Set(career.slice(RECENT_JOBS).map((old) => old.short ?? old.company))].join(', ')}</span>
-                  </a>
-                </li>
-              ),
-              // ...and once they are open, the way to fold them again sits at their top as well as after the last
-              i === RECENT_JOBS && (
-                <li key="less-top" class="slide career-less career-less-top">
-                  <a href="#career-more" data-rmx-document data-career-less>
-                    <span aria-hidden="true">↑</span> {t.career.hide}
-                  </a>
-                </li>
-              ),
-              <li key={job.id} id={`job-${job.id}`} class={`slide job${job.featured ? ' job-featured' : ''}${job.highlights?.length ? ' job-wide' : ''}${i >= RECENT_JOBS ? ' job-older' : ''}`}>
+            {career.map((job) => (
+              <li key={job.id} id={`job-${job.id}`} class={`slide job${job.featured ? ' job-featured' : ''}${job.highlights?.length ? ' job-wide' : ''}`}>
                 <p class="job-years">
                   <span>{job.start}</span>
                   {job.start !== job.end && <i aria-hidden="true" />}
@@ -559,16 +537,8 @@ export function HomePage(handle: Handle<{ lang: Lang }>) {
                     ))}
                   </ul>
                 )}
-              </li>,
-            ])}
-            {/* phones, once the older jobs are open: folds them again and goes back to the button that
-                opened them (rails.tsx). Without JS it is a link back to that button, which also closes
-                them (the :target that opened them moves away). */}
-            <li class="slide career-less">
-              <a href="#career-more" data-rmx-document data-career-less>
-                <span aria-hidden="true">↑</span> {t.career.hide}
-              </a>
-            </li>
+              </li>
+            ))}
           </Row>
 
           {/* Personal projects: one row each */}

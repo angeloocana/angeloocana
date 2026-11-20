@@ -248,8 +248,6 @@ const en = {
     sub: (count: number, since: string) => `${count} jobs since ${since}.`,
     pick: 'Pick one to jump to it.',
     // phones: the older jobs fold behind one button
-    earlier: (count: number) => `${count} earlier jobs`,
-    hide: 'Hide earlier jobs',
     today: 'Today',
     now: 'Now',
     built: 'What I built',
@@ -509,8 +507,6 @@ const pt: Copy = {
     title: ['Onde eu ', 'construí', ' coisas.'],
     sub: (count: number, since: string) => `${count} trabalhos desde ${since}.`,
     pick: 'Escolha um para ir direto a ele.',
-    earlier: (count: number) => `${count} trabalhos anteriores`,
-    hide: 'Ocultar trabalhos anteriores',
     today: 'Hoje',
     now: 'Hoje',
     built: 'O que eu construí',
