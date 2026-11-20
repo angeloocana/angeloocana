@@ -1,3 +1,5 @@
+import type { Lang } from '../../../copy.ts'
+import { clipView, type ClipData } from '../clip-card.ts'
 import type { Media } from './media.ts'
 
 // The clips row carries its first few clips in the page; the rest come from the JSON the build writes
@@ -24,47 +26,36 @@ export function setUpClips(signal: AbortSignal, media: Media) {
     return loading.get(track)!
   }
 
-  // The rest of a row's clips: the same cards the page renders (ClipSlide in home-page.tsx), skipping the
-  // ones already there.
+  // The rest of a row's clips: copies of the page's own empty card (<template id="clip-card">, the same
+  // ClipCard that rendered the first ones), filled from clipView like those were, skipping the ones already there.
   async function appendClips(track: HTMLElement, url: string) {
-    let data: { names: Record<string, Record<string, string>>; clips: { id: string; cat: string; star: number; score: number; label: Record<string, string>; captionRejected?: boolean; ig?: string; poster: string; video: string }[] }
     let response = await fetch(url, { signal })
     if (!response.ok) throw new Error(`${url}: ${response.status}`)
-    data = await response.json()
-    let lang = root.lang === 'pt-BR' ? 'pt' : 'en'
-    let words = JSON.parse(track.dataset.words ?? '{}') as Record<string, string>
+    let data = (await response.json()) as { names: Record<Lang, Record<string, string>>; clips: ClipData[] }
+    let template = document.querySelector<HTMLTemplateElement>('#clip-card')
+    if (!template) return
+    let lang: Lang = root.lang === 'pt-BR' ? 'pt' : 'en'
+    let row = JSON.parse(track.dataset.words ?? '{}') as { ig: string; newTab: string }
+    let words = { names: data.names[lang], ig: row.ig, newTab: row.newTab }
     let have = new Set([...track.querySelectorAll<HTMLElement>('[data-clip]')].map((el) => el.dataset.clip))
-    let icon = track.querySelector('.clip-ig svg')
     let added: HTMLElement[] = []
     for (let clip of data.clips) {
       if (have.has(clip.id)) continue
-      let li = document.createElement('li')
-      li.className = 'slide clip'
-      Object.assign(li.dataset, { clip: clip.id, cat: clip.cat, star: String(clip.star), score: String(clip.score), poster: clip.poster, video: clip.video })
-      let img = document.createElement('img')
-      Object.assign(img, { className: 'clip-video', src: clip.poster, alt: clip.label[lang], loading: 'lazy', decoding: 'async', width: 540, height: 960 })
-      let copy = document.createElement('div')
-      copy.className = 'clip-copy'
-      copy.setAttribute('aria-hidden', 'true')
-      let cat = document.createElement('p')
-      cat.className = 'clip-cat'
-      cat.textContent = data.names[lang][clip.cat]
-      copy.append(cat)
-      if (!clip.captionRejected) {
-        let label = document.createElement('p')
-        label.className = 'clip-label'
-        label.textContent = clip.label[lang]
-        copy.append(label)
-      }
-      li.append(img, copy)
-      if (clip.ig) {
-        let a = document.createElement('a')
-        Object.assign(a, { className: 'clip-ig', href: clip.ig, target: '_blank', rel: 'noopener', tabIndex: -1 })
-        a.setAttribute('aria-label', `${words.ig}: ${clip.label[lang]} (${words.newTab})`)
-        a.dataset.cursor = 'Instagram'
-        if (icon) a.append(icon.cloneNode(true))
-        li.append(a)
-      }
+      let view = clipView(clip, lang, words)
+      let li = (template.content.firstElementChild as HTMLElement).cloneNode(true) as HTMLElement
+      Object.assign(li.dataset, view.data)
+      let img = li.querySelector('img')!
+      img.src = view.poster
+      img.alt = view.alt
+      li.querySelector('.clip-cat')!.textContent = view.cat
+      let caption = li.querySelector('.clip-label')!
+      if (view.caption) caption.textContent = view.caption
+      else caption.remove()
+      let ig = li.querySelector<HTMLAnchorElement>('.clip-ig')!
+      if (view.ig) {
+        ig.href = view.ig.href
+        ig.setAttribute('aria-label', view.ig.label)
+      } else ig.remove()
       added.push(li)
     }
     track.append(...added)
