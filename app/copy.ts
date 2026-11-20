@@ -251,7 +251,7 @@ const en = {
     highlightBody: 'What I built, the impact, the stack.',
     for: 'For',
     tech: 'Technologies',
-    /** after the tags a phone shows, how many more there are (their names are in its title) */
+    /** after the tags a phone shows, how many more there are (a press shows them) */
     moreTech: (n: number) => `+${n} more`,
     highlights: 'Highlights',
     jump: 'Jump to a company',

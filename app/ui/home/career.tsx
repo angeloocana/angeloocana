@@ -69,10 +69,10 @@ export function Career(handle: Handle<{ lang: Lang; t: Copy; nav: (href: string)
                 {job.tech.map((tech) => (
                   <li key={tech}>{tech}</li>
                 ))}
-                {/* phones show the first few tags (home.css): this says how many more, read like the tags, and
-                    names them in its title */}
+                {/* phones show the first few tags (home.css): this says how many more, and a press shows them in
+                    place (rails/rows.ts) */}
                 {job.tech.length > PHONE_TAGS && (
-                  <li class="tech-more" title={job.tech.slice(PHONE_TAGS).join(', ')}>{t.career.moreTech(job.tech.length - PHONE_TAGS)}</li>
+                  <li class="tech-more"><button type="button" aria-expanded="false">{t.career.moreTech(job.tech.length - PHONE_TAGS)}</button></li>
                 )}
               </ul>
             )}

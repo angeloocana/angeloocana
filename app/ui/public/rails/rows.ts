@@ -337,6 +337,11 @@ export function setUpRail(rail: HTMLElement, { signal, motion, clips }: { signal
     let dir = target.closest('[data-rail-next]') ? 1 : target.closest('[data-rail-prev]') ? -1 : 0
     if (dir) track.scrollBy({ left: dir * track.clientWidth * 0.8, behavior: motion.reduced ? 'auto' : 'smooth' })
 
+    // a job's "+12 more" (phones): shows its other tags in place, or folds them again (home.css); the card
+    // grows, and the row's height follows it (the ResizeObserver above)
+    let moreTags = target.closest<HTMLButtonElement>('.tech-more button')
+    if (moreTags) moreTags.setAttribute('aria-expanded', String(moreTags.getAttribute('aria-expanded') !== 'true'))
+
     // a jump link ([data-rail-jump], like the career intro's list) slides the row to its card, page staying put
     let jump = target.closest<HTMLAnchorElement>('a[data-rail-jump]')
     let slide = jump && track.querySelector<HTMLElement>(`[id="${jump.hash.slice(1)}"]`)
