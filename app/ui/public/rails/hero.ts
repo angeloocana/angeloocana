@@ -5,7 +5,7 @@ import { advance } from './media.ts'
 // the mouse.
 export function setUpHero(signal: AbortSignal, motion: Motion) {
   let root = document.documentElement
-  let flight = motion.reduced ? null : setUpFlight(signal)
+  let flight = setUpFlight(signal, motion)
 
   // Any first interaction skips the title intro.
   let skip = () => {
@@ -39,8 +39,9 @@ export function setUpHero(signal: AbortSignal, motion: Motion) {
 
 // The plane in "Brazil ✈ Ottawa" takes off once the page has settled, so it is the only thing moving:
 // 2.5s after load. It waits while the tab is hidden or the route is off screen, and flies again on
-// hover or tap.
-function setUpFlight(signal: AbortSignal) {
+// hover or tap. Never while the page's motion is off (paused, reduced motion, data saver): the route then
+// shows the plane landed, and it takes off once the motion comes back, if it hasn't flown yet.
+function setUpFlight(signal: AbortSignal, motion: Motion) {
   let route = document.querySelector<HTMLElement>('[data-flight]')
   let plane = route?.querySelector('.hi-plane')
   if (!route || !plane) return null
@@ -49,10 +50,19 @@ function setUpFlight(signal: AbortSignal) {
   let flown = false
   let flying = false
   let inView = false
-  el.dataset.flight = 'wait'
+  let still = () => motion.paused || !motion.motion
+  // 'landed' has no styles: the plane at the end of its route, as without JS
+  let rest = () => {
+    if (still()) { flying = false; el.dataset.flight = 'landed' }
+    else if (!flown) el.dataset.flight = 'wait'
+  }
+  rest()
+  let motionChanged = () => { rest(); flyIfReady() }
+  motion.onPause(motionChanged)
+  motion.onChange(motionChanged)
 
   function fly() {
-    if (flying) return
+    if (flying || still()) return
     flying = true
     flown = true
     el.dataset.flight = 'wait'
