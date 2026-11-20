@@ -256,6 +256,54 @@ describe('home page in a browser', () => {
     assert.deepEqual(errors, [])
   })
 
+  // a post runs no Remix client, only its pointer ring: the home page's post links load it in full, so the
+  // ring starts there (with a client navigation the home page's runtime stayed and the ring never came)
+  it('opens a post from the home page as its own page, where the pointer ring follows, and comes back', async (t) => {
+    let page = await t.serve(await serveDist())
+    await page.setViewportSize({ width: 1440, height: 900 })
+    await open(page, '/')
+    await scrollTo(page, 'posts')
+    let link = page.locator('#posts .post-card a').first()
+    let href = (await link.getAttribute('href'))!
+    await page.evaluate(() => { (window as Window & { homeRuntime?: boolean }).homeRuntime = true })
+    let documents: string[] = []
+    page.on('request', (request) => { if (request.resourceType() === 'document') documents.push(new URL(request.url()).pathname) })
+    await link.click()
+    await page.waitForURL(`**${href}`)
+    await page.waitForSelector('main.post-main')
+    // a full page load: a new window (the home page's runtime is gone) with the post's own document
+    assert.deepEqual(documents, [href])
+    assert.equal(await page.evaluate(() => (window as Window & { homeRuntime?: boolean }).homeRuntime), undefined)
+    assert.equal(await page.evaluate(() => !!document.getElementById('rmx-data')), false)
+    await page.mouse.move(300, 300)
+    await page.mouse.move(420, 360, { steps: 4 })
+    await page.waitForFunction(() => document.querySelector<HTMLElement>('.cur')?.dataset.on === 'true')
+    await page.goBack()
+    await page.waitForURL((url) => url.pathname === '/')
+    await page.waitForFunction(() => document.documentElement.classList.contains('js-rails'))
+  })
+
+  // Without JS: More (a native <details>) opens the sections under it on a phone, and every clip's Instagram
+  // link is an ordinary Tab stop (the one-stop roving tabindex comes with the script)
+  it('works without JS: More opens on a phone, and the clip links are in the Tab order', async (t) => {
+    let page = await t.serve(await serveDist())
+    let cdp = await page.context().newCDPSession(page)
+    await cdp.send('Emulation.setScriptExecutionDisabled', { value: true })
+    await page.setViewportSize({ width: 390, height: 844 })
+    await page.goto('/', { waitUntil: 'load' })
+    await page.waitForTimeout(1200) // the title card's own CSS fade
+    assert.equal(await page.evaluate(() => document.documentElement.classList.contains('js-rails')), false)
+    let learning = page.locator('#menu-more a[data-chapter-link="learning"]')
+    assert.equal(await learning.isVisible(), false)
+    await page.click('.menu-toggle')
+    assert.equal(await learning.isVisible(), true)
+    await learning.click()
+    await page.waitForURL('**/#learning')
+    let clips = await page.evaluate(() => [...document.querySelectorAll<HTMLAnchorElement>('#outside .clip-ig')].map((a) => a.tabIndex))
+    assert.ok(clips.length >= 10, `${clips.length} clip links`)
+    assert.deepEqual(clips.filter((i) => i !== 0), [], 'every clip link is a Tab stop')
+  })
+
   it('holds still for reduced motion: no ice, nothing looping, no video', async (t) => {
     let page = await t.serve(await serveDist())
     await page.setViewportSize({ width: 1440, height: 900 })
