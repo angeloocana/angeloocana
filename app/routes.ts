@@ -2,6 +2,8 @@ import { get, route } from 'remix/routes'
 
 export const routes = route({
   assets: get('/assets/*path'),
+  // each kind of page's one stylesheet, named by a hash of its contents (app/styles.ts)
+  css: get('/css/:name.:hash.css'),
   home: '/',
   // /pt/ is the one the static host serves (it redirects /pt there, dropping any #section)
   pt: get('/pt(/)'),

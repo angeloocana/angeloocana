@@ -7,9 +7,14 @@ import { SocialIcon, SocialSprite } from './social-icons.tsx'
 // What every page shares: the fonts, the fixed menu with the language flags, the contact links
 // and the footer.
 
-// The fonts live in public/fonts/ (public/styles/fonts.css); these two carry the first screen, so they
-// are preloaded.
-export const FONTS = ['/fonts/inter.woff2', '/fonts/instrument-serif.woff2']
+// The pointer's ring (app/ui/public/cursor.ts moves it; hidden until it does).
+export function Cursor() {
+  return () => (
+    <div class="cur" aria-hidden="true">
+      <span class="cur-label" />
+    </div>
+  )
+}
 
 export function SocialLinks(handle: Handle<{ class: string; t: Copy['links'] }>) {
   return () => (

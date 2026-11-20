@@ -30,7 +30,9 @@ if (missing.length) {
 }
 await cp('public', OUT, {
   recursive: true,
-  filter: (src) => !src.endsWith('.DS_Store') && !src.endsWith('styles/review.css') && !src.startsWith('public/media'),
+  // the pages' stylesheets are put together from public/styles/ (app/styles.ts, saved under /css/ below); the
+  // review's only runs in development
+  filter: (src) => !src.endsWith('.DS_Store') && !src.startsWith('public/styles') && !src.startsWith('public/media'),
 })
 
 // Browser modules compiled from .ts/.tsx keep their source names, which static hosts would serve
@@ -76,11 +78,15 @@ function collect(text: string, from: string) {
   }
 }
 
+// each kind of page's one stylesheet (/css/home.Ab12Cd34.css, app/styles.ts), saved as the pages name them
+let stylesheets = new Set<string>()
 for (let [path, file] of Object.entries(PAGES)) {
   let html = await (await get(path)).text()
   await save(file, html)
   collect(html, path)
+  for (let [url] of html.matchAll(/\/css\/[\w-]+\.[\w-]+\.css/g)) stylesheets.add(url)
 }
+for (let url of stylesheets) await save(url, await (await get(url)).text())
 
 // Every script URL carries a hash of the file (rails.@a1b2c3.tsx, see app/assets.ts), which is what
 // lets _headers below cache /assets/ for a year. A URL without one is only a name the import map
@@ -146,7 +152,9 @@ await save(
   '_headers',
   // (/media/* gets its headers from worker.ts)
   // (/fonts/ never change in place: a new font gets a new file name)
+  // (/css/ files are named by a hash of their contents, like /assets/)
   ['/sw.js', '  Cache-Control: no-cache', '/assets/*', '  Cache-Control: public, max-age=31536000, immutable',
+    '/css/*', '  Cache-Control: public, max-age=31536000, immutable',
     '/fonts/*', '  Cache-Control: public, max-age=31536000, immutable', ''].join('\n'),
 )
 

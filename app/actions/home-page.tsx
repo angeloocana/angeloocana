@@ -3,13 +3,12 @@ import type { Handle } from 'remix/component'
 import { Document } from './document.tsx'
 import { homeOrder } from '../content/clips.ts'
 import { COPY, HREF, type Lang } from '../copy.ts'
-import { CineCursor } from '../ui/public/cine-cursor.tsx'
 import { Ice } from '../ui/public/ice.tsx'
 import { Rails } from '../ui/public/rails.tsx'
 import { JojDemo } from '../ui/public/joj-demo.tsx'
 import { TicTacToe } from '../ui/public/tic-tac-toe.tsx'
 import { PoolTiles } from '../ui/public/pool-tiles.tsx'
-import { FONTS, SiteFoot, SiteNav } from '../ui/chrome.tsx'
+import { Cursor, SiteFoot, SiteNav } from '../ui/chrome.tsx'
 import { Career } from '../ui/home/career.tsx'
 import { Hero } from '../ui/home/hero.tsx'
 import { Learning } from '../ui/home/learning.tsx'
@@ -36,8 +35,8 @@ export function HomePage(handle: Handle<{ lang: Lang }>) {
         description={t.meta.description}
         locale={t.meta.locale}
         bodyClass="cin"
-        fonts={FONTS}
-        styles={['/styles/fonts.css', '/styles/base.css', '/styles/chrome.css', '/styles/devices.css', '/styles/home.css']}
+        bundle="home"
+        scripts="after-paint"
         themeColor="#070707"
         intro
       >
@@ -45,7 +44,7 @@ export function HomePage(handle: Handle<{ lang: Lang }>) {
         <JojDemo />
         <TicTacToe />
         <PoolTiles />
-        <CineCursor />
+        <Cursor />
 
         <div class="cin-intro" aria-hidden="true">
           <p>

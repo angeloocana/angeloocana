@@ -6,8 +6,7 @@ import { formatDate } from './home-page.tsx'
 import type { Post } from '../content/posts.ts'
 import { translationOf } from '../content/posts.ts'
 import { COPY, HREF, type Lang } from '../copy.ts'
-import { FONTS, SiteFoot, SiteNav } from '../ui/chrome.tsx'
-import { CineCursor } from '../ui/public/cine-cursor.tsx'
+import { Cursor, SiteFoot, SiteNav } from '../ui/chrome.tsx'
 
 // One post, at the same URL it had on the old site. The body is the post's own Markdown, rendered
 // as is (it is my own writing, so it is trusted HTML). Video tutorials embed YouTube without cookies.
@@ -26,14 +25,16 @@ export function PostPage(handle: Handle<{ post: Post }>) {
         description={post.excerpt}
         locale={t.meta.locale}
         bodyClass="cin post-page"
-        fonts={FONTS}
-        styles={['/styles/fonts.css', '/styles/base.css', '/styles/chrome.css', '/styles/post.css']}
+        // the two fonts the post's first screen reads in
+        fonts={['/fonts/inter.woff2', '/fonts/instrument-serif.woff2']}
+        bundle="post"
+        scripts="cursor"
         themeColor="#070707"
         url={post.url}
         ogType="article"
         alternates={translation ? { [lang]: post.url, [other]: translation.url } : { [lang]: post.url }}
       >
-        <CineCursor />
+        <Cursor />
         <SiteNav lang={lang} t={t} langHref={{ [lang]: post.url, [other]: translation?.url ?? HREF[other] } as Record<Lang, string>} />
         <main class="post-main">
           <article class="post">

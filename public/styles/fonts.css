@@ -1,8 +1,9 @@
 /* The site's fonts, served from /fonts/ (latin subset from Google Fonts, which covers Portuguese).
    Instrument Serif + Inter carry the film; each project borrows its product's own type:
    Barlow Condensed for track2.fit, Fraunces for Jump Over Jump. Inter and Fraunces are variable.
+   Instrument Serif's upright face is in fonts-title.css. On a first visit to the home page these come
+   after the first paint, under the title card (app/actions/document.tsx), so the words paint at once.
    /fonts/ is cached for a year (scripts/build.ts), so a changed font needs a new file name. */
-@font-face { font-family: 'Instrument Serif'; font-style: normal; font-weight: 400; font-display: swap; src: url(/fonts/instrument-serif.woff2) format('woff2'); }
 @font-face { font-family: 'Instrument Serif'; font-style: italic; font-weight: 400; font-display: swap; src: url(/fonts/instrument-serif-italic.woff2) format('woff2'); }
 @font-face { font-family: 'Inter'; font-style: normal; font-weight: 300 600; font-display: swap; src: url(/fonts/inter.woff2) format('woff2'); }
 @font-face { font-family: 'Barlow Condensed'; font-style: italic; font-weight: 700; font-display: swap; src: url(/fonts/barlow-condensed-700-italic.woff2) format('woff2'); }

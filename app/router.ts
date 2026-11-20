@@ -12,7 +12,9 @@ export const router = createRouter({
     staticFiles('./public', { index: false }),
     // videos and screenshots, from the shared media folder outside the repo
     staticFiles(MEDIA_DIR, { index: false, filter: (path) => path.startsWith('media/') }),
-    render({ assets }),
+    // without the islands' <link rel="modulepreload">s: on a phone they raced the first screen's stylesheet
+    // and fonts. The home page fetches the islands once it has painted (app/actions/document.tsx).
+    render({ assets: { getScriptEntry: async (path) => ({ ...(await assets.getScriptEntry(path)), preloads: [] }) } }),
   ],
 })
 

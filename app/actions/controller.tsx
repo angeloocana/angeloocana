@@ -9,6 +9,7 @@ import { postAt } from '../content/posts.ts'
 import { ReviewPage, reviewEnabled, saveReview } from './review-page.tsx'
 import { clipExists, CutPage, momentsJson, saveCut, sheetFile, sourceMedia } from './cut-page.tsx'
 import { publishInfo, startPublish } from '../content/publish.ts'
+import { bundleCss, bundleHref, isBundle } from '../styles.ts'
 
 function post(context: { request: Request; render: (node: RemixNode) => Response | Promise<Response> }) {
   let found = postAt(new URL(context.request.url).pathname)
@@ -20,6 +21,11 @@ export default createController(routes, {
   actions: {
     async assets(context) {
       return (await assets.fetch(context.request)) ?? new Response('Not Found', { status: 404 })
+    },
+    css(context) {
+      let { name } = context.params
+      if (!isBundle(name) || new URL(context.request.url).pathname !== bundleHref(name)) return new Response('Not Found', { status: 404 })
+      return new Response(bundleCss(name), { headers: { 'Content-Type': 'text/css; charset=utf-8' } })
     },
     home(context) {
       return context.render(<HomePage lang="en" />)

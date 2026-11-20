@@ -1,0 +1,3 @@
+/* The one font the first screen can't do without: Instrument Serif, the title card's name and every heading.
+   It comes with the page's stylesheet; the rest (fonts.css) follow the first paint on the home page. */
+@font-face { font-family: 'Instrument Serif'; font-style: normal; font-weight: 400; font-display: swap; src: url(/fonts/instrument-serif.woff2) format('woff2'); }

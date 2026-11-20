@@ -33,6 +33,28 @@ describe('root controller', () => {
     }
   })
 
+  it('waits on one stylesheet; a post loads only the pointer ring, no Remix client', async () => {
+    let home = await (await router.fetch(new URL(routes.home.href(), 'http://localhost'))).text()
+    let head = home.slice(0, home.indexOf('</head>'))
+    let blocking = [...head.matchAll(/<link rel="stylesheet"[^>]*>/g)].map(([tag]) => tag).filter((tag) => !/media="print"/.test(tag))
+    assert.equal(blocking.length, 1, `home: ${blocking}`)
+    // nothing fetched ahead of the first paint: the scripts start after it
+    assert.doesNotMatch(head, /<link[^>]*modulepreload|<script type="module"/)
+    let css = blocking[0].match(/href="([^"]+)"/)![1]
+    let response = await router.fetch(new URL(css, 'http://localhost'))
+    assert.equal(response.status, 200)
+    assert.match(response.headers.get('Content-Type') ?? '', /text\/css/)
+    // a stale name (an old build's hash) is not served
+    assert.equal((await router.fetch(new URL('/css/home.stale000.css', 'http://localhost'))).status, 404)
+
+    let [post] = postsFor('en')
+    let page = await (await router.fetch(new URL(post.url, 'http://localhost'))).text()
+    let scripts = [...page.matchAll(/<script[^>]*src="([^"]+)"/g)].map(([, src]) => src)
+    assert.deepEqual(scripts.map((src) => src.replace(/\.@[\w-]+/, '')), ['/assets/app/ui/public/cursor.ts'])
+    assert.doesNotMatch(page, /importmap|rmx-data/)
+    assert.equal([...page.matchAll(/<link rel="stylesheet"/g)].length, 1)
+  })
+
   it('serves every live clip in /data/clips.json', async () => {
     let response = await router.fetch(new URL(routes.clipsData.href(), 'http://localhost'))
     assert.equal(response.status, 200)
