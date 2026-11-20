@@ -35,7 +35,9 @@ describe('root controller', () => {
 
   it('waits on one stylesheet; a post loads only the pointer ring, no Remix client', async () => {
     let home = await (await router.fetch(new URL(routes.home.href(), 'http://localhost'))).text()
-    let head = home.slice(0, home.indexOf('</head>'))
+    // (a <noscript> copy of the late fonts loads only without JS)
+    let head = home.slice(0, home.indexOf('</head>')).replace(/<noscript>[^]*?<\/noscript>/g, '')
+    assert.match(home.slice(0, home.indexOf('</head>')), /<noscript><link rel="stylesheet" href="\/css\/fonts\.[\w-]+\.css"/)
     let blocking = [...head.matchAll(/<link rel="stylesheet"[^>]*>/g)].map(([tag]) => tag).filter((tag) => !/media="print"/.test(tag))
     assert.equal(blocking.length, 1, `home: ${blocking}`)
     // nothing fetched ahead of the first paint: the scripts start after it
