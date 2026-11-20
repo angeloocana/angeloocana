@@ -4,6 +4,9 @@ import { careerFor } from '../../content/career.ts'
 import type { Copy, Lang } from '../../copy.ts'
 import { kicker, Row, TitleLink } from './shared.tsx'
 
+/** How many of a job's tags a phone shows (home.css hides the rest, and the card says how many more). */
+const PHONE_TAGS = 6
+
 // Career: today first, then back to the start. The intro card lists every job, a tap away.
 export function Career(handle: Handle<{ lang: Lang; t: Copy; nav: (href: string) => string }>) {
   return () => {
@@ -66,6 +69,11 @@ export function Career(handle: Handle<{ lang: Lang; t: Copy; nav: (href: string)
                 {job.tech.map((tech) => (
                   <li key={tech}>{tech}</li>
                 ))}
+                {/* phones show the first few tags (home.css): this says how many more, read like the tags, and
+                    names them in its title */}
+                {job.tech.length > PHONE_TAGS && (
+                  <li class="tech-more" title={job.tech.slice(PHONE_TAGS).join(', ')}>{t.career.moreTech(job.tech.length - PHONE_TAGS)}</li>
+                )}
               </ul>
             )}
           </li>
