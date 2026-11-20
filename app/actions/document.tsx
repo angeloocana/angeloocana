@@ -56,8 +56,10 @@ const INTRO_ONCE = unsafeHTML(
 //     stylesheet for print until then. The title card covers the page on a first visit, so the switch from
 //     the system font happens under it; when no card shows (a later visit, reduced motion) they apply at once.
 //   - The Remix client and the pointer's ring start once the page has painted and is parsed (Remix reads the
-//     islands from the end of the body), with the islands' modules fetched beside them. A tab opened in the
-//     background never paints until it is shown, so a timer starts them anyway.
+//     islands from the end of the body), with the islands' modules fetched beside them. Where the browser
+//     can't observe paints, the first frame after the page is parsed stands in for the paint. A tab opened
+//     in the background never paints until it is shown, so a timer starts them anyway.
+//   - Without JS the fonts come from a <noscript> copy of the stylesheet.
 function afterPaint(fonts: string | undefined, scripts: string[]) {
   return unsafeHTML(
     `(function(d,f,s){var h=d.documentElement,l=f&&d.getElementById('fonts-more'),n=0;` +
@@ -66,7 +68,8 @@ function afterPaint(fonts: string | undefined, scripts: string[]) {
       `function add(r,u){var e=d.createElement(r?'script':'link');r?(e.type='module',e.src=u):(e.rel='modulepreload',e.href=u);d.head.append(e)}` +
       `function run(){font();try{var x=JSON.parse(d.getElementById('rmx-data').textContent).h;for(var k in x)add(0,x[k].moduleUrl)}catch(e){}s.forEach(function(u){add(1,u)})}` +
       `function go(){if(n++)return;d.readyState=='loading'?d.addEventListener('DOMContentLoaded',run):run()}` +
-      `try{new PerformanceObserver(function(e,o){if(e.getEntriesByName('first-contentful-paint').length){o.disconnect();go()}}).observe({type:'paint',buffered:true})}catch(e){}` +
+      `var P=window.PerformanceObserver;if(P&&(P.supportedEntryTypes||[]).indexOf('paint')>=0)new P(function(e,o){if(e.getEntriesByName('first-contentful-paint').length){o.disconnect();go()}}).observe({type:'paint',buffered:true});` +
+      `else d.addEventListener('DOMContentLoaded',function(){requestAnimationFrame(function(){setTimeout(go)})});` +
       `setTimeout(go,3000)})(document,${JSON.stringify(fonts ?? '')},${JSON.stringify(scripts)})`,
   )
 }
@@ -141,6 +144,7 @@ export function Document(handle: Handle<DocumentProps>) {
             <link key={style} rel="stylesheet" href={versioned(style)} />
           ))}
           {lateFonts && <link rel="stylesheet" id="fonts-more" href={lateFonts} media="print" />}
+          {lateFonts && <noscript><link rel="stylesheet" href={lateFonts} /></noscript>}
           <title>{fullTitle}</title>
           {scripts !== 'cursor' && <ImportMap value={importMap} />}
           {scripts === 'islands' && <script type="module" src={href}></script>}
