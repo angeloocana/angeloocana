@@ -104,9 +104,10 @@ export function clipsJson() {
 }
 
 // One clip: a still (rails/media.ts adds the video player only while the clip is near the screen, because
-// phones crash with a hundred video players on one page), its hobby and caption, and its Instagram link,
-// out of the Tab order: rails/rows.ts makes only the clip in view tabbable (a roving tabindex), and the
-// arrow keys move between clips from there. Without a view it is the empty card of the <template>.
+// phones crash with a hundred video players on one page), its hobby and caption, and its Instagram link, an
+// ordinary link without JS. rails/rows.ts then makes only the clip in view tabbable (a roving tabindex), and
+// the arrow keys move between clips from there. Without a view it is the empty card of the <template>, which
+// only that script fills, so its link starts out of the Tab order.
 function ClipCard(handle: Handle<{ view?: ReturnType<typeof clipView> }>) {
   return () => {
     let { view } = handle.props
@@ -120,7 +121,7 @@ function ClipCard(handle: Handle<{ view?: ReturnType<typeof clipView> }>) {
           {(!view || view.caption) && <p class="clip-label">{view?.caption}</p>}
         </div>
         {(!view || view.ig) && (
-          <a class="clip-ig" href={view?.ig?.href} target="_blank" rel="noopener" tabIndex={-1} aria-label={view?.ig?.label} data-cursor="Instagram">
+          <a class="clip-ig" href={view?.ig?.href} target="_blank" rel="noopener" tabIndex={view ? undefined : -1} aria-label={view?.ig?.label} data-cursor="Instagram">
             <SocialIcon id="instagram" />
           </a>
         )}

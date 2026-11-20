@@ -264,7 +264,9 @@ export function setUpRail(rail: HTMLElement, { signal, motion, clips }: { signal
     current.tabIndex = 0
     lastRove = current
   }
-  // new clips come in out of the Tab order (tabIndex -1), so the one link that has it stays the only one
+  // the page's clip links are ordinary links until now (no JS, no roving); new clips come in out of the Tab
+  // order (tabIndex -1), so the one link that has it stays the only one
+  if (roving) for (let a of links()) a.tabIndex = -1
   update()
   if (roving) {
     track.addEventListener('keydown', (event) => {
