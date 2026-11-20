@@ -2,6 +2,7 @@ import * as assert from 'remix/assert'
 import { describe, it } from 'remix/test'
 
 import { loadClips } from '../content/clips.ts'
+import { SOCIALS } from '../content.ts'
 import { COPY } from '../copy.ts'
 import { plain, postsFor } from '../content/posts.ts'
 import { router } from '../router.ts'
@@ -132,6 +133,8 @@ describe('root controller', () => {
       assert.match(hero, /<h1[^>]*>Ângelo <em>Ocanã<\/em><\/h1>/)
       for (let words of [t.hi.role, t.hi.proof]) assert.ok(hero.includes(words), `${path}: ${words}`)
       for (let href of ['mailto:', '#career', '#track2fit', '#jumpoverjump', '#outside']) assert.match(hero, new RegExp(`<a [^>]*href="${href}`), `${path}: ${href}`)
+      // every social link sits on the first screen too, not only in the footer
+      for (let social of SOCIALS) assert.ok(hero.includes(`href="${social.url}"`), `${path}: ${social.label} in the hero`)
       // one canvas for the whole page, outside the hero and every row: a single fixed layer
       assert.doesNotMatch(hero, /<canvas class="ice"/, `${path}: the ice canvas should not be inside the hero`)
       let canvases = (html.match(/<canvas [^>]*>/g) ?? []).filter((c) => /class="ice"/.test(c))

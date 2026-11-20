@@ -2,7 +2,7 @@ import type { Handle } from 'remix/component'
 
 import { SITE, SOCIALS } from '../content.ts'
 import { type Copy, type Lang } from '../copy.ts'
-import { SocialIcon } from './social-icons.tsx'
+import { SocialIcon, SocialSprite } from './social-icons.tsx'
 
 // What every page shares: the fonts, the fixed menu with the language flags, the contact links
 // and the footer.
@@ -136,6 +136,8 @@ export function SiteFoot(handle: Handle<{ t: Copy }>) {
       <h2>{handle.props.t.foot.title}</h2>
       <SocialLinks class="foot-links" t={handle.props.t.links} />
       <p class="cin-fine">© {new Date().getFullYear()} Ângelo Ocanã · {handle.props.t.foot.built}</p>
+      {/* the icons' drawings, once: every SocialIcon on the page points here */}
+      <SocialSprite />
     </footer>
   )
 }

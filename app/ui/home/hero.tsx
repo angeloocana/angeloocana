@@ -2,7 +2,7 @@ import type { Handle } from 'remix/component'
 
 import { careerFor } from '../../content/career.ts'
 import { CATEGORY_NAMES, clipUrl, heroClipUrl, type Clip } from '../../content/clips.ts'
-import { SITE } from '../../content.ts'
+import { SITE, SOCIALS } from '../../content.ts'
 import type { Copy, Lang } from '../../copy.ts'
 import { AppleWatch, IPhone, Screens } from '../devices.tsx'
 import { SocialIcon } from '../social-icons.tsx'
@@ -47,6 +47,16 @@ export function Hero(handle: Handle<{ lang: Lang; t: Copy; clips: Clip[] }>) {
               <span>{SITE.email}</span>
             </a>
           </p>
+          {/* elsewhere, right under the email: small icons, one line on a phone so the tiles keep the first screen */}
+          <ul class="hero-socials" aria-label={t.links.elsewhere}>
+            {SOCIALS.map((social) => (
+              <li key={social.id}>
+                <a href={social.url} rel="me noopener" target="_blank" aria-label={`${social.label} (${t.links.newTab})`} title={social.label}>
+                  <SocialIcon id={social.id} />
+                </a>
+              </li>
+            ))}
+          </ul>
         </div>
 
         <ul class="hero-tiles" aria-label={tiles.label}>

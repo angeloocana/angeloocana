@@ -140,6 +140,7 @@ html:not(.js-rails) .menu-pause, .menu-pause[hidden] { display: none; }
 .socials a:hover { color: var(--amber); border-color: rgb(232 184 106 / 0.55); background: rgb(232 184 106 / 0.07); transform: translateY(-3px); }
 .socials .social-icon { width: 1.75rem; height: 1.75rem; }
 .social-icon { flex: none; display: block; }
+.social-sprite { position: absolute; width: 0; height: 0; overflow: hidden; }
 @media (max-width: 720px) {
   .foot-links { width: min(100%, 26rem); }
   .socials { grid-template-columns: repeat(6, minmax(2.75rem, 1fr)); justify-self: stretch; gap: 0.45rem; }
