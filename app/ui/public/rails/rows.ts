@@ -16,7 +16,8 @@ type Clips = ReturnType<typeof setUpClips>
 export function setUpRail(rail: HTMLElement, { signal, motion, clips }: { signal: AbortSignal; motion: Motion; clips: Clips }) {
   let track = rail.querySelector<HTMLElement>('[data-rail-track]')!
   let bg = rail.querySelector<HTMLElement>('[data-rail-bg]')
-  let slides = () => [...track.children].filter((el) => !(el as HTMLElement).hidden) as HTMLElement[]
+  // the cards shown (on phones a row's opening card is display: none: its words sit above the row)
+  let slides = () => [...track.children].filter((el) => (el as HTMLElement).offsetWidth) as HTMLElement[]
 
   let intro = track.querySelector<HTMLElement>(':scope > .intro-slide')
   let prev = rail.querySelector<HTMLButtonElement>('[data-rail-prev]')
@@ -54,7 +55,7 @@ export function setUpRail(rail: HTMLElement, { signal, motion, clips }: { signal
   let measure = () => {
     stale = false
     let origin = track.offsetLeft + track.clientLeft
-    boxes = slides().filter((el) => el.offsetWidth).map((el) => ({ el, l: el.offsetLeft - origin, r: el.offsetLeft - origin + el.offsetWidth, h: el.offsetHeight }))
+    boxes = slides().map((el) => ({ el, l: el.offsetLeft - origin, r: el.offsetLeft - origin + el.offsetWidth, h: el.offsetHeight }))
     byEl = new Map(boxes.map((b) => [b.el, b]))
     // the row's things: the slides of its [data-count] class, or every slide shown; the page may carry only
     // some of them, and data-total says how many there are in all (the clips: known when the page is built)
