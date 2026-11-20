@@ -854,10 +854,10 @@ pre.rf-code { margin: 0; width: 100%; height: 100%; padding: 1.2rem 1.4rem; font
 .row-career .rail-wrap { overflow-y: clip; }
 .row-career .rail { margin-bottom: calc(var(--lift, 0px) * -1); transition: margin-bottom 0.45s var(--ease), --peek-l 0.3s, --peek-r 0.3s; }
 
-/* phones and narrow windows: the career scrolls sideways like every other row, one job per card; each card
-   ends where its content ends instead of stretching to the tallest */
+/* phones and narrow windows: the career scrolls sideways like every other row, one job per card; each card,
+   the opening one too, ends where its content ends instead of stretching to the tallest */
 @media (max-width: 899.98px) {
-  .row-career .slide.job { align-self: flex-start; min-height: 0; }
+  .row-career .slide.job, .row-career .slide.intro { align-self: flex-start; min-height: 0; }
   /* highlights as a plain list with rules, not boxes: lighter on a narrow card */
   .job-wide .job-highlights { gap: 0; margin-top: 1.2rem; }
   .job-wide .job-highlights li { padding: 0.65rem 0; border: 0; border-top: 1px solid var(--line); border-radius: 0; background: none; }
