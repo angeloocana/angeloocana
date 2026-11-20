@@ -19,7 +19,8 @@ export function Projects(handle: Handle<{ lang: Lang; t: Copy; nav: (href: strin
           <li class="slide intro intro-wide intro-t2f">
             <div class="intro-text">
               <p class="cin-kicker">{kicker(t.t2f.kickerFirst)}</p>
-              <h2>{t.t2f.intro.title}</h2>
+              {/* its two phrases ("Train hard." / "Log easy."), each kept on one line */}
+              <h2>{t.t2f.intro.title.split(/(?<=\.) /).map((phrase) => <span key={phrase} class="phrase">{phrase}</span>)}</h2>
               <p>{t.t2f.intro.body}</p>
               <p class="cap-ctas">
                 <a class="cin-btn" href="https://track2.fit">{t.t2f.open} <span aria-hidden="true">→</span></a>
