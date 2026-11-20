@@ -34,32 +34,52 @@ export function setUpRail(rail: HTMLElement, { signal, motion, clips }: { signal
     signal.addEventListener('abort', () => near.disconnect())
   }
 
-  // How much of a slide shows inside the row (0 to 1).
-  let shown = (el: Element, view: DOMRect) => {
-    let r = el.getBoundingClientRect()
-    return r.width ? Math.max(0, Math.min(r.right, view.right) - Math.max(r.left, view.left)) / r.width : 0
-  }
-  // the row's things: the slides of its [data-count] class, or every slide; the page may carry only
-  // some of them, and data-total says how many there are in all (the clips: known when the page is built)
+  // Where each slide sits in the row, measured from the layout (offsetLeft/Width ignore the slide-in
+  // animation and the row's sideways scroll) and kept until the row or a card changes size or the row gets
+  // new cards. A scroll frame then reads only scrollLeft: no layout, no getBoundingClientRect.
+  type Box = { el: HTMLElement; l: number; r: number; h: number }
   let kind = track.dataset.count
-  let things = () => (kind ? ([...track.getElementsByClassName(kind)] as HTMLElement[]) : slides().filter((el) => getComputedStyle(el).display !== 'none'))
-  let totalOf = (items: HTMLElement[]) => Math.max(items.length, Number(track.dataset.total) || 0)
+  let boxes: Box[] = []
+  let thingBoxes: Box[] = []
+  let byEl = new Map<Element, Box>()
+  let tallest = 0
+  let width = 0
+  let max = 0
+  let stale = true
+  let measure = () => {
+    stale = false
+    let origin = track.offsetLeft + track.clientLeft
+    boxes = slides().filter((el) => el.offsetWidth).map((el) => ({ el, l: el.offsetLeft - origin, r: el.offsetLeft - origin + el.offsetWidth, h: el.offsetHeight }))
+    byEl = new Map(boxes.map((b) => [b.el, b]))
+    // the row's things: the slides of its [data-count] class, or every slide shown; the page may carry only
+    // some of them, and data-total says how many there are in all (the clips: known when the page is built)
+    thingBoxes = kind ? boxes.filter((b) => b.el.classList.contains(kind!)) : boxes
+    tallest = Math.max(0, ...boxes.map((b) => b.h))
+    width = track.clientWidth
+    max = track.scrollWidth - width
+  }
+  let invalidate = () => { stale = true; request() }
+  let sized = new ResizeObserver(invalidate)
+  let observeAll = () => { sized.observe(track); for (let el of track.children) sized.observe(el) }
+  observeAll()
+  let added = new MutationObserver(() => { observeAll(); invalidate() })
+  added.observe(track, { childList: true })
+  signal.addEventListener('abort', () => { sized.disconnect(); added.disconnect() })
+  // the part of the row in view, in the same coordinates as the boxes
+  let view = () => ({ l: track.scrollLeft, r: track.scrollLeft + width })
+  // how much of a slide shows inside the row (0 to 1)
+  let shownBox = (b: Box | undefined, v: { l: number; r: number }) => (b && b.r > b.l ? Math.max(0, Math.min(b.r, v.r) - Math.max(b.l, v.l)) / (b.r - b.l) : 0)
+  let shown = (el: Element) => { if (stale) measure(); return shownBox(byEl.get(el), view()) }
+  let totalOf = (n: number) => Math.max(n, Number(track.dataset.total) || 0)
 
   // "12 / 115" under a long row: the last of its things that is mostly in view, out of all of them,
   // and a thin bar that fills as you go
   let count = rail.querySelector<HTMLElement>('[data-rail-count]')
-  let showCount = (atEnd: boolean) => {
-    if (!count || !kind) return
-    let items = things()
-    if (!items.length) return
-    let total = totalOf(items)
-    let right = track.getBoundingClientRect().right
-    let seen = atEnd ? items.length : items.filter((el) => el.getBoundingClientRect().left + el.offsetWidth * 0.6 <= right).length
-    let text = `${seen} / ${total}`
-    if (count.dataset.text === text) return
-    count.dataset.text = text
-    count.innerHTML = `<span>${text}</span><i></i>`
-    count.style.setProperty('--done', `${(seen / total) * 100}%`)
+  let countText = (atEnd: boolean, v: { l: number; r: number }) => {
+    if (!count || !kind || !thingBoxes.length) return null
+    let total = totalOf(thingBoxes.length)
+    let seen = atEnd ? thingBoxes.length : thingBoxes.filter((b) => b.l + (b.r - b.l) * 0.6 <= v.r).length
+    return { text: `${seen} / ${total}`, done: (seen / total) * 100 }
   }
 
   // Where the row came to rest, for screen readers: "3 to 4 of 9", said once scrolling settles (not on
@@ -69,12 +89,12 @@ export function setUpRail(rail: HTMLElement, { signal, motion, clips }: { signal
   let settled = 0
   let announce = () => {
     if (!live || !at.one || !rail.contains(document.activeElement)) return
-    let items = things()
-    let view = track.getBoundingClientRect()
-    let inView = items.map((el, i) => (shown(el, view) >= 0.6 ? i + 1 : 0)).filter(Boolean)
+    if (stale) measure()
+    let v = view()
+    let inView = thingBoxes.map((b, i) => (shownBox(b, v) >= 0.6 ? i + 1 : 0)).filter(Boolean)
     if (!inView.length) return
     let [a, b] = [inView[0], inView.at(-1)!]
-    let text = (a === b ? at.one : at.some!).replace('{a}', String(a)).replace('{b}', String(b)).replace('{n}', String(totalOf(items)))
+    let text = (a === b ? at.one : at.some!).replace('{a}', String(a)).replace('{b}', String(b)).replace('{n}', String(totalOf(thingBoxes.length)))
     if (live.textContent !== text) live.textContent = text
   }
   let settle = () => {
@@ -84,75 +104,85 @@ export function setUpRail(rail: HTMLElement, { signal, motion, clips }: { signal
   track.addEventListener('scroll', settle, { signal, passive: true })
   signal.addEventListener('abort', () => clearTimeout(settled))
 
+  // the career's "Next" pill moves up under the cards in view when they are shorter than the row (which
+  // keeps its tallest card's height), by --lift (site.css, a transform, so the page never moves). No other
+  // row uses it.
+  let lifts = rail.classList.contains('row-career')
   let queued = false
   let lastBg = ''
+  let last = { peekL: -1, peekR: -1, lift: -1, start: false, end: false, introAway: false, text: '' }
   function update() {
     queued = false
-    let list = slides()
-    let max = track.scrollWidth - track.clientWidth
-    let atStart = track.scrollLeft < 8
-    let atEnd = track.scrollLeft > max - 8
-    showCount(atEnd)
-    rail.toggleAttribute('data-at-start', atStart)
-    rail.toggleAttribute('data-at-end', atEnd)
-    // a disabled arrow leaves the Tab order; if it had focus, the other one takes it
-    let lost = (atStart && document.activeElement === prev) || (atEnd && document.activeElement === next)
-    if (prev) prev.disabled = atStart
-    if (next) next.disabled = atEnd
-    if (lost) (atStart ? next : prev)?.focus({ preventScroll: true })
+    // reads: the cached boxes and the row's scroll, nothing else
+    if (stale) measure()
+    let v = view()
+    let atStart = v.l < 8
+    let atEnd = v.l > max - 8
     // only a card that peeks in at an edge fades out (--peek-l and --peek-r: how much of it shows); a
     // card that is mostly in view never does
-    let view = track.getBoundingClientRect()
-    let peekAt = (side: 'left' | 'right') => {
-      let x = view[side]
-      let edge = list.find((s) => {
-        let r = s.getBoundingClientRect()
-        return r.left < x - 1 && r.right > x + 1
-      })
-      if (!edge || shown(edge, view) >= 0.6) return 0
-      let r = edge.getBoundingClientRect()
-      return Math.round(side === 'right' ? x - r.left : r.right - x)
+    let peekAt = (side: 'l' | 'r') => {
+      let x = v[side]
+      let edge = boxes.find((b) => b.l < x - 1 && b.r > x + 1)
+      if (!edge || shownBox(edge, v) >= 0.6) return 0
+      return Math.round(side === 'r' ? x - edge.l : edge.r - x)
     }
-    track.style.setProperty('--peek-l', `${peekAt('left')}px`)
-    track.style.setProperty('--peek-r', `${peekAt('right')}px`)
-    // how much shorter the tallest card in view is than the row (which keeps its tallest card's height):
-    // the career's "Next" pill moves up by that much (site.css, a transform, so the page never moves)
-    let tallest = Math.max(0, ...list.map((s) => s.offsetHeight))
-    let inView = Math.max(0, ...list.filter((s) => shown(s, view) > 0).map((s) => s.offsetHeight))
-    rail.style.setProperty('--lift', `${tallest - inView}px`)
+    let peekL = peekAt('l')
+    let peekR = peekAt('r')
+    let lift = lifts ? tallest - Math.max(0, ...boxes.filter((b) => shownBox(b, v) > 0).map((b) => b.h)) : 0
+    let introAway = intro ? shownBox(byEl.get(intro), v) < 0.5 : false
+    let counted = countText(atEnd, v)
+    // backdrop follows the first video slide that is mostly in view
+    let poster = ''
+    if (bg) {
+      let b = boxes.find((b) => b.el.dataset.poster && b.l >= v.l - (b.r - b.l) * 0.3 && b.r <= v.r + (b.r - b.l) * 0.3)
+      poster = b?.el.dataset.poster ?? ''
+    }
+
+    // writes, only of what changed
+    if (counted && count && counted.text !== last.text) {
+      last.text = counted.text
+      count.innerHTML = `<span>${counted.text}</span><i></i>`
+      count.style.setProperty('--done', `${counted.done}%`)
+    }
+    if (atStart !== last.start || atEnd !== last.end) {
+      last.start = atStart
+      last.end = atEnd
+      rail.toggleAttribute('data-at-start', atStart)
+      rail.toggleAttribute('data-at-end', atEnd)
+      // a disabled arrow leaves the Tab order; if it had focus, the other one takes it
+      let lost = (atStart && document.activeElement === prev) || (atEnd && document.activeElement === next)
+      if (prev) prev.disabled = atStart
+      if (next) next.disabled = atEnd
+      if (lost) (atStart ? next : prev)?.focus({ preventScroll: true })
+    }
+    if (peekL !== last.peekL) track.style.setProperty('--peek-l', `${(last.peekL = peekL)}px`)
+    if (peekR !== last.peekR) track.style.setProperty('--peek-r', `${(last.peekR = peekR)}px`)
+    if (lifts && lift !== last.lift) rail.style.setProperty('--lift', `${(last.lift = lift)}px`)
     // the row's opening card ("More on Instagram"), once scrolled away, leaves the Tab order: Tab into the
     // row goes on from the cards in view instead of scrolling it back to the start
-    if (intro) {
-      let away = shown(intro, view) < 0.5
+    if (intro && introAway !== last.introAway) {
+      last.introAway = introAway
       for (let a of intro.querySelectorAll<HTMLElement>('a, button')) {
-        if (away && a !== document.activeElement) a.tabIndex = -1
-        else if (!away) a.removeAttribute('tabindex')
+        if (introAway && a !== document.activeElement) a.tabIndex = -1
+        else if (!introAway) a.removeAttribute('tabindex')
       }
     }
-    if (bg) {
-      // backdrop follows the first video slide that is mostly in view
-      let shown = list.find((s) => {
-        let r = s.getBoundingClientRect()
-        return s.dataset.poster && r.left >= view.left - r.width * 0.3 && r.right <= view.right + r.width * 0.3
-      })
-      let poster = shown?.dataset.poster ?? ''
-      if (poster && poster !== lastBg) {
-        lastBg = poster
-        let layer = document.createElement('i')
-        layer.style.backgroundImage = `url("${poster}")`
-        bg.append(layer)
-        requestAnimationFrame(() => layer.classList.add('on'))
-        let old = [...bg.children].slice(0, -2)
-        setTimeout(() => old.forEach((el) => el.remove()), 1200)
-      }
+    if (bg && poster && poster !== lastBg) {
+      lastBg = poster
+      let layer = document.createElement('i')
+      layer.style.backgroundImage = `url("${poster}")`
+      bg.append(layer)
+      requestAnimationFrame(() => layer.classList.add('on'))
+      let old = [...bg.children].slice(0, -2)
+      setTimeout(() => old.forEach((el) => el.remove()), 1200)
     }
+    rove()
   }
-  let request = () => {
+  function request() {
     if (!queued) { queued = true; requestAnimationFrame(update) }
   }
   track.addEventListener('scroll', request, { signal, passive: true })
-  addEventListener('resize', request, { signal })
-  update()
+  addEventListener('resize', invalidate, { signal })
 
   // Hobby chips over the row ([data-rail-cat]): each slides the row to the first clip of its hobby,
   // loading the rest of the clips first when they aren't in yet.
@@ -166,7 +196,7 @@ export function setUpRail(rail: HTMLElement, { signal, motion, clips }: { signal
   }
   let checkPicked = () => {
     if (!picked || track.classList.contains('is-jumping')) return
-    if (shown(picked, track.getBoundingClientRect()) < 0.5) pick(null)
+    if (shown(picked) < 0.5) pick(null)
   }
   let unpickTimer = 0
   if (chips.length) {
@@ -190,16 +220,27 @@ export function setUpRail(rail: HTMLElement, { signal, motion, clips }: { signal
   // The clips' Instagram links: one Tab stop for the whole row, on the clip in view (a roving tabindex).
   // From there the left and right arrows move to the clip before or after it, and Enter opens its post.
   let links = () => [...track.querySelectorAll<HTMLAnchorElement>('.clip-ig')]
-  let rove = () => {
-    let all = links()
-    if (!all.length || all.includes(document.activeElement as HTMLAnchorElement)) return
-    let view = track.getBoundingClientRect()
-    let current = all.find((a) => a.getBoundingClientRect().left >= view.left) ?? all[0]
-    for (let a of all) a.tabIndex = a === current ? 0 : -1
+  let roving = !!track.querySelector('[data-clip]')
+  let lastRove: HTMLAnchorElement | null = null
+  function rove() {
+    if (!roving) return
+    let v = view()
+    // the first clip with a link whose link (in its top right corner) is in view
+    let current: HTMLAnchorElement | null = null
+    for (let b of boxes) {
+      if (b.r - 48 < v.l) continue
+      current = b.el.querySelector<HTMLAnchorElement>(':scope > .clip-ig')
+      if (current) break
+    }
+    if (!current || current === lastRove || links().includes(document.activeElement as HTMLAnchorElement)) return
+    lastRove?.setAttribute('tabindex', '-1')
+    if (!lastRove) for (let a of links()) a.tabIndex = -1
+    current.tabIndex = 0
+    lastRove = current
   }
-  if (track.querySelector('[data-clip]')) {
-    track.addEventListener('scroll', () => requestAnimationFrame(rove), { signal, passive: true })
-    rove()
+  // new clips come in out of the Tab order (tabIndex -1), so the one link that has it stays the only one
+  update()
+  if (roving) {
     track.addEventListener('keydown', (event) => {
       let link = (event.target as Element).closest<HTMLAnchorElement>('.clip-ig')
       let dir = event.key === 'ArrowRight' ? 1 : event.key === 'ArrowLeft' ? -1 : 0
@@ -210,6 +251,7 @@ export function setUpRail(rail: HTMLElement, { signal, motion, clips }: { signal
       if (!to) return
       link.tabIndex = -1
       to.tabIndex = 0
+      lastRove = to
       to.focus({ preventScroll: true })
       to.closest('.slide')?.scrollIntoView({ inline: 'center', block: 'nearest', behavior: motion.reduced ? 'auto' : 'smooth' })
     }, { signal })
