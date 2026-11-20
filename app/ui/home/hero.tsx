@@ -6,7 +6,7 @@ import { SITE, SOCIALS } from '../../content.ts'
 import type { Copy, Lang } from '../../copy.ts'
 import { AppleWatch, IPhone, Screens } from '../devices.tsx'
 import { SocialIcon } from '../social-icons.tsx'
-import { M, PauseButton } from './shared.tsx'
+import { media, PauseButton } from './shared.tsx'
 
 // The first screen, before any rows: who I am on the left, and three tiles that each open a row further
 // down. Career first and widest, then what I build, then one clip from outside work.
@@ -98,10 +98,10 @@ export function Hero(handle: Handle<{ lang: Lang; t: Copy; clips: Clip[] }>) {
                 </a>
                 <div class="tile-devices" aria-hidden="true">
                   <IPhone class="td-phone">
-                    <Screens srcs={['home', 'session', 'history'].map((s) => `${M}/t2f/phone-${s}.webp`)} alt="" />
+                    <Screens srcs={['home', 'session', 'history'].map((s) => media(`t2f/phone-${s}.webp`))} alt="" />
                   </IPhone>
                   <AppleWatch class="td-watch">
-                    <Screens srcs={['log-set', 'rest', 'record'].map((s) => `${M}/t2f/watch-${s}.webp`)} alt="" />
+                    <Screens srcs={['log-set', 'rest', 'record'].map((s) => media(`t2f/watch-${s}.webp`))} alt="" />
                   </AppleWatch>
                 </div>
               </li>

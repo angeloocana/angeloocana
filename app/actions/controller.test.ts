@@ -137,6 +137,28 @@ describe('root controller', () => {
     }
   })
 
+  // A post runs no Remix client (only its pointer ring): a client navigation from the home page would keep
+  // the home page's runtime, and the ring would never start. Every link off the home page loads in full.
+  it('loads every link from the home pages to another page in full, posts included', async () => {
+    for (let path of [routes.home.href(), routes.pt.href()]) {
+      let html = await (await router.fetch(new URL(path, 'http://localhost'))).text()
+      let links = [...html.matchAll(/<a ([^>]*)>/g)].map(([, attrs]) => attrs).filter((attrs) => /href="\/[^/"#]/.test(attrs))
+      let posts = links.filter((attrs) => /href="\/(?:en|pt)\/blog\/|href="\/Tutoriais\//.test(attrs))
+      assert.equal(posts.length, postsFor(path === '/' ? 'en' : 'pt').length, `${path}: post links`)
+      for (let attrs of links) assert.match(attrs, /data-rmx-document/, `${path}: <a ${attrs}>`)
+    }
+  })
+
+  // media is cached for a week (worker.ts): a file pushed again must get a new URL
+  it('versions every /media/ URL on the home pages with ?v=', async () => {
+    for (let path of [routes.home.href(), routes.pt.href()]) {
+      let html = await (await router.fetch(new URL(path, 'http://localhost'))).text()
+      let urls = [...html.matchAll(/\/media\/[^"'\s)<>]+/g)].map(([url]) => url)
+      assert.ok(urls.length >= 30, `${path}: only ${urls.length} media URLs`)
+      for (let url of urls) assert.match(url, /\?v=[\w-]+/, `${path}: ${url}`)
+    }
+  })
+
   it('plays the lighter cuts of the hero clip: the phone one first, then the tile one', async () => {
     let html = await (await router.fetch(new URL(routes.home.href(), 'http://localhost'))).text()
     let video = html.match(/<video [^>]*tile-video[\s\S]*?<\/video>/)?.[0] ?? ''

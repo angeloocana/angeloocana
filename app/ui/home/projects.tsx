@@ -5,7 +5,7 @@ import type { Copy, Lang } from '../../copy.ts'
 import { AppleWatch, IPad, IPhone, Laptop, Pixel, Screens, WearWatch } from '../devices.tsx'
 import { JojDesktop, JojPhone } from '../joj-screens.tsx'
 import { COLORS, sampleTiles } from '../public/pool-tiles-domain.ts'
-import { Card, kicker, M, Row, studyCard, TitleLink } from './shared.tsx'
+import { Card, kicker, media, Row, studyCard, TitleLink } from './shared.tsx'
 
 // Personal projects: track2.fit, Jump Over Jump and Tic Tac Toe AI, a row each, then More projects.
 export function Projects(handle: Handle<{ lang: Lang; t: Copy; nav: (href: string) => string }>) {
@@ -29,34 +29,34 @@ export function Projects(handle: Handle<{ lang: Lang; t: Copy; nav: (href: strin
             </div>
             <div class="intro-visual hv-t2f">
               <Laptop class="hv hv-laptop" label={t.t2f.web}>
-                <Screens near srcs={[`${M}/t2f/desktop.webp`]} alt={t.t2f.webAlt} />
+                <Screens near srcs={[media('t2f/desktop.webp')]} alt={t.t2f.webAlt} />
               </Laptop>
               <IPhone class="hv hv-phone" label={t.t2f.iphone}>
-                <Screens near srcs={['session', 'home', 'history', 'records'].map((s) => `${M}/t2f/phone-${s}.webp`)} alt={t.t2f.iphoneAlt} />
+                <Screens near srcs={['session', 'home', 'history', 'records'].map((s) => media(`t2f/phone-${s}.webp`))} alt={t.t2f.iphoneAlt} />
               </IPhone>
               <AppleWatch class="hv hv-watch" label={t.t2f.watch}>
-                <Screens near srcs={['log-set', 'rest', 'record', 'go'].map((s) => `${M}/t2f/watch-${s}.webp`)} alt={t.t2f.watchAlt} />
+                <Screens near srcs={['log-set', 'rest', 'record', 'go'].map((s) => media(`t2f/watch-${s}.webp`))} alt={t.t2f.watchAlt} />
               </AppleWatch>
             </div>
           </li>
           <Card class="card-phone" title={t.t2f.cards.phone.title} body={t.t2f.cards.phone.body}>
             <IPhone class="c-dev" label={t.t2f.iphone}>
-              <Screens near srcs={['home', 'session', 'history', 'body', 'records'].map((s) => `${M}/t2f/phone-${s}.webp`)} alt={t.t2f.iphoneAlt} />
+              <Screens near srcs={['home', 'session', 'history', 'body', 'records'].map((s) => media(`t2f/phone-${s}.webp`))} alt={t.t2f.iphoneAlt} />
             </IPhone>
           </Card>
           <Card class="card-watch" title={t.t2f.cards.watch.title} body={t.t2f.cards.watch.body}>
             <AppleWatch class="c-dev" label={t.t2f.watch}>
-              <Screens near srcs={['go', 'log-set', 'rest', 'record'].map((s) => `${M}/t2f/watch-${s}.webp`)} alt={t.t2f.watchAlt} />
+              <Screens near srcs={['go', 'log-set', 'rest', 'record'].map((s) => media(`t2f/watch-${s}.webp`))} alt={t.t2f.watchAlt} />
             </AppleWatch>
           </Card>
           <Card class="card-ipad" title={t.t2f.cards.ipad.title} body={t.t2f.cards.ipad.body}>
             <IPad class="c-dev" label={t.t2f.ipad}>
-              <Screens near srcs={[`${M}/t2f/ipad-history.webp`]} alt={t.t2f.ipadAlt} />
+              <Screens near srcs={[media('t2f/ipad-history.webp')]} alt={t.t2f.ipadAlt} />
             </IPad>
           </Card>
           <Card class="card-laptop" title={t.t2f.cards.web.title} body={t.t2f.cards.web.body}>
             <Laptop class="c-dev" label={t.t2f.web}>
-              <Screens near srcs={[`${M}/t2f/desktop.webp`]} alt={t.t2f.webAlt} />
+              <Screens near srcs={[media('t2f/desktop.webp')]} alt={t.t2f.webAlt} />
             </Laptop>
           </Card>
           <Card class="card-sync" title={t.t2f.cards.sync.title} body={t.t2f.cards.sync.body}>
@@ -85,7 +85,7 @@ export function Projects(handle: Handle<{ lang: Lang; t: Copy; nav: (href: strin
               <WearWatch class="c-dev" label={t.t2f.wear}>
                 {/* the file waits in data-src until the video first comes on screen (rails.tsx): with a
                     <source>, phones fetched it on load, rows before it was near */}
-                <video data-autoplay muted loop playsInline preload="none" aria-hidden="true" data-src={`${M}/t2f/wear.mp4`} />
+                <video data-autoplay muted loop playsInline preload="none" aria-hidden="true" data-src={media('t2f/wear.mp4')} />
               </WearWatch>
             </div>
           </Card>
@@ -168,8 +168,8 @@ export function Projects(handle: Handle<{ lang: Lang; t: Copy; nav: (href: strin
           …
 c_sharp_phaser/JumpOverJump`}</pre>
                 )}
-                {frame.kind === 'logo' && <img src={`${M}/joj/2015-logo.webp`} alt={t.reel.logoAlt} loading="lazy" />}
-                {frame.kind === 'board' && <img src={`${M}/joj/2016-board.webp`} alt={t.reel.boardAlt} loading="lazy" />}
+                {frame.kind === 'logo' && <img src={media('joj/2015-logo.webp')} alt={t.reel.logoAlt} loading="lazy" />}
+                {frame.kind === 'board' && <img src={media('joj/2016-board.webp')} alt={t.reel.boardAlt} loading="lazy" />}
                 {frame.kind === 'terminal' && (
                   <pre class="rf-code rf-term">{`  a b c d e f g h
 8 ● ● ● ● ● ● ● ●
@@ -190,7 +190,7 @@ c_sharp_phaser/JumpOverJump`}</pre>
 ├── c_sharp_angularjs/
 └── c_sharp_phaser/`}</pre>
                 )}
-                {frame.kind === 'neural' && <img src={`${M}/joj/2026-neural.webp`} alt={t.reel.neuralAlt} loading="lazy" />}
+                {frame.kind === 'neural' && <img src={media('joj/2026-neural.webp')} alt={t.reel.neuralAlt} loading="lazy" />}
               </div>
               <p class="rf-year">{frame.year}</p>
               <h3>{frame.tech}</h3>

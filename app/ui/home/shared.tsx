@@ -6,8 +6,8 @@ import type { Copy } from '../../copy.ts'
 // What the home page's sections share: the row every section is, its cards, and the small pieces of
 // their words (a kicker, a title that links, the pause button).
 
-/** Where the site's media is served (the R2 bucket, see worker.ts). */
-export const M = '/media'
+/** A media file's URL (the R2 bucket, see worker.ts), versioned by its media.json hash. */
+export { mediaUrl as media } from '../../content/clips.ts'
 
 // "Personal projects · track2.fit": a line may break only after a separator, never before it (the "·" ends
 // the line it closes), and never inside the part that follows it (the product's name stays whole)

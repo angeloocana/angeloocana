@@ -66,6 +66,14 @@ export type Clip = {
 export const MEDIA_VERSIONS: Record<string, string> = JSON.parse(readFileSync(new URL('./media.json', import.meta.url), 'utf8'))
 
 /**
+ * Any other media file's URL (the projects' screenshots and videos, like `t2f/desktop.webp`), with its
+ * media.json hash as ?v=, like the clips: media is cached for a week, so a new screenshot gets a new URL.
+ */
+export function mediaUrl(key: string) {
+  return `/media/${key}?v=${MEDIA_VERSIONS[key] ?? '0'}`
+}
+
+/**
  * A clip's video or poster URL. The ?v= tag changes whenever the file is re-cut, so browsers that
  * cached the old cut (media is cached for a week, see worker.ts) fetch the new one. It's the hash from
  * media.json. The dev server plays the local file, which the cut editor may have re-cut since it was

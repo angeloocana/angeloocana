@@ -35,7 +35,9 @@ export function Posts(handle: Handle<{ lang: Lang; t: Copy; nav: (href: string) 
           let postLang = post.lang === lang ? undefined : post.lang === 'pt' ? 'pt-BR' : 'en'
           return (
           <li key={post.key} class="slide post-card">
-            <a href={post.url} hrefLang={post.lang} data-cursor={t.posts.kicker}>
+            {/* a full page load (data-rmx-document): a post runs no Remix client, only its pointer ring, which a
+                client navigation from here would never start */}
+            <a href={post.url} hrefLang={post.lang} data-cursor={t.posts.kicker} data-rmx-document>
               <p class="post-year">{post.date.slice(0, 4)}</p>
               <p class="post-meta">
                 <span>{formatDate(post.date, lang)}</span>
