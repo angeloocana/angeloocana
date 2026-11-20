@@ -548,8 +548,8 @@ export function HomePage(handle: Handle<{ lang: Lang }>) {
               <li class="slide intro intro-wide intro-t2f">
                 <div class="intro-text">
                   <p class="cin-kicker">{kicker(t.t2f.kickerFirst)}</p>
-                  <h2>{t.t2f.captions[0].title}</h2>
-                  <p>{t.t2f.captions[0].body}</p>
+                  <h2>{t.t2f.intro.title}</h2>
+                  <p>{t.t2f.intro.body}</p>
                   <p class="cap-ctas">
                     <a class="cin-btn" href="https://track2.fit">{t.t2f.open} <span aria-hidden="true">→</span></a>
                     <span class="cin-soon">{t.t2f.soon}</span>

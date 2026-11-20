@@ -32,7 +32,6 @@ const en = {
       { href: '#posts', label: 'Posts', phone: false },
       { href: '#contact', label: 'Contact' },
     ] as { href: string; label: string; phone?: false }[],
-    switchTo: { lang: 'pt' as Lang, label: 'PT', name: 'Leia em português' },
     langsLabel: 'Language',
     langs: { en: 'English', pt: 'Português' } as Record<Lang, string>,
   },
@@ -82,11 +81,8 @@ const en = {
   t2f: {
     kickerFirst: 'Personal projects · track2.fit',
     kicker: 'track2.fit',
-    captions: [
-      { title: 'Train hard. Log easy.', body: 'A workout tracker I design and build end to end, on iPhone, Apple Watch, iPad and the web. It works offline and syncs when you’re back online.' },
-      { title: 'Log a set from your wrist.', body: 'Rest timer, heart rate and PRs on Apple Watch. On iPhone it suggests your next workout, fills in weights and reps, and logs whole sets from one sentence.' },
-      { title: 'Offline first. Everywhere.', body: 'Every device keeps its own copy and syncs when you’re back online, from your wrist to the web. Free, no ads. Android and Wear OS are on the way.' },
-    ],
+    // the row's first card: what it is and where it runs (the cards after it take one thing each)
+    intro: { title: 'Train hard. Log easy.', body: 'A workout tracker I design and build end to end, on iPhone, Apple Watch, iPad and the web.' },
     cards: {
       phone: { title: 'It already knows what’s next.', body: 'Suggests your next workout, fills in weights and reps, and logs whole sets from one sentence.' },
       watch: { title: 'Log a set from your wrist.', body: 'Rest timer, heart rate and PRs, without reaching for your phone between sets.' },
@@ -305,7 +301,6 @@ const pt: Copy = {
       { href: '#posts', label: 'Posts', phone: false },
       { href: '#contact', label: 'Contato' },
     ],
-    switchTo: { lang: 'en', label: 'EN', name: 'Read in English' },
     langsLabel: 'Idioma',
     langs: { en: 'English', pt: 'Português' },
   },
@@ -349,11 +344,7 @@ const pt: Copy = {
   t2f: {
     kickerFirst: 'Projetos pessoais · track2.fit',
     kicker: 'track2.fit',
-    captions: [
-      { title: 'Treine pesado. Registre fácil.', body: 'Um app de treino que eu desenho e construo de ponta a ponta, no iPhone, Apple Watch, iPad e na web. Funciona sem internet e sincroniza quando a conexão volta.' },
-      { title: 'Registre a série pelo pulso.', body: 'Timer de descanso, batimentos e recordes no Apple Watch. No iPhone ele sugere o próximo treino, preenche pesos e repetições e registra séries inteiras a partir de uma frase.' },
-      { title: 'Funciona sem internet. Em todo lugar.', body: 'Cada aparelho guarda a própria cópia e sincroniza quando a conexão volta, do pulso até a web. Grátis e sem anúncios. Android e Wear OS estão a caminho.' },
-    ],
+    intro: { title: 'Treine pesado. Registre fácil.', body: 'Um app de treino que eu desenho e construo de ponta a ponta, no iPhone, Apple Watch, iPad e na web.' },
     cards: {
       phone: { title: 'Ele já sabe o que vem depois.', body: 'Sugere o próximo treino, preenche pesos e repetições e registra séries inteiras a partir de uma frase.' },
       watch: { title: 'Registre a série pelo pulso.', body: 'Timer de descanso, batimentos e recordes, sem pegar o celular entre as séries.' },
@@ -468,7 +459,7 @@ const pt: Copy = {
         { date: '24–25 set', text: 'Linhas que se desenham quadro a quadro, depois X, O e a linha da vitória.' },
         { date: '26 set', text: 'A entrevista, às 11h30. O último commit antes dela, um teste, entrou às 11h28.' },
         { date: '27–28 set', text: 'Depois dela: uma IA que ganha e bloqueia, e uma rede neural conectada ao jogo.' },
-        { date: '30 set–6 out', text: 'Ela reveza quem começa, marca o placar e pensa num web worker.' },
+        { date: '30 set–6 out', text: 'O jogo alterna quem começa, marca o placar e pensa num web worker.' },
         { date: '8 out', text: 'O tabuleiro reescrito em bits: dois por casa, um número para o jogo todo.' },
         { date: '5–7 nov', text: 'Assinaturas de tipos, documentação e animações memoizadas.' },
       ],
