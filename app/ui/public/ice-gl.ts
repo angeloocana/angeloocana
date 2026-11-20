@@ -475,13 +475,20 @@ export async function mountIce(canvas: HTMLCanvasElement, signal: AbortSignal) {
     last = [x, y]
     stir()
   }
-  // a card held melted: the whole of it clears, and the frost just around it
+  // a card held melted: it clears, and the frost just around it. The warmth fades in over FEATHER px from
+  // the edge, so the melt's edge falls where the frost's grain puts it (the shader), like the clear places
+  // around the words, never along a straight line
+  let FEATHER = 40
   let thaw = (el: Element, s: number) => {
     let [l, t, r, b] = rect(el)
-    for (let j = Math.max(0, Math.ceil((t - 12) / MELT)); j < Math.min(mh, Math.floor((b + 12) / MELT)); j++)
-      for (let i = Math.max(0, Math.ceil((l - 12) / MELT)); i < Math.min(mw, Math.floor((r + 12) / MELT)); i++) {
-        let k = j * mw + i
-        melt[k] += (1 - melt[k]) * s
+    l -= 12; t -= 12; r += 12; b += 12
+    for (let j = Math.max(0, Math.floor(t / MELT)); j < Math.min(mh, Math.ceil(b / MELT)); j++)
+      for (let i = Math.max(0, Math.floor(l / MELT)); i < Math.min(mw, Math.ceil(r / MELT)); i++) {
+        let x = (i + 0.5) * MELT, y = (j + 0.5) * MELT
+        let f = Math.min(1, Math.min(x - l, r - x, y - t, b - y) / FEATHER)
+        if (f <= 0) continue
+        let k = j * mw + i, to = f * f * (3 - 2 * f)
+        if (melt[k] < to) melt[k] += (to - melt[k]) * s
       }
   }
 
@@ -544,7 +551,16 @@ export async function mountIce(canvas: HTMLCanvasElement, signal: AbortSignal) {
   let warmUntil = 0 // something melted or moving until then: full frame rate
   let stir = () => { warmUntil = Math.max(warmUntil, t + 1.5); go() }
   function step(dt: number) {
-    for (let el of new Set([hovered, focused])) if (el) thaw(el, 0.12)
+    // the focused card, and the hovered one while the pointer is still over it: a card scrolled out from
+    // under the pointer is let go, and refreezes. Nothing thaws while the page is scrolling, so a card
+    // moving past leaves no trail of warmth behind it.
+    if (t - scrolledAt > 0.15) {
+      if (focused) thaw(focused, 0.12)
+      if (hovered && hovered !== focused) {
+        let [l, top, r, b] = rect(hovered)
+        if (ptr.x >= l && ptr.x <= r && ptr.y >= top && ptr.y <= b) thaw(hovered, 0.12)
+      }
+    }
     let since = t - frozenAt
     for (let b of breaths) {
       let p = (since - b.at) / 0.7
@@ -570,6 +586,7 @@ export async function mountIce(canvas: HTMLCanvasElement, signal: AbortSignal) {
     meltSum = sum
   }
   let meltSum = 0
+  let scrolledAt = -9 // when the page last scrolled
 
   // one frame: only the maps that changed go up to the GPU
   let meltDirty = true
@@ -648,6 +665,7 @@ export async function mountIce(canvas: HTMLCanvasElement, signal: AbortSignal) {
     let target = e.target
     if (target === document) {
       sy = scrollY
+      scrolledAt = t
       // the section in the middle of the screen; a new one brings the creep (not again until it settles)
       let mid = sy + H / 2
       let now = sections.find((s) => s.t <= mid && s.b > mid)?.id ?? section

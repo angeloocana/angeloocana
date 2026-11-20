@@ -23,11 +23,22 @@ export const Ice = clientEntry(import.meta.url, function Ice(handle: Handle) {
       }
     }
     let saveData = !!(navigator as Navigator & { connection?: { saveData?: boolean } }).connection?.saveData
-    let still = () => root.classList.contains('is-paused') || matchMedia('(prefers-reduced-motion: reduce)').matches || saveData
+    let reducedQuery = matchMedia('(prefers-reduced-motion: reduce)')
+    let still = () => root.classList.contains('is-paused') || reducedQuery.matches || saveData
+    // the pause, before rails.tsx has marked it, counts only until it has (is-paused then says)
+    let marked = () => root.classList.contains('js-rails')
+    let off = () => still() || (!marked() && pausedAtLoad())
 
+    // Until the sheet is up, the motion is watched: off, the CSS frost shows and anything queued waits (it
+    // checks again when it runs); on again, the wait for idle starts over. The watching ends with the mount.
     let started = false
+    let idle = 0
+    let loaded = document.readyState === 'complete'
     let start = async () => {
+      idle = 0
       if (started || signal.aborted) return
+      // paused or reduced since this was queued: no WebGL yet, it waits for the motion to come back
+      if (off()) return showOff()
       started = true
       watch.disconnect()
       let on = false
@@ -38,25 +49,27 @@ export const Ice = clientEntry(import.meta.url, function Ice(handle: Handle) {
       if (on) delete root.dataset.ice
       else root.dataset.ice = 'off'
     }
-    // waits while the motion is off, then for the browser to be idle
-    let whenIdle = () => {
+    let showOff = () => { root.dataset.ice = 'off' }
+    // (Safari has no requestIdleCallback: a short timer there)
+    let hasIdle = 'requestIdleCallback' in window
+    let cancelIdle = () => {
+      if (hasIdle) cancelIdleCallback(idle)
+      else clearTimeout(idle)
+      idle = 0
+    }
+    // the motion changed, or the page loaded: the sheet waits for the browser to be idle, if it may come
+    let check = () => {
       if (signal.aborted || started) return
-      if (still()) return
-      if ('requestIdleCallback' in window) {
-        let id = requestIdleCallback(start, { timeout: 2000 })
-        signal.addEventListener('abort', () => cancelIdleCallback(id))
-      } else setTimeout(start, 200)
+      if (off()) { cancelIdle(); showOff(); return }
+      if (!loaded || idle) return
+      idle = hasIdle ? requestIdleCallback(start, { timeout: 2000 }) : window.setTimeout(start, 200)
     }
-    let watch = new MutationObserver(whenIdle)
-    signal.addEventListener('abort', () => watch.disconnect())
-    if (still() || pausedAtLoad()) {
-      root.dataset.ice = 'off'
-      watch.observe(root, { attributes: true, attributeFilter: ['class'] })
-      matchMedia('(prefers-reduced-motion: reduce)').addEventListener('change', whenIdle, { signal })
-      return
-    }
-    if (document.readyState === 'complete') whenIdle()
-    else addEventListener('load', whenIdle, { signal, once: true })
+    let watch = new MutationObserver(check)
+    watch.observe(root, { attributes: true, attributeFilter: ['class'] })
+    reducedQuery.addEventListener('change', check, { signal })
+    signal.addEventListener('abort', () => { watch.disconnect(); cancelIdle() })
+    if (!loaded) addEventListener('load', () => { loaded = true; check() }, { signal, once: true })
+    check()
   })
 
   return () => <canvas class="ice" aria-hidden="true" />
