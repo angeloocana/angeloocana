@@ -40,12 +40,17 @@ export const Ice = clientEntry(import.meta.url, function Ice(handle: Handle) {
       // paused or reduced since this was queued: no WebGL yet, it waits for the motion to come back
       if (off()) return showOff()
       started = true
-      watch.disconnect()
       let on = false
       try {
         let { mountIce } = await import('./ice-gl.ts')
-        on = !signal.aborted && (await mountIce(ice, signal))
+        if (signal.aborted) return
+        // paused or reduced while the code downloaded: still no WebGL, and the watching goes on, so the motion
+        // coming back starts it over
+        if (off()) { started = false; return showOff() }
+        watch.disconnect()
+        on = await mountIce(ice, signal)
       } catch {}
+      if (signal.aborted) return
       if (on) delete root.dataset.ice
       else root.dataset.ice = 'off'
     }
