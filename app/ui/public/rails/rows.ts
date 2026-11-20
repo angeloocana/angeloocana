@@ -13,7 +13,13 @@ type Clips = ReturnType<typeof setUpClips>
 //   - shuffles the home row's clips so hobbies take turns ([data-shuffle]); starred clips stay first
 //   - fades the row's backdrop ([data-rail-bg]) to the poster of the slide in view
 //   - keeps one clip's Instagram link in the Tab order (the arrow keys move it)
-export function setUpRail(rail: HTMLElement, { signal, motion, clips }: { signal: AbortSignal; motion: Motion; clips: Clips }) {
+// It returns what rails/nav.ts asks of the row, read from the same cached boxes.
+export interface Rail {
+  /** The first card mostly in view (more than 60% of it), from the cached boxes: no layout read. */
+  cardInView(): HTMLElement | undefined
+}
+
+export function setUpRail(rail: HTMLElement, { signal, motion, clips }: { signal: AbortSignal; motion: Motion; clips: Clips }): Rail {
   let track = rail.querySelector<HTMLElement>('[data-rail-track]')!
   let bg = rail.querySelector<HTMLElement>('[data-rail-bg]')
   // the cards shown (on phones a row's opening card is display: none: its words sit above the row)
@@ -368,6 +374,14 @@ export function setUpRail(rail: HTMLElement, { signal, motion, clips }: { signal
       track.addEventListener('click', (e) => { e.preventDefault(); e.stopPropagation() }, { capture: true, once: true })
     }
   }, { signal })
+
+  return {
+    cardInView() {
+      if (stale) measure()
+      let v = view()
+      return boxes.find((b) => b.r - v.l > (b.r - b.l) * 0.6)?.el
+    },
+  }
 }
 
 // Is the pointer over the letters of some text (not just inside a box that holds text)?

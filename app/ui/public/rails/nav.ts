@@ -1,6 +1,8 @@
 // The fixed menu: the link of the section in view, the language flags that carry it to the other
 // language, and the More list on phones.
-export function setUpNav(signal: AbortSignal) {
+import type { Rail } from './rows.ts'
+
+export function setUpNav(signal: AbortSignal, rails: Map<HTMLElement, Rail>) {
   let root = document.documentElement
   let toggle = document.querySelector<HTMLButtonElement>('.menu-toggle')
   let moreList = document.querySelector<HTMLElement>('#menu-more')
@@ -41,12 +43,11 @@ export function setUpNav(signal: AbortSignal) {
     if (scrollY > 0 && innerHeight + scrollY >= pageHeight - 4) here = list.at(-1)?.id ?? here
     return here
   }
-  // the first card mostly in view in a sideways row, by its id: a job, a clip; the row's opening card: none
+  // the first card mostly in view in a sideways row, by its id: a job, a clip; the row's opening card: none.
+  // rails/rows.ts keeps where each card sits, so a frame here reads only the row's scroll.
   let cardInView = (track: HTMLElement | null, prefix: string) => {
-    if (!track) return ''
-    // (offsetLeft, like rails/rows.ts: the layout's place, not the slide-in animation's)
-    let left = track.scrollLeft + track.offsetLeft + track.clientLeft
-    let card = ([...track.children] as HTMLElement[]).find((el) => el.offsetWidth && el.offsetLeft + el.offsetWidth - left > el.offsetWidth * 0.6)
+    let rail = track?.closest<HTMLElement>('[data-rail]')
+    let card = rail && rails.get(rail)?.cardInView()
     return card?.id.startsWith(prefix) ? card.id : ''
   }
 
