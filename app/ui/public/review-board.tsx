@@ -199,7 +199,7 @@ export const ReviewBoard = clientEntry(import.meta.url, function ReviewBoard(han
         if (signal.aborted) return
         clearTimeout(clearStatus)
         card.classList.toggle('is-saving', state === 'saving')
-        card.classList.toggle('is-error', state === 'error')
+        card.classList.toggle('is-error', state === 'error' || Boolean(takedownError))
         card.classList.toggle('has-save-error', retryable)
         status.textContent = [message, takedownError].filter(Boolean).join(' ')
         retry.hidden = !retryable
