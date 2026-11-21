@@ -78,13 +78,11 @@ export function mediaUrl(key: string) {
  * A clip's video or poster URL. The ?v= tag changes whenever the file is re-cut, so browsers that
  * cached the old cut (media is cached for a week, see worker.ts) fetch the new one. It's the hash from
  * media.json. The dev server plays the local file, which the cut editor may have re-cut since it was
- * pushed, so there (and for a clip not pushed yet) it's the file's time instead.
+ * pushed, so only there it's the file's time instead.
  */
 export function clipUrl(id: string, ext: 'mp4' | 'jpg') {
-  let version = MEDIA_VERSIONS[`clips/${id}.${ext}`]
-  let file = join(MEDIA_DIR, 'media', 'clips', `${id}.${ext}`)
-  if ((!version || process.env.NODE_ENV === 'development') && existsSync(file)) version = Math.round(statSync(file).mtimeMs / 1000).toString(36)
-  return `/media/clips/${id}.${ext}?v=${version ?? '0'}`
+  let key = `clips/${id}.${ext}`
+  return `/media/${key}?v=${clipMediaVersion(key) ?? '0'}`
 }
 
 /**
@@ -95,10 +93,16 @@ export function clipUrl(id: string, ext: 'mp4' | 'jpg') {
  */
 export function heroClipUrl(id: string, cut: 'phone' | 'tile') {
   let key = `hero/${id}-${cut}.mp4`
-  let version = MEDIA_VERSIONS[key]
-  let file = join(MEDIA_DIR, 'media', key)
-  if ((!version || process.env.NODE_ENV === 'development') && existsSync(file)) version = Math.round(statSync(file).mtimeMs / 1000).toString(36)
+  let version = clipMediaVersion(key)
   return version ? `/media/${key}?v=${version}` : undefined
+}
+
+function clipMediaVersion(key: string) {
+  if (process.env.NODE_ENV === 'development') {
+    let file = join(MEDIA_DIR, 'media', key)
+    if (existsSync(file)) return Math.round(statSync(file).mtimeMs / 1000).toString(36)
+  }
+  return MEDIA_VERSIONS[key]
 }
 
 /** The clip's Instagram post, when it has one. */

@@ -23,7 +23,7 @@ export type ClipWords = { names: Record<string, string>; ig: string; newTab: str
 export function clipView(clip: ClipData, lang: Lang, words: ClipWords) {
   let label = clip.label[lang]
   return {
-    data: { clip: clip.id, cat: clip.cat, star: String(clip.star), score: String(clip.score), poster: clip.poster, video: clip.video },
+    data: { clip: clip.id, cat: clip.cat, star: String(clip.star), score: String(clip.score), video: clip.video },
     poster: clip.poster,
     alt: label,
     cat: words.names[clip.cat],
@@ -31,4 +31,9 @@ export function clipView(clip: ClipData, lang: Lang, words: ClipWords) {
     caption: clip.captionRejected ? undefined : label,
     ig: clip.ig ? { href: clip.ig, label: `${words.ig}: ${label} (${words.newTab})` } : undefined,
   }
+}
+
+/** Read the one poster URL on the card; the player and backdrop reuse its image. */
+export function clipPoster(card: Element) {
+  return card.querySelector('img.clip-video')?.getAttribute('src') ?? ''
 }

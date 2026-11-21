@@ -34,7 +34,7 @@ export function isPublicMediaKey(key: string): boolean {
 
 export function versionedMediaKey(key: string, version: string): string {
   if (!isPublicMediaKey(key)) throw new Error('Invalid public media key')
-  let hash = /^sha256-([0-9a-f]{64})$/.exec(version)?.[1]
-  if (!hash) throw new Error('Invalid media version')
-  return `versions/${hash}/${key}`
+  // A 96-bit SHA-256 prefix in base64url (16 characters) keeps the prerendered pages small.
+  if (!/^[A-Za-z0-9_-]{16}$/.test(version)) throw new Error('Invalid media version')
+  return `versions/${version}/${key}`
 }

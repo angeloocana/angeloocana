@@ -55,8 +55,8 @@ it('adds security headers without changing full, ranged or revalidated media res
 })
 
 const KEY = 'clips/c12345678.mp4'
-const HASH = 'a'.repeat(64)
-const VERSIONED_KEY = `versions/${HASH}/${KEY}`
+const VERSION = 'aBb1D-e2G3h4_IJ5'
+const VERSIONED_KEY = `versions/${VERSION}/${KEY}`
 
 function mediaWorker() {
   let lookups: string[] = []
@@ -83,27 +83,27 @@ describe('media worker', () => {
       assert.equal(response.status, 200)
       assert.equal(await response.text(), 'original cut')
     }
-    let latest = await worker.fetch(`${KEY}?v=sha256-${HASH}`)
+    let latest = await worker.fetch(`${KEY}?v=${VERSION}`)
     assert.equal(latest.status, 200)
     assert.equal(await latest.text(), 'new cut')
 
-    let missingHash = 'b'.repeat(64)
-    let missing = await worker.fetch(`${KEY}?v=sha256-${missingHash}`)
+    let missingVersion = 'b'.repeat(16)
+    let missing = await worker.fetch(`${KEY}?v=${missingVersion}`)
     assert.equal(missing.status, 404)
     assert.equal(missing.headers.get('Cache-Control'), 'no-store')
-    assert.deepEqual(worker.lookups, [KEY, KEY, KEY, VERSIONED_KEY, `versions/${missingHash}/${KEY}`])
+    assert.deepEqual(worker.lookups, [KEY, KEY, KEY, VERSIONED_KEY, `versions/${missingVersion}/${KEY}`])
   })
 
   it('rejects private or malformed media URLs without contacting R2', async () => {
     let worker = mediaWorker()
     for (let path of [
       VERSIONED_KEY,
-      `versions%2F${HASH}/${KEY}`,
+      `versions%2F${VERSION}/${KEY}`,
       'clips/%ZZ.mp4',
       'joj/unlisted.webp',
       `${KEY}?v=`,
       `${KEY}?v=unexpected`,
-      `${KEY}?v=0&v=sha256-${HASH}`,
+      `${KEY}?v=0&v=${VERSION}`,
     ]) {
       let response = await worker.fetch(path)
       assert.equal(response.status, 404, path)

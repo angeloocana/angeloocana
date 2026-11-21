@@ -1,3 +1,4 @@
+import { clipPoster } from '../clip-card.ts'
 import type { Motion } from './motion.ts'
 import type { setUpClips } from './clips.ts'
 
@@ -49,7 +50,7 @@ export function setUpRail(rail: HTMLElement, { signal, motion, clips }: { signal
   // Where each slide sits in the row, measured from the layout (offsetLeft/Width ignore the slide-in
   // animation and the row's sideways scroll) and kept until the row or a card changes size or the row gets
   // new cards. A scroll frame then reads only scrollLeft: no layout, no getBoundingClientRect.
-  type Box = { el: HTMLElement; l: number; r: number; h: number }
+  type Box = { el: HTMLElement; l: number; r: number; h: number; poster: string }
   let kind = track.dataset.count
   let boxes: Box[] = []
   let thingBoxes: Box[] = []
@@ -61,7 +62,7 @@ export function setUpRail(rail: HTMLElement, { signal, motion, clips }: { signal
   let measure = () => {
     stale = false
     let origin = track.offsetLeft + track.clientLeft
-    boxes = slides().map((el) => ({ el, l: el.offsetLeft - origin, r: el.offsetLeft - origin + el.offsetWidth, h: el.offsetHeight }))
+    boxes = slides().map((el) => ({ el, l: el.offsetLeft - origin, r: el.offsetLeft - origin + el.offsetWidth, h: el.offsetHeight, poster: bg ? clipPoster(el) : '' }))
     byEl = new Map(boxes.map((b) => [b.el, b]))
     // the row's things: the slides of its [data-count] class, or every slide shown; the page may carry only
     // some of them, and data-total says how many there are in all (the clips: known when the page is built)
@@ -184,8 +185,8 @@ export function setUpRail(rail: HTMLElement, { signal, motion, clips }: { signal
     // backdrop follows the first video slide that is mostly in view
     let poster = ''
     if (bg) {
-      let b = boxes.find((b) => b.el.dataset.poster && b.l >= v.l - (b.r - b.l) * 0.3 && b.r <= v.r + (b.r - b.l) * 0.3)
-      poster = b?.el.dataset.poster ?? ''
+      let b = boxes.find((b) => b.poster && b.l >= v.l - (b.r - b.l) * 0.3 && b.r <= v.r + (b.r - b.l) * 0.3)
+      poster = b?.poster ?? ''
     }
 
     // writes, only of what changed
