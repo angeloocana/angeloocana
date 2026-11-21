@@ -502,7 +502,8 @@ export async function mountIce(canvas: HTMLCanvasElement, signal: AbortSignal) {
       }
   }
   // a stroke from the last position, so a fast swipe leaves an unbroken trail
-  let last: Point | null = null, lastWarm = -9
+  let last: Point | null = null
+  let freshMelt: { point: Point; at: number } | null = null
   let warm = (x: number, y: number) => {
     if (released) return
     let r = phone ? 64 : 80
@@ -511,7 +512,7 @@ export async function mountIce(canvas: HTMLCanvasElement, signal: AbortSignal) {
       for (let i = 1; i <= steps; i++) brush(last[0] + ((x - last[0]) * i) / steps, last[1] + ((y - last[1]) * i) / steps, r, 0.1)
     } else brush(x, y, r, 0.25)
     last = [x, y]
-    lastWarm = t
+    freshMelt = { point: last, at: t }
     stir()
   }
 
@@ -535,8 +536,8 @@ export async function mountIce(canvas: HTMLCanvasElement, signal: AbortSignal) {
   let nextSwim = () => {
     let kind = pick(rng)
     let distance = SPECIES[kind].speed * SWIM
-    if (last && t - lastWarm < 1.5) {
-      let path = plan(rng, last, distance, thickness)
+    if (freshMelt && t - freshMelt.at < 1.5) {
+      let path = plan(rng, freshMelt.point, distance, thickness)
       if (path) return swim(kind, path, false)
     }
     // Look for a continuous strip of frost in the visible viewport, not just thick ice at its edges.
@@ -599,6 +600,7 @@ export async function mountIce(canvas: HTMLCanvasElement, signal: AbortSignal) {
     cracks.splice(next * 3, 3, x, H - y, t)
     next = (next + 1) % 4
     brush(x, y, 26, 0.8)
+    freshMelt = { point: [x, y], at: t }
     stir()
   }, { signal })
 
@@ -723,16 +725,18 @@ export async function mountIce(canvas: HTMLCanvasElement, signal: AbortSignal) {
     if (released || raf || still || document.hidden || signal.aborted) return
     raf = requestAnimationFrame(frame)
   }
-  // No frames run for the gap itself. If the timer fires while hidden or paused, go() does nothing;
-  // the first frame after motion resumes picks up the overdue visit.
-  let waitForSwim = (now: number) => {
-    let delay = swims.wait(now)
-    if (delay !== null) swimTimer = window.setTimeout(go, delay)
+  // No frames run for the gap itself. An early wake waits out the same deadline before asking for a frame.
+  // If go() can't run while hidden or paused, the first frame on return picks up the overdue visit.
+  let waitForSwim = () => {
+    if (swimTimer) return
+    let delay = swims.wait(performance.now())
+    if (delay > 0) swimTimer = window.setTimeout(() => { swimTimer = 0; waitForSwim() }, delay)
+    else go()
   }
-  let finishSwim = (now: number) => {
+  let finishSwim = () => {
     if (!animal) return
     animal = null
-    waitForSwim(now)
+    waitForSwim()
   }
   // the page moved: a frame at once, and a few more while it keeps moving
   let kick = () => {
@@ -752,9 +756,10 @@ export async function mountIce(canvas: HTMLCanvasElement, signal: AbortSignal) {
     for (let track of moved.keys()) reslack.add(track)
     moved.clear()
     for (acc += dt; acc >= 1 / 60; acc -= 1 / 60) step(1 / 60)
-    if (animal && t - animal.at >= animal.time) finishSwim(now)
-    if (swims.ready(now, !still && !document.hidden)) {
+    if (animal && t - animal.at >= animal.time) finishSwim()
+    if (swims.ready(performance.now(), !still && !document.hidden)) {
       clearTimeout(swimTimer)
+      swimTimer = 0
       nextSwim()
     }
     draw()
@@ -765,7 +770,7 @@ export async function mountIce(canvas: HTMLCanvasElement, signal: AbortSignal) {
     if (busy) raf = requestAnimationFrame(frame)
     else {
       then = 0
-      waitForSwim(now)
+      waitForSwim()
     }
   }
   let halt = () => { cancelAnimationFrame(raf); raf = 0; then = 0; if (idle) cancelIdleCallback(idle); idle = 0 }
@@ -801,8 +806,8 @@ export async function mountIce(canvas: HTMLCanvasElement, signal: AbortSignal) {
     still = now
     if (still) {
       halt()
-      finishSwim(performance.now())
-      lastWarm = -9
+      finishSwim()
+      freshMelt = null
       melt.fill(0)
       meltDirty = true
       hovered = focused = null
@@ -816,7 +821,7 @@ export async function mountIce(canvas: HTMLCanvasElement, signal: AbortSignal) {
   let paused = new MutationObserver(setStill)
   paused.observe(root, { attributes: true, attributeFilter: ['class'] })
   document.addEventListener('visibilitychange', () => {
-    if (document.hidden) { halt(); finishSwim(performance.now()); lastWarm = -9 }
+    if (document.hidden) { halt(); finishSwim(); freshMelt = null }
     else go()
   }, { signal })
   // the screen changed size: a new sheet; the page changed size, or a row got new cards: measure again
@@ -895,10 +900,8 @@ export function schedule(rng: () => number) {
   let due: number | null = null
   return {
     wait(now: number) {
-      if (due !== null) return null
-      let delay = SWIM_GAP[0] + (SWIM_GAP[1] - SWIM_GAP[0]) * rng()
-      due = now + delay
-      return delay
+      due ??= now + SWIM_GAP[0] + (SWIM_GAP[1] - SWIM_GAP[0]) * rng()
+      return Math.max(0, Math.ceil(due - now))
     },
     ready(now: number, allowed: boolean) {
       if (!allowed || due === null || now < due) return false
