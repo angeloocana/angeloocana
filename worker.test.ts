@@ -39,7 +39,7 @@ it('adds security headers without changing full, ranged or revalidated media res
     assert.equal(response.headers.get('Referrer-Policy'), 'strict-origin-when-cross-origin')
     assert.equal(response.headers.get('X-Frame-Options'), 'DENY')
     assert.equal(response.headers.get('Permissions-Policy'), 'camera=(), microphone=(), geolocation=()')
-    assert.equal(response.headers.get('Strict-Transport-Security'), 'max-age=604800')
+    assert.equal(response.headers.get('Strict-Transport-Security'), 'max-age=31536000')
     assert.equal(response.headers.get('Cache-Control'), 'public, max-age=604800')
     assert.equal(response.headers.get('ETag'), ETAG)
     assert.equal(response.headers.get('Accept-Ranges'), 'bytes')
@@ -48,10 +48,15 @@ it('adds security headers without changing full, ranged or revalidated media res
     assert.equal(await response.text(), content)
   }
 
-  let preview = new URL(MEDIA_URL)
-  preview.hostname = 'angeloocana.angeloocana.workers.dev'
-  let response = await worker.fetch(new Request(preview), env)
-  assert.equal(response.headers.get('Strict-Transport-Security'), null)
+  for (let [origin, expected] of [
+    ['https://www.angeloocana.com', 'max-age=31536000'],
+    ['https://angeloocana.angeloocana.workers.dev', null],
+    ['http://angeloocana.com', null],
+  ] as const) {
+    let url = new URL(MEDIA_URL)
+    let response = await worker.fetch(new Request(new URL(url.pathname + url.search, origin)), env)
+    assert.equal(response.headers.get('Strict-Transport-Security'), expected, origin)
+  }
 })
 
 const KEY = 'clips/c12345678.mp4'
