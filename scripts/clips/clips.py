@@ -28,7 +28,7 @@ from contextlib import contextmanager
 
 # Keep the CLI from creating an untracked __pycache__ in the checkout.
 sys.dont_write_bytecode = True
-from review_io import review_lock, write_json_atomic
+from review_io import promote_clip, review_lock, write_json_atomic
 
 REPO = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 MEDIA = os.environ.get('ANGELOOCANA_MEDIA') or os.path.expanduser('~/dev/angeloocana-media')
@@ -139,7 +139,7 @@ def cut(item_id, start, cat=None, en=None, pt=None, length='6'):
     with render_clip(pieces) as staged, review_lock(MEDIA):
         clips = load_clips()  # Preserve review edits made while ffmpeg was running.
         new = is_new(clips)
-        mp4 = promote_clip(cid, *staged)
+        mp4 = promote_clip(MEDIA, cid, *staged)
         save_recipe(cid, pieces)
         if new:
             source_kind = 'instagram' if it['source'].startswith('Instagram') else 'phone'
@@ -204,25 +204,6 @@ def render_clip(pieces):
         yield mp4, jpg
 
 
-def promote_clip(name, staged_mp4, staged_jpg):
-    """Replace a verified pair under the caller's review lock; restore the MP4 if the JPG rename fails."""
-    mp4, jpg = os.path.join(OUT, f'{name}.mp4'), os.path.join(OUT, f'{name}.jpg')
-    backup = os.path.join(os.path.dirname(staged_mp4), 'previous.mp4')
-    had_mp4 = os.path.exists(mp4)
-    if had_mp4:
-        os.link(mp4, backup)
-    os.replace(staged_mp4, mp4)
-    try:
-        os.replace(staged_jpg, jpg)
-    except OSError:
-        if had_mp4:
-            os.replace(backup, mp4)
-        else:
-            os.unlink(mp4)
-        raise
-    return mp4
-
-
 def build(name):
     """Render the recorded recipe and promote the finished pair."""
     with review_lock(MEDIA):
@@ -230,7 +211,7 @@ def build(name):
     with render_clip(pieces) as staged, review_lock(MEDIA):
         if recipes().get(name) != pieces:
             raise RuntimeError(f'{name}: recipe changed while rendering; rebuild again')
-        return promote_clip(name, *staged)
+        return promote_clip(MEDIA, name, *staged)
 
 
 def montage(name):
@@ -253,7 +234,7 @@ def rebuild(*names):
         with render_clip(pieces) as staged, review_lock(MEDIA):
             if draft is None and recipes().get(name) != pieces:
                 raise RuntimeError(f'{name}: recipe changed while rendering; rebuild again')
-            mp4 = promote_clip(name, *staged)
+            mp4 = promote_clip(MEDIA, name, *staged)
             if draft is not None:
                 save_recipe(name, draft)
                 drafts = read_json(DRAFTS, {})

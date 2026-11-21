@@ -1,5 +1,7 @@
 """Synthetic render regression (python3 -B -m unittest discover -s scripts/clips)."""
 import json
+import subprocess
+import sys
 import tempfile
 import unittest
 from pathlib import Path
@@ -31,3 +33,56 @@ class ClipRenderTest(unittest.TestCase):
                         clips.build(clip)
                 self.assertEqual((mp4.read_bytes(), jpg.read_bytes()), before)
                 self.assertEqual(set(out.iterdir()), {mp4, jpg})
+
+    def test_next_lock_recovers_pair_after_interrupted_promotion_and_recovery(self):
+        child = '''
+import os
+import sys
+from pathlib import Path
+from unittest.mock import patch
+from review_io import promote_clip, review_lock
+
+root, phase = Path(sys.argv[1]), sys.argv[2]
+out = root / 'media' / 'clips'
+mp4, jpg = out / 'clip.mp4', out / 'clip.jpg'
+replace = os.replace
+
+def exit_after_mp4(source, destination):
+    replace(source, destination)
+    if Path(destination) == mp4:
+        os._exit(71)
+
+if phase == 'promote':
+    with review_lock(root), patch('os.replace', exit_after_mp4):
+        promote_clip(root, 'clip', root / 'next.mp4', root / 'next.jpg')
+elif phase == 'recover':
+    with patch('os.replace', exit_after_mp4), review_lock(root):
+        raise AssertionError('Interrupted recovery should not grant the lock')
+else:
+    with review_lock(root):
+        assert mp4.read_bytes() == b'old-video'
+        assert jpg.read_bytes() == b'old-poster'
+'''
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            out = root / 'media' / 'clips'
+            out.mkdir(parents=True)
+            mp4, jpg = out / 'clip.mp4', out / 'clip.jpg'
+            journal = out / '.review-promotion'
+            mp4.write_bytes(b'old-video')
+            jpg.write_bytes(b'old-poster')
+            (root / 'next.mp4').write_bytes(b'next-video')
+            (root / 'next.jpg').write_bytes(b'next-poster')
+
+            def run(phase, status):
+                result = subprocess.run([sys.executable, '-B', '-c', child, tmp, phase],
+                                        cwd=Path(__file__).resolve().parent, capture_output=True, timeout=10)
+                self.assertEqual(result.returncode, status, result.stderr.decode())
+
+            run('promote', 71)
+            self.assertEqual((mp4.read_bytes(), jpg.read_bytes()), (b'next-video', b'old-poster'))
+            self.assertTrue(journal.is_dir())
+            run('recover', 71)
+            self.assertTrue(journal.is_dir())
+            run('snapshot', 0)
+            self.assertFalse(journal.exists())
