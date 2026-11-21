@@ -123,6 +123,9 @@ export function Hero(handle: Handle<{ lang: Lang; t: Copy; clips: Clip[] }>) {
                 {heroClipUrl(clip.id, 'phone') && <source src={heroClipUrl(clip.id, 'phone')} type="video/mp4" media="(max-width: 760px)" />}
                 <source src={heroClipUrl(clip.id, 'tile') ?? clipUrl(clip.id, 'mp4')} type="video/mp4" />
               </video>
+              {/* with scripts off the browser gives every video its own controls, over the tile's words: the
+                  poster covers it then (with scripts on, nothing here is fetched) */}
+              <noscript><img class="tile-video" src={clipUrl(clip.id, 'jpg')} alt="" /></noscript>
               <div class="tile-life-copy">
                 <p class="tile-kicker">{tiles.life.kicker}</p>
                 <h2 class="tile-title"><a href="#outside" class="tile-link" data-rmx-document>{CATEGORY_NAMES[lang][clip.cat]}<span class="tile-go" aria-hidden="true">→</span></a></h2>

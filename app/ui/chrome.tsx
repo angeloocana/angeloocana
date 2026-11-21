@@ -1,4 +1,5 @@
 import type { Handle } from 'remix/component'
+import { unsafeHTML } from 'remix/component'
 
 import { SITE, SOCIALS } from '../content.ts'
 import { type Copy, type Lang } from '../copy.ts'
@@ -62,6 +63,10 @@ function Flag(handle: Handle<{ lang: Lang }>) {
 }
 
 
+// A section picked from More closes it, before the page's scripts have come too (the list is the element
+// just before this script, More's <details> the one before it)
+const MENU_PICK = unsafeHTML("let m=document.currentScript.previousSibling;m.onclick=e=>e.target.closest('a')&&(m.previousSibling.open=0)")
+
 /**
  * The fixed menu. On the home page the links jump to sections; elsewhere they go back home first.
  * Both flags always show; the current language is lit. `langHref` says where each flag leads.
@@ -78,7 +83,7 @@ export function SiteNav(handle: Handle<{ lang: Lang; t: Copy; home?: boolean; la
     let inPage = home ? true : undefined
     return (
       <header class="cin-nav">
-        {home && <a class="skip-link" href="#main" data-rmx-document>{t.nav.skip}</a>}
+        <a class="skip-link" href="#main" data-rmx-document={inPage}>{t.nav.skip}</a>
         <a href={home ? '#top' : base} data-rmx-document={inPage} class="cin-mark" aria-label={`Ângelo Ocanã · ${t.nav.top}`}>ÂO</a>
         {/* Phones show the first two sections and More; the rest open under it as a small list. On the home
             page More is a native <details>, so it opens before the scripts have loaded and without JS;
@@ -90,10 +95,12 @@ export function SiteNav(handle: Handle<{ lang: Lang; t: Copy; home?: boolean; la
             <a key={chapter.href} href={`${base}${chapter.href}`} data-rmx-document={inPage} data-chapter-link={chapter.href.slice(1)}>{chapter.label}</a>
           ))}
           {/* (the list follows the <details> instead of sitting in it: closed, a <details> hides what it holds,
-              and on wide screens the list shows in the line whether it is open or not) */}
+              and on wide screens the list shows in the line whether it is open or not; aria-controls tells
+              screen readers that More opens it). A pick closes it, before the scripts have come too
+              (MENU_PICK, scripts or not), so the section's heading lands under the menu, not under the open list. */}
           {home && (
             <details class="menu-drop">
-              <summary class="menu-toggle">
+              <summary class="menu-toggle" aria-controls="menu-more">
                 {t.nav.more}
                 <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6" /></svg>
               </summary>
@@ -113,6 +120,7 @@ export function SiteNav(handle: Handle<{ lang: Lang; t: Copy; home?: boolean; la
               </button>
             )}
           </div>
+          {home && <script innerHTML={MENU_PICK} />}
         </nav>
         {/* the two flags as a small hand of cards: the current one stands taller and ringed */}
         <p class="cin-langs" role="group" aria-label={t.nav.langsLabel}>

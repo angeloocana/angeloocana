@@ -15,6 +15,8 @@ export function setUpMedia(signal: AbortSignal, motion: Motion): Media {
   // checks motion.motion as it goes)
   if (motion.saveData) return media
 
+  // paused, or reduced motion: nothing plays, and no clip gets a player
+  let still = () => motion.paused || !motion.motion
   let onScreen = new Set<HTMLVideoElement>()
   let watched = new Set<HTMLVideoElement>()
   let watcher = new IntersectionObserver((entries) => {
@@ -22,7 +24,7 @@ export function setUpMedia(signal: AbortSignal, motion: Motion): Media {
       let video = target as HTMLVideoElement
       if (isIntersecting) onScreen.add(video)
       else onScreen.delete(video)
-      if (isIntersecting && !motion.paused && motion.motion) play(video)
+      if (isIntersecting && !still()) play(video)
       else video.pause()
     }
   }, { threshold: 0.35 })
@@ -41,24 +43,21 @@ export function setUpMedia(signal: AbortSignal, motion: Motion): Media {
   let playerSlides = new Set<HTMLElement>()
   let playerObservers: IntersectionObserver[] = []
 
-  motion.onChange(() => {
-    if (!motion.motion) {
+  // Paused, or reduced motion: everything stops, and the clips coming near stay posters (a player would
+  // fetch its file for nothing). Moving again: observing again reports where each one is now, so the clips
+  // near the screen get players, and the videos on screen play.
+  let followMotion = () => {
+    if (still()) {
       for (let video of document.querySelectorAll('video')) video.pause()
       return
     }
-    // observing again reports where each one is now: the clips near the screen get players, and the
-    // videos on screen play
     for (let video of watched) { watcher.unobserve(video); watcher.observe(video) }
     for (let players of playerObservers) for (let slide of playerSlides) {
       if (!slide.querySelector('video.clip-video')) { players.unobserve(slide); players.observe(slide) }
     }
-  })
-  motion.onPause(() => {
-    for (let video of onScreen) {
-      if (motion.paused) video.pause()
-      else play(video)
-    }
-  })
+  }
+  motion.onChange(followMotion)
+  motion.onPause(followMotion)
 
   // [data-autoplay="idle"] (the hero's clip, the biggest file on the first screen) waits until the page
   // has loaded and the browser is idle, so it never competes with the first paint; its poster shows until then
@@ -84,7 +83,7 @@ export function setUpMedia(signal: AbortSignal, motion: Motion): Media {
         let video = slide.querySelector<HTMLVideoElement>('video.clip-video')
         // only clips near the screen run the slide-in animation: 114 of them scrolling with the page cost frames
         slide.toggleAttribute('data-near', isIntersecting)
-        if (isIntersecting && !video && motion.motion) {
+        if (isIntersecting && !video && !still()) {
           video = document.createElement('video')
           video.className = 'clip-video'
           video.muted = true

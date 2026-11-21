@@ -9,6 +9,7 @@ import { JojDemo } from '../ui/public/joj-demo.tsx'
 import { TicTacToe } from '../ui/public/tic-tac-toe.tsx'
 import { PoolTiles } from '../ui/public/pool-tiles.tsx'
 import { Cursor, SiteFoot, SiteNav } from '../ui/chrome.tsx'
+import { WatchSprite } from '../ui/devices.tsx'
 import { Career } from '../ui/home/career.tsx'
 import { Hero } from '../ui/home/hero.tsx'
 import { Learning } from '../ui/home/learning.tsx'
@@ -57,8 +58,10 @@ export function HomePage(handle: Handle<{ lang: Lang }>) {
         <noscript><style>{'.row-career .job-tech li:not(.tech-more){display:block!important}.row-career .tech-more{display:none!important}'}</style></noscript>
         <SiteNav lang={lang} t={t} home langHref={HREF} />
 
-        {/* what a row says to screen readers once it settles, for every row (rails/rows.ts) */}
-        <main id="main" tabIndex={-1} data-at={JSON.stringify(t.rail.at)}>
+        {/* the Apple Watch's drawing, once, before the hero's watch points at it (devices.tsx) */}
+        <WatchSprite />
+        {/* what a row says to screen readers once it settles, for every row, and a job's open tags' "Show fewer" (rails/rows.ts) */}
+        <main id="main" tabIndex={-1} data-at={JSON.stringify({ ...t.rail.at, less: t.career.lessTech })}>
           <Hero lang={lang} t={t} clips={clips} />
           <Career lang={lang} t={t} nav={nav} />
           <Projects lang={lang} t={t} nav={nav} />

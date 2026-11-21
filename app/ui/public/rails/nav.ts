@@ -120,10 +120,10 @@ export function setUpNav(signal: AbortSignal, rails: Map<HTMLElement, Rail>) {
     addEventListener('pointerdown', (event) => {
       if (details.open && !(event.target as Element).closest('.cin-menu, .menu-scrim')) close()
     }, { signal })
-    // focus leaving the menu (Tab past the last section) closes it too
-    list.addEventListener('focusout', (event) => {
+    // focus leaving the menu, either way (Tab past the last section, Shift-Tab back past the first two), closes it too
+    summary.closest<HTMLElement>('.cin-menu')?.addEventListener('focusout', (event) => {
       let to = event.relatedTarget as Element | null
-      if (to && !to.closest('.cin-menu')) close()
+      if (details.open && to && !to.closest('.cin-menu')) close()
     }, { signal })
   }
   update()

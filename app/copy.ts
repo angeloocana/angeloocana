@@ -253,6 +253,8 @@ const en = {
     tech: 'Technologies',
     /** after the tags a phone shows, how many more there are (a press shows them) */
     moreTech: (n: number) => `+${n} more`,
+    /** the same tag once pressed: folds them again */
+    lessTech: 'Show fewer',
     highlights: 'Highlights',
     jump: 'Jump to a company',
   },
@@ -508,6 +510,7 @@ const pt: Copy = {
     for: 'Para',
     tech: 'Tecnologias',
     moreTech: (n: number) => `+${n}`,
+    lessTech: 'Mostrar menos',
     highlights: 'Destaques',
     jump: 'Ir para uma empresa',
   },

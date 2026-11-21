@@ -116,7 +116,7 @@ export function setUpRail(rail: HTMLElement, { signal, motion, clips }: { signal
   // Where the row came to rest, for screen readers: "3 to 4 of 9", said once scrolling settles (not on
   // every frame of it), and only while focus is in this row.
   let live = rail.querySelector<HTMLElement>('[data-rail-live]')
-  let at = JSON.parse(document.querySelector<HTMLElement>('main')?.dataset.at ?? '{}') as { one?: string; some?: string }
+  let at = JSON.parse(document.querySelector<HTMLElement>('main')?.dataset.at ?? '{}') as { one?: string; some?: string; less?: string }
   let settled = 0
   let announce = () => {
     if (!live || !at.one || !rail.contains(document.activeElement)) return
@@ -255,6 +255,19 @@ export function setUpRail(rail: HTMLElement, { signal, motion, clips }: { signal
       unpickTimer = window.setTimeout(checkPicked, 200)
     }, { signal, passive: true })
   }
+  // more chips than fit: home.css fades the side where some are out of sight
+  let chipRow = rail.querySelector<HTMLElement>('.clip-chips')
+  if (chipRow) {
+    let row = chipRow
+    let edges = () => {
+      row.toggleAttribute('data-more-l', row.scrollLeft > 2)
+      row.toggleAttribute('data-more-r', row.scrollLeft < row.scrollWidth - row.clientWidth - 2)
+    }
+    row.addEventListener('scroll', edges, { signal, passive: true })
+    let fits = new ResizeObserver(edges)
+    fits.observe(row)
+    signal.addEventListener('abort', () => fits.disconnect())
+  }
   for (let chip of chips) {
     chip.addEventListener('click', async () => {
       chip.setAttribute('aria-busy', 'true')
@@ -375,10 +388,15 @@ export function setUpRail(rail: HTMLElement, { signal, motion, clips }: { signal
       track.scrollBy({ left: dir * track.clientWidth * 0.8, behavior: motion.reduced ? 'auto' : 'smooth' })
     }
 
-    // a job's "+12 more" (phones): shows its other tags in place, or folds them again (home.css); the card
-    // grows, and the row's height follows it (the ResizeObserver above)
+    // a job's "+12 more" (phones): shows its other tags in place, saying "Show fewer" then, or folds them
+    // again (home.css); the card grows, and the row's height follows it (the ResizeObserver above)
     let moreTags = target.closest<HTMLButtonElement>('.tech-more button')
-    if (moreTags) moreTags.setAttribute('aria-expanded', String(moreTags.getAttribute('aria-expanded') !== 'true'))
+    if (moreTags) {
+      let open = moreTags.getAttribute('aria-expanded') !== 'true'
+      moreTags.dataset.more ??= moreTags.textContent ?? ''
+      moreTags.setAttribute('aria-expanded', String(open))
+      moreTags.textContent = open ? at.less ?? '' : moreTags.dataset.more
+    }
 
     // a jump link ([data-rail-jump], like the career intro's list) slides the row to its card, page staying put
     let jump = target.closest<HTMLAnchorElement>('a[data-rail-jump]')

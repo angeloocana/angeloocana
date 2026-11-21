@@ -103,64 +103,73 @@ function WatchDefs(handle: Handle<{ id: string }>) {
 // Apple Watch (46 mm, midnight aluminium, sport band), drawn like a product shot: crisp band
 // with rounded ends, a rounded case with a lit rim, a black border round the display, and the
 // digital crown. The display is 120 x 146.5 in this 200 x 400 box: the screenshots' own shape.
+// The home page shows it three times: the drawing is in the page once (WatchSprite, a <symbol>) and
+// each watch points at it.
+export function WatchSprite() {
+  return () => (
+    <svg class="social-sprite" aria-hidden="true">
+      <symbol id="aw-art" viewBox="0 0 200 400">
+        <defs>
+          <linearGradient id="aw-band" x1="0" x2="1">
+            <stop offset="0" stop-color="#14161a" />
+            <stop offset="0.12" stop-color="#22262c" />
+            <stop offset="0.5" stop-color="#2b3037" />
+            <stop offset="0.88" stop-color="#22262c" />
+            <stop offset="1" stop-color="#121418" />
+          </linearGradient>
+          <linearGradient id="aw-tuck" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stop-color="#000" stop-opacity="0" />
+            <stop offset="1" stop-color="#000" stop-opacity="0.55" />
+          </linearGradient>
+          <linearGradient id="aw-case" x1="0" y1="0" x2="0.3" y2="1">
+            <stop offset="0" stop-color="#3b3f46" />
+            <stop offset="0.5" stop-color="#25282d" />
+            <stop offset="1" stop-color="#1b1d21" />
+          </linearGradient>
+          <linearGradient id="aw-rim" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0" stop-color="#c4c9d0" />
+            <stop offset="0.35" stop-color="#5c6168" />
+            <stop offset="0.7" stop-color="#2c2f34" />
+            <stop offset="1" stop-color="#7d828a" />
+          </linearGradient>
+          <linearGradient id="aw-crown" x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0" stop-color="#3a3d43" />
+            <stop offset="0.5" stop-color="#9fa4ab" />
+            <stop offset="1" stop-color="#2e3136" />
+          </linearGradient>
+          <pattern id="aw-ridges" width="200" height="2.2" patternUnits="userSpaceOnUse">
+            <rect width="200" height="0.9" fill="#000" opacity="0.4" />
+          </pattern>
+        </defs>
+        {/* sport band: two straps with rounded ends, tucked under the case */}
+        <path fill="url(#aw-band)" d="M50 36 Q50 16 70 16 H130 Q150 16 150 36 V136 H50 Z" />
+        <path fill="url(#aw-band)" d="M50 270 H150 V366 Q150 386 130 386 H70 Q50 386 50 366 Z" />
+        <path d="M51 38 Q51 17 70 17 H130 Q149 17 149 38 M51 364 Q51 385 70 385 H130 Q149 385 149 364" fill="none" stroke="#fff" stroke-opacity="0.07" />
+        {/* the case's shadow on the band, where the straps tuck in */}
+        <rect x="50" y="98" width="100" height="22" fill="url(#aw-tuck)" />
+        <rect x="50" y="282" width="100" height="22" fill="url(#aw-tuck)" transform="rotate(180 100 293)" />
+        {/* digital crown with ridges and its red ring, and the side button below it */}
+        <rect x="168" y="148" width="15" height="34" rx="4.5" fill="url(#aw-crown)" />
+        <rect x="168" y="148" width="15" height="34" rx="4.5" fill="url(#aw-ridges)" />
+        <rect x="168" y="152" width="2.6" height="26" rx="1.2" fill="#b8312b" />
+        <rect x="169" y="198" width="7" height="34" rx="3" fill="#24272b" stroke="#5f646b" stroke-width="0.7" />
+        {/* case: a lit rim around a rounded aluminium body */}
+        <rect x="26" y="116" width="148" height="176" rx="46" fill="url(#aw-rim)" />
+        <rect x="27.6" y="117.6" width="144.8" height="172.8" rx="44.4" fill="url(#aw-case)" />
+        {/* black glass: a thin border all round the display */}
+        <rect x="32" y="122" width="136" height="164" rx="40" fill="#000" />
+        <rect x="32.5" y="122.5" width="135" height="163" rx="39.5" fill="none" stroke="#fff" stroke-opacity="0.06" />
+      </symbol>
+    </svg>
+  )
+}
+
 export function AppleWatch(handle: Handle<DeviceProps>) {
-  let id = `aw${Math.random().toString(36).slice(2, 7)}`
   return () => {
     let { children, class: className = '', label, style } = handle.props
     return (
       <figure class={`dev dev-watch ${className}`} style={style} aria-label={label}>
-        <svg class="dev-art" viewBox="0 0 200 400" aria-hidden="true">
-          <defs>
-            <linearGradient id={`${id}-band`} x1="0" x2="1">
-              <stop offset="0" stop-color="#14161a" />
-              <stop offset="0.12" stop-color="#22262c" />
-              <stop offset="0.5" stop-color="#2b3037" />
-              <stop offset="0.88" stop-color="#22262c" />
-              <stop offset="1" stop-color="#121418" />
-            </linearGradient>
-            <linearGradient id={`${id}-tuck`} x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0" stop-color="#000" stop-opacity="0" />
-              <stop offset="1" stop-color="#000" stop-opacity="0.55" />
-            </linearGradient>
-            <linearGradient id={`${id}-case`} x1="0" y1="0" x2="0.3" y2="1">
-              <stop offset="0" stop-color="#3b3f46" />
-              <stop offset="0.5" stop-color="#25282d" />
-              <stop offset="1" stop-color="#1b1d21" />
-            </linearGradient>
-            <linearGradient id={`${id}-rim`} x1="0" y1="0" x2="1" y2="1">
-              <stop offset="0" stop-color="#c4c9d0" />
-              <stop offset="0.35" stop-color="#5c6168" />
-              <stop offset="0.7" stop-color="#2c2f34" />
-              <stop offset="1" stop-color="#7d828a" />
-            </linearGradient>
-            <linearGradient id={`${id}-crown`} x1="0" y1="0" x2="1" y2="0">
-              <stop offset="0" stop-color="#3a3d43" />
-              <stop offset="0.5" stop-color="#9fa4ab" />
-              <stop offset="1" stop-color="#2e3136" />
-            </linearGradient>
-            <pattern id={`${id}-ridges`} width="200" height="2.2" patternUnits="userSpaceOnUse">
-              <rect width="200" height="0.9" fill="#000" opacity="0.4" />
-            </pattern>
-          </defs>
-          {/* sport band: two straps with rounded ends, tucked under the case */}
-          <path fill={`url(#${id}-band)`} d="M50 36 Q50 16 70 16 H130 Q150 16 150 36 V136 H50 Z" />
-          <path fill={`url(#${id}-band)`} d="M50 270 H150 V366 Q150 386 130 386 H70 Q50 386 50 366 Z" />
-          <path d="M51 38 Q51 17 70 17 H130 Q149 17 149 38 M51 364 Q51 385 70 385 H130 Q149 385 149 364" fill="none" stroke="#fff" stroke-opacity="0.07" />
-          {/* the case's shadow on the band, where the straps tuck in */}
-          <rect x="50" y="98" width="100" height="22" fill={`url(#${id}-tuck)`} />
-          <rect x="50" y="282" width="100" height="22" fill={`url(#${id}-tuck)`} transform="rotate(180 100 293)" />
-          {/* digital crown with ridges and its red ring, and the side button below it */}
-          <rect x="168" y="148" width="15" height="34" rx="4.5" fill={`url(#${id}-crown)`} />
-          <rect x="168" y="148" width="15" height="34" rx="4.5" fill={`url(#${id}-ridges)`} />
-          <rect x="168" y="152" width="2.6" height="26" rx="1.2" fill="#b8312b" />
-          <rect x="169" y="198" width="7" height="34" rx="3" fill="#24272b" stroke="#5f646b" stroke-width="0.7" />
-          {/* case: a lit rim around a rounded aluminium body */}
-          <rect x="26" y="116" width="148" height="176" rx="46" fill={`url(#${id}-rim)`} />
-          <rect x="27.6" y="117.6" width="144.8" height="172.8" rx="44.4" fill={`url(#${id}-case)`} />
-          {/* black glass: a thin border all round the display */}
-          <rect x="32" y="122" width="136" height="164" rx="40" fill="#000" />
-          <rect x="32.5" y="122.5" width="135" height="163" rx="39.5" fill="none" stroke="#fff" stroke-opacity="0.06" />
-        </svg>
+        <svg class="dev-art" viewBox="0 0 200 400" aria-hidden="true"><use href="#aw-art" /></svg>
         <div class="dev-screen">{children}</div>
         <span class="watch-glare" aria-hidden="true" />
       </figure>

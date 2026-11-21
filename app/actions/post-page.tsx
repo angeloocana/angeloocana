@@ -36,7 +36,7 @@ export function PostPage(handle: Handle<{ post: Post }>) {
       >
         <Cursor />
         <SiteNav lang={lang} t={t} langHref={{ [lang]: post.url, [other]: translation?.url ?? HREF[other] } as Record<Lang, string>} />
-        <main class="post-main">
+        <main id="main" tabIndex={-1} class="post-main">
           <article class="post">
             <a class="post-back" href={`${home}#posts`}>
               <span aria-hidden="true">←</span> {t.posts.back}

@@ -70,7 +70,7 @@ export function Career(handle: Handle<{ lang: Lang; t: Copy; nav: (href: string)
                   <li key={tech}>{tech}</li>
                 ))}
                 {/* phones show the first few tags (home.css): this says how many more, and a press shows them in
-                    place (rails/rows.ts) */}
+                    place (rails/rows.ts), and says "Show fewer" while they show */}
                 {job.tech.length > PHONE_TAGS && (
                   <li class="tech-more"><button type="button" aria-expanded="false">{t.career.moreTech(job.tech.length - PHONE_TAGS)}</button></li>
                 )}

@@ -1,9 +1,7 @@
 /* The home page, told like a film: every section is a row. Scroll down to move between rows, sideways
    inside a row to see more (app/ui/public/rails.tsx). Without JS the rows still scroll. What it shares with
    the posts (colours, type, menu, footer) is in chrome.css. */
-/* ---------- the menu's home-only parts: the skip link, the pause, and More on phones ---------- */
-.skip-link { position: absolute; z-index: 70; left: 1rem; top: 0.6rem; display: inline-flex; align-items: center; min-height: 2.75rem; padding: 0.7rem 1rem; border-radius: 999px; background: var(--amber); color: #111; font: 600 0.8rem/1 var(--sans); text-decoration: none; transform: translateY(-200%); }
-.skip-link:focus { transform: none; }
+/* ---------- the menu's home-only parts: the pause, and More on phones ---------- */
 /* wide screens: More is hidden, its list is part of the line */
 .menu-drop { display: none; }
 /* the page's pause, at the end of the line: a quiet icon as dim as the links, its words only on phones */
@@ -42,6 +40,8 @@ html:not(.js-rails) .menu-pause, .menu-pause[hidden] { display: none; }
   .menu-more a::after { left: 0.2rem; right: auto; width: 1.5rem; bottom: 0.6rem; }
   .menu-more a[aria-current] { color: var(--amber); }
   /* under the header, over the page: a tap on it closes the list (rails/nav.ts) */
+  /* a pick from the open list with no scripts at all leaves it open: the section lands under it, not behind it */
+  html:not(.js-rails):has(.menu-drop[open]) :is(.row, #projects, #contact) { scroll-margin-top: 17rem; }
   .menu-scrim[data-open] { position: fixed; z-index: 55; inset: 0; background: rgb(0 0 0 / 0.55); animation: fade 0.2s ease-out; }
 }
 @keyframes fade { from { opacity: 0; } to { opacity: 1; } }
@@ -156,6 +156,12 @@ html:not(.js-rails) .rail-bar { visibility: hidden; }
 .clip-jump-label { flex: none; font: 500 0.75rem/1.2 var(--sans); letter-spacing: 0.12em; text-transform: uppercase; color: var(--dim); }
 .clip-chips { display: flex; flex: 1; gap: 0.4rem; min-width: 0; overflow-x: auto; scrollbar-width: none; padding-block: 2px; }
 .clip-chips::-webkit-scrollbar { display: none; }
+/* more chips than fit: a side with chips out of sight fades out, only while some are (rails/rows.ts marks it) */
+@property --chips-l { syntax: '<length>'; inherits: false; initial-value: 0px; }
+@property --chips-r { syntax: '<length>'; inherits: false; initial-value: 0px; }
+.clip-chips { mask-image: linear-gradient(to right, transparent, #000 var(--chips-l), #000 calc(100% - var(--chips-r)), transparent); transition: --chips-l 0.25s, --chips-r 0.25s; }
+.clip-chips[data-more-l] { --chips-l: 3rem; }
+.clip-chips[data-more-r] { --chips-r: 3rem; }
 .clip-chips button { all: unset; box-sizing: border-box; display: inline-flex; align-items: center; gap: 0.45rem; min-height: 2.75rem; padding: 0 0.95rem; border-radius: 999px; border: 1px solid var(--line); color: #d9d3c8; font: 500 0.78rem/1 var(--sans); white-space: nowrap; cursor: pointer; transition: border-color 0.3s, color 0.3s, background 0.3s; }
 .clip-chips small { color: var(--dim); font-size: 0.7rem; font-variant-numeric: tabular-nums; }
 .clip-chips button:hover, .clip-chips button[aria-pressed='true'] { border-color: rgb(232 184 106 / 0.55); color: var(--amber); }
@@ -359,6 +365,8 @@ html:not(.js-rails) .clip-pause, .clip-pause[hidden] { display: none; }
 /* rhythm: up, down, and every fourth clip a little wider */
 .clip:nth-child(even) { align-self: flex-end; }
 .clip:nth-child(4n+3) { --h: var(--row-h); width: calc(var(--h) * 4 / 5); align-self: center; }
+/* never wider than the row's own width (a wide clip on a phone would hide its Instagram link off screen) */
+.clip { max-width: 100%; }
 @media (hover: hover) {
   .rail:hover .clip:not(:hover) { filter: brightness(0.62) saturate(0.85); }
   .clip:hover { translate: 0 -6px; scale: 1.015; }
@@ -871,13 +879,11 @@ pre.rf-code { margin: 0; width: 100%; height: 100%; padding: 1.2rem 1.4rem; font
      there is nothing to press, and all of them show (home-page.tsx). */
   .row-career .job-tech:not(:has([aria-expanded='true'])) li:nth-child(n+7):not(.tech-more) { display: none; }
   .row-career .job-tech .tech-more { display: block; padding: 0; border-style: dashed; background: none; }
-  /* the whole chip is the button, its tap area 44px tall; open, it reads − (its name stays "+12 more") */
+  /* the whole chip is the button, its tap area 44px tall; open, it reads "Show fewer" (to screen readers too) */
   .tech-more button { all: unset; position: relative; display: block; padding: 0.4rem 0.6rem; border-radius: inherit; color: var(--dim); cursor: pointer; }
   .tech-more button::after { content: ''; position: absolute; inset: -0.6rem 0; }
   .tech-more button:hover { color: var(--text); }
   .tech-more button:focus-visible { outline: 2px solid var(--amber); outline-offset: 2px; }
-  .tech-more button[aria-expanded='true'] { font-size: 0; }
-  .tech-more button[aria-expanded='true']::before { content: '−'; font-size: 0.75rem; }
   .row-career .job .job-tech { padding-top: 1rem; }
 }
 
