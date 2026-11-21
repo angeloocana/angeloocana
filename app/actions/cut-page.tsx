@@ -92,10 +92,14 @@ export function saveCut(request: Request, id: string) {
   let parsed = request.json().catch(() => null)
   return exclusive(async () => {
     let body = (await parsed) as { action?: string; pieces?: unknown; revision?: unknown; cat?: unknown; label?: unknown; captionRejected?: unknown } | null
-    if (!body || !['save', 'rebuild', 'discard', 'keep', 'uncheck', 'approve'].includes(body.action ?? '')) return cutError('Unknown cut action.', 400)
-    let intake = findIntake(id)
-    if (body.action === 'approve') {
-      if (!intake || typeof body.revision !== 'string' || latestIntakePreview(id) !== body.revision) return cutError('That private preview is no longer current. Render it again before adding it.', 409)
+    if (!body) return cutError('Unknown cut action.', 400)
+    let action = body.action
+    let privateWrite = action === 'save-preview' || action === 'discard-preview' || action === 'render-preview'
+    if (action === 'approve') {
+      let revision = body.revision
+      if (typeof revision !== 'string' || !await withReviewLock(MEDIA_DIR, () => latestIntakePreview(id) === revision)) {
+        return cutError('That private preview is no longer current. Reload the cut before adding it.', 409)
+      }
       if (!autoPublish() || needsLegacyRecovery()) return cutError('Review publishing must be ready before adding a clip.', 409)
       let clip
       try {
@@ -104,23 +108,28 @@ export function saveCut(request: Request, id: string) {
         if (error instanceof ReviewIntakeError) return cutError(error.message, error.status)
         throw error
       }
-      let result = await approveIntake(id, body.revision, clip)
+      let result = await approveIntake(id, revision, clip)
       if (result === 'stale') return cutError('That private preview changed. Render it again before adding it.', 409)
       if (result === 'failed') return cutError('Could not add the clip. The private draft is still available.', 500)
       reviewChanged()
       return Response.json({ added: true }, { headers: { 'Cache-Control': 'no-store' } })
     }
+    if (!privateWrite && !['save', 'rebuild', 'discard', 'keep', 'uncheck'].includes(action ?? '')) return cutError('Unknown cut action.', 400)
     let expected = await withReviewLock(MEDIA_DIR, () => {
-      if (body.action === 'keep' || body.action === 'uncheck') {
-        if (intake) return cutError('This clip is still private.', 409)
-        return Response.json({ check: setCheck(id, body.action === 'keep' ? 'kept' : null) })
+      let intake = findIntake(id)
+      if (privateWrite && !intake) return cutError('This private draft is no longer open. Reload the cut.', 409)
+      if (!privateWrite && intake) return cutError('This clip is still private.', 409)
+      if (!intake && !clipExists(id)) return cutError('Unknown clip.', 404)
+      if (action === 'keep' || action === 'uncheck') {
+        return Response.json({ check: setCheck(id, action === 'keep' ? 'kept' : null) })
       }
-      if (body.action === 'discard') return Response.json({ draft: saveDraft(id, null) })
-      if (!intake && body.action === 'rebuild' && autoPublish() && needsLegacyRecovery()) {
+      if (action === 'discard' || action === 'discard-preview') return Response.json({ draft: saveDraft(id, null) })
+      if (action === 'rebuild' && autoPublish() && needsLegacyRecovery()) {
         return Response.json({ error: 'Use Recover to finish the previous publish before rebuilding.' }, { status: 409 })
       }
 
-      let pieces = body.pieces === undefined && body.action === 'rebuild'
+      let render = action === 'rebuild' || action === 'render-preview'
+      let pieces = body.pieces === undefined && render
         ? (intake ? loadDraft(id) ?? initialIntakeCut(intake) : undefined)
         : cleanPieces(body.pieces, intake ? id : undefined)
       if (typeof pieces === 'string') return cutError(pieces, 400)
@@ -128,16 +137,16 @@ export function saveCut(request: Request, id: string) {
         return cutError('Keep every piece within the uploaded video.', 422)
       }
       let draft = pieces ? saveDraft(id, pieces) : false
-      return body.action === 'rebuild' ? loadCutInputs(id) : Response.json({ draft })
+      return render ? loadCutInputs(id) : Response.json({ draft })
     })
     if (expected instanceof Response) return expected
 
     // clips.py takes the same lock to verify the inputs and promote; only the server queue stays held.
-    let result = await rebuildClip(id, expected, Boolean(intake))
+    let result = await rebuildClip(id, expected, privateWrite)
     if (result === 'stale') return Response.json({ error: 'Cut changed; review it and rebuild again.' }, { status: 409 })
     if (result === 'failed') return cutError('Could not render the cut.', 500)
     return withReviewLock(MEDIA_DIR, () => {
-      if (intake) {
+      if (privateWrite) {
         let revision = latestIntakePreview(id)
         return revision ? Response.json({ draft: true, revision, video: previewUrl(id, revision) }, { headers: { 'Cache-Control': 'no-store' } })
           : cutError('The draft changed. Render it again.', 409)
@@ -149,18 +158,29 @@ export function saveCut(request: Request, id: string) {
 }
 
 /** GET /review/moments/:vid: the moments of one source video (found on first request). */
+const mediaPolicy = 'Cross-Origin-Resource-Policy'
+
 export async function momentsJson(request: Request, vid: string) {
   let cut = new URL(request.url).searchParams.get('cut') ?? undefined
+  if (!await withReviewLock(MEDIA_DIR, () => canReadSource(vid, cut))) return new Response('Not Found', { status: 404 })
   let data = await loadMoments(vid, cut)
-  return data ? Response.json(data, { headers: { 'Cache-Control': cut ? 'no-store' : 'no-cache' } }) : new Response('Not Found', { status: 404 })
+  return data ? Response.json(data, { headers: { 'Cache-Control': cut ? 'no-store' : 'no-cache', [mediaPolicy]: 'same-origin' } }) : new Response('Not Found', { status: 404 })
+}
+
+async function reviewFile(request: Request, file: string, type: string, privateMedia: boolean) {
+  let response = await createFileResponse(openLazyFile(file, { type }), request, { cacheControl: privateMedia ? 'no-store' : 'no-cache' })
+  response.headers.set(mediaPolicy, 'same-origin')
+  return response
 }
 
 /** GET /review/sheet/:vid: the thumbnail sheet of those moments. */
 export async function sheetFile(request: Request, vid: string) {
   let cut = new URL(request.url).searchParams.get('cut') ?? undefined
-  let file = join(MOMENTS_DIR, `${vid}.jpg`)
-  if (!canReadSource(vid, cut) || !existsSync(file)) return new Response('Not Found', { status: 404 })
-  return createFileResponse(openLazyFile(file, { type: 'image/jpeg' }), request, { cacheControl: cut ? 'no-store' : 'no-cache' })
+  return withReviewLock(MEDIA_DIR, () => {
+    let file = join(MOMENTS_DIR, `${vid}.jpg`)
+    if (!canReadSource(vid, cut) || !existsSync(file)) return new Response('Not Found', { status: 404 })
+    return reviewFile(request, file, 'image/jpeg', Boolean(cut))
+  })
 }
 
 const TYPES: Record<string, string> = { '.mp4': 'video/mp4', '.mov': 'video/quicktime', '.jpg': 'image/jpeg', '.jpeg': 'image/jpeg', '.png': 'image/png', '.webp': 'image/webp' }
@@ -170,14 +190,18 @@ export async function sourceMedia(request: Request) {
   let params = new URL(request.url).searchParams
   let path = params.get('path') ?? ''
   let cut = params.get('cut') ?? undefined
-  let file = sourceFile(path, cut)
-  let type = TYPES[extname(path).toLowerCase()]
-  if (!file || !type || !existsSync(file)) return new Response('Not Found', { status: 404 })
-  return createFileResponse(openLazyFile(file, { type }), request, { cacheControl: cut ? 'no-store' : 'no-cache' })
+  return withReviewLock(MEDIA_DIR, () => {
+    let file = sourceFile(path, cut)
+    let type = TYPES[extname(path).toLowerCase()]
+    if (!file || !type || !existsSync(file)) return new Response('Not Found', { status: 404 })
+    return reviewFile(request, file, type, Boolean(cut))
+  })
 }
 
 export async function privateIntakeMedia(request: Request, id: string, revision: string, filename: string) {
-  let file = intakePreviewFile(id, revision, filename)
-  if (!file) return new Response('Not Found', { status: 404 })
-  return createFileResponse(openLazyFile(file, { type: TYPES[extname(filename)] }), request, { cacheControl: 'no-store' })
+  return withReviewLock(MEDIA_DIR, () => {
+    let file = intakePreviewFile(id, revision, filename)
+    if (!file) return new Response('Not Found', { status: 404 })
+    return reviewFile(request, file, TYPES[extname(filename)], true)
+  })
 }

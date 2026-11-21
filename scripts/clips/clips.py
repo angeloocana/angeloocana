@@ -400,6 +400,9 @@ def approve_intake(name):
         if (not isinstance(revision, str) or str(uuid.UUID(revision)) != revision
                 or not isinstance(clip, dict) or clip.get('id') != name or clip.get('rejected') is not False):
             raise ValueError('Invalid intake approval')
+        # A standalone invocation must enforce the same public schema as the review endpoint.
+        subprocess.run(['node', os.path.join(REPO, 'scripts', 'check-intake-clip.ts')],
+                       input=json.dumps(clip), text=True, capture_output=True, timeout=10, check=True)
         directory = os.path.join(WORK, 'intake', name)
         with review_lock(MEDIA):
             receipt = read_json(os.path.join(directory, 'preview.json'), {})
@@ -420,7 +423,7 @@ def approve_intake(name):
             del drafts[name]
             checks = read_json(CHECKS, {})
             checks[name] = {'state': 'edited', 'at': time.strftime('%Y-%m-%dT%H:%M:%SZ', time.gmtime())}
-            queue['clips'].append(clip)  # The caller has run the shared public-clip validator.
+            queue['clips'].append(clip)
             os.makedirs(OUT, exist_ok=True)
             # The journal consumes the staged pair. Keep the verified private preview retryable if it rolls back.
             with tempfile.TemporaryDirectory(dir=directory, prefix='.approve-') as scratch:

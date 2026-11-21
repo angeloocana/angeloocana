@@ -1,6 +1,6 @@
 import type { CutCheck, Piece } from '../../content/cuts.ts'
 
-type Action = 'save' | 'rebuild' | 'discard' | 'keep' | 'uncheck'
+type Action = 'save' | 'rebuild' | 'discard' | 'keep' | 'uncheck' | 'save-preview' | 'discard-preview' | 'render-preview'
 type Reply = Record<string, unknown>
 type Initial = { current: Piece[]; draft: Piece[] | null; check: CutCheck | null; video: string; intake?: { revision?: string } }
 type Options = {
@@ -103,7 +103,7 @@ export function createCutWrites(id: string, initial: Initial, { fetch, signal, u
     if (!state.pieces.length) return
     let version = revision
     if (state.retry === 'save') saving()
-    return send(path, { action: 'save', pieces: state.pieces }, ({ draft }) => typeof draft === 'boolean' ? draft : undefined, (result) => {
+    return send(path, { action: initial.intake ? 'save-preview' : 'save', pieces: state.pieces }, ({ draft }) => typeof draft === 'boolean' ? draft : undefined, (result) => {
       if ('value' in result) state.hasDraft = result.value
       if (version !== revision) return
       if ('error' in result) {
@@ -143,7 +143,7 @@ export function createCutWrites(id: string, initial: Initial, { fetch, signal, u
     state.status = initial.intake ? 'Rendering a private preview…' : 'Rebuilding the video…'
     update()
     type Rendered = { current: Piece[]; check: CutCheck | null; video: string } | { previewRevision: string; video: string }
-    return send<Rendered>(path, { action: 'rebuild', pieces: state.pieces }, ({ draft, current, check, video, revision: rendered }) => {
+    return send<Rendered>(path, { action: initial.intake ? 'render-preview' : 'rebuild', pieces: state.pieces }, ({ draft, current, check, video, revision: rendered }) => {
       if (typeof video !== 'string' || !video) return
       if (initial.intake) {
         if (draft === true && typeof rendered === 'string' && video === `/review/intake/${id}/${rendered}/clip.mp4`) return { previewRevision: rendered, video }
@@ -184,7 +184,7 @@ export function createCutWrites(id: string, initial: Initial, { fetch, signal, u
     state.retry = null
     state.status = 'Undoing changes…'
     update()
-    return send(path, { action: 'discard' }, ({ draft }) => draft === false ? false : undefined, (result) => {
+    return send(path, { action: initial.intake ? 'discard-preview' : 'discard' }, ({ draft }) => draft === false ? false : undefined, (result) => {
       state.busy = null
       if ('value' in result) state.hasDraft = false
       if (version !== revision) return

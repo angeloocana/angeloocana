@@ -32,6 +32,16 @@ export function reviewDenied(request: Request): Response | undefined {
   }
 }
 
+export function reviewMediaDenied(request: Request): Response | undefined {
+  let denied = reviewDenied(request)
+  if (denied) return denied
+  let origin = request.headers.get('Origin')
+  let site = request.headers.get('Sec-Fetch-Site')
+  if ((origin !== null && origin !== new URL(request.url).origin) || (site && site !== 'same-origin' && site !== 'none')) {
+    return new Response('Review media requires a same-origin request', { status: 403 })
+  }
+}
+
 // Feedback notes stay on this machine, in the shared media folder, so they never reach the public repo.
 const NOTES = join(MEDIA_DIR, 'clip-feedback.json')
 export function loadNotes(): Record<string, string> {

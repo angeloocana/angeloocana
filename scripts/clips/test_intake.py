@@ -76,6 +76,10 @@ class IntakeTest(unittest.TestCase):
 
         approval = {'revision': receipt['revision'], 'clip': public}
         run('approve-intake', name, data=approval, active=False, status=1)
+        run('approve-intake', name, data={**approval, 'clip': {**public, 'original': relative}}, status=1,
+            error='Intake approval could not be completed')
+        assert_pending()
+        self.assertEqual(json.loads(receipt_file.read_bytes()), receipt)
         run('approve-intake', name, data={**approval, 'revision': str(uuid.uuid4())}, status=3)
         changed = [['vid', relative, 0.2, 0.3, 0.5]]
         drafts.write_text(json.dumps({name: changed}))

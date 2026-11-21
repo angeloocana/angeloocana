@@ -6,11 +6,13 @@ import { routes } from '../routes.ts'
 import { clipsJson, HomePage } from './home-page.tsx'
 import { PostPage } from './post-page.tsx'
 import { postAt } from '../content/posts.ts'
-import { ReviewPage, reviewDenied, saveReview } from './review-page.tsx'
+import { ReviewPage, reviewDenied, reviewMediaDenied, saveReview } from './review-page.tsx'
 import { clipExists, CutPage, momentsJson, saveCut, sheetFile, sourceMedia, uploadIntake, privateIntakeMedia } from './cut-page.tsx'
 import { findIntake } from '../content/review-intake.ts'
 import { publishInfo, startPublish } from '../content/publish.ts'
 import { takeDownReviewClip } from '../content/review-takedown.ts'
+import { MEDIA_DIR } from '../content/media-dir.ts'
+import { withReviewLock } from '../content/review-io.ts'
 import { bundleCss, bundleHref, isBundle } from '../styles.ts'
 
 function post(context: { request: Request; render: (node: RemixNode) => Response | Promise<Response> }) {
@@ -54,34 +56,36 @@ export default createController(routes, {
       let denied = reviewDenied(context.request)
       if (denied) return denied
       if (context.request.method === 'POST') return saveReview(context.request)
-      return context.render(<ReviewPage />)
+      return withReviewLock(MEDIA_DIR, () => context.render(<ReviewPage />))
     },
     async reviewCut(context) {
       let denied = reviewDenied(context.request)
       if (denied) return denied
       let { id } = context.params
-      let intake = findIntake(id)
-      if (!intake && !clipExists(id)) return new Response('Not Found', { status: 404 })
       if (context.request.method === 'POST') return saveCut(context.request, id)
-      let page = await context.render(<CutPage id={id} />)
-      if (intake) page.headers.set('Cache-Control', 'no-store')
-      return page
+      return withReviewLock(MEDIA_DIR, async () => {
+        let intake = findIntake(id)
+        if (!intake && !clipExists(id)) return new Response('Not Found', { status: 404 })
+        let page = await context.render(<CutPage id={id} />)
+        if (intake) page.headers.set('Cache-Control', 'no-store')
+        return page
+      })
     },
     reviewIntake(context) {
       return reviewDenied(context.request) ?? uploadIntake(context.request)
     },
     reviewIntakePreview(context) {
       let { id, revision, ext } = context.params
-      return reviewDenied(context.request) ?? privateIntakeMedia(context.request, id, revision, `clip.${ext}`)
+      return reviewMediaDenied(context.request) ?? privateIntakeMedia(context.request, id, revision, `clip.${ext}`)
     },
     reviewMoments(context) {
-      return reviewDenied(context.request) ?? momentsJson(context.request, context.params.vid)
+      return reviewMediaDenied(context.request) ?? momentsJson(context.request, context.params.vid)
     },
     reviewSheet(context) {
-      return reviewDenied(context.request) ?? sheetFile(context.request, context.params.vid)
+      return reviewMediaDenied(context.request) ?? sheetFile(context.request, context.params.vid)
     },
     reviewSource(context) {
-      return reviewDenied(context.request) ?? sourceMedia(context.request)
+      return reviewMediaDenied(context.request) ?? sourceMedia(context.request)
     },
     async reviewPublish(context) {
       let denied = reviewDenied(context.request)
