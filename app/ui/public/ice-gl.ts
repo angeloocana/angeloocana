@@ -22,11 +22,9 @@
 // the clear places around the words) are kept in cells fixed to the page, and only the rows that scroll
 // into view are worked out; each frame only adds the screen's own frost to them.
 //
-// Now and then something swims under the sheet (ice-animals.ts), seen only where it has been melted: its
-// silhouette is a tiny texture the frame samples only inside the animal's own small box.
-
-import { SPECIES, SWIM, along, drawAnimal, isKind, pick, plan, random, schedule, TH, TW } from './ice-animals.ts'
-import type { Kind, Point } from './ice-animals.ts'
+// Now and then something swims under the sheet, seen only where it has been melted: its silhouette is a
+// tiny texture the frame samples only inside the animal's own small box. Its artwork and timing live in
+// this already delayed chunk; another browser module would add an entry to the home page's import map.
 
 const VERT = 'attribute vec2 a;void main(){gl_Position=vec4(a,0.,1.);}'
 
@@ -160,9 +158,12 @@ void main(){
       vec4 an = texture2D(K, lc*.5 + .5);
       float open = smoothstep(.12, .45, mt);
       float vis = Y.z*th*(.04 + .96*open);
-      float water = an.g*vis*hole*.075*(1. - an.r);
-      col = mix(col, vec3(.4, .55, .65), water/max(a + water, .001)); a += water;
-      dark += mix(an.g*.6, an.r, open)*vis*.6;
+      float bodyShade = an.r*vis*hole*.76;
+      float water = smoothstep(.10, .65, an.g)*vis*hole*.29*(1. - an.r*.92);
+      float shade = bodyShade + water;
+      col = (col*a + vec3(.032, .052, .066)*bodyShade + vec3(.42, .53, .58)*water)/max(a + shade, .001);
+      a += shade;
+      dark += mix(an.g*.6, an.r, open)*vis*.58*(1. - hole);
     }
   }
   // cracks with depth: a dark cut, lit on the side toward the light
@@ -474,6 +475,7 @@ export async function mountIce(canvas: HTMLCanvasElement, signal: AbortSignal) {
   // how thick the ice is at a point on the screen (what the shader works out, without the grain)
   let EDGE = 0.6, REACH = 60
   let thickness = (x: number, y: number) => {
+    if (x < 0 || x >= W || y < 0 || y >= H) return 0
     let k = (Math.floor((Math.max(0, sy) + y) / LAYOUT) - shownAt) * lw + Math.floor(x / LAYOUT)
     if (k < 0 || k >= lw * lh) return 0
     let edge = Math.max(0, Math.min(x, W - x, y - navH, H - y))
@@ -499,26 +501,23 @@ export async function mountIce(canvas: HTMLCanvasElement, signal: AbortSignal) {
       for (let i = 1; i <= steps; i++) brush(last[0] + ((x - last[0]) * i) / steps, last[1] + ((y - last[1]) * i) / steps, r, 0.1)
     } else brush(x, y, r, 0.25)
     last = [x, y]
-    if (!animal && swims.input(t)) swim(next0 ?? pick(rng), [x, y])
+    if (!animal && !document.hidden && swims.input(t)) swim(pick(rng), [x, y])
     stir()
   }
 
-  // Something swimming under the ice (ice-animals.ts): due only on real input (above), at most one, gone the
+  // Something swimming under the ice: due only on real input (above), at most one, gone the
   // moment the motion goes off, the tab is hidden or the sheet comes down. Its silhouette goes into a tiny
   // texture, made the first time one comes.
   let rng = random((Math.random() * 2 ** 32) | 0)
   let swims = schedule(rng)
-  let animal: { kind: Kind; path: [Point, Point, Point]; at: number; time: number } | null = null
+  let animal: { kind: Kind; path: [Point, Point, Point]; at: number; time: number; from: number } | null = null
   let animalTex: WebGLTexture | null = null, drawnKind: Kind | null = null
-  // PREVIEW (for review on a phone; remove before shipping): ?animal=pike|trout|otter|beaver|seal brings that
-  // one as soon as the sheet has frozen in, and again on the next input once it has passed, each in a melt
-  // of its own, so it shows without a swipe in the right place
+  // PREVIEW ONLY: the named animal passes once with a small automatic thaw. Reload to replay.
   let preview = new URLSearchParams(location.search).get('animal')
-  let next0: Kind | null = isKind(preview) ? preview : null, shown0 = false
-  if (next0) { rng = random(18); swims = { input: () => !animal, retry() {}, reset() {} } }
-  let swim = (kind: Kind, near: Point) => {
+  let previewKind = isKind(preview) ? preview : null, previewPending = previewKind !== null
+  let swim = (kind: Kind, near: Point, previewPath?: [Point, Point, Point]) => {
     let s = SPECIES[kind]
-    let path = plan(rng, near, s.speed * SWIM, thickness)
+    let path = previewPath ?? plan(rng, near, s.speed * SWIM, thickness)
     if (!path) return swims.retry(t)
     if (!animalTex) animalTex = texture(4)
     if (drawnKind !== kind) {
@@ -529,7 +528,8 @@ export async function mountIce(canvas: HTMLCanvasElement, signal: AbortSignal) {
       g.texImage2D(g.TEXTURE_2D, 0, g.RGBA, g.RGBA, g.UNSIGNED_BYTE, canvas)
       drawnKind = kind
     }
-    animal = { kind, path, at: t, time: SWIM * (0.9 + 0.2 * rng()) }
+    // Start near enough to reach the new melt before it refreezes.
+    animal = { kind, path, at: t, time: SWIM * (0.9 + 0.2 * rng()), from: previewPath ? 0 : 0.32 }
     stir()
   }
   let gone = () => { animal = null; swims.reset() }
@@ -620,16 +620,20 @@ export async function mountIce(canvas: HTMLCanvasElement, signal: AbortSignal) {
       }
     }
     let since = t - frozenAt
-    if (animal && next0 && t - animal.at < animal.time) {
-      let [[x, y]] = along(animal.path, (t - animal.at) / animal.time)
-      brush(x, y, 90, 0.012)
+    if (animal?.from === 0) {
+      let p = animal.from + (t - animal.at) / animal.time
+      if (p < 1) {
+        let [[x, y], [dx, dy]] = along(animal.path, p)
+        brush(x + dx * 20, y + dy * 20, 110, 0.022)
+      }
     }
-    if (next0 && !shown0 && t - frozenAt > FREEZE + 0.4) {
-      shown0 = true
-      // (near the thickest ice in the screen's middle, away from the words)
-      let near: Point = [W / 2, H / 2], top = 0
-      for (let y = H * 0.25; y < H * 0.85; y += 24) for (let x = W * 0.2; x < W * 0.8; x += 24) if (thickness(x, y) > top) { top = thickness(x, y); near = [x, y] }
-      swim(next0, near)
+    if (previewKind && previewPending && since > FREEZE + 0.4) {
+      previewPending = false
+      // Show the same stretch of bare ice between the hero tiles and Career on phones and desktop.
+      let hero = document.querySelector('.hero')!.getBoundingClientRect()
+      let y = H * 0.46, x = W / 2, distance = Math.min(W * 0.84, 500)
+      scrollTo({ top: scrollY + hero.bottom + 30 - y, behavior: 'instant' })
+      swim(previewKind, [x, y], [[x - distance / 2, y + 3], [x, y - 11], [x + distance / 2, y + 3]])
     }
     for (let b of breaths) {
       let p = (since - b.at) / 0.7
@@ -689,7 +693,8 @@ export async function mountIce(canvas: HTMLCanvasElement, signal: AbortSignal) {
     g.uniform2f(u.P, ptr.x + (dx - ptr.x) * away, H - (ptr.y + (dy - ptr.y) * away))
     g.uniform3fv(u.C, still ? [0, 0, -99, 0, 0, -99, 0, 0, -99, 0, 0, -99] : cracks)
     // the animal: where it is along its path, faded in and out at its ends
-    let p = animal ? (t - animal.at) / animal.time : 1
+    let age = animal ? (t - animal.at) / animal.time : 1
+    let p = age + (animal?.from ?? 0)
     if (animal && p >= 1) animal = null
     if (animal && !still) {
       let s = SPECIES[animal.kind]
@@ -697,7 +702,7 @@ export async function mountIce(canvas: HTMLCanvasElement, signal: AbortSignal) {
       let half = s.length / 0.8 / 2
       g.uniform1i(u.K, 4)
       g.uniform4f(u.Z, x, y, dx, dy)
-      g.uniform4f(u.Y, half, (half * TH) / TW, Math.min(1, p * 6, (1 - p) * 6), t * s.beat * 6.2832)
+      g.uniform4f(u.Y, half, (half * TH) / TW, Math.min(1, age * 6, (1 - p) * 6), t * s.beat * 6.2832)
       g.uniform1f(u.X, s.wave)
     } else g.uniform4f(u.Y, 1, 1, 0, 0)
     g.clearColor(0, 0, 0, 0)
@@ -829,4 +834,180 @@ export async function mountIce(canvas: HTMLCanvasElement, signal: AbortSignal) {
   if (still) draw()
   else go()
   return true
+}
+
+// What swims under the ice: which one, when, and along which path. Only time spent animating the ice
+// counts toward the delay, and only melting input can bring a new visitor.
+type Kind = 'pike' | 'trout' | 'otter' | 'beaver' | 'seal'
+type Point = [number, number]
+
+// Length and speed in CSS px; sway in half-widths of the box; beat in cycles per second.
+export const SPECIES: Record<Kind, { weight: number; length: number; speed: number; wave: number; beat: number }> = {
+  pike: { weight: 0.3, length: 190, speed: 46, wave: 0.12, beat: 0.6 },
+  trout: { weight: 0.3, length: 120, speed: 62, wave: 0.2, beat: 1.1 },
+  otter: { weight: 0.3, length: 150, speed: 70, wave: 0.18, beat: 0.8 },
+  seal: { weight: 0.07, length: 190, speed: 52, wave: 0.14, beat: 0.4 },
+  beaver: { weight: 0.03, length: 130, speed: 34, wave: 0.08, beat: 0.5 },
+}
+export const KINDS = Object.keys(SPECIES) as Kind[]
+export const isKind = (s: string | null): s is Kind => s !== null && Object.hasOwn(SPECIES, s)
+
+export const DELAY: Point = [45, 75]
+const SWIM = 11
+export const RETRY = 5 // due, but no thick ice near the pointer: try again this much later
+
+// A seeded generator (mulberry32), so a test or review link sees the same pass each time.
+export function random(seed: number) {
+  return () => {
+    seed = (seed + 0x6d2b79f5) | 0
+    let x = Math.imul(seed ^ (seed >>> 15), 1 | seed)
+    x = (x + Math.imul(x ^ (x >>> 7), 61 | x)) ^ x
+    return ((x ^ (x >>> 14)) >>> 0) / 4294967296
+  }
+}
+
+export function pick(rng: () => number): Kind {
+  let r = rng()
+  for (let kind of KINDS) if ((r -= SPECIES[kind].weight) < 0) return kind
+  return 'pike'
+}
+
+export function schedule(rng: () => number) {
+  let due = -1
+  return {
+    input(t: number) {
+      if (due >= 0 && t < due) return false
+      let ready = due >= 0
+      due = t + DELAY[0] + (DELAY[1] - DELAY[0]) * rng()
+      return ready
+    },
+    retry(t: number) { due = t + RETRY },
+    reset() { due = -1 },
+  }
+}
+
+// Pick a gentle arc that passes through the thickest ice close to the pointer.
+export function plan(rng: () => number, near: Point, distance: number, thickness: (x: number, y: number) => number): [Point, Point, Point] | null {
+  let best: [Point, Point, Point] | null = null, top = 0
+  for (let n = 0; n < 12; n++) {
+    let a = (rng() - 0.5) * 1.1 + (rng() < 0.5 ? 0 : Math.PI)
+    let dx = Math.cos(a), dy = Math.sin(a)
+    let mx = near[0] + (rng() - 0.5) * 88, my = near[1] + (rng() - 0.5) * 88
+    let bend = (rng() - 0.5) * distance * 0.3
+    let path: [Point, Point, Point] = [
+      [mx - (dx * distance) / 2, my - (dy * distance) / 2],
+      [mx - dy * bend, my + dx * bend],
+      [mx + (dx * distance) / 2, my + (dy * distance) / 2],
+    ]
+    let score = 0
+    for (let i = 0; i <= 16; i++) {
+      let [x, y] = along(path, i / 16)[0]
+      score += thickness(x, y) * Math.exp(-Math.hypot(x - near[0], y - near[1]) / 180)
+    }
+    if (score > top) { top = score; best = path }
+  }
+  return top > 1 ? best : null
+}
+
+// Position on the arc (u from 0 to 1) and direction of travel.
+export function along([a, b, c]: [Point, Point, Point], u: number): [Point, Point] {
+  let v = 1 - u
+  let x = v * v * a[0] + 2 * v * u * b[0] + u * u * c[0], y = v * v * a[1] + 2 * v * u * b[1] + u * u * c[1]
+  let tx = v * (b[0] - a[0]) + u * (c[0] - b[0]), ty = v * (b[1] - a[1]) + u * (c[1] - b[1])
+  let d = Math.hypot(tx, ty) || 1
+  return [[x, y], [tx / d, ty / d]]
+}
+
+// Silhouettes seen from above with the head to the right, spanning the middle 80% of the texture.
+// Each outline is a width profile along the body (0 the tail, 1 the nose).
+const TW = 160, TH = 64
+const X0 = TW * 0.1, LEN = TW * 0.8, CY = TH / 2
+let px = (f: number) => X0 + f * LEN
+
+function outline(ctx: CanvasRenderingContext2D, profile: Point[]) {
+  let pts: Point[] = [...profile.map(([f, w]): Point => [px(f), CY - w]), ...profile.toReversed().map(([f, w]): Point => [px(f), CY + w])]
+  ctx.moveTo((pts[0][0] + pts.at(-1)![0]) / 2, (pts[0][1] + pts.at(-1)![1]) / 2)
+  for (let i = 0; i < pts.length; i++) {
+    let p = pts[i], q = pts[(i + 1) % pts.length]
+    ctx.quadraticCurveTo(p[0], p[1], (p[0] + q[0]) / 2, (p[1] + q[1]) / 2)
+  }
+  ctx.closePath()
+}
+let oval = (ctx: CanvasRenderingContext2D, f: number, dy: number, rx: number, ry: number, rot = 0) => {
+  ctx.moveTo(px(f) + rx * Math.cos(rot), CY + dy + rx * Math.sin(rot))
+  ctx.ellipse(px(f), CY + dy, rx, ry, rot, 0, Math.PI * 2)
+}
+// A fish's tail, from where it joins the body (f, half-width w) out to the fork (spread, notched to n).
+let tail = (ctx: CanvasRenderingContext2D, f: number, w: number, spread: number, n: number) => {
+  // Clockwise on the screen, like every other part, so the parts' fills do not cancel where they overlap.
+  ctx.moveTo(px(f), CY + w)
+  ctx.lineTo(px(0), CY + spread)
+  ctx.lineTo(px(n), CY)
+  ctx.lineTo(px(0), CY - spread)
+  ctx.lineTo(px(f), CY - w)
+  ctx.closePath()
+}
+let pair = (ctx: CanvasRenderingContext2D, f: number, out: number, rx: number, ry: number, sweep: number) => {
+  oval(ctx, f, -out, rx, ry, -sweep)
+  oval(ctx, f, out, rx, ry, sweep)
+}
+
+const SHAPES: Record<Kind, (ctx: CanvasRenderingContext2D) => void> = {
+  // A long narrow body, fins far back, and a flat snout.
+  pike(ctx) {
+    outline(ctx, [[0.1, 1.2], [0.2, 3], [0.38, 5.5], [0.6, 6.5], [0.78, 6], [0.9, 4.6], [0.97, 3], [1, 1.6]])
+    tail(ctx, 0.13, 1.5, 7, 0.05)
+    pair(ctx, 0.3, 6, 6, 1.8, 0.5)
+    pair(ctx, 0.72, 6.5, 6, 2, 0.6)
+  },
+  // A spindle, forked tail and splayed fins.
+  trout(ctx) {
+    outline(ctx, [[0.14, 1.6], [0.28, 5.5], [0.48, 9], [0.68, 9.5], [0.86, 7], [0.96, 4], [1, 2]])
+    tail(ctx, 0.17, 2, 10, 0.03)
+    pair(ctx, 0.74, 9, 8, 2.6, 0.7)
+    pair(ctx, 0.38, 6, 6, 2, 0.6)
+  },
+  // A long body, tapering tail, tucked paws and a round head.
+  otter(ctx) {
+    outline(ctx, [[0, 0.6], [0.14, 2.6], [0.32, 5], [0.42, 8.5], [0.62, 9.5], [0.8, 7.5], [0.86, 6], [0.92, 7.2], [0.98, 5], [1, 2.4]])
+    pair(ctx, 0.44, 9, 6, 2.6, 0.8)
+    pair(ctx, 0.76, 8, 5, 2.2, 0.9)
+  },
+  // A heavy body, paddle tail, webbed hind feet and a small head.
+  beaver(ctx) {
+    outline(ctx, [[0.23, 2.3], [0.36, 11], [0.55, 15], [0.74, 13], [0.85, 8], [0.9, 8.5], [0.98, 6], [1, 3]])
+    oval(ctx, 0.14, 0, 15, 8.5)
+    pair(ctx, 0.36, 13, 7, 4, 0.6)
+    pair(ctx, 0.78, 11, 3.5, 2.2, 0.8)
+  },
+  // A plump torpedo, fore-flippers and a V of hind flippers.
+  seal(ctx) {
+    outline(ctx, [[0.12, 2], [0.24, 7.5], [0.44, 13], [0.64, 14], [0.84, 10.5], [0.95, 7], [1, 3.4]])
+    pair(ctx, 0.62, 14, 9, 3, 0.7)
+    oval(ctx, 0.05, -4, 9, 3.5, -0.35)
+    oval(ctx, 0.05, 4, 9, 3.5, 0.35)
+  },
+}
+
+// Draw only the shadows (the shapes themselves are off the canvas): a wide green one is the water
+// around it, a sharper red one its body. An opaque black canvas, so no alpha to undo.
+function drawAnimal(canvas: HTMLCanvasElement, kind: Kind) {
+  canvas.width = TW
+  canvas.height = TH
+  let ctx = canvas.getContext('2d')!
+  ctx.fillStyle = '#000'
+  ctx.fillRect(0, 0, TW, TH)
+  ctx.globalCompositeOperation = 'lighter'
+  ctx.shadowOffsetX = TW * 4
+  for (let [color, blur] of [['#0f0', 9], ['#f00', 2.5]] as const) {
+    ctx.shadowColor = color
+    ctx.shadowBlur = blur
+    ctx.beginPath()
+    ctx.save()
+    ctx.translate(-TW * 4, 0)
+    SHAPES[kind](ctx)
+    ctx.restore()
+    ctx.fillStyle = '#fff'
+    ctx.fill('nonzero')
+  }
 }

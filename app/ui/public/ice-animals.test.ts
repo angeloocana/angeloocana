@@ -1,7 +1,7 @@
 import * as assert from 'remix/assert'
 import { describe, it } from 'remix/test'
 
-import { DELAY, KINDS, RETRY, SPECIES, along, isKind, pick, plan, random, schedule } from './ice-animals.ts'
+import { DELAY, KINDS, RETRY, SPECIES, along, isKind, pick, plan, random, schedule } from './ice-gl.ts'
 
 describe('what swims under the ice', () => {
   it('mostly a pike, a trout or an otter; a seal now and then, a beaver rarely', () => {
@@ -64,6 +64,7 @@ describe('what swims under the ice', () => {
   it('takes only the five names for a review link', () => {
     assert.ok(KINDS.every(isKind))
     assert.equal(isKind('shark'), false)
+    assert.equal(isKind('constructor'), false)
     assert.equal(isKind(null), false)
   })
 })
