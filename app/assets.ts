@@ -29,7 +29,7 @@ export const assets = createAssetServer({
   scripts: { loaders: isHmr ? [componentHmr()] : undefined },
 })
 
-const entry = 'app/actions/public/entry.ts'
+const entry = nodeEnv === 'production' ? 'app/actions/public/entry-static.ts' : 'app/actions/public/entry.ts'
 
 export const scriptEntry = await assets.getScriptEntry(entry)
 
