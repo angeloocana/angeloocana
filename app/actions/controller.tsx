@@ -9,6 +9,7 @@ import { postAt } from '../content/posts.ts'
 import { ReviewPage, reviewDenied, saveReview } from './review-page.tsx'
 import { clipExists, CutPage, momentsJson, saveCut, sheetFile, sourceMedia } from './cut-page.tsx'
 import { publishInfo, startPublish } from '../content/publish.ts'
+import { takeDownReviewClip } from '../content/review-takedown.ts'
 import { bundleCss, bundleHref, isBundle } from '../styles.ts'
 
 function post(context: { request: Request; render: (node: RemixNode) => Response | Promise<Response> }) {
@@ -76,6 +77,9 @@ export default createController(routes, {
       if (denied) return denied
       if (context.request.method === 'POST') startPublish()
       return Response.json(publishInfo(), { headers: { 'Cache-Control': 'no-store' } })
+    },
+    reviewTakedown(context) {
+      return reviewDenied(context.request) ?? takeDownReviewClip(context.request, context.params.id)
     },
     concepts() {
       return new Response(null, { status: 301, headers: { Location: routes.home.href() } })

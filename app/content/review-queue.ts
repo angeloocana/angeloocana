@@ -108,6 +108,8 @@ export function acknowledgeReviewRevision(
   let pending = readReviewQueue(mediaRoot)
   if (!pending) throw new Error('Review queue is missing; cannot acknowledge the published revision.')
   let { revision, desired, published } = snapshot
+  // The process may stop after rebasing the queue but before checkpointing its receipt.
+  if (pending.revision !== revision && isDeepStrictEqual(pending.base, published)) return
   let clips = pending.revision === revision ? published : mergeReviewClips(desired, pending.clips, published)
   writeReviewQueue(mediaRoot, { ...pending, base: published, clips })
 }

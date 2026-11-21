@@ -2,6 +2,8 @@
 import fcntl
 import json
 import os
+import signal
+import subprocess
 import sys
 import tempfile
 import time
@@ -100,7 +102,32 @@ def write_json_atomic(path, data):
         os.replace(staged, path)
 
 
+def run_publisher(media_root, args):
+    """Serialize release and takedown commands without holding the review-data lock during I/O."""
+    work = Path(media_root) / 'work'
+    work.mkdir(parents=True, exist_ok=True)
+    with (work / 'review-publisher.lock').open('a') as lock:
+        try:
+            fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
+        except BlockingIOError:
+            return 75  # Another publisher owns the lock; the caller can try again.
+        # Retain the fd in the child too, in case only this guardian is stopped.
+        env = dict(os.environ, REVIEW_PUBLISH_LOCKED='1')
+        command = subprocess.Popen(args, start_new_session=True, pass_fds=(lock.fileno(),), env=env)
+        try:
+            return command.wait()
+        finally:
+            # If Node dies during a put, don't let its local Wrangler process keep running
+            # after we release the lock and allow a takedown. An already sent call is journaled.
+            try:
+                os.killpg(command.pid, signal.SIGKILL)
+            except ProcessLookupError:
+                pass
+
+
 if __name__ == '__main__':
+    if sys.argv[1] == '--publish-lock':
+        sys.exit(run_publisher(sys.argv[2], sys.argv[3:]))
     with review_lock(sys.argv[1]):
         print('1', flush=True)
         sys.stdin.buffer.read(1)  # Node holds the write end open for the duration of its critical section.

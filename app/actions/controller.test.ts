@@ -274,7 +274,7 @@ describe('root controller', () => {
       assert.equal((await read(external)).status, 404)
       let forwarded = await router.fetch(new Request(`${local}/review/publish`, { headers: { Host: 'example.com:44100' } }))
       assert.equal(forwarded.status, 404)
-      for (let path of ['/review', '/review/cut/h-ice', '/review/publish']) {
+      for (let path of ['/review', '/review/cut/h-ice', '/review/publish', '/review/takedown/h-ice']) {
         for (let origin of [undefined, 'null', external, 'http://localhost:44101']) {
           let response = await router.fetch(new Request(`${local}${path}`, {
             method: 'POST',
@@ -290,6 +290,10 @@ describe('root controller', () => {
         body: JSON.stringify({ id: 'not-a-clip' }),
       }))
       assert.deepEqual(await response.json(), { error: 'Unknown clip' })
+      let takedown = await router.fetch(new Request(`${local}/review/takedown/h-ice`, {
+        method: 'POST', headers: { Origin: local }, body: JSON.stringify({ confirm: true }),
+      }))
+      assert.equal(takedown.status, 409) // Not the always-on server; no publisher can start.
     } finally {
       if (nodeEnv === undefined) delete process.env.NODE_ENV
       else process.env.NODE_ENV = nodeEnv

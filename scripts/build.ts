@@ -27,7 +27,7 @@ const live = new Set(loadClips().filter((clip) => !clip.rejected).map((clip) => 
 // publish a page with a broken video.
 let missing = [...live].flatMap((id) => [`clips/${id}.mp4`, `clips/${id}.jpg`]).filter((key) => !MEDIA_VERSIONS[key])
 if (missing.length) {
-  throw new Error(`${missing.length} live clip files aren't in the bucket yet (${missing.slice(0, 3).join(', ')}…). Run \`npm run media:push\` and commit app/content/media.json.`)
+  throw new Error(`${missing.length} live clip files aren't in the bucket yet (${missing.slice(0, 3).join(', ')}…). Run \`npm run media:push\` on your branch and commit both clip and media manifests.`)
 }
 await cp('public', OUT, {
   recursive: true,

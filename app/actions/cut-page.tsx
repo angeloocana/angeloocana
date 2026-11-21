@@ -6,7 +6,7 @@ import { createFileResponse } from 'remix/response/file'
 
 import { Document } from './document.tsx'
 import { loadNotes, reviewGroups } from './review-page.tsx'
-import { CATEGORY_NAMES, clipUrl, loadClips } from '../content/clips.ts'
+import { CATEGORY_NAMES, clipUrl, loadReviewClips } from '../content/clips.ts'
 import { cleanPieces, clipSource, cutState, exclusive, loadChecks, loadCutInputs, loadDraft, loadDrafts, loadMoments, loadRecipe, loadSources, MOMENTS_DIR, rebuildClip, saveDraft, setCheck, sourceFile } from '../content/cuts.ts'
 import { MEDIA_DIR } from '../content/media-dir.ts'
 import { publishInfo, reviewChanged } from '../content/publish.ts'
@@ -19,7 +19,7 @@ import { CutEditor } from '../ui/public/cut-editor.tsx'
 /** GET /review/cut/:id */
 export function CutPage(handle: Handle<{ id: string }>) {
   return () => {
-    let clips = loadClips()
+    let clips = loadReviewClips()
     let clip = clips.find((c) => c.id === handle.props.id)!
     let current = loadRecipe(clip.id) ?? []
     // the next clip on the home page whose cut is not checked yet, in /review's order
@@ -50,7 +50,7 @@ export function CutPage(handle: Handle<{ id: string }>) {
   }
 }
 
-export const clipExists = (id: string) => loadClips().some((c) => c.id === id)
+export const clipExists = (id: string) => loadReviewClips().some((c) => c.id === id)
 
 /** POST /review/cut/:id with { action: 'save' | 'rebuild' | 'discard' | 'keep' | 'uncheck', pieces? } */
 export function saveCut(request: Request, id: string) {

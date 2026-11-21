@@ -24,6 +24,7 @@ import subprocess
 import sys
 import tempfile
 import time
+import uuid
 from contextlib import contextmanager
 
 # Keep the CLI from creating an untracked __pycache__ in the checkout.
@@ -35,6 +36,8 @@ MEDIA = os.environ.get('ANGELOOCANA_MEDIA') or os.path.expanduser('~/dev/angeloo
 CLIPS_JSON = os.path.join(REPO, 'app', 'content', 'clips.json')
 OUT = os.path.join(MEDIA, 'media', 'clips')
 WORK = os.path.join(MEDIA, 'work')
+REVIEW_QUEUE = os.path.join(WORK, 'review-queue.json')
+AUTOPUBLISH = os.environ.get('REVIEW_AUTOPUBLISH') == '1'
 # How every clip is made: {"clips": {clip id: [piece, …]}}. The name is from when only montages had one.
 RECIPES = os.path.join(MEDIA, 'index', 'montages.json')
 # Cuts changed on /review/cut that have not been rebuilt yet: {clip id: [piece, …]}.
@@ -92,12 +95,33 @@ def poster(mp4, jpg):
 
 
 def load_clips():
+    queue = read_json(REVIEW_QUEUE, None) if AUTOPUBLISH else None
+    if queue is not None:
+        return queue['clips']
     with open(CLIPS_JSON, encoding='utf-8') as f:
         return json.load(f)
 
 
+def queue_review_revision(clips=None):
+    """Bump the private revision under the same lock as media promotion. Don't rewrite the checkout."""
+    if not AUTOPUBLISH:
+        return
+    queue = read_json(REVIEW_QUEUE, None)
+    if queue is None:
+        base = subprocess.run(['git', 'show', 'HEAD:app/content/clips.json'], cwd=REPO,
+                              capture_output=True, check=True).stdout
+        queue = {'base': json.loads(base), 'clips': load_clips()}
+    if clips is not None:
+        queue['clips'] = clips
+    queue.update(revision=str(uuid.uuid4()), changedAt=time.time_ns() // 1_000_000)
+    write_json_atomic(REVIEW_QUEUE, queue)
+
+
 def save_clips(clips):
-    write_json_atomic(CLIPS_JSON, clips)
+    if AUTOPUBLISH:
+        queue_review_revision(clips)
+    else:
+        write_json_atomic(CLIPS_JSON, clips)
 
 
 def recipes():
@@ -148,6 +172,8 @@ def cut(item_id, start, cat=None, en=None, pt=None, length='6'):
                 clip['igKind'] = it['source'].split('·')[-1].strip()
             clips.append(clip)
             save_clips(clips)
+        else:
+            queue_review_revision()
     print(mp4)
 
 
@@ -211,7 +237,9 @@ def build(name):
     with render_clip(pieces) as staged, review_lock(MEDIA):
         if recipes().get(name) != pieces:
             raise RuntimeError(f'{name}: recipe changed while rendering; rebuild again')
-        return promote_clip(MEDIA, name, *staged)
+        mp4 = promote_clip(MEDIA, name, *staged)
+        queue_review_revision()
+        return mp4
 
 
 def montage(name):
@@ -280,6 +308,7 @@ def rebuild(*names, expected=None):
                 checks = read_json(CHECKS, {})
                 checks[name] = {'state': 'edited', 'at': time.strftime('%Y-%m-%dT%H:%M:%SZ', time.gmtime())}
                 write_json_atomic(CHECKS, checks)
+            queue_review_revision()
         print(mp4, flush=True)
 
 

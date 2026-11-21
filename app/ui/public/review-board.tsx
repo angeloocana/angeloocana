@@ -1,7 +1,7 @@
 import { clientEntry } from 'remix/component'
 import type { Handle } from 'remix/component'
 
-// Behaviour for the local review page (/review): hover to play, and save each change to clips.json.
+// Behaviour for the local review page (/review): hover to play and save each change.
 
 // Which clips the cut filter shows (data-cut is set by review-page.tsx: todo, draft, edited or kept).
 const CUT_FILTERS: Record<string, (card: HTMLElement) => boolean> = {
@@ -93,6 +93,27 @@ export const ReviewBoard = clientEntry(import.meta.url, function ReviewBoard(han
       tally()
     }
 
+    async function takeDown(card: HTMLElement, button: HTMLButtonElement) {
+      if (card.classList.contains('is-saving') || !window.confirm('Remove this rejected clip’s public files now? Older pages may still link to them and copies already cached can remain. Your original files on this Mac are not deleted.')) return
+      let saved = card.querySelector<HTMLElement>('.rv-saved')!
+      button.disabled = true
+      card.classList.remove('is-error')
+      saved.textContent = 'Removing public files…'
+      try {
+        let response = await fetch(`/review/takedown/${encodeURIComponent(card.dataset.id!)}`, {
+          method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ confirm: true }), signal,
+        })
+        let result = await response.json().catch(() => null)
+        if (!response.ok || !result?.removed) throw new Error(result?.error ?? 'Takedown did not finish. Try again.')
+        saved.textContent = 'Public files removed. Cached copies can still remain.'
+      } catch (error) {
+        card.classList.add('is-error')
+        saved.textContent = (error as Error).message || 'Takedown did not finish. Try again.'
+      } finally {
+        button.disabled = false
+      }
+    }
+
     // source filter (Instagram, the old phone, …) and cut filter (to check, edited, …)
     document.addEventListener('click', (event) => {
       let button = (event.target as Element).closest<HTMLElement>('[data-source-filter], [data-cut-filter]')
@@ -108,6 +129,7 @@ export const ReviewBoard = clientEntry(import.meta.url, function ReviewBoard(han
       if (!button || !card || button.tagName === 'SELECT') return
       if (button.dataset.act === 'star') save(card, { star: (Number(card.dataset.star) + 1) % 4 })
       if (button.dataset.act === 'reject') save(card, { rejected: card.dataset.rejected !== 'true' })
+      if (button.dataset.act === 'takedown' && button instanceof HTMLButtonElement) void takeDown(card, button)
       if (button.dataset.act === 'caption') {
         card.dataset.captionRejected = String(card.dataset.captionRejected !== 'true')
         save(card, { captionRejected: card.dataset.captionRejected === 'true' })

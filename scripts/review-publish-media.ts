@@ -32,18 +32,13 @@ function objectClipId(object: string): string | undefined {
 
 function wrangler(args: string[]): Promise<void> {
   return new Promise((resolve, reject) => {
-    // npx spawns Wrangler; give them a group so a timeout stops both. Raw CLI output can
-    // contain private filesystem paths or credentials, so don't put it in the publish log.
-    let child = spawn('npx', [...WRANGLER, 'r2', 'object', ...args, '--remote'], { detached: true, stdio: 'ignore' })
+    // Stay in the publisher guardian's process group, which it stops before releasing the lock.
+    // Raw CLI output can contain private paths or credentials; don't put it in the publish log.
+    let child = spawn('npx', [...WRANGLER, 'r2', 'object', ...args, '--remote'], { stdio: 'ignore' })
     let timedOut = false
     let timer = setTimeout(() => {
       timedOut = true
-      if (child.pid === undefined) return
-      try {
-        process.kill(-child.pid, 'SIGKILL')
-      } catch {
-        child.kill('SIGKILL')
-      }
+      child.kill('SIGKILL')
     }, WRANGLER_TIMEOUT)
     child.once('error', () => {
       clearTimeout(timer)

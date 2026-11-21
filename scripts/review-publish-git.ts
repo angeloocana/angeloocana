@@ -7,8 +7,11 @@ const MASTER = 'refs/heads/master'
 const CLIPS = 'app/content/clips.json'
 const MEDIA = 'app/content/media.json'
 
+type ReleaseTree = { sha: string; clipsJson: string; mediaJson: string }
+
 export interface ReviewGit {
-  fetchMaster(): { sha: string; clipsJson: string; mediaJson: string }
+  fetchMaster(): ReleaseTree
+  readRelease(sha: string): ReleaseTree
   makeCandidate(masterSha: string, clipsJson: string, mediaJson: string): string
   pushCandidate(masterSha: string, candidateSha: string): 'pushed' | 'moved'
   contains(masterSha: string, candidateSha: string): boolean
@@ -74,16 +77,35 @@ export function openReviewGit(sourceRepo: string, scratchRoot: string): ReviewGi
     if (sha !== fetchedSha) throw new Error('Review Git requires the latest fetched master SHA')
   }
 
+  function readTree(sha: string): ReleaseTree {
+    const clipsJson = run('read clips.json from master', ['cat-file', 'blob', `${sha}:${CLIPS}`])
+    const mediaJson = run('read media.json from master', ['cat-file', 'blob', `${sha}:${MEDIA}`])
+    return { sha, clipsJson, mediaJson }
+  }
+  function contains(masterSha: string, candidateSha: string) {
+    requireFetched(masterSha)
+    if (!/^(?:[0-9a-f]{40}|[0-9a-f]{64})$/.test(candidateSha)) return false
+    // A candidate from a previous run is available only if it arrived with fetched ancestry.
+    const type = run('look up the candidate object', ['cat-file', '--batch-check=%(objecttype)'], `${candidateSha}\n`).trim()
+    if (type !== 'commit') return false
+    const result = git(workspace, ['merge-base', '--is-ancestor', candidateSha, masterSha])
+    if (result.status === 0) return true
+    if (result.status === 1) return false
+    throw gitFailure('check candidate ancestry', result)
+  }
+
   return {
     fetchMaster() {
       fetchedSha = undefined
       candidates.clear()
       run('fetch origin master', ['fetch', '--no-tags', '--no-recurse-submodules', '--refmap=', '--', origin, MASTER])
       const sha = run('identify fetched master', ['rev-parse', 'FETCH_HEAD^{commit}']).trim()
-      const clipsJson = run('read clips.json from master', ['cat-file', 'blob', `${sha}:${CLIPS}`])
-      const mediaJson = run('read media.json from master', ['cat-file', 'blob', `${sha}:${MEDIA}`])
       fetchedSha = sha
-      return { sha, clipsJson, mediaJson }
+      return readTree(sha)
+    },
+    readRelease(sha) {
+      if (!fetchedSha || !contains(fetchedSha, sha)) throw new Error('This published commit is not on origin master')
+      return readTree(sha)
     },
     makeCandidate(masterSha, clipsJson, mediaJson) {
       requireFetched(masterSha)
@@ -128,17 +150,7 @@ export function openReviewGit(sourceRepo: string, scratchRoot: string): ReviewGi
       if (rejection === '[remote rejected] (failed to update ref)' && new RegExp(mismatch).test(result.stderr ?? '')) return 'moved'
       throw gitFailure('push master', result, rejection)
     },
-    contains(masterSha, candidateSha) {
-      requireFetched(masterSha)
-      if (!/^(?:[0-9a-f]{40}|[0-9a-f]{64})$/.test(candidateSha)) return false
-      // A candidate from a previous run is available only if it arrived with fetched ancestry.
-      const type = run('look up the candidate object', ['cat-file', '--batch-check=%(objecttype)'], `${candidateSha}\n`).trim()
-      if (type !== 'commit') return false
-      const result = git(workspace, ['merge-base', '--is-ancestor', candidateSha, masterSha])
-      if (result.status === 0) return true
-      if (result.status === 1) return false
-      throw gitFailure('check candidate ancestry', result)
-    },
+    contains,
     close,
   }
 }

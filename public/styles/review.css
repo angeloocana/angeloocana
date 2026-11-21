@@ -36,7 +36,10 @@ body.rv-page { margin: 0; background: #0b0b0b; color: #ece7df; font: 14px/1.45 s
 .rv .if-rejected, .rv[data-rejected='true'] .if-live { display: none; }
 .rv[data-rejected='true'] .if-rejected { display: inline; }
 .rv[data-rejected='true'] { opacity: 0.4; }
-.rv[data-rejected='true']:hover { opacity: 0.85; }
+.rv[data-rejected='true']:hover, .rv[data-rejected='true']:focus-within { opacity: 0.85; }
+.rv-actions .rv-takedown { display: none; border-color: #80504a; color: #f6aaa0; }
+.rv[data-rejected='true'] .rv-takedown { display: inline-block; }
+.rv-actions .rv-takedown:disabled { opacity: 0.6; cursor: wait; }
 .rv-reject { border-color: #5a2a2a !important; }
 .rv[data-rejected='true'] .rv-reject { border-color: #2f5a2a !important; }
 .hide-rejected .rv[data-rejected='true'] { display: none; }

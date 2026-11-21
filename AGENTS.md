@@ -12,8 +12,8 @@ served by Cloudflare. English at `/`, Portuguese at `/pt`. Read this before chan
 - **Footage of other people:** prefer clips where Ângelo is the subject; no kids or strangers as the focus.
 - **Ship through master.** Branch, open a PR, merge: every push to master deploys itself (Workers Builds,
   see Hosting). A hand deploy (`npm run deploy`) must also come from up-to-date master; deploying an old
-  branch rolls the live site back. One exception: the review server (below) commits `app/content/clips.json`
-  and `media.json` straight to master by itself, so what Ângelo changes on /review goes live.
+  branch rolls the live site back. One exception: the review server (below) publishes its own isolated
+  commit of `app/content/clips.json` and `media.json` to origin/master, so changes from /review go live.
 - **Leave `~/dev/angeloocana` (the main checkout) on master, with nothing uncommitted**: the always-on review
   server runs from it and publishes from it. Work in a worktree or branch elsewhere.
 - Ask before anything hard to undo outside the repo (DNS, Cloudflare or Netlify settings, deleting media).
@@ -30,7 +30,7 @@ npm run typecheck
 npm run build      # prerender to dist/ (from git alone; media comes from R2, see below)
 npm run preview    # build, then serve dist/ the way Cloudflare will (media from the real bucket)
 npm run deploy     # build and publish to Cloudflare by hand (pushes to master already do this)
-npm run media:push # upload new or re-cut media to R2 and update app/content/media.json (--dry-run to look)
+npm run media:push # manual branch workflow: upload a snapshot and update its clip/media JSON (--dry-run to look)
 scripts/review-server.sh install|restart|status|logs|uninstall   # the always-on review tool, see below
 ```
 
@@ -43,11 +43,11 @@ Videos and screenshots are **not in git**. They live in one folder on Ângelo's 
 and session shares: `~/dev/angeloocana-media` (override with `$ANGELOOCANA_MEDIA`, see
 `app/content/media-dir.ts`). Its `media/` folder is served at `/media` by the dev server (`app/router.ts`).
 The live site serves `/media` from the private R2 bucket `angeloocana-media`, through the small worker in
-`worker.ts` (byte ranges included: iPhone Safari needs them for video). After cutting or re-cutting clips,
-run `npm run media:push`: it uploads what changed (live clips and screenshots only; rejected clips never
-leave the Mac, and are taken down if they had gone up) and rewrites `app/content/media.json`, the content
-hashes the page uses as `?v=`. Commit that file. The build stops if a live clip isn't in it. Deploys no
-longer touch the media. Never move or delete the local folder: it is still the source for every upload.
+`worker.ts` (byte ranges included: iPhone Safari needs them for video). Outside the always-on review tool, run `npm run media:push` on a branch after cutting or re-cutting clips.
+It uploads an immutable snapshot of approved clips and allowlisted project assets, then writes that snapshot's
+`clips.json` and `media.json` (the content versions the page uses as `?v=`). Commit them together. It does
+not remove objects. The build stops if a live clip isn't in the manifest. Never move or delete the local
+folder: it is still the source for every upload.
 
 Clip tools (cut, montage, contact sheets, Instagram links) are in `scripts/clips/`; read its README.
 
@@ -71,10 +71,12 @@ Clip tools (cut, montage, contact sheets, Instagram links) are in `scripts/clips
   rebuilt there, or marked "Keep this cut", get a mark on /review and drop out of its "To check" filter.
   Port 44144 is the **always-on review server**: a launchd agent (`scripts/review-server.sh`) runs the dev
   server from the main checkout, at login and again whenever it stops; don't stop it or take its port.
-  Two minutes after the last change there, it publishes by itself (`app/content/publish.ts` →
-  `scripts/publish-review.ts`): `media:push`, then a commit of `clips.json` and `media.json` to master, and
-  a push, which deploys. Both pages show whether changes are live yet; the log is `work/publish.log` in
-  the media folder. `npm run dev` in any other checkout also serves /review, but never publishes.
+  Approved changes are queued privately in `work/review-queue.json`, leaving the checkout clean. Two minutes
+  after the last change, `scripts/publish-review.ts` uploads the snapshot and pushes its isolated content
+  commit on top of freshly fetched origin/master. The review pages show queued, pushed, confirmed live or
+  failed. Only after confirmation does it remove public objects for excluded clips. Use **Remove public files
+  now…** on a rejected card only for urgent removal; cached copies can remain. The log is `work/publish.log`.
+  `npm run dev` in another checkout also serves /review but never auto-publishes.
 - `app/actions/home-page.tsx`: the page. Every section is a sideways row (`Row`), driven by
   `app/ui/public/rails.tsx` (arrows, drag, shuffle, autoplay). The Jump Over Jump demo is
   `app/ui/public/joj-demo.tsx`; devices are `app/ui/devices.tsx`.
