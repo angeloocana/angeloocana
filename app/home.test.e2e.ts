@@ -11,14 +11,21 @@ import type { Page } from 'playwright'
 const DIST = fileURLToPath(new URL('../dist/', import.meta.url))
 const TYPES: Record<string, string> = { '.html': 'text/html', '.js': 'text/javascript', '.css': 'text/css', '.json': 'application/json', '.svg': 'image/svg+xml', '.woff2': 'font/woff2' }
 
-// dist/ served the way Cloudflare serves it: a folder answers with its index.html
+// dist/ served with the exact home CSP Cloudflare receives, not a permissive test-only policy.
 async function serveDist() {
+  let headers = await readFile(join(DIST, '_headers'), 'utf8')
+  let policies = new Map([...headers.matchAll(/^(\S+)\n  Content-Security-Policy: (.+)$/gm)].map(([, path, policy]) => [path, policy]))
   let server = createServer(async (req, res) => {
-    let file = join(DIST, decodeURIComponent(new URL(req.url ?? '/', 'http://x').pathname))
+    let path = decodeURIComponent(new URL(req.url ?? '/', 'http://x').pathname)
+    let file = join(DIST, path)
     try {
       if ((await stat(file)).isDirectory()) file = join(file, 'index.html')
       let body = await readFile(file)
-      res.writeHead(200, { 'Content-Type': TYPES[extname(file)] ?? 'application/octet-stream' })
+      let policy = policies.get(path)
+      res.writeHead(200, {
+        'Content-Type': TYPES[extname(file)] ?? 'application/octet-stream',
+        ...(policy ? { 'Content-Security-Policy': policy } : {}),
+      })
       res.end(body)
     } catch {
       res.writeHead(404)
@@ -163,6 +170,21 @@ let resting = (page: Page, row: string) => page.evaluate((row) => new Promise<nu
 let frames = (page: Page) => page.evaluate(() => new Promise((done) => requestAnimationFrame(() => requestAnimationFrame(done))))
 
 describe('home page in a browser', () => {
+  it('boots the static home and its offline fallback under the shipped CSP', async (t) => {
+    let page = await t.serve(await serveDist())
+    let violations: string[] = []
+    await page.exposeFunction('captureViolation', (directive: string, uri: string) => violations.push(`${directive}: ${uri}`))
+    await page.addInitScript(() => {
+      let capture = (window as Window & { captureViolation?: (directive: string, uri: string) => void }).captureViolation
+      document.addEventListener('securitypolicyviolation', (event) => capture?.(event.effectiveDirective, event.blockedURI))
+    })
+    for (let path of ['/', '/pt/', '/offline-plugin-app-shell-fallback/']) {
+      await open(page, path)
+      assert.ok(await page.evaluate(() => document.documentElement.classList.contains('cin-seen')), 'the hashed intro ran')
+    }
+    assert.deepEqual(violations, [])
+  })
+
   it('keeps the section, and the job, when the language changes', async (t) => {
     let page = await t.serve(await serveDist())
     await page.setViewportSize({ width: 1440, height: 900 })
