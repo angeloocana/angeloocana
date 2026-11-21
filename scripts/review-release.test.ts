@@ -1,4 +1,5 @@
 import { execFileSync } from 'node:child_process'
+import { createHash } from 'node:crypto'
 import { mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs'
 import { dirname, join } from 'node:path'
 import { tmpdir } from 'node:os'
@@ -9,8 +10,8 @@ import type { Clip } from '../app/content/clips.ts'
 import { versionedMediaKey } from '../app/content/media-keys.ts'
 import type { PublishState } from '../app/content/publish.ts'
 import { withReviewLock, writeJsonAtomic } from '../app/content/review-io.ts'
-import { queueReviewRevision, readReviewQueue } from '../app/content/review-queue.ts'
-import { openReviewGit } from './review-publish-git.ts'
+import { acknowledgeReviewRevision, queueReviewRevision, readReviewQueue } from '../app/content/review-queue.ts'
+import { openReviewGit, requirePublishedLegacyBase } from './review-publish-git.ts'
 import { openReviewMedia, type ObjectStore } from './review-publish-media.ts'
 import { parseManifest, reconcileReviewRelease, urgentlyRemoveClip, type DeployCheck } from './review-release.ts'
 
@@ -19,12 +20,14 @@ const MEDIA = 'app/content/media.json'
 const VIDEO = 'clips/c12345678.mp4'
 const POSTER = 'clips/c12345678.jpg'
 const HERO = 'hero/h-fixture-phone.mp4'
+const HISTORIC_VERSION = 'abcdefghijklmnop'
+const HISTORIC_HERO = versionedMediaKey(HERO, HISTORIC_VERSION)
 const clip = (id: string): Clip => ({ id, rejected: false, cat: 'ice', label: { en: 'Test cut', pt: 'Teste' }, star: 0, score: 3, source: 'montage' })
 
 function git(cwd: string, ...args: string[]) {
   return execFileSync('git', args, { cwd, encoding: 'utf8', env: { ...process.env, GIT_ALLOW_PROTOCOL: 'file' }, stdio: ['ignore', 'pipe', 'pipe'] }).trim()
 }
-function fixture(dir: string) {
+function fixture(dir: string, initialManifest: Record<string, string> = {}) {
   let source = join(dir, 'checkout')
   let remote = join(dir, 'remote.git')
   mkdirSync(source)
@@ -36,7 +39,7 @@ function fixture(dir: string) {
   let original = [clip('c12345678'), clip('h-fixture')]
   mkdirSync(join(source, 'app/content'), { recursive: true })
   writeJsonAtomic(join(source, CLIPS), original)
-  writeJsonAtomic(join(source, MEDIA), {})
+  writeJsonAtomic(join(source, MEDIA), initialManifest, 2)
   writeFileSync(join(source, 'README.md'), 'initial')
   git(source, 'add', '.')
   git(source, 'commit', '-m', 'Initial test release')
@@ -57,7 +60,7 @@ it('recovers a partial upload and ambiguous push, preserves newer edits, and cle
   let nextDeploy: DeployCheck = { state: 'pending' }
   let checks: string[] = []
   let removed: string[] = []
-  let bytes = new Map<string, string>([[HERO, 'legacy hero variant']])
+  let bytes = new Map<string, string>([[HERO, 'legacy hero variant'], [HISTORIC_HERO, 'version from another machine']])
   let save = (state: PublishState) => writeJsonAtomic(progress, state)
   let state = () => JSON.parse(readFileSync(progress, 'utf8')) as PublishState
   save({})
@@ -74,7 +77,7 @@ it('recovers a partial upload and ambiguous push, preserves newer edits, and cle
   }
   let afterSnapshot = async () => {}
   try {
-    let { source, remote, peer, original } = fixture(dir)
+    let { source, remote, peer, original } = fixture(dir, { [HERO]: HISTORIC_VERSION })
     let originalSha = git(remote, 'rev-parse', 'master')
     writeFileSync(join(source, 'README.md'), 'unrelated local history')
     git(source, 'add', 'README.md')
@@ -93,7 +96,7 @@ it('recovers a partial upload and ambiguous push, preserves newer edits, and cle
     writeMedia('clips/h-fixture.jpg', 'approved hero poster')
     let first = await withReviewLock(mediaRoot, () => queueReviewRevision(mediaRoot, original, [{ ...original[0], star: 1 }, original[1]]))
 
-    async function run(ambiguous = false) {
+    async function run(ambiguous = false, deny = false) {
       let adapter = openReviewGit(source, join(dir, 'scratch'))
       try {
         let working = state()
@@ -101,6 +104,7 @@ it('recovers a partial upload and ambiguous push, preserves newer edits, and cle
         await reconcileReviewRelease({ mediaRoot, media: openReviewMedia(mediaRoot, store), save,
           git: { ...adapter, pushCandidate(base, candidate) {
             assert.equal(state().candidate?.sha, candidate)
+            if (deny) throw new Error('test auth was denied')
             let result = status(base, candidate)
             target = result
             if (ambiguous && result === 'pushed') throw new Error('test lost connection after acceptance')
@@ -158,6 +162,14 @@ it('recovers a partial upload and ambiguous push, preserves newer edits, and cle
     assert.equal(state().live, undefined)
     assert.equal(removed.length, 0)
 
+    // A terminal failure preparing the newer release must not revive the failed old deploy.
+    await run(false, true)
+    assert.equal(state().pushed, undefined)
+    assert.equal(state().candidate?.revision, newerRevision)
+    assert.equal(state().failed?.phase, 'push')
+    assert.equal(git(remote, 'rev-parse', 'master'), sent)
+    assert.deepEqual(checks, [sent, sent])
+
     await run()
     let latest = git(remote, 'rev-parse', 'master')
     assert.equal(state().pushed?.sha, latest)
@@ -170,8 +182,10 @@ it('recovers a partial upload and ambiguous push, preserves newer edits, and cle
     assert.equal(state().live?.sha, latest)
     assert.deepEqual(checks, [sent, sent, latest])
     assert.ok(removed.includes(HERO))
+    assert.ok(removed.includes(HISTORIC_HERO))
     assert.ok(!removed.some((key) => key.includes('c12345678')))
     assert.equal(bytes.has(HERO), false)
+    assert.equal(bytes.has(HISTORIC_HERO), false)
   } finally { rmSync(dir, { recursive: true, force: true }) }
 })
 
@@ -181,7 +195,7 @@ it('urgent takedown is separate from deploying and refuses a restored clip', asy
   try {
     let { source, original } = fixture(dir)
     let current = original.map((item) => ({ ...item, rejected: item.id === 'h-fixture' }))
-    await withReviewLock(mediaRoot, () => queueReviewRevision(mediaRoot, original, current))
+    let pending = await withReviewLock(mediaRoot, () => queueReviewRevision(mediaRoot, original, current))
     let git = openReviewGit(source, join(dir, 'scratch'))
     try {
       let dropped: string[] = []
@@ -193,6 +207,101 @@ it('urgent takedown is separate from deploying and refuses a restored clip', asy
       await urgentlyRemoveClip(deps, 'h-fixture')
       assert.ok(dropped.includes(HERO))
       assert.ok(dropped.every((key) => key.includes('h-fixture')))
+      let count = dropped.length
+      // A historical, already acknowledged rejection in the queue is not authority to remove
+      // an approval from origin. The remote itself still has the original, approved record.
+      await withReviewLock(mediaRoot, () => acknowledgeReviewRevision(mediaRoot, { revision: pending.revision, desired: current, published: current }))
+      await assert.rejects(urgentlyRemoveClip(deps, 'h-fixture'), /Reject the clip/)
+      assert.equal(dropped.length, count)
     } finally { git.close() }
+  } finally { rmSync(dir, { recursive: true, force: true }) }
+})
+
+it('does not clean an old exclusion after a remote restore or an unconfirmed new rejection', async () => {
+  let dir = mkdtempSync(join(tmpdir(), 'review-cleanup-tip-'))
+  let mediaRoot = join(dir, 'media-root')
+  try {
+    let { source, remote, peer, original } = fixture(dir)
+    let rejected = original.map((item) => ({ ...item, rejected: item.id === 'h-fixture' }))
+    function publishPeer(clips: Clip[], message: string) {
+      writeJsonAtomic(join(peer, CLIPS), clips)
+      git(peer, 'add', CLIPS)
+      git(peer, 'commit', '-m', message)
+      git(peer, 'push', 'origin', 'master')
+      return git(remote, 'rev-parse', 'master')
+    }
+    let earlier = publishPeer(rejected, 'Reject clip')
+    let queue = await withReviewLock(mediaRoot, () => queueReviewRevision(mediaRoot, rejected))
+    let state: PublishState = { candidate: { revision: queue.revision, sha: earlier, desired: rejected, published: rejected, manifest: {} } }
+    let removed: string[] = []
+    let adapter = openReviewGit(source, join(dir, 'scratch'))
+    try {
+      let media = openReviewMedia(mediaRoot, {
+        async put() { throw new Error('Unexpected upload') }, async remove(key) { removed.push(key) },
+      })
+      await reconcileReviewRelease({ mediaRoot, git: adapter, media, save() {}, async deploy(sha) {
+        assert.equal(sha, earlier)
+        publishPeer(original, 'Restore during deploy check')
+        return { state: 'live' }
+      } }, state)
+      assert.equal(removed.length, 0)
+      assert.equal(state.live?.sha, earlier)
+      assert.equal(state.cleanup, undefined)
+
+      let latest = publishPeer(rejected, 'Reject again; not yet deployed')
+      state.cleanup = { revision: queue.revision, ids: ['h-fixture'], manifest: {} }
+      await reconcileReviewRelease({ mediaRoot, git: adapter, media, save() {}, async deploy(sha) {
+        assert.equal(sha, latest)
+        return { state: 'pending' }
+      } }, state)
+      assert.equal(removed.length, 0)
+      assert.ok(state.cleanup?.nextCheckAt)
+    } finally { adapter.close() }
+  } finally { rmSync(dir, { recursive: true, force: true }) }
+})
+
+it('rechecks master even for a no-op and refuses a clean unpublished legacy commit', async () => {
+  let dir = mkdtempSync(join(tmpdir(), 'review-no-op-tip-'))
+  let mediaRoot = join(dir, 'media-root')
+  try {
+    let keys = [POSTER, VIDEO, 'clips/h-fixture.jpg', 'clips/h-fixture.mp4']
+    let manifest = Object.fromEntries(keys.map((key) => [key, createHash('sha256').update(key).digest('hex').slice(0, 10)]))
+    let { source, remote, peer, original } = fixture(dir, manifest)
+    for (let key of keys) {
+      let file = join(mediaRoot, 'media', key)
+      mkdirSync(dirname(file), { recursive: true })
+      writeFileSync(file, key)
+    }
+    await withReviewLock(mediaRoot, () => queueReviewRevision(mediaRoot, original))
+    let adapter = openReviewGit(source, join(dir, 'scratch'))
+    let state: PublishState = {}
+    try {
+      await reconcileReviewRelease({ mediaRoot, git: { ...adapter,
+        makeCandidate(base, clips, media) {
+          assert.equal(adapter.makeCandidate(base, clips, media), base)
+          writeJsonAtomic(join(peer, CLIPS), [{ ...original[0], star: 3 }, original[1]])
+          git(peer, 'add', CLIPS)
+          git(peer, 'commit', '-m', 'Change public data while the no-op is prepared')
+          git(peer, 'push', 'origin', 'master')
+          return base
+        },
+      }, media: openReviewMedia(mediaRoot, {
+        async put() { throw new Error('Unexpected upload') }, async remove() { throw new Error('Unexpected removal') },
+      }), save() {}, async deploy() { throw new Error('A stale base cannot be marked live') } }, state)
+      assert.match(state.failed?.message ?? '', /Master moved/)
+      assert.equal(state.pushed, undefined)
+      assert.equal(state.candidate, undefined)
+      assert.equal(state.live, undefined)
+
+      writeJsonAtomic(join(source, CLIPS), [original[0], { ...original[1], rejected: true }])
+      git(source, 'add', CLIPS)
+      git(source, 'commit', '-m', 'Legacy publisher committed locally but failed to push')
+      assert.equal(git(source, 'status', '--short'), '')
+      let local = git(source, 'rev-parse', 'HEAD')
+      let master = adapter.fetchMaster()
+      assert.equal(master.sha, git(remote, 'rev-parse', 'master'))
+      assert.throws(() => requirePublishedLegacyBase(adapter, master.sha, local), /no pending work was cleared/)
+      assert.equal(git(source, 'rev-parse', 'HEAD'), local)
+    } finally { adapter.close() }
   } finally { rmSync(dir, { recursive: true, force: true }) }
 })

@@ -65,6 +65,10 @@ When cutting manually from a branch, check the result, run `npm run media:push`,
 `app/content/clips.json` and `media.json` together. The manual command never takes media down. Re-cuts get
 new versioned R2 objects and `?v=` URLs; an older page doesn't silently get the new bytes.
 
+After upgrading the always-on server, use **Recover** if the previous publisher left unfinished work.
+It preserves the old progress until it can recover it safely. If local master has unpublished commits,
+reconcile the old clip edits with origin/master first; the publisher won't reset or push the checkout.
+
 ## Choosing footage
 
 - Look before cutting: make a contact sheet and check who is in the frame. Several ice-swimming videos

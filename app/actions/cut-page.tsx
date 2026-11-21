@@ -9,7 +9,7 @@ import { loadNotes, reviewGroups } from './review-page.tsx'
 import { CATEGORY_NAMES, clipUrl, loadReviewClips } from '../content/clips.ts'
 import { cleanPieces, clipSource, cutState, exclusive, loadChecks, loadCutInputs, loadDraft, loadDrafts, loadMoments, loadRecipe, loadSources, MOMENTS_DIR, rebuildClip, saveDraft, setCheck, sourceFile } from '../content/cuts.ts'
 import { MEDIA_DIR } from '../content/media-dir.ts'
-import { publishInfo, reviewChanged } from '../content/publish.ts'
+import { autoPublish, needsLegacyRecovery, publishInfo, reviewChanged } from '../content/publish.ts'
 import { withReviewLock } from '../content/review-io.ts'
 import { CutEditor } from '../ui/public/cut-editor.tsx'
 
@@ -62,6 +62,9 @@ export function saveCut(request: Request, id: string) {
         return Response.json({ check: setCheck(id, body.action === 'keep' ? 'kept' : null) })
       }
       if (body.action === 'discard') return Response.json({ draft: saveDraft(id, null) })
+      if (body.action === 'rebuild' && autoPublish() && needsLegacyRecovery()) {
+        return Response.json({ error: 'Use Recover to finish the previous publish before rebuilding.' }, { status: 409 })
+      }
 
       let pieces = body.pieces === undefined && body.action === 'rebuild' ? undefined : cleanPieces(body.pieces)
       if (typeof pieces === 'string') return Response.json({ error: pieces }, { status: 400 })

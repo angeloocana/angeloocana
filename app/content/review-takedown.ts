@@ -2,10 +2,11 @@ import { execFile } from 'node:child_process'
 
 import { loadReviewClips } from './clips.ts'
 import { MEDIA_DIR } from './media-dir.ts'
-import { autoPublish, REPO } from './publish.ts'
+import { autoPublish, needsLegacyRecovery, REPO } from './publish.ts'
 
 export async function takeDownReviewClip(request: Request, id: string): Promise<Response> {
   if (!autoPublish()) return Response.json({ error: 'Public takedowns run on the always-on review server.' }, { status: 409 })
+  if (needsLegacyRecovery()) return Response.json({ error: 'Use Recover to finish the previous publish first.' }, { status: 409 })
   let approval = await request.json().catch(() => null)
   if (approval?.confirm !== true) return Response.json({ error: 'Confirm the urgent takedown first.' }, { status: 400 })
   let clip = loadReviewClips().find((clip) => clip.id === id)

@@ -6,7 +6,7 @@ import { CATEGORIES, CATEGORY_NAMES, clipUrl, instagramUrl, loadCommittedClips, 
 import { cutState, loadChecks, loadDrafts, type CutCheck, type CutState } from '../content/cuts.ts'
 import { MEDIA_DIR } from '../content/media-dir.ts'
 import { assertPublicClipData } from '../content/public-clip-data.ts'
-import { autoPublish, publishInfo, reviewChanged } from '../content/publish.ts'
+import { autoPublish, needsLegacyRecovery, publishInfo, reviewChanged } from '../content/publish.ts'
 import { withReviewLock, writeJsonAtomic } from '../content/review-io.ts'
 import { queueReviewRevision, readReviewQueue } from '../content/review-queue.ts'
 import { PublishStatus } from '../ui/public/publish-status.tsx'
@@ -68,6 +68,10 @@ async function applyReview(request: Request) {
         return Response.json({ error: (error as Error).message }, { status: 422 })
       }
     }
+    let changed = JSON.stringify(clip) !== before
+    if (changed && autoPublish() && needsLegacyRecovery()) {
+      return Response.json({ error: 'Use Recover to finish the previous publish before saving public edits.' }, { status: 409 })
+    }
     if (body.note !== undefined) {
       let notes = loadNotes()
       let note = String(body.note).trim().slice(0, 2000)
@@ -76,7 +80,7 @@ async function applyReview(request: Request) {
       writeJsonAtomic(NOTES, notes)
     }
     // A note isn't on the site; only changes to the public clip are saved and queued.
-    if (JSON.stringify(clip) !== before) {
+    if (changed) {
       if (autoPublish()) {
         let base = readReviewQueue(MEDIA_DIR)?.base ?? loadCommittedClips()
         queueReviewRevision(MEDIA_DIR, base, clips)

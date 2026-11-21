@@ -96,7 +96,8 @@ export async function reconcileReviewRelease(deps: Dependencies, state: PublishS
     }
 
     state.live = { revision, sha, confirmedAt: stamp() }
-    state.cleanup = { revision, ids: release.published.filter((clip) => clip.rejected).map((clip) => clip.id), manifest: release.manifest }
+    let rejected = new Set([...(state.cleanup?.ids ?? []), ...release.published.filter((clip) => clip.rejected).map((clip) => clip.id)])
+    state.cleanup = { revision, ids: [...rejected], manifest: release.manifest }
     delete state.pushed
     delete state.failed
     save(state)
@@ -106,19 +107,30 @@ export async function reconcileReviewRelease(deps: Dependencies, state: PublishS
     let cleanup = state.cleanup!
     revision = cleanup.revision
     phase = 'cleanup'
-    step('Removing rejected media')
-    let latest = fetchMaster()
+    step('Checking that rejected media is no longer live')
+    let latest = git.fetchMaster() // Never reuse a tip read before an asynchronous deploy check.
     let upstream = parsePublicClips(latest.clipsJson)
     let manifest = parseManifest(latest.mediaJson)
-    let reviewed = readReviewQueue(mediaRoot)?.clips ?? []
-    let inUse = new Set([...upstream, ...reviewed].filter((clip) => !clip.rejected).map((clip) => clip.id))
+    let inUse = new Set(upstream.filter((clip) => !clip.rejected).map((clip) => clip.id))
     for (let key of Object.keys(manifest)) {
       let id = clipMediaId(key)
       if (id) inUse.add(id)
     }
-    // A newer approval is allowed to bypass cleanup entirely. The ledger makes a restore that
-    // arrives after this check re-upload any removed versions before its own push.
-    await media.removeRejected(cleanup.ids.filter((id) => !inUse.has(id)), [cleanup.manifest, manifest])
+    let ids = cleanup.ids.filter((id) => !inUse.has(id))
+    if (ids.length && latest.sha !== state.live?.sha) {
+      // An older successful build could predate a live restoration. Only trust the current
+      // exclusion if that exact tip deployed and remained current during verification.
+      if ((await deps.deploy(latest.sha)).state !== 'live' || git.fetchMaster().sha !== latest.sha) {
+        cleanup.nextCheckAt = now().getTime() + CHECK_INTERVAL
+        delete state.failed
+        save(state)
+        return
+      }
+    }
+    let reviewed = readReviewQueue(mediaRoot)?.clips ?? []
+    let approvedLocally = new Set(reviewed.filter((clip) => !clip.rejected).map((clip) => clip.id))
+    // A restore that arrives after this check re-uploads tombstoned versions before its own push.
+    await media.removeRejected(ids.filter((id) => !approvedLocally.has(id)), [cleanup.manifest, manifest])
     delete state.cleanup
     delete state.failed
     save(state)
@@ -144,7 +156,14 @@ export async function reconcileReviewRelease(deps: Dependencies, state: PublishS
       if (!state.pushed && state.cleanup) await clean()
       return
     }
-    if (state.cleanup && !(state.failed?.phase === 'cleanup' && queue && queue.revision !== state.cleanup.revision)) {
+    if (newerThanFailedDeployment) {
+      // The new revision replaces this failed release. Do not let its deploy failure overwrite a
+      // newer terminal push failure and cause alternating automatic retries.
+      delete state.pushed
+      save(state)
+    }
+    let newerThanCleanup = state.cleanup && queue && queue.revision !== state.cleanup.revision
+    if (state.cleanup && !newerThanCleanup) {
       await clean()
       return
     }
@@ -154,7 +173,9 @@ export async function reconcileReviewRelease(deps: Dependencies, state: PublishS
     step('Capturing approved clips')
     let base = fetchMaster()
     let upstream = parsePublicClips(base.clipsJson)
-    let previous = media.availableManifest(parseManifest(base.mediaJson))
+    let prior = parseManifest(base.mediaJson)
+    media.rememberManifest(prior) // Includes versions uploaded elsewhere that a rejection will omit.
+    let previous = media.availableManifest(prior)
     let desired: Clip[] = []
     let snapshot = await capturePublishSnapshot(mediaRoot, () => {
       let latest = readReviewQueue(mediaRoot)
@@ -174,16 +195,29 @@ export async function reconcileReviewRelease(deps: Dependencies, state: PublishS
       let published = parsePublicClips(snapshot.clipsJson)
       for (let attempt = 0; attempt < 2; attempt++) {
         let sha = git.makeCandidate(current.sha, snapshot.clipsJson, manifestJson)
-        state.candidate = { revision, sha, desired, published, manifest: { ...snapshot.manifest } }
-        save(state)
-        if (sha === current.sha || git.pushCandidate(current.sha, sha) === 'pushed') {
-          pushed(state.candidate)
-          return
-        }
-        current = master = git.fetchMaster()
-        if (git.contains(current.sha, sha)) {
-          pushed(state.candidate)
-          return
+        let release: Release = { revision, sha, desired, published, manifest: { ...snapshot.manifest } }
+        if (sha === current.sha) {
+          // A no-op does not have a push lease. Verify the tip; an ancestor's deploy does not
+          // prove the current public blobs are equal to the snapshot.
+          current = master = git.fetchMaster()
+          if (current.sha === sha) {
+            pushed(release)
+            return
+          }
+        } else {
+          state.candidate = release
+          save(state)
+          if (git.pushCandidate(current.sha, sha) === 'pushed') {
+            pushed(release)
+            return
+          }
+          current = master = git.fetchMaster()
+          if (git.contains(current.sha, sha)) {
+            pushed(release)
+            return
+          }
+          delete state.candidate
+          save(state)
         }
         if (current.clipsJson !== base.clipsJson || current.mediaJson !== base.mediaJson) break
       }
@@ -204,8 +238,15 @@ export async function urgentlyRemoveClip(deps: Dependencies, id: string) {
   let { mediaRoot, git, media } = deps
   let latest = git.fetchMaster()
   let rejected = await withReviewLock(mediaRoot, () => {
-    let clips = readReviewQueue(mediaRoot)?.clips ?? parsePublicClips(latest.clipsJson)
-    return clips.some((clip) => clip.id === id && clip.rejected)
+    let queue = readReviewQueue(mediaRoot)
+    let saved = queue?.clips.find((clip) => clip.id === id)
+    if (saved && !saved.rejected) return false
+    let base = queue?.base.find((clip) => clip.id === id)
+    let pendingRejection = saved?.rejected && !base?.rejected
+    let publishedRejection = parsePublicClips(latest.clipsJson).some((clip) => clip.id === id && clip.rejected)
+    // An acknowledged rejection left in the queue is not new takedown authority if origin now
+    // approves the clip. Require a pending rejection or a rejection in freshly fetched master.
+    return pendingRejection || publishedRejection
   })
   if (!rejected) throw new Error('Reject the clip in review before removing its media.')
   await media.removeRejected([id], [parseManifest(latest.mediaJson)])

@@ -5,6 +5,7 @@ import { readFileSync } from 'node:fs'
 import { fileURLToPath } from 'node:url'
 
 import { MEDIA_DIR } from '../app/content/media-dir.ts'
+import { needsLegacyRecovery } from '../app/content/publish.ts'
 import { withReviewLock, writeJsonAtomic } from '../app/content/review-io.ts'
 import { capturePublishSnapshot, removePublishSnapshot, uploadPublishSnapshot } from './publish-snapshot.ts'
 import { makeR2ObjectStore, openReviewMedia } from './review-publish-media.ts'
@@ -27,6 +28,7 @@ if (process.env.REVIEW_PUBLISH_LOCKED !== '1') {
   if (result.status === 75) console.error('A review release or takedown is using the media store. Try again later.')
   process.exitCode = result.status ?? 1
 } else {
+  if (needsLegacyRecovery()) throw new Error('Recover the previous review publish before uploading manually.')
   let media = openReviewMedia(MEDIA_DIR, makeR2ObjectStore())
   let prior = readFileSync(MANIFEST, 'utf8')
   let original = ''

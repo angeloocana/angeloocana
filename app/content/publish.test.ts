@@ -114,11 +114,13 @@ it('signals unfinished legacy work without making it live or scheduling it autom
   assert.equal(publish.legacyProgress().pending, true)
   assert.equal(publish.publishInfo().state, 'failed')
   assert.match(publish.publishInfo().detail ?? '', /abcdef1/)
+  queueReviewRevision(root, []) // New v2 edits do not implicitly approve a legacy recovery.
   publish.resumePublishing()
   advance(120_000)
   assert.equal(spawn.mock.calls.length, 0)
   publish.startPublish()
   assert.equal(spawn.mock.calls.length, 1)
+  assert.equal((spawn.mock.calls[0].arguments[1] as string[]).at(-1), '--recover')
   exit()
 })
 

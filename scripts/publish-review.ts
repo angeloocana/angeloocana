@@ -7,10 +7,10 @@ import { dirname, join } from 'node:path'
 
 import { loadClips, loadCommittedClips } from '../app/content/clips.ts'
 import { MEDIA_DIR } from '../app/content/media-dir.ts'
-import { autoPublish, legacyProgress, PENDING, readState, REPO, STATE, writeState, type PublishState } from '../app/content/publish.ts'
+import { autoPublish, legacyProgress, needsLegacyRecovery, PENDING, readState, REPO, STATE, writeState, type PublishState } from '../app/content/publish.ts'
 import { withReviewLock } from '../app/content/review-io.ts'
 import { queueReviewRevision, readReviewQueue } from '../app/content/review-queue.ts'
-import { openReviewGit, type ReviewGit } from './review-publish-git.ts'
+import { openReviewGit, requirePublishedLegacyBase, type ReviewGit } from './review-publish-git.ts'
 import { makeR2ObjectStore, openReviewMedia } from './review-publish-media.ts'
 import { parseManifest, parsePublicClips, reconcileReviewRelease, urgentlyRemoveClip, type DeployCheck } from './review-release.ts'
 
@@ -39,13 +39,13 @@ async function checkDeployment(sha: string): Promise<DeployCheck> {
 async function migrateLegacy(git: ReviewGit, state: PublishState) {
   let legacy = legacyProgress()
   if (!legacy.pending && !legacy.sha && !existsSync(PENDING)) return
+  if (legacy.pending || legacy.sha) {
+    let current = git.fetchMaster()
+    if (legacy.pending) requirePublishedLegacyBase(git, current.sha, sourceGit('rev-parse', 'HEAD'))
+  }
+  let tree = legacy.sha ? git.readRelease(legacy.sha) : undefined
   let archive = join(WORK, 'publish-v1.json')
   if (existsSync(STATE) && !existsSync(archive)) copyFileSync(STATE, archive, constants.COPYFILE_EXCL)
-  let tree = undefined
-  if (legacy.sha) {
-    git.fetchMaster()
-    tree = git.readRelease(legacy.sha)
-  }
   let published = tree && parsePublicClips(tree.clipsJson)
   let { queued, newer } = await withReviewLock(MEDIA_DIR, () => {
     let pending = readReviewQueue(MEDIA_DIR)
@@ -80,13 +80,16 @@ async function main() {
     let media = openReviewMedia(MEDIA_DIR, makeR2ObjectStore())
     let deps = { git, media, mediaRoot: MEDIA_DIR, deploy: checkDeployment, save: writeState }
     if (process.argv[2] === '--takedown') {
+      if (needsLegacyRecovery()) throw new Error('Recover the previous review publish before taking down clips.')
       let id = process.argv[3]
       if (!id || process.argv.length !== 4) throw new Error('Choose one rejected clip.')
       await urgentlyRemoveClip(deps, id)
       log('Removed known public objects for the rejected clip.')
       return
     }
-    if (process.argv.length !== 2) throw new Error('Publish from the review page.')
+    let explicitRecovery = process.argv.length === 3 && process.argv[2] === '--recover'
+    if (process.argv.length !== 2 && !explicitRecovery) throw new Error('Publish from the review page.')
+    if (needsLegacyRecovery() && !explicitRecovery) throw new Error('Use Recover on the review page for earlier pending work.')
     let state = readState()
     await migrateLegacy(git, state)
     await reconcileReviewRelease(deps, state)

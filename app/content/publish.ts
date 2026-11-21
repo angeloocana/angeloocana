@@ -31,7 +31,7 @@ export type PublishState = {
   candidate?: Release
   pushed?: Release & { pushedAt: string; nextCheckAt: number; acknowledged?: boolean }
   live?: { revision: string; sha: string; confirmedAt: string }
-  cleanup?: { revision: string; ids: string[]; manifest: Record<string, string> }
+  cleanup?: { revision: string; ids: string[]; manifest: Record<string, string>; nextCheckAt?: number }
   failed?: { phase: 'prepare' | 'push' | 'deploy' | 'cleanup'; revision?: string; at: string; message: string }
 }
 
@@ -110,6 +110,11 @@ export function legacyProgress() {
   return readLegacy(readRecord())
 }
 
+export function needsLegacyRecovery() {
+  let { pending, sha } = legacyProgress()
+  return Boolean(pending || sha)
+}
+
 export function alive(pid: number | undefined) {
   if (pid === undefined || !Number.isInteger(pid) || pid <= 0) return false
   try {
@@ -151,10 +156,10 @@ function nextWork(state: PublishState, queued: QueuedWork | undefined): NextWork
   if (candidate && (failed?.phase === 'cleanup' || !hasFailed(state, candidate.revision))) {
     return { kind: 'resume', revision: candidate.revision, at: 0 }
   }
-  if (cleanup && !hasFailed(state, cleanup.revision)) {
-    return { kind: 'cleanup', revision: cleanup.revision, at: 0 }
+  if (queued) return queued
+  if (cleanup && !failed) {
+    return { kind: 'cleanup', revision: cleanup.revision, at: cleanup.nextCheckAt ?? 0 }
   }
-  return queued
 }
 
 let timer: ReturnType<typeof setTimeout> | undefined
@@ -181,7 +186,7 @@ function wakeIn(ms: number) {
   timer.unref?.()
 }
 
-function launchPublisher(revision: string | undefined) {
+function launchPublisher(revision: string | undefined, recover = false) {
   let startedAt = Date.now()
   let failedToStart = (error: unknown) => {
     console.error('Could not start the review publisher:', error)
@@ -194,7 +199,7 @@ function launchPublisher(revision: string | undefined) {
       // The child can outlive the server. The Python wrapper keeps the kernel publish lock across exec.
       child = childProcess.spawn(process.env.PYTHON ?? 'python3', [
         'scripts/clips/review_io.py', '--publish-lock', MEDIA_DIR,
-        process.execPath, '--import', 'remix/node-tsx', 'scripts/publish-review.ts',
+        process.execPath, '--import', 'remix/node-tsx', 'scripts/publish-review.ts', ...(recover ? ['--recover'] : []),
       ], { cwd: REPO, detached: true, stdio: ['ignore', log, log] })
       child.once('error', (error) => {
         child = undefined
@@ -229,6 +234,8 @@ function advance(manual: boolean) {
   try {
     let { state, running, legacy, next } = currentProgress()
     if (child || running) return wakeIn(ACTIVE_CHECK_MS)
+    let recover = Boolean(legacy.pending || legacy.sha)
+    if (recover && !manual) return wakeIn(30_000)
     if (manual) {
       if (!next && !state.failed && !legacy.pending && !legacy.sha) return
       launchFailure = undefined
@@ -238,7 +245,7 @@ function advance(manual: boolean) {
       let wait = next.at - Date.now()
       if (wait > 0) return wakeIn(Math.min(wait, 2 ** 31 - 1))
     }
-    launchPublisher(next?.revision ?? state.failed?.revision)
+    launchPublisher(next?.revision ?? state.failed?.revision, recover)
   } catch (error) {
     console.error('Could not read review publishing progress:', error)
   }

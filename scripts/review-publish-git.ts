@@ -18,6 +18,13 @@ export interface ReviewGit {
   close(): void
 }
 
+/** The old publisher may have committed a review locally before failing its push. */
+export function requirePublishedLegacyBase(git: ReviewGit, remoteSha: string, localSha: string) {
+  if (!git.contains(remoteSha, localSha)) {
+    throw new Error('Local master contains unpublished history. Reconcile the old clip edits with origin/master before recovering; no pending work was cleared.')
+  }
+}
+
 function gitFailure(action: string, result: SpawnSyncReturns<string>, rejection?: string): Error {
   // Git and remote hooks may print credentials, paths, or arbitrary text. Show only fixed diagnostics.
   const stderr = result.stderr ?? ''
