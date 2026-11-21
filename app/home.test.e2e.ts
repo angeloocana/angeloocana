@@ -80,16 +80,35 @@ let waitForClip = (page: Page, flag: string, clip: string) => page.waitForFuncti
 }, { flag, clip }, { timeout: 6000 })
 
 // A hobby chip, the way a visitor reaches it: on a phone the chips scroll sideways in their own strip, and one
-// out of sight there is brought into view along it first, then pressed where it shows. (Left to Playwright,
-// the click scrolled the page as well, and on a busy machine that took the page off the row, old code or new.)
+// out of sight there is brought into view along it, then pressed where it shows. Left to Playwright, the
+// click scrolled the page as well, and on a busy machine that took the page off the row. It waits for the
+// page's scripts (a language switch has just loaded a new page) and for the career row above to finish
+// easing to its height (--lift, rails/rows.ts: once the page is at rest, it moves what follows), and keeps
+// the chip on screen meanwhile.
 async function pressChip(page: Page, selector: string) {
-  let chip = page.locator(selector).first()
-  await chip.evaluate((el) => {
+  await page.waitForFunction(() => document.documentElement.classList.contains('js-rails'))
+  let at = await page.locator(selector).first().evaluate((el) => new Promise<{ x: number; y: number }>((done) => {
     let strip = el.closest<HTMLElement>('.clip-chips')!
-    strip.scrollLeft += el.getBoundingClientRect().left - strip.getBoundingClientRect().left - 16
-  })
-  let box = (await chip.boundingBox())!
-  await page.mouse.click(box.x + box.width / 2, box.y + box.height / 2)
+    let career = document.querySelector<HTMLElement>('#career')!
+    let careerRail = career.querySelector<HTMLElement>('[data-rail-track]')!
+    let last = ''
+    let still = 0
+    let tick = () => {
+      let box = el.getBoundingClientRect()
+      if (box.top < 60 || box.bottom > innerHeight) el.scrollIntoView({ block: 'center', inline: 'nearest', behavior: 'instant' })
+      strip.scrollLeft += el.getBoundingClientRect().left - strip.getBoundingClientRect().left - 16
+      box = el.getBoundingClientRect()
+      let lift = parseFloat(career.style.getPropertyValue('--lift')) || 0
+      let eased = Math.abs(parseFloat(getComputedStyle(careerRail).marginBottom) + lift) < 1
+      let now = `${box.x},${box.y}`
+      still = eased && now === last ? still + 1 : 0
+      last = now
+      if (still >= 5) done({ x: box.x + box.width / 2, y: box.y + box.height / 2 })
+      else requestAnimationFrame(tick)
+    }
+    tick()
+  }))
+  await page.mouse.click(at.x, at.y)
 }
 
 async function pickTravel(page: Page, flag: string) {
