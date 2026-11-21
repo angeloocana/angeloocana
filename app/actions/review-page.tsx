@@ -107,13 +107,13 @@ const SOURCES = [
   { key: 'ig-posts', label: 'IG posts' },
   { key: 'ig-stories', label: 'IG stories' },
   { key: 'not-instagram', label: 'Not Instagram' },
-  { key: 'phone', label: 'Old phone' },
+  { key: 'phone', label: 'Phone & uploads' },
   { key: 'montage', label: 'Montage' },
 ] as const
 const KIND = { reels: 'reel', posts: 'post', stories: 'story', igtv: 'IGTV' } as const
 const sourceKeys = (clip: Clip) => (clip.source === 'instagram' ? ['instagram', `ig-${clip.igKind}`] : ['not-instagram', clip.source])
 const sourceLabel = (clip: Clip) =>
-  clip.source === 'instagram' ? `Instagram ${clip.igKind ? KIND[clip.igKind] : ''}`.trim() : clip.source === 'phone' ? 'Old phone' : 'Montage'
+  clip.source === 'instagram' ? `Instagram ${clip.igKind ? KIND[clip.igKind] : ''}`.trim() : clip.source === 'phone' ? 'Phone / upload' : 'Montage'
 
 /** Clips by category, in the order this page shows them: live before rejected, then by star and score. */
 export function reviewGroups(clips: Clip[]) {

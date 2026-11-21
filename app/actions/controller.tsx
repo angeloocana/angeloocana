@@ -56,20 +56,23 @@ export default createController(routes, {
       if (context.request.method === 'POST') return saveReview(context.request)
       return context.render(<ReviewPage />)
     },
-    reviewCut(context) {
+    async reviewCut(context) {
       let denied = reviewDenied(context.request)
       if (denied) return denied
       let { id } = context.params
-      if (!findIntake(id) && !clipExists(id)) return new Response('Not Found', { status: 404 })
+      let intake = findIntake(id)
+      if (!intake && !clipExists(id)) return new Response('Not Found', { status: 404 })
       if (context.request.method === 'POST') return saveCut(context.request, id)
-      return context.render(<CutPage id={id} />)
+      let page = await context.render(<CutPage id={id} />)
+      if (intake) page.headers.set('Cache-Control', 'no-store')
+      return page
     },
     reviewIntake(context) {
       return reviewDenied(context.request) ?? uploadIntake(context.request)
     },
     reviewIntakePreview(context) {
-      let { id, revision, filename } = context.params
-      return reviewDenied(context.request) ?? privateIntakeMedia(context.request, id, revision, filename)
+      let { id, revision, ext } = context.params
+      return reviewDenied(context.request) ?? privateIntakeMedia(context.request, id, revision, `clip.${ext}`)
     },
     reviewMoments(context) {
       return reviewDenied(context.request) ?? momentsJson(context.request, context.params.vid)

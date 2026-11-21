@@ -45,7 +45,7 @@ it('picks a MOV, renders a private cut and queues only the explicitly approved r
   assert.equal(rendered.status, 200)
   let { revision, video } = await rendered.json() as { revision: string; video: string }
   let range = await router.fetch(new Request(url + video, { headers: { Range: 'bytes=0-15' } }))
-  assert.equal(range.status, 206)
+  assert.equal(range.status, 206, `${video}: ${range.status === 206 ? '' : await range.text()} (${readdirSync(join(root, 'work', 'intake', id, revision)).join(', ')})`)
   assert.equal(range.headers.get('Cache-Control'), 'no-store')
   assert.equal((await range.arrayBuffer()).byteLength, 16)
   assert.equal((await get(`/media/clips/${id}.mp4`)).status, 404)
