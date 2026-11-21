@@ -111,8 +111,9 @@ export function setUpMedia(signal: AbortSignal, motion: Motion): Media {
     let add = (slide: HTMLElement) => { playerSlides.add(slide); players.observe(slide) }
     // nothing loads until the row itself comes within a screen of view: measured against the row
     // alone, its first clips would get players (posters, metadata) on the first screen
-    let rowNear = new IntersectionObserver(([entry]) => {
-      if (!entry.isIntersecting) return
+    let rowNear = new IntersectionObserver((entries) => {
+      // The initial off-screen entry and the row coming into view can arrive in the same batch.
+      if (!entries.at(-1)?.isIntersecting) return
       rowNear.disconnect()
       track.querySelectorAll<HTMLElement>('[data-video]').forEach(add)
       media.addSlides = (slides) => slides.forEach(add)

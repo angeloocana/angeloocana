@@ -43,7 +43,8 @@ export function setUpNav(signal: AbortSignal, rails: Map<HTMLElement, Rail>) {
     if (scrollY > 0 && innerHeight + scrollY >= pageHeight - 4) here = list.at(-1)?.id ?? here
     return here
   }
-  // the first card mostly in view in a sideways row, by its id: a job, a clip; the row's opening card: none.
+  // Carry a linked card while it is still in view, even if the row ended before it could line up at the
+  // start. Otherwise carry the first card mostly in view (a job or a clip, not the row's opening card).
   // rails/rows.ts keeps where each card sits, so a frame here reads only the row's scroll.
   let cardInView = (track: HTMLElement | null, prefix: string) => {
     let rail = track?.closest<HTMLElement>('[data-rail]')

@@ -87,8 +87,8 @@ export async function playJojDemo(signal: AbortSignal) {
     let paused = () => document.documentElement.classList.contains('is-paused')
     let visible = false
     let wake: (() => void) | null = null
-    let watcher = new IntersectionObserver(([entry]) => {
-      visible = entry.isIntersecting
+    let watcher = new IntersectionObserver((entries) => {
+      visible = !!entries.at(-1)?.isIntersecting
       if (visible && wake) wake()
     })
     watcher.observe(board)

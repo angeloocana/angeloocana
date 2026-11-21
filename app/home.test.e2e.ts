@@ -69,26 +69,32 @@ let firstCard = (page: Page, row: string) => page.evaluate((row) => {
   let start = track.getBoundingClientRect().left + cards[0].offsetLeft - track.offsetLeft
   return cards.find((el) => Math.abs(el.getBoundingClientRect().left - start) < 8)?.id
 }, row)
-// Travel picked in Outside work, then the other language's flag: it opens with that clip first in the row
-async function carryClip(page: Page, flag: string, url: RegExp) {
+let waitForClip = (page: Page, flag: string, clip: string) => page.waitForFunction(({ flag, clip }) => {
+  let track = document.querySelector<HTMLElement>('#outside [data-rail-track]')!
+  let target = document.getElementById(clip)
+  let link = document.querySelector<HTMLAnchorElement>(flag)
+  if (!target || track.classList.contains('is-jumping') || link?.hash !== `#${clip}`) return false
+  let row = track.getBoundingClientRect()
+  let box = target.getBoundingClientRect()
+  return Math.min(row.right, box.right) - Math.max(row.left, box.left) >= box.width / 2
+}, { flag, clip }, { timeout: 6000 })
+
+async function pickTravel(page: Page, flag: string) {
   await scrollTo(page, 'outside')
   await page.click('#outside [data-rail-cat="travel"]')
-  await page.waitForFunction(() => document.querySelector('#outside [data-rail-cat="travel"]')!.getAttribute('aria-pressed') === 'true')
-  // the row has slid to the hobby: its first card is a Travel clip, and the row is at rest
-  await page.waitForFunction(() => {
-    let track = document.querySelector<HTMLElement>('#outside [data-rail-track]')!
-    let cards = ([...track.children] as HTMLElement[]).filter((el) => el.offsetWidth)
-    let start = track.getBoundingClientRect().left + cards[0].offsetLeft - track.offsetLeft
-    let first = cards.find((el) => Math.abs(el.getBoundingClientRect().left - start) < 8)
-    return first?.dataset.cat === 'travel' && !track.classList.contains('is-jumping')
-  }, null, { timeout: 6000 })
-  let clip = (await firstCard(page, 'outside'))!
-  await page.waitForFunction(({ flag, clip }) => document.querySelector<HTMLAnchorElement>(flag)!.hash === `#${clip}`, { flag, clip })
+  await page.waitForSelector('#outside [data-rail-cat="travel"][aria-pressed="true"]')
+  // The chip jumps to the first Travel clip in the shuffled rail, even if another clip shares its view.
+  let clip = (await page.locator('#outside [data-rail-track] [data-cat="travel"]').first().getAttribute('id'))!
+  await waitForClip(page, flag, clip)
+  assert.equal(new URL(page.url()).hash, `#${clip}`)
+  return clip
+}
+
+async function carryClip(page: Page, clip: string, flag: string, url: RegExp) {
   await page.click(flag)
   await page.waitForURL(url)
   assert.equal(new URL(page.url()).hash, `#${clip}`)
-  await page.waitForTimeout(1500) // the rest of the clips load, then the row moves to it
-  assert.equal(await firstCard(page, 'outside'), clip)
+  await waitForClip(page, `.lang-card:not(${flag})`, clip)
 }
 
 describe('home page in a browser', () => {
@@ -116,9 +122,41 @@ describe('home page in a browser', () => {
   it('keeps the clip in view when the language changes, both ways', async (t) => {
     let page = await t.serve(await serveDist())
     await page.setViewportSize({ width: 1440, height: 900 })
+    // Deal the incoming clip last so the browser clamps its scroll. Put the next Travel pick close
+    // enough that the old hash clip stays visible after the visitor asks to carry a different one.
+    await page.route('**/data/clips.json', async (route) => {
+      let hash = new URL(route.request().frame().url()).hash
+      if (!hash.startsWith('#clip-')) return route.continue()
+      let response = await route.fetch()
+      let json = await response.json() as { clips: { id: string; cat: string; score: number }[] }
+      let linked = json.clips.find((clip) => `#clip-${clip.id}` === hash)!
+      let nature = json.clips.find((clip) => clip.id === 'cbb1ca253')!
+      let tail = [...json.clips.filter((clip) => clip.cat === 'travel' && clip !== linked), nature, linked]
+      tail.forEach((clip, i) => { clip.score = -25 * (i + 1) })
+      await route.fulfill({ response, json })
+    })
+    let track = page.locator('#outside [data-rail-track]')
+    let atEnd = () => track.evaluate((el) => el.scrollWidth - el.clientWidth - el.scrollLeft < 2)
     await open(page, '/')
-    await carryClip(page, '.lang-pt', /\/pt\/#clip-/)
-    await carryClip(page, '.lang-en', /\/#clip-/)
+    let first = await pickTravel(page, '.lang-pt')
+    await carryClip(page, first, '.lang-pt', /\/pt\/#clip-/)
+    assert.ok(await atEnd(), 'the Portuguese rail reached its scroll limit')
+    let second = await pickTravel(page, '.lang-en')
+    assert.notEqual(second, first)
+    assert.equal(await track.evaluate((el, id) => {
+      let row = el.getBoundingClientRect()
+      let box = document.getElementById(id)!.getBoundingClientRect()
+      return Math.min(row.right, box.right) - Math.max(row.left, box.left) >= box.width / 2
+    }, first), true, 'the previous clip is still in view')
+    await carryClip(page, second, '.lang-en', /\/#clip-/)
+    assert.ok(await atEnd(), 'the English rail reached its scroll limit')
+    await carryClip(page, second, '.lang-pt', /\/pt\/#clip-/)
+
+    // A horizontal wheel gesture moves away from the hash clip; the flag follows the first clip there.
+    await track.hover()
+    let delta = await track.evaluate((el) => document.getElementById('clip-h-ice')!.offsetLeft - (el.firstElementChild as HTMLElement).offsetLeft - el.scrollLeft)
+    await page.mouse.wheel(delta, 0)
+    await waitForClip(page, '.lang-en', 'clip-h-ice')
   })
 
   it('works at phone width: the menu, More, Career sideways, and the switch keeps a job and a clip', async (t) => {
@@ -158,7 +196,8 @@ describe('home page in a browser', () => {
     await page.waitForURL(/\/pt\/#job-kinaxis$/)
     await page.waitForTimeout(300)
     assert.equal(await firstCard(page, 'career'), 'job-kinaxis')
-    await carryClip(page, '.lang-en', /\/#clip-/)
+    let clip = await pickTravel(page, '.lang-en')
+    await carryClip(page, clip, '.lang-en', /\/#clip-/)
   })
 
   // the other language's flag carries the clip in view (#clip-…): the page lands with the clip under the menu,

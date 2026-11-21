@@ -15,7 +15,7 @@ type Clips = ReturnType<typeof setUpClips>
 //   - keeps one clip's Instagram link in the Tab order (the arrow keys move it)
 // It returns what rails/nav.ts asks of the row, read from the same cached boxes.
 export interface Rail {
-  /** The first card mostly in view (more than 60% of it), from the cached boxes: no layout read. */
+  /** The card to carry to the other language, from the cached boxes. */
   cardInView(): HTMLElement | undefined
 }
 
@@ -40,7 +40,7 @@ export function setUpRail(rail: HTMLElement, { signal, motion, clips }: { signal
       loaded = await clips.loadMore(track)
       if (loaded) { near.disconnect(); track.removeEventListener('scrollend', load) }
     }
-    let near = new IntersectionObserver(([entry]) => { if (entry.isIntersecting) load() }, { rootMargin: '150% 0px' })
+    let near = new IntersectionObserver((entries) => { if (entries.at(-1)?.isIntersecting) load() }, { rootMargin: '150% 0px' })
     near.observe(rail)
     track.addEventListener('scrollend', load, { signal, passive: true })
     signal.addEventListener('abort', () => near.disconnect())
@@ -83,6 +83,25 @@ export function setUpRail(rail: HTMLElement, { signal, motion, clips }: { signal
   let shownBox = (b: Box | undefined, v: { l: number; r: number }) => (b && b.r > b.l ? Math.max(0, Math.min(b.r, v.r) - Math.max(b.l, v.l)) / (b.r - b.l) : 0)
   let shown = (el: Element) => { if (stale) measure(); return shownBox(byEl.get(el), view()) }
   let totalOf = (n: number) => Math.max(n, Number(track.dataset.total) || 0)
+
+  // A hash arrival may have landed at the scroll limit instead of at the linked card's left edge. Keep
+  // that card for the flag until the visitor moves the row. A chip or jump replaces it with its own card.
+  let preferred: { card: HTMLElement; left: number; arriving: boolean; moving: boolean } | undefined
+  let userMoves = 0
+  let movedByUser = () => {
+    userMoves++
+    if (!preferred) return
+    preferred = undefined
+    track.dispatchEvent(new Event('scroll'))
+  }
+  track.addEventListener('scroll', () => {
+    if (preferred && !preferred.moving && Math.abs(track.scrollLeft - preferred.left) > 2) movedByUser()
+  }, { signal, passive: true })
+  track.addEventListener('scrollend', () => {
+    if (!preferred?.moving) return
+    if (Math.abs(track.scrollLeft - preferred.left) > 2) movedByUser()
+    else preferred.moving = false
+  }, { signal, passive: true })
 
   // "12 / 115" under a long row: the last of its things that is mostly in view, out of all of them,
   // and a thin bar that fills as you go
@@ -244,7 +263,7 @@ export function setUpRail(rail: HTMLElement, { signal, motion, clips }: { signal
       let first = track.querySelector<HTMLElement>(`[data-cat="${chip.dataset.railCat}"]`)
       if (!first) return
       pick(chip, first)
-      slideTo(first)
+      slideTo(first, true)
     }, { signal })
   }
 
@@ -285,6 +304,7 @@ export function setUpRail(rail: HTMLElement, { signal, motion, clips }: { signal
       link.tabIndex = -1
       to.tabIndex = 0
       lastRove = to
+      movedByUser()
       to.focus({ preventScroll: true })
       to.closest('.slide')?.scrollIntoView({ inline: 'center', block: 'nearest', behavior: motion.reduced ? 'auto' : 'smooth' })
     }, { signal })
@@ -293,13 +313,20 @@ export function setUpRail(rail: HTMLElement, { signal, motion, clips }: { signal
   // Slides the row so a card starts at its left edge, the page staying put. Snapping is off for the trip:
   // off screen the card is still shrunk by its slide-in animation, and the browser would line up with
   // that smaller box, a few pixels short.
-  function slideTo(slide: HTMLElement) {
+  function slideTo(slide: HTMLElement, carry = false) {
+    movedByUser()
     track.classList.add('is-jumping')
     let landed = () => track.classList.remove('is-jumping')
     track.addEventListener('scrollend', landed, { once: true, signal })
     setTimeout(landed, 1500)
-    let first = slides()[0]
-    track.scrollTo({ left: slide.offsetLeft - first.offsetLeft, behavior: motion.reduced ? 'auto' : 'smooth' })
+    let left = slide.offsetLeft - slides()[0].offsetLeft
+    if (carry) {
+      history.replaceState(history.state, '', `#${slide.id}`)
+      let goal = Math.min(left, track.scrollWidth - track.clientWidth)
+      preferred = { card: slide, left: goal, arriving: false, moving: Math.abs(goal - track.scrollLeft) > 2 }
+    }
+    track.scrollTo({ left, behavior: motion.reduced ? 'auto' : 'smooth' })
+    if (carry) track.dispatchEvent(new Event('scroll'))
   }
   // Tab onto a link or a button in a card the row shows only part of (the next job, peeking in at the
   // edge): the browser brings just that link into view, leaving the card a sliver, so the row slides to the
@@ -321,26 +348,32 @@ export function setUpRail(rail: HTMLElement, { signal, motion, clips }: { signal
   let toHash = async () => {
     let id = location.hash.slice(1)
     if (!id) return
+    let moves = userMoves
     let find = () => track.querySelector<HTMLElement>(`:scope > [id="${CSS.escape(id)}"]`)
     let missing = !find()
     if (more && id.startsWith('clip-')) await clips.loadMore(track)
     let slide = find()
-    if (!slide || location.hash.slice(1) !== id) return
+    if (!slide || location.hash.slice(1) !== id || moves !== userMoves) return
     if (missing) rail.scrollIntoView({ block: 'start', behavior: 'instant' })
     track.classList.add('is-jumping')
     track.scrollLeft = slide.offsetLeft - slides()[0].offsetLeft
+    preferred = { card: slide, left: track.scrollLeft, arriving: true, moving: false }
+    track.dispatchEvent(new Event('scroll'))
     requestAnimationFrame(() => track.classList.remove('is-jumping'))
     for (let link of rail.querySelectorAll<HTMLAnchorElement>('a[data-rail-jump]')) link.toggleAttribute('data-picked', link.hash === location.hash)
   }
   toHash()
-  addEventListener('load', toHash, { signal, once: true })
-  addEventListener('hashchange', toHash, { signal })
+  addEventListener('load', () => { if (!userMoves) toHash() }, { signal, once: true })
+  addEventListener('hashchange', () => { preferred = undefined; toHash() }, { signal })
 
   // arrows: page by the width of what is visible
   rail.addEventListener('click', (event) => {
     let target = event.target as Element
     let dir = target.closest('[data-rail-next]') ? 1 : target.closest('[data-rail-prev]') ? -1 : 0
-    if (dir) track.scrollBy({ left: dir * track.clientWidth * 0.8, behavior: motion.reduced ? 'auto' : 'smooth' })
+    if (dir) {
+      movedByUser()
+      track.scrollBy({ left: dir * track.clientWidth * 0.8, behavior: motion.reduced ? 'auto' : 'smooth' })
+    }
 
     // a job's "+12 more" (phones): shows its other tags in place, or folds them again (home.css); the card
     // grows, and the row's height follows it (the ResizeObserver above)
@@ -354,7 +387,7 @@ export function setUpRail(rail: HTMLElement, { signal, motion, clips }: { signal
     let sideways = track.scrollWidth > track.clientWidth + 8
     if (slide && sideways) {
       event.preventDefault()
-      slideTo(slide)
+      slideTo(slide, true)
       // the last one picked stays lit, so swiping back to the list shows where you were
       for (let link of rail.querySelectorAll('a[data-rail-jump]')) link.toggleAttribute('data-picked', link === jump)
       slide.tabIndex = -1
@@ -373,7 +406,7 @@ export function setUpRail(rail: HTMLElement, { signal, motion, clips }: { signal
   addEventListener('pointermove', (event) => {
     if (!drag) return
     let dx = event.clientX - drag.x
-    if (!drag.moved && Math.abs(dx) > 4) { drag.moved = true; track.classList.add('is-dragging') }
+    if (!drag.moved && Math.abs(dx) > 4) { drag.moved = true; movedByUser(); track.classList.add('is-dragging') }
     if (drag.moved) track.scrollLeft = drag.left - dx
   }, { signal })
   addEventListener('pointerup', () => {
@@ -391,6 +424,10 @@ export function setUpRail(rail: HTMLElement, { signal, motion, clips }: { signal
     cardInView() {
       if (stale) measure()
       let v = view()
+      if (preferred) {
+        let visible = shownBox(byEl.get(preferred.card), v)
+        if (preferred.arriving ? visible >= 0.5 : visible > 0) return preferred.card
+      }
       return boxes.find((b) => b.r - v.l > (b.r - b.l) * 0.6)?.el
     },
   }
