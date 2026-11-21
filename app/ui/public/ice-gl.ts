@@ -495,6 +495,7 @@ export async function mountIce(canvas: HTMLCanvasElement, signal: AbortSignal) {
   // a stroke from the last position, so a fast swipe leaves an unbroken trail
   let last: [number, number] | null = null
   let warm = (x: number, y: number) => {
+    if (released) return
     let r = phone ? 64 : 80
     if (last) {
       let d = Math.hypot(x - last[0], y - last[1]), steps = Math.min(24, Math.ceil(d / 16))
@@ -508,16 +509,12 @@ export async function mountIce(canvas: HTMLCanvasElement, signal: AbortSignal) {
   // Something swimming under the ice: due only on real input (above), at most one, gone the
   // moment the motion goes off, the tab is hidden or the sheet comes down. Its silhouette goes into a tiny
   // texture, made the first time one comes.
-  let rng = random((Math.random() * 2 ** 32) | 0)
-  let swims = schedule(rng)
-  let animal: { kind: Kind; path: [Point, Point, Point]; at: number; time: number; from: number } | null = null
+  let rng = Math.random, swims = schedule(rng)
+  let animal: { kind: Kind; path: [Point, Point, Point]; at: number; time: number } | null = null
   let animalTex: WebGLTexture | null = null, drawnKind: Kind | null = null
-  // PREVIEW ONLY: the named animal passes once with a small automatic thaw. Reload to replay.
-  let preview = new URLSearchParams(location.search).get('animal')
-  let previewKind = isKind(preview) ? preview : null, previewPending = previewKind !== null
-  let swim = (kind: Kind, near: Point, previewPath?: [Point, Point, Point]) => {
+  let swim = (kind: Kind, near: Point) => {
     let s = SPECIES[kind]
-    let path = previewPath ?? plan(rng, near, s.speed * SWIM, thickness)
+    let path = plan(rng, near, s.speed * SWIM, thickness)
     if (!path) return swims.retry(t)
     if (!animalTex) animalTex = texture(4)
     if (drawnKind !== kind) {
@@ -528,8 +525,7 @@ export async function mountIce(canvas: HTMLCanvasElement, signal: AbortSignal) {
       g.texImage2D(g.TEXTURE_2D, 0, g.RGBA, g.RGBA, g.UNSIGNED_BYTE, canvas)
       drawnKind = kind
     }
-    // Start near enough to reach the new melt before it refreezes.
-    animal = { kind, path, at: t, time: SWIM * (0.9 + 0.2 * rng()), from: previewPath ? 0 : 0.32 }
+    animal = { kind, path, at: t, time: SWIM * (0.9 + 0.2 * rng()) }
     stir()
   }
   let gone = () => { animal = null; swims.reset() }
@@ -620,21 +616,6 @@ export async function mountIce(canvas: HTMLCanvasElement, signal: AbortSignal) {
       }
     }
     let since = t - frozenAt
-    if (animal?.from === 0) {
-      let p = animal.from + (t - animal.at) / animal.time
-      if (p < 1) {
-        let [[x, y], [dx, dy]] = along(animal.path, p)
-        brush(x + dx * 20, y + dy * 20, 110, 0.022)
-      }
-    }
-    if (previewKind && previewPending && since > FREEZE + 0.4) {
-      previewPending = false
-      // Show the same stretch of bare ice between the hero tiles and Career on phones and desktop.
-      let hero = document.querySelector('.hero')!.getBoundingClientRect()
-      let y = H * 0.46, x = W / 2, distance = Math.min(W * 0.84, 500)
-      scrollTo({ top: scrollY + hero.bottom + 30 - y, behavior: 'instant' })
-      swim(previewKind, [x, y], [[x - distance / 2, y + 3], [x, y - 11], [x + distance / 2, y + 3]])
-    }
     for (let b of breaths) {
       let p = (since - b.at) / 0.7
       if (p < 0 || p > 1) continue
@@ -692,9 +673,9 @@ export async function mountIce(canvas: HTMLCanvasElement, signal: AbortSignal) {
     let dx = W * 0.7, dy = H * 0.4
     g.uniform2f(u.P, ptr.x + (dx - ptr.x) * away, H - (ptr.y + (dy - ptr.y) * away))
     g.uniform3fv(u.C, still ? [0, 0, -99, 0, 0, -99, 0, 0, -99, 0, 0, -99] : cracks)
-    // the animal: where it is along its path, faded in and out at its ends
+    // Fade in on an approach close enough to reach the new melt before it refreezes.
     let age = animal ? (t - animal.at) / animal.time : 1
-    let p = age + (animal?.from ?? 0)
+    let p = age + 0.32
     if (animal && p >= 1) animal = null
     if (animal && !still) {
       let s = SPECIES[animal.kind]
@@ -711,10 +692,10 @@ export async function mountIce(canvas: HTMLCanvasElement, signal: AbortSignal) {
   }
 
   let raf = 0, then = 0, acc = 0
-  let remeasure = true
+  let remeasure = true, released = false
   let still = root.classList.contains('is-paused')
   function go() {
-    if (raf || still || document.hidden || signal.aborted) return
+    if (released || raf || still || document.hidden || signal.aborted) return
     raf = requestAnimationFrame(frame)
   }
   // the page moved: a frame at once, and a few more while it keeps moving
@@ -807,6 +788,8 @@ export async function mountIce(canvas: HTMLCanvasElement, signal: AbortSignal) {
   // Lost (the GPU reset, or too many contexts) or taken down: every observer stops, and the GPU's memory
   // goes back at once rather than whenever the canvas is collected.
   let release = () => {
+    if (released) return
+    released = true
     halt()
     animal = null
     sized.disconnect()
@@ -842,29 +825,18 @@ type Kind = 'pike' | 'trout' | 'otter' | 'beaver' | 'seal'
 type Point = [number, number]
 
 // Length and speed in CSS px; sway in half-widths of the box; beat in cycles per second.
-export const SPECIES: Record<Kind, { weight: number; length: number; speed: number; wave: number; beat: number }> = {
+const SPECIES: Record<Kind, { weight: number; length: number; speed: number; wave: number; beat: number }> = {
   pike: { weight: 0.3, length: 190, speed: 46, wave: 0.12, beat: 0.6 },
   trout: { weight: 0.3, length: 120, speed: 62, wave: 0.2, beat: 1.1 },
   otter: { weight: 0.3, length: 150, speed: 70, wave: 0.18, beat: 0.8 },
   seal: { weight: 0.07, length: 190, speed: 52, wave: 0.14, beat: 0.4 },
   beaver: { weight: 0.03, length: 130, speed: 34, wave: 0.08, beat: 0.5 },
 }
-export const KINDS = Object.keys(SPECIES) as Kind[]
-export const isKind = (s: string | null): s is Kind => s !== null && Object.hasOwn(SPECIES, s)
+const KINDS = Object.keys(SPECIES) as Kind[]
 
-export const DELAY: Point = [45, 75]
+const DELAY: Point = [45, 75]
 const SWIM = 11
-export const RETRY = 5 // due, but no thick ice near the pointer: try again this much later
-
-// A seeded generator (mulberry32), so a test or review link sees the same pass each time.
-export function random(seed: number) {
-  return () => {
-    seed = (seed + 0x6d2b79f5) | 0
-    let x = Math.imul(seed ^ (seed >>> 15), 1 | seed)
-    x = (x + Math.imul(x ^ (x >>> 7), 61 | x)) ^ x
-    return ((x ^ (x >>> 14)) >>> 0) / 4294967296
-  }
-}
+const RETRY = 5 // due, but no thick ice near the pointer: try again this much later
 
 export function pick(rng: () => number): Kind {
   let r = rng()

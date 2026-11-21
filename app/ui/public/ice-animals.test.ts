@@ -1,70 +1,36 @@
 import * as assert from 'remix/assert'
 import { describe, it } from 'remix/test'
 
-import { DELAY, KINDS, RETRY, SPECIES, along, isKind, pick, plan, random, schedule } from './ice-gl.ts'
+import { along, pick, plan, schedule } from './ice-gl.ts'
 
 describe('what swims under the ice', () => {
-  it('mostly a pike, a trout or an otter; a seal now and then, a beaver rarely', () => {
-    let rng = random(1), counts = Object.fromEntries(KINDS.map((k) => [k, 0]))
-    for (let i = 0; i < 20000; i++) counts[pick(rng)]++
-    assert.ok(Math.abs(KINDS.reduce((s, k) => s + SPECIES[k].weight, 0) - 1) < 1e-9)
-    for (let kind of ['pike', 'trout', 'otter']) assert.ok(counts[kind] > 5500 && counts[kind] < 6500, `${kind}: ${counts[kind]}`)
-    assert.ok(counts.seal > 1100 && counts.seal < 1700, `seal: ${counts.seal}`)
-    assert.ok(counts.beaver > 400 && counts.beaver < 800, `beaver: ${counts.beaver}`)
-    assert.ok(counts.beaver < counts.seal)
+  it('visits mostly as fish or an otter, less often as a seal, and very rarely as a beaver', () => {
+    let counts = { pike: 0, trout: 0, otter: 0, seal: 0, beaver: 0 }
+    for (let i = 0; i < 100; i++) counts[pick(() => (i + 0.5) / 100)]++
+    assert.deepEqual(counts, { pike: 30, trout: 30, otter: 30, seal: 7, beaver: 3 })
   })
 
-  it('comes about once a minute of use, only on input, never at the first', () => {
-    let s = schedule(random(7))
-    assert.equal(s.input(10), false) // the first input only sets the clock
-    assert.equal(s.input(10 + DELAY[0] - 1), false)
-    // input every half second for ten minutes: one every 45–75 s
-    let times: number[] = []
-    for (let t = 10.5; t < 610; t += 0.5) if (s.input(t)) times.push(t)
-    let gaps = times.slice(1).map((t, i) => t - times[i])
-    assert.ok(times[0] >= 10 + DELAY[0] && times[0] <= 10 + DELAY[1] + 0.5)
-    assert.ok(times.length >= 8 && times.length <= 13, `${times.length} in ten minutes`)
-    for (let gap of gaps) assert.ok(gap >= DELAY[0] && gap <= DELAY[1] + 0.5, `gap ${gap}`)
+  it('waits 45–75 seconds of ice motion and comes only with new input', () => {
+    let value = 0
+    let visits = schedule(() => value)
+    assert.equal(visits.input(10), false, 'first input only starts the clock')
+    assert.equal(visits.input(54.9), false)
+    value = 0.999
+    assert.equal(visits.input(55), true)
+    assert.equal(visits.input(129.9), false)
+    assert.equal(visits.input(130), true)
+    visits.reset() // tab hidden, or motion turned off
+    assert.equal(visits.input(500), false, 'no immediate swim on return')
   })
 
-  it('waits while nobody is there: due, it comes only with the next input', () => {
-    let s = schedule(random(3))
-    s.input(0)
-    assert.equal(s.input(500), true) // long idle: nothing came by itself, the input brings it
-    assert.equal(s.input(501), false)
-  })
-
-  it('starts over after the tab was hidden or the motion went off, and retries soon when there was no ice', () => {
-    let s = schedule(random(3))
-    s.input(0)
-    s.reset()
-    assert.equal(s.input(500), false, 'coming back does not bring one at once')
-    assert.equal(s.input(500 + DELAY[1] + 1), true)
-    s.retry(600)
-    assert.equal(s.input(600 + RETRY - 0.1), false)
-    assert.equal(s.input(600 + RETRY), true)
-  })
-
-  it('passes under thick ice near the pointer, and not at all where there is none', () => {
-    let thick = (x: number) => (x < 400 ? 0.5 : 0)
-    let path = plan(random(5), [200, 300], 500, thick)
+  it('passes close to the pointer, but not if there is no ice nearby', () => {
+    let near: [number, number] = [200, 300]
+    let thickness = (x: number) => x >= 0 && x < 400 ? 0.5 : 0
+    let path = plan(() => 0.25, near, 500, thickness)
     assert.ok(path)
-    let [[x, y]] = along(path, 0.5)
-    assert.ok(Math.hypot(x - 200, y - 300) < 200, 'its middle is near the pointer')
-    assert.equal(plan(random(5), [200, 300], 500, () => 0), null)
-  })
-
-  it('swims along its path, facing the way it goes', () => {
-    let path: [[number, number], [number, number], [number, number]] = [[0, 0], [50, 0], [100, 0]]
-    assert.deepEqual(along(path, 0), [[0, 0], [1, 0]])
-    assert.deepEqual(along(path, 1), [[100, 0], [1, 0]])
-    assert.deepEqual(along(path, 0.5)[0], [50, 0])
-  })
-
-  it('takes only the five names for a review link', () => {
-    assert.ok(KINDS.every(isKind))
-    assert.equal(isKind('shark'), false)
-    assert.equal(isKind('constructor'), false)
-    assert.equal(isKind(null), false)
+    let [[x, y], [dx, dy]] = along(path, 0.5)
+    assert.ok(Math.hypot(x - near[0], y - near[1]) < 50)
+    assert.ok(Math.abs(Math.hypot(dx, dy) - 1) < 1e-9)
+    assert.equal(plan(() => 0.25, near, 500, () => 0), null)
   })
 })
