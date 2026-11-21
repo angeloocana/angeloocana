@@ -8,7 +8,7 @@ tags:
   - ES6
 ---
 
-<img style="max-width: 100%; display: block; margin: 3rem auto;" alt="Redux Saga Logo" src="/imgs/Redux-Saga-Logo-Landscape.png" width="800" height="167" title="Redux saga logo" />
+<img class="redux-saga-logo" alt="Redux Saga Logo" src="/imgs/Redux-Saga-Logo-Landscape.png" width="800" height="167" title="Redux saga logo" />
 
 Redux-saga + the Yield keyword are the most powerful tool I've ever seen in the JavaScript world to manage side-effects (API calls, DBs, log, ...)
 
@@ -48,7 +48,7 @@ I hope you can learn new things and improve the reasonability of your code. =D
 
 # What is redux-saga?
 
-- Redux middleware <img style="width: auto; height: 25px;" alt="Redux Logo" src="/imgs/redux-2.png" width="537" height="512" title="Redux logo" />
+- Redux middleware <img class="redux-inline-logo" alt="Redux Logo" src="/imgs/redux-2.png" width="537" height="512" title="Redux logo" />
 
 - Manages side effects (API, DB, logs, etc.)
 
@@ -147,7 +147,7 @@ Code is always compact
 
 # Yield
 
-## Advantages <img style="width: auto; height: 45px; transform: translateY(4px);" alt="Positive" src="/imgs/positive.svg" width="512" height="512" title="Advantages" />
+## Advantages <img class="redux-pros-icon" alt="Positive" src="/imgs/positive.svg" width="512" height="512" title="Advantages" />
 
 - Fewer lines of code
 
@@ -160,7 +160,7 @@ Code is always compact
 - Execution stops on unhandled error
 
 
-## Disadvantages <img style="width: auto; height: 45px; transform: translateY(19px);" alt="Negative" src="/imgs/negative.svg" width="512" height="512" title="Disadvantages" />
+## Disadvantages <img class="redux-cons-icon" alt="Negative" src="/imgs/negative.svg" width="512" height="512" title="Disadvantages" />
 
 - Only works inside Generator Functions
 

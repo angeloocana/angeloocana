@@ -22,8 +22,8 @@ export function Career(handle: Handle<{ lang: Lang; t: Copy; nav: (href: string)
           {/* a way straight to any job, so the older ones are a tap away; rails.tsx slides the row,
               rolls the names in like credits and keeps the last one picked lit */}
           <ol class="career-index" aria-label={t.career.jump} data-reveal>
-            {career.map((job, i) => (
-              <li key={job.id} style={`--i:${i}`}>
+            {career.map((job) => (
+              <li key={job.id}>
                 <a href={`#job-${job.id}`} data-rmx-document data-rail-jump>
                   <b>{job.short ?? job.company}</b>
                   <span>

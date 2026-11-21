@@ -54,8 +54,6 @@ export function HomePage(handle: Handle<{ lang: Lang }>) {
           </p>
         </div>
 
-        {/* without JS a job's "+12 more" has nothing to show them: every tag shows instead (home.css) */}
-        <noscript><style>{'.row-career .job-tech li:not(.tech-more){display:block!important}.row-career .tech-more{display:none!important}'}</style></noscript>
         <SiteNav lang={lang} t={t} home langHref={HREF} />
 
         {/* the Apple Watch's drawing, once, before the hero's watch points at it (devices.tsx) */}

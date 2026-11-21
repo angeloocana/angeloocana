@@ -42,6 +42,12 @@
 .post-body pre { padding: 1.1rem 1.25rem; border-radius: 14px; border: 1px solid var(--line); background: #0f0f0f; white-space: pre-wrap; overflow-wrap: anywhere; line-height: 1.6; }
 .post-body pre code { padding: 0; background: none; font-size: 0.85rem; color: #d9e8c8; }
 .post-body img { max-width: 100%; height: auto; border-radius: 12px; }
+/* The original Redux Saga article's centered logo and inline illustrations. */
+.post-body .redux-saga-logo { display: block; margin: 3rem auto; }
+.post-body .redux-inline-logo { width: auto; height: 25px; }
+.post-body .redux-pros-icon, .post-body .redux-cons-icon { width: auto; height: 45px; }
+.post-body .redux-pros-icon { transform: translateY(4px); }
+.post-body .redux-cons-icon { transform: translateY(19px); }
 .post-body table { width: 100%; border-collapse: collapse; font-size: 0.95rem; }
 .post-body th, .post-body td { padding: 0.5rem 0.6rem; border-bottom: 1px solid var(--line); text-align: left; }
 .post-body hr { border: 0; border-top: 1px solid var(--line); }

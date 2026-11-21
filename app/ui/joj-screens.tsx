@@ -14,7 +14,7 @@ export function JojBoard() {
         let black = i < 8
         let x = i % 8
         let y = black ? 0 : 7
-        return <b key={i} class={`jd-piece ${black ? 'jd-black' : 'jd-white'}`} style={`--x:${x};--y:${y}`} data-x={String(x)} data-y={String(y)} />
+        return <b key={i} class={`jd-piece ${black ? 'jd-black' : 'jd-white'}`} data-x={String(x)} data-y={String(y)} />
       })}
     </div>
   )

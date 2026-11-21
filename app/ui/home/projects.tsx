@@ -4,7 +4,7 @@ import { GITHUB, projectsFor } from '../../content/projects.ts'
 import type { Copy, Lang } from '../../copy.ts'
 import { AppleWatch, IPad, IPhone, Laptop, Pixel, Screens, WearWatch } from '../devices.tsx'
 import { JojDesktop, JojPhone } from '../joj-screens.tsx'
-import { COLORS, sampleTiles } from '../public/pool-tiles-domain.ts'
+import { COLORS, DEFAULT_SIZE } from '../public/pool-tiles-domain.ts'
 import { Card, kicker, media, Row, studyCard, TitleLink } from './shared.tsx'
 
 // Personal projects: track2.fit, Jump Over Jump and Tic Tac Toe AI, a row each, then More projects.
@@ -289,8 +289,7 @@ c_sharp_phaser/JumpOverJump`}</pre>
 function PoolCard(handle: Handle<{ t: Copy }>) {
   return () => {
     let { t } = handle.props
-    let tiles = sampleTiles()
-    let { nRows, nCols } = tiles.size
+    let { nRows, nCols } = DEFAULT_SIZE
     let words = { cell: t.pool.cell, names: t.pool.names }
     let sizes = [['nRows', t.pool.rows, nRows], ['nCols', t.pool.cols, nCols]] as const
     return (
@@ -306,7 +305,7 @@ function PoolCard(handle: Handle<{ t: Copy }>) {
         <div class="pool" data-pool data-words={JSON.stringify(words)}>
           <div class="pool-colors" role="group" aria-label={t.pool.colors}>
             {COLORS.map((color, i) => (
-              <button key={color} type="button" data-pool-color={color} aria-pressed={i === 0 ? 'true' : 'false'} aria-label={t.pool.names[i]} title={t.pool.names[i]} style={`--c:${color}`} />
+              <button key={color} type="button" data-pool-color={color} aria-pressed={i === 0 ? 'true' : 'false'} aria-label={t.pool.names[i]} title={t.pool.names[i]} />
             ))}
           </div>
           {/* a frame of fixed height, so resizing the tiles never moves the buttons under them. The
@@ -314,7 +313,7 @@ function PoolCard(handle: Handle<{ t: Copy }>) {
               buttons in the page they were a sixth of its weight. */}
           <div class="pool-board">
             <div class="pool-frame">
-              <div class="pool-grid" role="group" aria-label={t.pool.tiles} data-pool-grid style={`--rows:${nRows};--cols:${nCols}`} />
+              <div class="pool-grid" role="group" aria-label={t.pool.tiles} data-pool-grid />
             </div>
             {/* full screen on a phone, when the board is wider than the screen (pool-tiles.tsx) */}
             <p class="pool-swipe" aria-hidden="true">{t.pool.swipe} <span>→</span></p>

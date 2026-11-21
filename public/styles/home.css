@@ -239,7 +239,20 @@ html:not(.js-rails) .rail-bar { visibility: hidden; }
 .tile-projects li { font: 400 clamp(1.25rem, 0.8rem + 1vw, 1.8rem)/1.15 var(--serif); color: #c9c2b6; }
 .tile-projects li::before { content: ''; display: inline-block; width: 6px; height: 6px; margin-right: 0.7rem; vertical-align: 0.2em; border-radius: 50%; background: rgb(232 184 106 / 0.55); }
 /* the timeline follows the list (not pinned to the tile's foot), so the two read as one */
-.tile-line { position: relative; width: 100%; margin-top: 1.4rem; }
+/* Position each mark by years since the first job. The fallbacks use the 2007–2026 timeline;
+   typed attr() reads the current span and offsets from hero.tsx where supported. */
+.tile-line { --tl-span: 19; position: relative; width: 100%; margin-top: 1.4rem; }
+.tile-line [data-tl-offset] { left: calc(100% * var(--tl-offset, 0) / var(--tl-span)); }
+.tile-line [data-tl-offset='1'] { --tl-offset: 1; }
+.tile-line [data-tl-offset='3'] { --tl-offset: 3; }
+.tile-line [data-tl-offset='4'] { --tl-offset: 4; }
+.tile-line [data-tl-offset='8'] { --tl-offset: 8; }
+.tile-line [data-tl-offset='11'] { --tl-offset: 11; }
+.tile-line [data-tl-offset='14'] { --tl-offset: 14; }
+@supports (z-index: attr(data-tl-span type(<integer>))) {
+  .tile-line { --tl-span: attr(data-tl-span type(<integer>)); }
+  .tile-line [data-tl-offset] { --tl-offset: attr(data-tl-offset type(<integer>)); }
+}
 .tl-track { position: relative; display: block; height: 1px; background: linear-gradient(90deg, rgb(236 231 223 / 0.12), rgb(236 231 223 / 0.3)); }
 .tl-track i { position: absolute; top: -3px; width: 7px; height: 7px; margin-left: -3px; border-radius: 50%; background: #0b0b0b; box-shadow: inset 0 0 0 1px rgb(236 231 223 / 0.45); }
 .tl-track i.tl-now { background: var(--amber); box-shadow: 0 0 0 0 rgb(232 184 106 / 0.6); animation: ping-amber 1.8s ease-out infinite; }
@@ -515,7 +528,16 @@ html:not(.js-rails) .clip-pause, .clip-pause[hidden] { display: none; }
 .jd-dot { position: absolute; z-index: 1; inset: 33%; border-radius: 50%; border: 0.4cqmin solid #ee9b6b; animation: dot-pop 0.34s cubic-bezier(0.3, 1.7, 0.5, 1) var(--delay, 0ms) both; }
 @keyframes dot-pop { from { transform: scale(0); opacity: 0; } }
 .jd-ripple { position: absolute; z-index: 0; inset: 8%; border-radius: 50%; background: radial-gradient(circle, rgb(238 155 107 / 0.55), rgb(238 155 107 / 0) 70%); opacity: 0; pointer-events: none; }
-.jd-piece { position: absolute; z-index: 2; left: calc(var(--x) * 12.5% + 1.25%); top: calc(var(--y) * 12.5% + 1.25%); width: 10%; aspect-ratio: 1; border-radius: 50%; transition: translate 0.24s cubic-bezier(0.3, 1.5, 0.5, 1), scale 0.24s cubic-bezier(0.3, 1.5, 0.5, 1), filter 0.24s, box-shadow 0.3s; }
+/* Starting squares (joj-screens.tsx); the demo sets --x and --y as the pieces move. */
+.jd-piece { position: absolute; z-index: 2; left: calc(var(--x, 0) * 12.5% + 1.25%); top: calc(var(--y, 0) * 12.5% + 1.25%); width: 10%; aspect-ratio: 1; border-radius: 50%; transition: translate 0.24s cubic-bezier(0.3, 1.5, 0.5, 1), scale 0.24s cubic-bezier(0.3, 1.5, 0.5, 1), filter 0.24s, box-shadow 0.3s; }
+.jd-piece[data-x='1'] { --x: 1; }
+.jd-piece[data-x='2'] { --x: 2; }
+.jd-piece[data-x='3'] { --x: 3; }
+.jd-piece[data-x='4'] { --x: 4; }
+.jd-piece[data-x='5'] { --x: 5; }
+.jd-piece[data-x='6'] { --x: 6; }
+.jd-piece[data-x='7'] { --x: 7; }
+.jd-piece[data-y='7'] { --y: 7; }
 .jd-flying { z-index: 4; transition: none; }
 .jd-piece::after { content: ''; position: absolute; border-radius: 50%; }
 .jd-white { background: radial-gradient(circle at 42% 35%, #fffaf1, #ece3d3 55%, #cdbfa8); box-shadow: 0 0.7cqmin 0 #a99b84, 0 1.4cqmin 2cqmin rgb(0 0 0 / 0.45); }
@@ -639,13 +661,22 @@ pre.rf-code { margin: 0; width: 100%; height: 100%; padding: 1.2rem 1.4rem; font
 /* each swatch is drawn small but taps as 44px: the button is the tap area, its circle is a ::before */
 .pool-colors { display: flex; flex-wrap: wrap; gap: 0; margin-inline: -0.5rem; }
 .pool-colors button { all: unset; position: relative; box-sizing: border-box; width: 2.75rem; height: 2.75rem; cursor: pointer; }
+/* Match COLORS in pool-tiles-domain.ts. */
+.pool-colors [data-pool-color='#0000ff'] { --c: #0000ff; }
+.pool-colors [data-pool-color='#3365ff'] { --c: #3365ff; }
+.pool-colors [data-pool-color='#65ccff'] { --c: #65ccff; }
+.pool-colors [data-pool-color='#ffffff'] { --c: #ffffff; }
+.pool-colors [data-pool-color='#ffff00'] { --c: #ffff00; }
+.pool-colors [data-pool-color='#ff9900'] { --c: #ff9900; }
+.pool-colors [data-pool-color='#ff3300'] { --c: #ff3300; }
 .pool-colors button::before { content: ''; position: absolute; inset: 0.525rem; border-radius: 50%; background: var(--c); box-shadow: inset 0 0 0 1px rgb(0 0 0 / 0.25); transition: transform 0.3s var(--ease), box-shadow 0.3s; }
 .pool-colors button:hover::before { transform: scale(1.1); }
 .pool-colors button[aria-pressed='true']::before { transform: scale(1.12); box-shadow: 0 0 0 2px #0b0b0b, 0 0 0 3.5px var(--amber); }
 .pool-colors button:focus-visible { outline: 1px solid var(--amber); outline-offset: -2px; border-radius: 50%; }
 /* the light lines between tiles are the grout */
 .pool-frame { width: 100%; height: var(--pool-h); }
-.pool-grid { display: grid; grid-template: repeat(var(--rows), 1fr) / repeat(var(--cols), 1fr); gap: 1px; padding: 1px; width: min(100%, calc(var(--pool-h) * var(--cols) / var(--rows))); aspect-ratio: var(--cols) / var(--rows); background: #b9c4c9; border-radius: 4px; user-select: none; -webkit-user-select: none; }
+/* Opening dimensions match DEFAULT_SIZE in pool-tiles-domain.ts; the game overrides them on resize. */
+.pool-grid { --rows: 9; --cols: 18; display: grid; grid-template: repeat(var(--rows), 1fr) / repeat(var(--cols), 1fr); gap: 1px; padding: 1px; width: min(100%, calc(var(--pool-h) * var(--cols) / var(--rows))); aspect-ratio: var(--cols) / var(--rows); background: #b9c4c9; border-radius: 4px; user-select: none; -webkit-user-select: none; }
 .pool-grid button { all: unset; min-width: 0; min-height: 0; background: var(--c); cursor: pointer; touch-action: manipulation; }
 .pool-grid button:hover { box-shadow: inset 0 0 0 2px rgb(0 0 0 / 0.28); }
 .pool-grid button:focus-visible { position: relative; z-index: 1; outline: 2px solid var(--amber); }
@@ -722,7 +753,14 @@ pre.rf-code { margin: 0; width: 100%; height: 100%; padding: 1.2rem 1.4rem; font
 .career-index a:hover b, .career-index a[data-picked] b { color: var(--amber); }
 .career-index a:focus-visible { outline: 1px solid rgb(232 184 106 / 0.6); outline-offset: 4px; border-radius: 4px; }
 .js-rails .career-index:not([data-shown]) li { opacity: 0; }
-.career-index[data-shown] li { animation: credit-in 0.9s var(--ease) both; animation-delay: calc(0.15s + var(--i, 0) * 0.07s); }
+.career-index[data-shown] li { animation: credit-in 0.9s var(--ease) both; animation-delay: calc(0.15s + var(--credit-index, 0) * 0.07s); }
+.career-index > :nth-child(2) { --credit-index: 1; }
+.career-index > :nth-child(3) { --credit-index: 2; }
+.career-index > :nth-child(4) { --credit-index: 3; }
+.career-index > :nth-child(5) { --credit-index: 4; }
+.career-index > :nth-child(6) { --credit-index: 5; }
+.career-index > :nth-child(7) { --credit-index: 6; }
+.career-index > :nth-child(8) { --credit-index: 7; }
 @keyframes credit-in { from { opacity: 0; transform: translateY(10px); } }
 .job { width: min(30rem, 84vw); padding: 1.8rem 1.6rem 1.6rem; background: linear-gradient(170deg, #141210, #0b0b0b 60%); border: 1px solid var(--line); display: flex; flex-direction: column; align-items: flex-start; }
 .job-featured { width: min(52rem, 88vw); border-color: rgb(232 184 106 / 0.45); background: radial-gradient(90% 60% at 0% 0%, rgb(232 184 106 / 0.09), transparent 70%), linear-gradient(170deg, #15120e, #0b0b0b 60%); }
@@ -877,8 +915,7 @@ pre.rf-code { margin: 0; width: 100%; height: 100%; padding: 1.2rem 1.4rem; font
   .row-career .job h3 { margin-block: 0.6rem 0.5rem; }
   /* long tech lists fold to their first six on a phone, where they wrap into many lines; a last tag says how
      many more, and a press shows them in place (career.tsx, PHONE_TAGS; rails/rows.ts). Folded from the first
-     paint, so the page's height above a #clip-… doesn't change under the browser on its way there; without JS
-     there is nothing to press, and all of them show (home-page.tsx). */
+     paint, so the page's height above a #clip-… doesn't change under the browser on its way there. */
   .row-career .job-tech:not(:has([aria-expanded='true'])) li:nth-child(n+7):not(.tech-more) { display: none; }
   .row-career .job-tech .tech-more { display: block; padding: 0; border-style: dashed; background: none; }
   /* the whole chip is the button, its tap area 44px tall; open, it reads "Show fewer" (to screen readers too) */
@@ -887,5 +924,11 @@ pre.rf-code { margin: 0; width: 100%; height: 100%; padding: 1.2rem 1.4rem; font
   .tech-more button:hover { color: var(--text); }
   .tech-more button:focus-visible { outline: 2px solid var(--amber); outline-offset: 2px; }
   .row-career .job .job-tech { padding-top: 1rem; }
+}
+
+/* With scripting disabled, show every tag instead of offering a button that cannot open the list. */
+@media (scripting: none) {
+  .row-career .job-tech li:not(.tech-more) { display: block !important; }
+  .row-career .tech-more { display: none !important; }
 }
 
