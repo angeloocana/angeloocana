@@ -6,12 +6,13 @@
 //   work/moments/          each source video split into short moments (v226.json) with a thumbnail sheet (v226.jpg)
 import { spawn } from 'node:child_process'
 import { createHash } from 'node:crypto'
-import { existsSync, readFileSync, renameSync, statSync, writeFileSync } from 'node:fs'
+import { existsSync, readFileSync, statSync } from 'node:fs'
 import { homedir } from 'node:os'
 import { isAbsolute, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
 
 import { MEDIA_DIR } from './media-dir.ts'
+import { writeJsonAtomic } from './review-io.ts'
 
 /** A video piece is `seconds` long from `start`; cx/cy place the 9:16 crop (0..1), zoom > 1 crops closer.
  *  A photo piece shows a still for `seconds` with a slow zoom in or out. */
@@ -57,11 +58,6 @@ function readJson<T>(file: string, fallback: T): T {
   return existsSync(file) ? (JSON.parse(readFileSync(file, 'utf8')) as T) : fallback
 }
 
-function writeJson(file: string, data: unknown) {
-  writeFileSync(`${file}.tmp`, JSON.stringify(data, null, 1) + '\n')
-  renameSync(`${file}.tmp`, file)
-}
-
 const num = (value: unknown, fallback: number) => (typeof value === 'number' && Number.isFinite(value) ? value : fallback)
 const round = (value: number) => Math.round(value * 1000) / 1000
 
@@ -97,7 +93,7 @@ export function saveDraft(id: string, pieces: Piece[] | null): boolean {
   let same = raw && JSON.stringify(raw) === JSON.stringify(recipes()[id]?.map((p) => toRaw(toPiece(p))))
   if (!raw || same) delete drafts[id]
   else drafts[id] = raw
-  writeJson(DRAFTS, drafts)
+  writeJsonAtomic(DRAFTS, drafts)
   return Boolean(drafts[id])
 }
 
@@ -108,7 +104,7 @@ export function setCheck(id: string, state: 'kept' | null): CutCheck | null {
   let checks = loadChecks()
   if (state) checks[id] = { state, at: new Date().toISOString().slice(0, 19) + 'Z' }
   else delete checks[id]
-  writeJson(CHECKS, checks)
+  writeJsonAtomic(CHECKS, checks)
   return checks[id] ?? null
 }
 

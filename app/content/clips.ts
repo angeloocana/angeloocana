@@ -1,12 +1,13 @@
 // The home page's video row. The list itself lives in clips.json, which the local review page
 // (/review, development only) edits: reject clips, star the ones that should come first.
-import { existsSync, readFileSync, statSync, writeFileSync } from 'node:fs'
+import { existsSync, readFileSync, statSync } from 'node:fs'
 import { join } from 'node:path'
 
 import type { Lang } from '../copy.ts'
 import { takeTurns } from '../ui/public/take-turns.ts'
 import { MEDIA_DIR } from './media-dir.ts'
 import { CATEGORIES } from './public-clip-data.ts'
+import { writeJsonAtomic } from './review-io.ts'
 
 export { CATEGORIES }
 export type Category = (typeof CATEGORIES)[number]
@@ -116,7 +117,7 @@ export function loadClips(): Clip[] {
 }
 
 export function saveClips(clips: Clip[]) {
-  writeFileSync(FILE, JSON.stringify(clips, null, 1) + '\n')
+  writeJsonAtomic(FILE, clips)
 }
 
 /**

@@ -1,4 +1,4 @@
-import { existsSync, readFileSync, writeFileSync } from 'node:fs'
+import { existsSync, readFileSync } from 'node:fs'
 import { join } from 'node:path'
 
 import { Document } from './document.tsx'
@@ -7,6 +7,7 @@ import { cutState, loadChecks, loadDrafts, type CutCheck, type CutState } from '
 import { MEDIA_DIR } from '../content/media-dir.ts'
 import { assertPublicClipData } from '../content/public-clip-data.ts'
 import { publishInfo, reviewChanged } from '../content/publish.ts'
+import { withReviewLock, writeJsonAtomic } from '../content/review-io.ts'
 import { PublishStatus } from '../ui/public/publish-status.tsx'
 import { ReviewBoard } from '../ui/public/review-board.tsx'
 
@@ -38,34 +39,38 @@ export function loadNotes(): Record<string, string> {
 /** POST /review with { id, star?, rejected?, cat?, label?, captionRejected?, note? } */
 export async function saveReview(request: Request) {
   let body = (await request.json()) as Partial<Clip> & { id: string; note?: string }
-  let clips = loadClips()
-  let clip = clips.find((c) => c.id === body.id)
-  if (!clip) return Response.json({ error: 'Unknown clip' }, { status: 404 })
-  let before = JSON.stringify(clip)
-  if (body.star !== undefined) clip.star = Math.max(0, Math.min(3, Math.round(Number(body.star) || 0)))
-  if (body.rejected !== undefined) clip.rejected = Boolean(body.rejected)
-  if (body.cat !== undefined && (CATEGORIES as readonly string[]).includes(body.cat)) clip.cat = body.cat as Category
-  if (body.captionRejected !== undefined) clip.captionRejected = Boolean(body.captionRejected) || undefined
-  if (body.label) {
-    let clean = (text: unknown, fallback: string) => (typeof text === 'string' && text.trim() ? text.trim().slice(0, 120) : fallback)
-    clip.label = { en: clean(body.label.en, clip.label.en), pt: clean(body.label.pt, clip.label.pt) }
-    try {
-      assertPublicClipData(clips)
-    } catch (error) {
-      return Response.json({ error: (error as Error).message }, { status: 422 })
+  return withReviewLock(MEDIA_DIR, () => {
+    let clips = loadClips()
+    let clip = clips.find((c) => c.id === body.id)
+    if (!clip) return Response.json({ error: 'Unknown clip' }, { status: 404 })
+    let before = JSON.stringify(clip)
+    if (body.star !== undefined) clip.star = Math.max(0, Math.min(3, Math.round(Number(body.star) || 0)))
+    if (body.rejected !== undefined) clip.rejected = Boolean(body.rejected)
+    if (body.cat !== undefined && (CATEGORIES as readonly string[]).includes(body.cat)) clip.cat = body.cat as Category
+    if (body.captionRejected !== undefined) clip.captionRejected = Boolean(body.captionRejected) || undefined
+    if (body.label) {
+      let clean = (text: unknown, fallback: string) => (typeof text === 'string' && text.trim() ? text.trim().slice(0, 120) : fallback)
+      clip.label = { en: clean(body.label.en, clip.label.en), pt: clean(body.label.pt, clip.label.pt) }
+      try {
+        assertPublicClipData(clips)
+      } catch (error) {
+        return Response.json({ error: (error as Error).message }, { status: 422 })
+      }
     }
-  }
-  if (body.note !== undefined) {
-    let notes = loadNotes()
-    let note = String(body.note).trim().slice(0, 2000)
-    if (note) notes[clip.id] = note
-    else delete notes[clip.id]
-    writeFileSync(NOTES, JSON.stringify(notes, null, 1) + '\n')
-  }
-  saveClips(clips)
-  // a note isn't on the site; anything else about the clip is, so it gets published
-  if (JSON.stringify(clip) !== before) reviewChanged()
-  return Response.json(clip)
+    if (body.note !== undefined) {
+      let notes = loadNotes()
+      let note = String(body.note).trim().slice(0, 2000)
+      if (note) notes[clip.id] = note
+      else delete notes[clip.id]
+      writeJsonAtomic(NOTES, notes)
+    }
+    // A note isn't on the site; only changes to the public clip are saved and queued.
+    if (JSON.stringify(clip) !== before) {
+      saveClips(clips)
+      reviewChanged()
+    }
+    return Response.json(clip)
+  })
 }
 
 // The source filter: every clip gets one of these keys, shown as a badge and used by the filter buttons.

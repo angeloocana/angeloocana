@@ -1,12 +1,20 @@
+import { mkdtempSync, rmSync } from 'node:fs'
+import { tmpdir } from 'node:os'
+import { join } from 'node:path'
 import * as assert from 'remix/assert'
-import { describe, it } from 'remix/test'
+import { afterAll, describe, it } from 'remix/test'
 
-import { loadClips } from '../content/clips.ts'
 import { SOCIALS } from '../content.ts'
 import { COPY } from '../copy.ts'
 import { plain, postsFor } from '../content/posts.ts'
-import { router } from '../router.ts'
 import { routes } from '../routes.ts'
+
+// The router captures the media root on import; even an unknown review clip takes the lock.
+let mediaRoot = mkdtempSync(join(tmpdir(), 'review-router-'))
+process.env.ANGELOOCANA_MEDIA = mediaRoot
+let { loadClips } = await import('../content/clips.ts')
+let { router } = await import('../router.ts')
+afterAll(() => rmSync(mediaRoot, { recursive: true, force: true }))
 
 // The home page's weight on a phone: the clips past the first few come from /data/clips.json instead.
 const HOME_BUDGET = 130_000

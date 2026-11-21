@@ -9,11 +9,12 @@
 //   work/publish.lock     the pid of the publisher while it runs
 //   work/publish.log      everything the publisher printed
 import { spawn } from 'node:child_process'
-import { existsSync, mkdirSync, openSync, readFileSync, statSync, writeFileSync, renameSync } from 'node:fs'
+import { existsSync, mkdirSync, openSync, readFileSync, statSync, writeFileSync } from 'node:fs'
 import { join } from 'node:path'
 import { fileURLToPath } from 'node:url'
 
 import { MEDIA_DIR } from './media-dir.ts'
+import { writeJsonAtomic } from './review-io.ts'
 
 const WORK = join(MEDIA_DIR, 'work')
 export const PENDING = join(WORK, 'publish-pending')
@@ -54,8 +55,7 @@ export function readState(): PublishState {
 
 export function writeState(state: PublishState) {
   mkdirSync(WORK, { recursive: true })
-  writeFileSync(`${STATE}.tmp`, JSON.stringify(state, null, 1) + '\n')
-  renameSync(`${STATE}.tmp`, STATE)
+  writeJsonAtomic(STATE, state)
 }
 
 /** When the review last changed (ms), or 0. */
