@@ -11,6 +11,7 @@ export const BUNDLES = {
   // the home page: the title card's font, then the rows; its other fonts come on their own (fonts, below),
   // after the first paint on a first visit (app/actions/document.tsx)
   home: ['fonts-title.css', 'base.css', 'chrome.css', 'devices.css', 'home.css'],
+  'home-noscript': ['home-noscript.css'],
   // a post: no title card to cover a late font, so all of its fonts are in its one stylesheet
   post: ['fonts-title.css', 'fonts.css', 'base.css', 'chrome.css', 'post.css'],
   fonts: ['fonts.css'],

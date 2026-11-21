@@ -914,9 +914,3 @@ pre.rf-code { margin: 0; width: 100%; height: 100%; padding: 1.2rem 1.4rem; font
   .row-career .job .job-tech { padding-top: 1rem; }
 }
 
-/* With scripting disabled, show every tag instead of offering a button that cannot open the list. */
-@media (scripting: none) {
-  .row-career .job-tech li:not(.tech-more) { display: block !important; }
-  .row-career .tech-more { display: none !important; }
-}
-

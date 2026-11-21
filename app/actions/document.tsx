@@ -144,7 +144,7 @@ export function Document(handle: Handle<DocumentProps>) {
             <link key={style} rel="stylesheet" href={versioned(style)} />
           ))}
           {lateFonts && <link rel="stylesheet" id="fonts-more" href={lateFonts} media="print" />}
-          {lateFonts && <noscript><link rel="stylesheet" href={lateFonts} /></noscript>}
+          {lateFonts && <noscript><link rel="stylesheet" href={lateFonts} /><link rel="stylesheet" href={bundleHref('home-noscript')} /></noscript>}
           <title>{fullTitle}</title>
           {scripts !== 'cursor' && <ImportMap value={importMap} />}
           {scripts === 'islands' && <script type="module" src={href}></script>}

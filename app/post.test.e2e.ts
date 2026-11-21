@@ -1,19 +1,7 @@
-import { fileURLToPath } from 'node:url'
 import * as assert from 'remix/assert'
-import { staticFiles } from 'remix/middleware/static'
-import { createTestServer } from 'remix/node-fetch-server/test'
-import { createRouter } from 'remix/router'
 import { describe, it } from 'remix/test'
 
-function serveDist() {
-  let router = createRouter({ middleware: [staticFiles(fileURLToPath(new URL('../dist/', import.meta.url)))] })
-  return createTestServer((request) => {
-    // Wrangler resolves the URL-encoded @ in a fingerprint to the filename on disk.
-    let url = new URL(request.url)
-    if (url.pathname.startsWith('/assets/')) url.pathname = url.pathname.replaceAll('%40', '@')
-    return router.fetch(new Request(url, request))
-  })
-}
+import { serveDist } from './test-support/serve-dist.ts'
 
 const gitPost = 'blog/git/git-setup/'
 const tutorial = '/Tutoriais/DicaRapida_1_Melhorar_Performance_MVC/'
@@ -52,7 +40,8 @@ describe('posts in a browser', () => {
     })
     for (let key of ['Space', 'Enter']) {
       requests.length = 0
-      await page.goto(tutorial)
+      let response = await page.goto(tutorial)
+      assert.ok(response?.headers()['content-security-policy'], 'Play runs under the shipped CSP')
       let play = page.getByRole('button', { name: 'Tocar o vídeo (carrega o YouTube)' })
       await play.scrollIntoViewIfNeeded()
       assert.equal(await page.locator('.post-video iframe').count(), 0)
