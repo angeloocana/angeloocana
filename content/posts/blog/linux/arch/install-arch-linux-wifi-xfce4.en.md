@@ -18,7 +18,7 @@ https://www.archlinux.org/download/
 
 ### Download Rufus
 Rufus is a program to create bootable USB drivers
-https://rufus.akeo.ie/
+https://rufus.ie/en/
 
 Open rufus, select your .iso image, select your pendrive and BURN!
 

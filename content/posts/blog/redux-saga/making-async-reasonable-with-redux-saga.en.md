@@ -8,7 +8,7 @@ tags:
   - ES6
 ---
 
-<img style="max-width: 100%; display: block; margin: 3rem auto;" alt="Redux Saga Logo" src="https://angeloocana.com/imgs/Redux-Saga-Logo-Landscape.png" title="Redux saga logo" />
+<img style="max-width: 100%; display: block; margin: 3rem auto;" alt="Redux Saga Logo" src="/imgs/Redux-Saga-Logo-Landscape.png" width="800" height="167" title="Redux saga logo" />
 
 Redux-saga + the Yield keyword are the most powerful tool I've ever seen in the JavaScript world to manage side-effects (API calls, DBs, log, ...)
 
@@ -48,7 +48,7 @@ I hope you can learn new things and improve the reasonability of your code. =D
 
 # What is redux-saga?
 
-- Redux middleware <img style="max-height: 25px;" alt="Redux Logo" src="https://angeloocana.com/imgs/redux-2.png" title="Redux logo" />
+- Redux middleware <img style="width: auto; height: 25px;" alt="Redux Logo" src="/imgs/redux-2.png" width="537" height="512" title="Redux logo" />
 
 - Manages side effects (API, DB, logs, etc.)
 
@@ -147,7 +147,7 @@ Code is always compact
 
 # Yield
 
-## Advantages <img style="max-height: 45px; transform: translateY(4px);" alt="Positive" src="https://angeloocana.com/imgs/positive.svg" title="Advantages" />
+## Advantages <img style="width: auto; height: 45px; transform: translateY(4px);" alt="Positive" src="/imgs/positive.svg" width="512" height="512" title="Advantages" />
 
 - Fewer lines of code
 
@@ -160,7 +160,7 @@ Code is always compact
 - Execution stops on unhandled error
 
 
-## Disadvantages <img style="max-height: 45px; transform: translateY(19px);" alt="Negative" src="https://angeloocana.com/imgs/negative.svg" title="Disadvantages" />
+## Disadvantages <img style="width: auto; height: 45px; transform: translateY(19px);" alt="Negative" src="/imgs/negative.svg" width="512" height="512" title="Disadvantages" />
 
 - Only works inside Generator Functions
 
@@ -466,6 +466,6 @@ function* logErrors() {
 
 - Advanced Redux https://app.pluralsight.com/library/courses/advanced-redux
 
-- Async React with Redux Saga https://egghead.io/courses/async-react-with-redux-saga
+- [Async React with Redux Saga](https://web.archive.org/web/20241007040931/https://egghead.io/courses/async-react-with-redux-saga)
 
 - Redux Saga docs https://redux-saga.js.org/

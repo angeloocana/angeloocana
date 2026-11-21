@@ -13,5 +13,4 @@ com material gratuíto para aprender Francês.
 
 ## Links
 
- - Learn French with Vincent
-    https://www.youtube.com/watch?v=AdfwQXJ0ZVM
+ - [Learn French with Vincent](https://www.youtube.com/watch?v=keBSvVsEibI)

@@ -33,5 +33,6 @@ const entry = 'app/actions/public/entry.ts'
 
 export const scriptEntry = await assets.getScriptEntry(entry)
 
-// The pointer's ring: a plain script, all a post needs (app/ui/public/cursor.ts)
+// Posts use the pointer ring and, on video tutorials only, a click-to-load player.
 export const cursorEntry = await assets.getScriptEntry('app/ui/public/cursor.ts')
+export const postVideoEntry = await assets.getScriptEntry('app/ui/public/post-video.ts')

@@ -4,12 +4,14 @@ import { staticFiles } from 'remix/middleware/static'
 
 import controller from './actions/controller.tsx'
 import { assets } from './assets.ts'
+import { legacyBlogAssets } from './content/legacy-blog-assets.ts'
 import { MEDIA_DIR } from './content/media-dir.ts'
 import { routes } from './routes.ts'
 
 export const router = createRouter({
   middleware: [
     staticFiles('./public', { index: false }),
+    staticFiles('./legacy/static', { index: false, filter: (path) => legacyBlogAssets.includes(path) }),
     // videos and screenshots, from the shared media folder outside the repo
     staticFiles(MEDIA_DIR, { index: false, filter: (path) => path.startsWith('media/') }),
     // without the islands' <link rel="modulepreload">s: on a phone they raced the first screen's stylesheet

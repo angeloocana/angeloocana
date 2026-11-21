@@ -66,9 +66,9 @@ function Flag(handle: Handle<{ lang: Lang }>) {
  * The fixed menu. On the home page the links jump to sections; elsewhere they go back home first.
  * Both flags always show; the current language is lit. `langHref` says where each flag leads.
  */
-export function SiteNav(handle: Handle<{ lang: Lang; t: Copy; home?: boolean; langHref: Record<Lang, string> }>) {
+export function SiteNav(handle: Handle<{ lang: Lang; t: Copy; home?: boolean; post?: boolean; langHref: Record<Lang, string> }>) {
   return () => {
-    let { home, lang, langHref, t } = handle.props
+    let { home, post, lang, langHref, t } = handle.props
     let base = home ? '' : lang === 'pt' ? '/pt/' : '/'
     // On the home page these are #links within it, and data-rmx-document leaves them to the browser, which
     // only scrolls. Without it Remix's client navigation takes a #link to the URL you are already on
@@ -78,8 +78,8 @@ export function SiteNav(handle: Handle<{ lang: Lang; t: Copy; home?: boolean; la
     let inPage = home ? true : undefined
     return (
       <header class="cin-nav">
-        {home && <a class="skip-link" href="#main" data-rmx-document>{t.nav.skip}</a>}
-        <a href={home ? '#top' : base} data-rmx-document={inPage} class="cin-mark" aria-label={`Ângelo Ocanã · ${t.nav.top}`}>ÂO</a>
+        {(home || post) && <a class="skip-link" href="#main" data-rmx-document={inPage}>{t.nav.skip}</a>}
+        <a href={home ? '#top' : base} data-rmx-document={inPage} class="cin-mark" aria-label={`${post ? 'ÂO · ' : ''}Ângelo Ocanã · ${t.nav.top}`}>ÂO</a>
         {/* Phones show the first two sections and More; the rest open under it as a small list. On the home
             page More is a native <details>, so it opens before the scripts have loaded and without JS;
             rails/nav.ts adds the scrim, Escape, a tap outside and the focus. Wide screens show all six in one

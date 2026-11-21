@@ -18,7 +18,7 @@ https://www.archlinux.org/download/
 
 ### Baixar Rufus
 Rufus é um programa pra criar pendrives bootaveis apartir de arquivos .iso
-https://rufus.akeo.ie/
+https://rufus.ie/pt_BR/
 
 Abra o rufus, seleciona o seu arquivo .iso, selecione o local do pendrive e BURN!
 

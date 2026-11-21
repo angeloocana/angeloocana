@@ -59,6 +59,30 @@ export function plain(markdown: string) {
     .trim()
 }
 
+const postRenderer = new marked.Renderer()
+postRenderer.image = function (image) {
+  let html = marked.Renderer.prototype.image.call(this, image)
+  // The old language posts use YouTube's 480×360 thumbnails as video links.
+  return /^https:\/\/img\.youtube\.com\/vi\/[\w-]{11}\/0\.jpg$/.test(image.href)
+    ? html.replace('<img ', '<img loading="lazy" width="480" height="360" ')
+    : html
+}
+
+function renderBody(body: string) {
+  let headings: number[] = []
+  return marked.parse(body, {
+    async: false,
+    renderer: postRenderer,
+    walkTokens(token) {
+      // The page title is H1. Preserve the author's relative hierarchy below it,
+      // even in posts whose first heading is a Markdown H1 or H3.
+      if (token.type !== 'heading') return
+      while (headings.length && headings[headings.length - 1] >= token.depth) headings.pop()
+      token.depth = Math.min(6, headings.push(token.depth) + 1)
+    },
+  })
+}
+
 function load(): Post[] {
   return files(ROOT).map((file) => {
     let rel = relative(ROOT, file).replace(/\\/g, '/')
@@ -78,7 +102,7 @@ function load(): Post[] {
       youtubeId,
       excerpt: text.length > 170 ? `${text.slice(0, 170).replace(/\s+\S*$/, '')}…` : text,
       minutes: Math.max(1, Math.round(words / 220)),
-      html: marked.parse(body, { async: false }) as string,
+      html: renderBody(body),
     }
   })
 }
