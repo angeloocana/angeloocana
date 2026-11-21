@@ -103,7 +103,7 @@ export function heroClipUrl(id: string, cut: 'phone' | 'tile') {
 function clipMediaVersion(key: string) {
   if (process.env.NODE_ENV === 'development') {
     let file = join(MEDIA_DIR, 'media', key)
-    if (existsSync(file)) return Math.round(statSync(file).mtimeMs / 1000).toString(36)
+    if (existsSync(file)) return Math.round(statSync(file).mtimeMs).toString(36)
   }
   return MEDIA_VERSIONS[key]
 }
