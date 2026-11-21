@@ -65,8 +65,9 @@ async function recordClip(page: Page): Promise<Buffer> {
 // a returning visitor: no title card in the way
 let open = async (page: Page, path: string) => {
   await page.addInitScript(() => { try { localStorage.setItem('ao-intro', '1') } catch {} })
-  await page.goto(path, { waitUntil: 'load' })
+  let response = await page.goto(path, { waitUntil: 'load' })
   await page.waitForFunction(() => document.documentElement.classList.contains('js-rails'))
+  return response
 }
 let scrollTo = (page: Page, id: string) => page.evaluate((id) => document.getElementById(id)!.scrollIntoView({ behavior: 'instant' }), id)
 // the card at the start of a row: where its first card sits when the row is not scrolled
@@ -179,7 +180,8 @@ describe('home page in a browser', () => {
       document.addEventListener('securitypolicyviolation', (event) => capture?.(event.effectiveDirective, event.blockedURI))
     })
     for (let path of ['/', '/pt/', '/offline-plugin-app-shell-fallback/']) {
-      await open(page, path)
+      let response = await open(page, path)
+      assert.ok(response?.headers()['content-security-policy'], path)
       assert.ok(await page.evaluate(() => document.documentElement.classList.contains('cin-seen')), 'the hashed intro ran')
     }
     assert.deepEqual(violations, [])

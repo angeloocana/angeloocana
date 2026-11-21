@@ -15,10 +15,7 @@ export function Hero(handle: Handle<{ lang: Lang; t: Copy; clips: Clip[] }>) {
     let { clips, lang, t } = handle.props
     let career = careerFor(lang)
     let now = career[0]
-    let first = Number(career[career.length - 1].start)
-    let span = new Date().getFullYear() - first
-    let offset = (start: string) => Number(start) - first
-    let currentOffset = offset(now.start)
+    let first = career[career.length - 1].start
     let clip = clips[0]
     let tiles = t.hi.tiles
     return (
@@ -73,12 +70,12 @@ export function Hero(handle: Handle<{ lang: Lang; t: Copy; clips: Clip[] }>) {
                 {(now.highlights ?? []).map((h) => <li key={h.title}>{h.title}</li>)}
               </ul>
             </div>
-            <div class="tile-line" aria-hidden="true" data-tl-span={span}>
+            <div class="tile-line" aria-hidden="true">
               <span class="tl-track">
-                {career.map((job) => <i key={job.id} class={job.end === 'Now' ? 'tl-now' : ''} data-tl-offset={offset(job.start)} />)}
-                <b data-tl-offset={currentOffset} />
+                {career.map((job) => <i key={job.id} class={job.end === 'Now' ? 'tl-now' : ''} data-tl-year={job.start} />)}
+                <b data-tl-year={now.start} />
               </span>
-              <span class="tl-years"><span>{first}</span><span data-tl-offset={currentOffset}>{now.start}</span><span>{t.career.now}</span></span>
+              <span class="tl-years"><span>{first}</span><span data-tl-year={now.start}>{now.start}</span><span>{t.career.now}</span></span>
             </div>
             <p class="tile-foot">{tiles.career.since(career.length, String(first))}</p>
           </li>

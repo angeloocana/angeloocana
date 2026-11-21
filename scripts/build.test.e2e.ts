@@ -72,6 +72,7 @@ describe('static build CSP', () => {
       assert.deepEqual(directives.get('img-src'), ["'self'", 'data:', 'https://img.youtube.com', 'https://angeloocana.com/imgs/'], path)
       assert.deepEqual(directives.get('frame-src'), ['https://www.youtube-nocookie.com'], path)
       let html = await readFile(local, 'utf8')
+      assert.doesNotMatch(html, /<style\b|<[a-z][^>]*\sstyle\s*=/i, path)
       let scripts = [...html.matchAll(/<script\b([^>]*)>([^]*?)<\/script\s*>/gi)]
       let inline = scripts.filter(([, attrs]) => !/\ssrc\s*=/i.test(attrs) && !/\stype="application\/json"/i.test(attrs))
       if (home) {

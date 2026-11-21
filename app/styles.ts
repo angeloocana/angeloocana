@@ -1,6 +1,8 @@
 import { createHash } from 'node:crypto'
 import { readFileSync } from 'node:fs'
 
+import { CAREER } from './content/career.ts'
+
 // The stylesheets a page loads: each kind of page gets one file, put together from the parts in
 // public/styles/, so the first screen waits on one stylesheet instead of five. Each file's URL carries a
 // hash of its contents (/css/home.Ab12Cd34.css), so the built site can cache /css/ for a year
@@ -20,9 +22,21 @@ export function isBundle(name: string): name is Bundle {
   return Object.hasOwn(BUNDLES, name)
 }
 
+// Position the home timeline against the year of the build, not a fixed calendar year in home.css.
+const currentYear = new Date().getFullYear()
+function timelineCss(): string {
+  let first = Number(CAREER[CAREER.length - 1].start)
+  let years = new Set(CAREER.map((job) => Number(job.start)))
+  return [...years].map((year) => {
+    let left = ((year - first) / (currentYear - first)) * 100
+    return `.tile-line [data-tl-year="${year}"] { left: ${left}%; }`
+  }).join('\n')
+}
+
 // read on every call: in development an edited stylesheet shows on the next load
 export function bundleCss(name: Bundle): string {
-  return BUNDLES[name].map((part) => readFileSync(`public/styles/${part}`, 'utf8')).join('\n')
+  let css = BUNDLES[name].map((part) => readFileSync(`public/styles/${part}`, 'utf8')).join('\n')
+  return name === 'home' ? `${css}\n${timelineCss()}` : css
 }
 
 export function bundleHref(name: Bundle): string {

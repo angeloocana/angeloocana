@@ -238,21 +238,9 @@ html:not(.js-rails) .rail-bar { visibility: hidden; }
 .tile-projects { display: grid; gap: 0.25rem; align-content: space-evenly; max-height: 15rem; }
 .tile-projects li { font: 400 clamp(1.25rem, 0.8rem + 1vw, 1.8rem)/1.15 var(--serif); color: #c9c2b6; }
 .tile-projects li::before { content: ''; display: inline-block; width: 6px; height: 6px; margin-right: 0.7rem; vertical-align: 0.2em; border-radius: 50%; background: rgb(232 184 106 / 0.55); }
-/* the timeline follows the list (not pinned to the tile's foot), so the two read as one */
-/* Position each mark by years since the first job. The fallbacks use the 2007–2026 timeline;
-   typed attr() reads the current span and offsets from hero.tsx where supported. */
-.tile-line { --tl-span: 19; position: relative; width: 100%; margin-top: 1.4rem; }
-.tile-line [data-tl-offset] { left: calc(100% * var(--tl-offset, 0) / var(--tl-span)); }
-.tile-line [data-tl-offset='1'] { --tl-offset: 1; }
-.tile-line [data-tl-offset='3'] { --tl-offset: 3; }
-.tile-line [data-tl-offset='4'] { --tl-offset: 4; }
-.tile-line [data-tl-offset='8'] { --tl-offset: 8; }
-.tile-line [data-tl-offset='11'] { --tl-offset: 11; }
-.tile-line [data-tl-offset='14'] { --tl-offset: 14; }
-@supports (z-index: attr(data-tl-span type(<integer>))) {
-  .tile-line { --tl-span: attr(data-tl-span type(<integer>)); }
-  .tile-line [data-tl-offset] { --tl-offset: attr(data-tl-offset type(<integer>)); }
-}
+/* the timeline follows the list (not pinned to the tile's foot), so the two read as one;
+   app/styles.ts adds the positions for data-tl-year to the same stylesheet. */
+.tile-line { position: relative; width: 100%; margin-top: 1.4rem; }
 .tl-track { position: relative; display: block; height: 1px; background: linear-gradient(90deg, rgb(236 231 223 / 0.12), rgb(236 231 223 / 0.3)); }
 .tl-track i { position: absolute; top: -3px; width: 7px; height: 7px; margin-left: -3px; border-radius: 50%; background: #0b0b0b; box-shadow: inset 0 0 0 1px rgb(236 231 223 / 0.45); }
 .tl-track i.tl-now { background: var(--amber); box-shadow: 0 0 0 0 rgb(232 184 106 / 0.6); animation: ping-amber 1.8s ease-out infinite; }
