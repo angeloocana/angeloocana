@@ -259,7 +259,9 @@ export const ReviewBoard = clientEntry(import.meta.url, function ReviewBoard(han
       () => Boolean(editedField()) || [...actions.values()].some((card) => card.pending()),
       async () => {
         editedField()?.blur()
-        await Promise.all([...actions.values()].map((card) => card.settle()))
+        let activeCards = [...actions].filter(([, card]) => card.pending())
+        await Promise.all(activeCards.map(([, card]) => card.settle()))
+        return activeCards.every(([element]) => !element.classList.contains('is-error'))
       },
       signal,
     )

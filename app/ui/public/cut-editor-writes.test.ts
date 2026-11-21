@@ -82,7 +82,7 @@ it('waits for the save body, rebuilds the clicked snapshot, then saves the newer
   let third = await cut.next(2)
   assert.deepEqual(third.body, { action: 'save', pieces: [piece(0.6)] })
   third.reply(Response.json({ draft: true }))
-  await laterSave
+  assert.equal(await laterSave, true)
   assert.equal(cut.state.hasDraft, true)
   assert.equal(cut.state.unsaved, false)
   assert.equal(cut.pending(), false)
@@ -161,8 +161,18 @@ it('keeps a failed older rebuild visible after the newer draft is saved', async 
   assert.deepEqual(newer.body, { action: 'save', pieces: [piece(0.4)] })
   assert.equal(cut.pending(), true)
   newer.reply(Response.json({ draft: true }))
-  await leaving
+  assert.equal(await leaving, false)
   assert.match(cut.state.status, /^Saved as a draft/)
   assert.equal(cut.state.rebuildError, 'Rebuild failed: Render failed.')
   assert.equal(cut.pending(), false)
+})
+
+it('reports a failed keep to the navigation guard even when the queue is empty', async (t) => {
+  let cut = editor(t)
+  void cut.mark('keep')
+  let leaving = cut.settle()
+  ;(await cut.next(0)).reply(Response.json({ error: 'Could not update cut.' }, { status: 500 }))
+  assert.equal(await leaving, false)
+  assert.equal(cut.pending(), false)
+  assert.match(cut.state.status, /Could not update cut/)
 })

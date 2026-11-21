@@ -1,9 +1,11 @@
 /** Wait for review writes on ordinary links; do not lose drafts silently on reload or back. */
-export function guardReviewNavigation(pending: () => boolean, settle: () => Promise<void>, signal: AbortSignal) {
+export function guardReviewNavigation(pending: () => boolean, settle: () => Promise<boolean>, signal: AbortSignal) {
   let attempt = 0
   let leaving = false
+  window.addEventListener('pageshow', () => { leaving = false }, { signal })
   window.addEventListener('beforeunload', (event) => {
-    if (leaving || !pending()) return
+    if (leaving) { leaving = false; return }
+    if (!pending()) return
     event.preventDefault()
     event.returnValue = ''
   }, { signal })
@@ -16,10 +18,10 @@ export function guardReviewNavigation(pending: () => boolean, settle: () => Prom
     if (!pending()) return
     event.preventDefault()
     let current = ++attempt
-    let waited = true
-    try { await settle() } catch { waited = false }
+    let waited = false
+    try { waited = await settle() } catch {}
     if (signal.aborted || current !== attempt) return
-    if ((!waited || pending()) && !window.confirm('Some edits still aren’t saved. Leave this page anyway?')) return
+    if ((!waited || pending()) && !window.confirm('Some changes could not be confirmed. Leave this page anyway?')) return
     leaving = true
     location.assign(url.href)
   }, { signal })

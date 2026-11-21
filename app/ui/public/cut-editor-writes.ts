@@ -42,6 +42,7 @@ export function createCutWrites(id: string, initial: Initial, { fetch, signal, u
   }
   let tail = Promise.resolve()
   let pendingWrites = 0
+  let failedWrites = 0
   let revision = 0
   let noteRevision = 0
   let note = ''
@@ -77,6 +78,7 @@ export function createCutWrites(id: string, initial: Initial, { fetch, signal, u
         result = { error: 'Could not reach the review server.' }
       }
       if (signal.aborted) return
+      if ('error' in result) failedWrites++
       done(result)
       update()
     })
@@ -221,10 +223,12 @@ export function createCutWrites(id: string, initial: Initial, { fetch, signal, u
   return {
     state, changed, save, rebuild, discard, mark, saveNote, retryNote: writeNote,
     pending: () => Boolean(pendingWrites || saveTimer || noteTimer || state.unsaved || state.noteError),
-    settle() {
+    async settle() {
+      let failures = failedWrites
       if (saveTimer) void save()
       if (noteTimer) void writeNote()
-      return tail
+      await tail
+      return failures === failedWrites
     },
   }
 }
