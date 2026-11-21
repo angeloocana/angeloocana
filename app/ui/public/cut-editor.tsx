@@ -3,6 +3,7 @@ import type { Handle } from 'remix/component'
 
 import type { CutCheck, Moment, Piece, Source } from '../../content/cuts.ts'
 import type { PublishInfo } from '../../content/publish.ts'
+import { createCutWrites } from './cut-editor-writes.ts'
 import { PublishStatus } from './publish-status.tsx'
 
 // The local cut editor (/review/cut/:id). On the right, every short moment of the clip's source videos:
@@ -38,7 +39,6 @@ const MIN_OVERLAP = 0.15
 const round = (n: number) => Math.round(n * 100) / 100
 const overlap = (a0: number, a1: number, b0: number, b1: number) => Math.max(0, Math.min(a1, b1) - Math.max(a0, b0))
 const end = (p: Piece & { kind: 'vid' }) => p.start + p.secs
-const clone = (pieces: Piece[]) => pieces.map((p) => ({ ...p }))
 const day = (at: string) => new Date(at).toLocaleDateString('en', { month: 'short', day: 'numeric' })
 const sourceUrl = (path: string) => `/review/source?path=${encodeURIComponent(path)}`
 function time(seconds: number) {
@@ -53,18 +53,22 @@ export const CutEditor = clientEntry(import.meta.url, function CutEditor(handle:
   let { clip, sources, next, progress } = handle.props
   let byPath = new Map(sources.map((s) => [s.path, s]))
   let byId = new Map(sources.map((s) => [s.id, s]))
-  let current = clone(handle.props.current)
-  let pieces = clone(handle.props.draft ?? current)
-  let hasDraft = Boolean(handle.props.draft)
-  let video = handle.props.video
-  let note = handle.props.note
-  let check = handle.props.check
-  // checked = edited or kept, with no draft waiting (the same rule as the marks on /review)
-  let isChecked = () => Boolean(check) && !hasDraft && !clip.rejected
+  let writes = createCutWrites(clip.id, handle.props, {
+    fetch: (url, init) => fetch(url, init),
+    signal: handle.signal,
+    update: () => handle.update(),
+    discarded: () => {
+      focus = cut.pieces.length ? 0 : -1
+      showFocus()
+    },
+    rebuilt: () => window.dispatchEvent(new Event('review:changed')),
+  })
+  let cut = writes.state
+  // checked = edited or kept, with no draft or unsaved edits waiting
+  let isChecked = () => Boolean(cut.check) && !cut.hasDraft && !cut.unsaved && !clip.rejected
   let othersChecked = progress.checked - Number(isChecked())
-  let status = ''
-  let busy = false
-  let focus = pieces.length ? 0 : -1
+  let previewError = ''
+  let focus = cut.pieces.length ? 0 : -1
   let playing = -1
   let wide = false
   let picker = false
@@ -76,90 +80,28 @@ export const CutEditor = clientEntry(import.meta.url, function CutEditor(handle:
     let id = path && byPath.get(path)?.id
     if (id && !panels.includes(id)) panels.push(id)
   }
-  for (let p of [...current, ...pieces]) if (p.kind === 'vid') addPanel(p.path)
+  for (let p of [...cut.current, ...cut.pieces]) if (p.kind === 'vid') addPanel(p.path)
   addPanel(handle.props.ownSource)
   let sets = new Map<string, MomentSet | 'loading' | 'failed'>()
 
-  // ---- saving ----
-
-  let saveTimer: ReturnType<typeof setTimeout> | undefined
-  async function post(body: Record<string, unknown>) {
-    let response = await fetch(`/review/cut/${clip.id}`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) })
-    return (await response.json().catch(() => ({ error: `Error ${response.status}` }))) as { draft?: boolean; error?: string; video?: string; current?: Piece[]; check?: CutCheck | null }
-  }
-  function changed() {
-    status = 'Saving…'
-    handle.update()
-    clearTimeout(saveTimer)
-    saveTimer = setTimeout(async () => {
-      if (!pieces.length) {
-        status = 'Pick at least one moment.'
-        return handle.update()
-      }
-      let result = await post({ action: 'save', pieces })
-      hasDraft = Boolean(result.draft)
-      status = result.error ?? (hasDraft ? 'Saved as a draft. Rebuild to put it in the clip.' : 'Same as the clip now.')
-      handle.update()
-    }, 500)
-  }
-  async function rebuild() {
-    clearTimeout(saveTimer)
-    busy = true
-    status = 'Rebuilding the video…'
-    handle.update()
-    let result = await post({ action: 'rebuild', pieces })
-    busy = false
-    if (result.error) status = `Rebuild failed: ${result.error}`
-    else {
-      current = clone(result.current ?? pieces)
-      hasDraft = false
-      if (result.check !== undefined) check = result.check
-      video = result.video ?? video
-      status = 'Rebuilt: the clip now uses this cut.'
-      window.dispatchEvent(new Event('review:changed'))
-    }
-    handle.update()
-  }
-  async function undo() {
-    clearTimeout(saveTimer)
-    pieces = clone(current)
-    focus = pieces.length ? 0 : -1
-    let result = await post({ action: 'discard' })
-    hasDraft = Boolean(result.draft)
-    status = result.error ?? 'Back to the cut the clip uses now.'
-    handle.update()
-    showFocus()
-  }
-  /** Mark the cut as fine as it is ('keep'), or take the mark off ('uncheck'). */
-  async function mark(action: 'keep' | 'uncheck') {
-    let result = await post({ action })
-    if (result.error) status = result.error
-    else check = result.check ?? null
-    handle.update()
-  }
   function checkState() {
-    if (hasDraft) return <p class="ce-check" data-state="draft">Draft: rebuild the video to use it, or undo your changes.</p>
+    if (cut.unsaved) return <p class="ce-check" data-state="draft">Unsaved changes to your cut.</p>
+    if (cut.hasDraft) return <p class="ce-check" data-state="draft">Draft: rebuild the video to use it, or undo your changes.</p>
+    let { check, marking, busy } = cut
     if (!check) {
       return (
         <p class="ce-check" data-state="todo">
           <span>Not checked yet.</span>
-          <button type="button" class="ce-keep" mix={on('click', () => mark('keep'))}>✓ Keep this cut</button>
+          <button type="button" class="ce-keep" disabled={marking || Boolean(busy)} mix={on('click', () => writes.mark('keep'))}>✓ Keep this cut</button>
         </p>
       )
     }
     return (
       <p class="ce-check" data-state={check.state}>
         <span>{check.state === 'edited' ? `✓ Edited ${day(check.at)}` : `✓ Kept as it was · ${day(check.at)}`}</span>
-        <button type="button" class="ce-uncheck" mix={on('click', () => mark('uncheck'))}>Mark not checked</button>
+        <button type="button" class="ce-uncheck" disabled={marking || Boolean(busy)} mix={on('click', () => writes.mark('uncheck'))}>Mark not checked</button>
       </p>
     )
-  }
-
-  let noteTimer: ReturnType<typeof setTimeout> | undefined
-  function saveNote(text: string) {
-    note = text
-    clearTimeout(noteTimer)
-    noteTimer = setTimeout(() => fetch('/review', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id: clip.id, note }) }), 400)
   }
 
   // ---- moments ----
@@ -193,21 +135,22 @@ export const CutEditor = clientEntry(import.meta.url, function CutEditor(handle:
 
   /** The framing to use for a new piece of this video: the nearest piece of it that is already framed. */
   function framingFor(path: string, at: number) {
-    let near = [...pieces, ...current]
+    let near = [...cut.pieces, ...cut.current]
       .filter((p): p is Piece & { kind: 'vid' } => p.kind === 'vid' && p.path === path)
       .sort((a, b) => Math.abs(a.start - at) - Math.abs(b.start - at))[0]
     return near ? { cx: near.cx, zoom: near.zoom, cy: near.cy } : { cx: 0.5, zoom: 1, cy: 0.5 }
   }
 
   function addRange(path: string, a: number, b: number) {
+    let { pieces } = cut
     let touching = pieces.flatMap((p, i) => (p.kind === 'vid' && p.path === path && p.start <= b + 0.05 && end(p) >= a - 0.05 ? [i] : []))
     if (touching.length) {
       let first = pieces[touching[0]] as Piece & { kind: 'vid' }
       let s = Math.min(a, ...touching.map((i) => (pieces[i] as Piece & { kind: 'vid' }).start))
       let e = Math.max(b, ...touching.map((i) => end(pieces[i] as Piece & { kind: 'vid' })))
       let merged: Piece = { ...first, start: round(s), secs: round(e - s) }
-      pieces = pieces.flatMap((p, i) => (i === touching[0] ? [merged] : touching.includes(i) ? [] : [p]))
-      focus = pieces.indexOf(merged)
+      cut.pieces = pieces.flatMap((p, i) => (i === touching[0] ? [merged] : touching.includes(i) ? [] : [p]))
+      focus = cut.pieces.indexOf(merged)
       return
     }
     let piece: Piece = { kind: 'vid', path, start: round(a), secs: round(b - a), ...framingFor(path, a) }
@@ -219,14 +162,15 @@ export const CutEditor = clientEntry(import.meta.url, function CutEditor(handle:
   }
 
   function removeRange(path: string, a: number, b: number) {
-    let kept = pieces[focus]
-    pieces = pieces.flatMap((p) => {
+    let kept = cut.pieces[focus]
+    let pieces = cut.pieces.flatMap((p) => {
       if (p.kind !== 'vid' || p.path !== path || overlap(p.start, end(p), a, b) <= 0) return [p]
       let parts: Piece[] = []
       if (a - p.start >= 0.4) parts.push({ ...p, secs: round(a - p.start) })
       if (end(p) - b >= 0.4) parts.push({ ...p, start: round(b), secs: round(end(p) - b) })
       return parts
     })
+    cut.pieces = pieces
     focus = pieces.includes(kept) ? pieces.indexOf(kept) : Math.min(focus, pieces.length - 1)
   }
 
@@ -235,10 +179,10 @@ export const CutEditor = clientEntry(import.meta.url, function CutEditor(handle:
     let source = byId.get(id)
     if (!source || !set || typeof set === 'string') return
     let m = set.moments[index]
-    if (uses(pieces, source.path, m).numbers.length) removeRange(source.path, m.s, m.e)
+    if (uses(cut.pieces, source.path, m).numbers.length) removeRange(source.path, m.s, m.e)
     else addRange(source.path, m.s, m.e)
     stopAll()
-    changed()
+    writes.changed()
   }
 
   // ---- the preview player ----
@@ -334,6 +278,7 @@ export const CutEditor = clientEntry(import.meta.url, function CutEditor(handle:
 
   // play the whole cut, piece by piece, the way the clip will loop
   function playAll(from = 0) {
+    let { pieces } = cut
     if (!pieces.length) return
     playing = from % pieces.length
     handle.update()
@@ -345,14 +290,14 @@ export const CutEditor = clientEntry(import.meta.url, function CutEditor(handle:
   }
   function showFocus() {
     stopAll()
-    let p = pieces[focus]
+    let p = cut.pieces[focus]
     if (p) show(shotOf(p))
   }
 
   // ---- editing the focused piece ----
 
   function edit(patch: Partial<Record<'start' | 'secs' | 'cx' | 'zoom' | 'cy', number>> & { zoomIn?: boolean }) {
-    let p = pieces[focus]
+    let p = cut.pieces[focus]
     if (!p) return
     let set = p.kind === 'vid' ? sets.get(byPath.get(p.path)?.id ?? '') : undefined
     let dur = set && typeof set !== 'string' ? set.dur : (byPath.get(p.path)?.dur ?? 3600)
@@ -362,30 +307,31 @@ export const CutEditor = clientEntry(import.meta.url, function CutEditor(handle:
       next.secs = round(Math.max(0.3, Math.min(dur - next.start, next.secs)))
       next.zoom = Math.max(1, Math.min(3, next.zoom))
     } else next.secs = round(Math.max(0.3, Math.min(10, next.secs)))
-    pieces[focus] = next
+    cut.pieces[focus] = next
     let seek = 'start' in patch || 'secs' in patch
     if (shot && playing < 0) {
       shot = shotOf(next)
       if (seek) show(shot)
       else place()
     }
-    changed()
+    writes.changed()
   }
 
   function move(from: number, by: number) {
+    let { pieces } = cut
     let to = from + by
     if (to < 0 || to >= pieces.length) return
     ;[pieces[from], pieces[to]] = [pieces[to], pieces[from]]
     if (focus === from) focus = to
     else if (focus === to) focus = from
-    changed()
+    writes.changed()
   }
 
   function remove(index: number) {
-    pieces.splice(index, 1)
-    focus = Math.min(focus, pieces.length - 1)
+    cut.pieces.splice(index, 1)
+    focus = Math.min(focus, cut.pieces.length - 1)
     stopAll()
-    changed()
+    writes.changed()
   }
 
   // ---- events on the moment tiles (one listener for all of them) ----
@@ -415,7 +361,12 @@ export const CutEditor = clientEntry(import.meta.url, function CutEditor(handle:
     for (let id of panels) load(id)
     if (box) new ResizeObserver(() => place()).observe(box)
     player?.addEventListener('error', () => {
-      status = 'The preview could not load this video. Reload the page to try again.'
+      previewError = 'The preview could not load this video. Choose another moment to try again.'
+      handle.update()
+    })
+    player?.addEventListener('loadedmetadata', () => {
+      if (!previewError) return
+      previewError = ''
       handle.update()
     })
     setTimeout(showFocus, 50)
@@ -497,6 +448,7 @@ export const CutEditor = clientEntry(import.meta.url, function CutEditor(handle:
   function panel(id: string) {
     let source = byId.get(id)!
     let set = sets.get(id)
+    let { pieces, current } = cut
     let fromHere = pieces.some((p) => p.path === source.path) || current.some((p) => p.path === source.path)
     let others = source.usedBy.filter((c) => c !== clip.id)
     return (
@@ -605,6 +557,7 @@ export const CutEditor = clientEntry(import.meta.url, function CutEditor(handle:
   }
 
   return () => {
+    let { pieces, video, busy } = cut
     let total = pieces.reduce((sum, p) => sum + p.secs, 0)
     let focused = pieces[focus]
     return (
@@ -671,13 +624,19 @@ export const CutEditor = clientEntry(import.meta.url, function CutEditor(handle:
           {!pieces.length && <p class="ce-hint">Click moments on the right to build the cut.</p>}
 
           <div class="ce-row ce-actions">
-            <button type="button" class="ce-primary" disabled={busy || !pieces.length} mix={on('click', rebuild)}>
-              {busy ? 'Rebuilding…' : 'Rebuild video'}
+            <button type="button" class="ce-primary" disabled={Boolean(busy) || !pieces.length} mix={on('click', writes.rebuild)}>
+              {busy === 'rebuild' ? 'Rebuilding…' : cut.retry === 'rebuild' ? 'Retry rebuild' : 'Rebuild video'}
             </button>
-            <button type="button" disabled={busy || !hasDraft} mix={on('click', undo)}>Undo changes</button>
+            <button type="button" disabled={Boolean(busy) || (!cut.hasDraft && !cut.unsaved)} mix={on('click', writes.discard)}>Undo changes</button>
+            {cut.retry === 'save' && <button type="button" mix={on('click', writes.save)}>Retry save</button>}
           </div>
-          <p class="ce-status" aria-live="polite">{status}</p>
-          <textarea class="rv-note" rows={3} placeholder="Feedback for Claude (only saved on this Mac)" defaultValue={note} mix={on('input', (e) => saveNote((e.currentTarget as HTMLTextAreaElement).value))} />
+          <p class="ce-status" aria-live="polite">
+            {cut.status}
+            {cut.noteError && <>{cut.status && <br />}{cut.noteError}</>}
+            {previewError && <>{(cut.status || cut.noteError) && <br />}{previewError}</>}
+          </p>
+          <textarea class="rv-note" rows={3} placeholder="Feedback for Claude (only saved on this Mac)" defaultValue={handle.props.note} mix={on('input', (e) => writes.saveNote((e.currentTarget as HTMLTextAreaElement).value))} />
+          {cut.noteError && <button type="button" mix={on('click', writes.retryNote)}>Retry note save</button>}
         </aside>
 
         <main class="ce-main">
