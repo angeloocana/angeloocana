@@ -1,9 +1,11 @@
 """Synthetic render regression (python3 -B -m unittest discover -s scripts/clips)."""
+import io
 import json
 import subprocess
 import sys
 import tempfile
 import unittest
+from contextlib import contextmanager
 from pathlib import Path
 from unittest.mock import patch
 
@@ -86,3 +88,91 @@ else:
             self.assertTrue(journal.is_dir())
             run('snapshot', 0)
             self.assertFalse(journal.exists())
+
+
+class CutRebuildTest(unittest.TestCase):
+    def setUp(self):
+        tmp = self.enterContext(tempfile.TemporaryDirectory())
+        root = Path(tmp)
+        self.out = root / 'media' / 'clips'
+        self.recipe = root / 'montages.json'
+        self.drafts = root / 'cut-drafts.json'
+        self.checks = root / 'cut-checks.json'
+        self.enterContext(patch.multiple(clips, MEDIA=tmp, OUT=str(self.out), RECIPES=str(self.recipe),
+                                         DRAFTS=str(self.drafts), CHECKS=str(self.checks)))
+        clips.ffmpeg('-f', 'lavfi', '-i', 'testsrc2=size=96x160:rate=30', '-t', '1', str(root / 'source.mp4'))
+        self.base = [['vid', 'source.mp4', 0, 0.3, 0.5]]
+        self.draft = [['vid', 'source.mp4', 0.2, 0.3, 0.5]]
+        self.new = [['vid', 'source.mp4', 0.4, 0.3, 0.5]]
+        clips.save_recipe('clip', self.base)
+        clips.write_json_atomic(self.drafts, {'clip': self.draft})
+        clips.write_json_atomic(self.checks, {'clip': {'state': 'kept', 'at': '2026-01-01T00:00:00Z'}})
+        clips.build('clip')
+
+    def snapshot(self):
+        files = [self.out / 'clip.mp4', self.out / 'clip.jpg', self.recipe, self.drafts, self.checks]
+        return tuple(path.read_bytes() for path in files)
+
+    def test_web_rebuild_refuses_inputs_replaced_before_read(self):
+        expected = json.dumps({'draft': self.draft, 'recipe': self.base})
+        for changed in ('draft', 'recipe'):
+            with self.subTest(changed=changed):
+                with clips.review_lock(clips.MEDIA):
+                    clips.save_recipe('clip', self.new if changed == 'recipe' else self.base)
+                    clips.write_json_atomic(self.drafts, {'clip': self.new if changed == 'draft' else self.draft})
+                before = self.snapshot()
+                with patch('sys.stdin', io.StringIO(expected)), patch.object(clips, 'render_clip') as render:
+                    with self.assertRaisesRegex(clips.StaleCut, 'cut changed;.*rebuild again'):
+                        clips.rebuild_expected('clip')
+                    render.assert_not_called()
+                self.assertEqual(self.snapshot(), before)
+
+    def test_slow_cli_rebuild_cannot_overwrite_newer_edit(self):
+        render = clips.render_clip
+        before_first = self.snapshot()
+        newer = None
+
+        @contextmanager
+        def interleave(pieces):
+            nonlocal newer
+            self.assertEqual(pieces, self.draft)
+            with render(pieces) as staged:
+                # A later rebuild finishes while the first job is still rendering (outside the flock).
+                with clips.review_lock(clips.MEDIA):
+                    clips.write_json_atomic(self.drafts, {'clip': self.new})
+                with patch.object(clips, 'render_clip', render):
+                    clips.rebuild('clip')
+                newer = self.snapshot()
+                yield staged
+
+        with patch.object(clips, 'render_clip', interleave):
+            with self.assertRaisesRegex(clips.StaleCut, 'cut changed;.*rebuild again'):
+                clips.rebuild()
+        self.assertEqual(self.snapshot(), newer)
+        self.assertNotEqual(newer[:2], before_first[:2])
+        self.assertEqual(clips.recipes()['clip'], self.new)
+        self.assertEqual(clips.read_json(self.drafts, {}), {})
+        self.assertEqual(clips.read_json(self.checks, {})['clip']['state'], 'edited')
+        self.assertEqual({p.name for p in self.out.iterdir()}, {'clip.mp4', 'clip.jpg'})
+
+    def test_web_rebuild_preserves_draft_when_only_recipe_changes_during_render(self):
+        render = clips.render_clip
+        expected = json.dumps({'draft': self.draft, 'recipe': self.base})
+        changed = None
+
+        @contextmanager
+        def interleave(pieces):
+            nonlocal changed
+            with render(pieces) as staged:
+                with clips.review_lock(clips.MEDIA):
+                    clips.save_recipe('clip', self.new)
+                with patch.object(clips, 'render_clip', render):
+                    clips.build('clip')  # Rebuild from the new recipe, leaving the existing draft alone.
+                changed = self.snapshot()
+                yield staged
+
+        with patch('sys.stdin', io.StringIO(expected)), patch.object(clips, 'render_clip', interleave):
+            with self.assertRaisesRegex(clips.StaleCut, 'cut changed;.*rebuild again'):
+                clips.rebuild_expected('clip')
+        self.assertEqual(self.snapshot(), changed)
+        self.assertEqual(clips.read_json(self.drafts, {}), {'clip': self.draft})

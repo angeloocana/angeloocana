@@ -219,28 +219,64 @@ def montage(name):
     print(build(name))
 
 
-def rebuild(*names):
+class StaleCut(RuntimeError):
+    pass
+
+
+def cut_inputs(name, drafts):
+    return {'draft': drafts.get(name), 'recipe': recipes().get(name)}
+
+
+def require_cut(name, expected, actual):
+    def identity(value):
+        # Compare raw pieces, without filling defaults or joining. JS can re-encode numbers,
+        # so 1.0 equals 1, but Python must not also consider true equal to 1.
+        if isinstance(value, list):
+            return tuple(map(identity, value))
+        return type(value) is bool, value
+
+    if any(identity(expected[key]) != identity(actual[key]) for key in ('draft', 'recipe')):
+        raise StaleCut(f'{name}: cut changed; review it and rebuild again')
+
+
+def rebuild_expected(name):
+    """The web action supplies its snapshot on stdin; never echo those private inputs."""
+    try:
+        expected = json.load(sys.stdin)
+    except ValueError:
+        sys.exit('Invalid expected cut')
+    if not isinstance(expected, dict) or expected.keys() != {'draft', 'recipe'}:
+        sys.exit('Invalid expected cut')
+    rebuild(name, expected=expected)
+
+
+def rebuild(*names, expected=None):
     """Apply the cuts saved on /review/cut: render each one, then make it the clip's recipe."""
-    with review_lock(MEDIA):
-        todo = names or list(read_json(DRAFTS, {}))
+    todo = names
     if not todo:
-        print('No changed cuts to rebuild')
+        with review_lock(MEDIA):
+            todo = list(read_json(DRAFTS, {}))
+        if not todo:
+            print('No changed cuts to rebuild')
     for name in todo:
         with review_lock(MEDIA):
-            draft = read_json(DRAFTS, {}).get(name)
+            cut = cut_inputs(name, read_json(DRAFTS, {}))
+            if expected is not None:
+                require_cut(name, expected, cut)
+            draft = cut['draft']
             if draft is None and not names:
                 continue
-            pieces = draft if draft is not None else recipes()[name]
+            pieces = draft if draft is not None else cut['recipe']
+            if pieces is None:
+                raise RuntimeError(f'{name}: no recorded cut')
         with render_clip(pieces) as staged, review_lock(MEDIA):
-            if draft is None and recipes().get(name) != pieces:
-                raise RuntimeError(f'{name}: recipe changed while rendering; rebuild again')
+            drafts = read_json(DRAFTS, {})
+            require_cut(name, cut, cut_inputs(name, drafts))
             mp4 = promote_clip(MEDIA, name, *staged)
             if draft is not None:
                 save_recipe(name, draft)
-                drafts = read_json(DRAFTS, {})
-                if drafts.get(name) == draft:
-                    del drafts[name]
-                    write_json_atomic(DRAFTS, drafts)
+                del drafts[name]
+                write_json_atomic(DRAFTS, drafts)
                 checks = read_json(CHECKS, {})
                 checks[name] = {'state': 'edited', 'at': time.strftime('%Y-%m-%dT%H:%M:%SZ', time.gmtime())}
                 write_json_atomic(CHECKS, checks)
@@ -435,7 +471,11 @@ def links():
 
 if __name__ == '__main__':
     commands = {'sheet': sheet, 'cut': cut, 'build': lambda name: print(build(name)), 'montage': montage, 'rebuild': rebuild,
-                'moments': moments, 'recipes': find_recipes, 'links': links}
+                'rebuild-expected': rebuild_expected, 'moments': moments, 'recipes': find_recipes, 'links': links}
     if len(sys.argv) < 2 or sys.argv[1] not in commands:
         sys.exit(__doc__)
-    commands[sys.argv[1]](*sys.argv[2:])
+    try:
+        commands[sys.argv[1]](*sys.argv[2:])
+    except StaleCut as error:
+        print(error, file=sys.stderr)
+        sys.exit(3)  # The web action maps this retryable conflict to HTTP 409.
