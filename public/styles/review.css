@@ -190,14 +190,22 @@ body.rv-page { margin: 0; background: #0b0b0b; color: #ece7df; font: 14px/1.45 s
 
 /* ---- whether the review's changes are live (app/ui/public/publish-status.tsx) ---- */
 .pub { display: flex; flex-wrap: wrap; align-items: center; gap: 0.35rem 0.45rem; font-size: 0.8rem; color: #cfc8bc; white-space: normal; }
-.pub-dot { width: 0.55rem; height: 0.55rem; border-radius: 50%; background: #7fc97a; flex: none; }
-.pub[data-state='waiting'] .pub-dot { background: #e8b86a; }
-.pub[data-state='running'] .pub-dot { background: #e8b86a; animation: pub-pulse 1s ease-in-out infinite alternate; }
-.pub[data-state='failed'] .pub-dot { background: #e2554a; }
-.pub[data-state='failed'] .pub-text { color: #f0938b; font-weight: 600; }
+.pub-dot { width: 0.55rem; height: 0.55rem; border-radius: 50%; background: #777; flex: none; }
 .pub[data-state='off'] .pub-dot { background: #555; }
 .pub[data-state='off'] { color: #8f887d; }
+.pub[data-state='queued'] .pub-dot { background: #e8b86a; }
+.pub[data-state='running'] .pub-dot { background: #e8b86a; animation: pub-pulse 1s ease-in-out infinite alternate; }
+.pub[data-state='pushed'] .pub-dot { background: #8ab6dc; }
+.pub[data-state='live'] .pub-dot { background: #7fc97a; }
+.pub[data-state='failed'] .pub-dot { background: #e2554a; }
+.pub[data-state='failed'] .pub-text { color: #f0938b; font-weight: 600; }
 .pub-now { font: inherit; font-size: 0.72rem; color: #ece7df; background: #1f1f1f; border: 1px solid #444; border-radius: 999px; padding: 0.1rem 0.5rem; cursor: pointer; }
-.pub-detail { flex-basis: 100%; color: #c9a19c; font-size: 0.72rem; white-space: pre-wrap; }
+.pub-now:disabled { opacity: 0.6; cursor: wait; }
+.pub-detail, .pub-cleanup { flex-basis: 100%; font-size: 0.72rem; white-space: pre-wrap; overflow-wrap: anywhere; }
+.pub-detail { color: #c9a19c; }
+.pub-cleanup { color: #e8b86a; }
+@media (prefers-reduced-motion: reduce) {
+  .pub[data-state='running'] .pub-dot { animation: none; }
+}
 .ce-side > .pub { margin: -0.2rem 0 0.6rem; }
 @keyframes pub-pulse { from { opacity: 0.35; } to { opacity: 1; } }
