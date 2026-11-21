@@ -97,6 +97,39 @@ async function carryClip(page: Page, clip: string, flag: string, url: RegExp) {
   await waitForClip(page, `.lang-card:not(${flag})`, clip)
 }
 
+// The page's other language opened at a #clip-… gets that clip dealt last, after every Travel clip: the clip
+// is not in the page, the row has to load it and the browser has to clamp its scroll to reach it.
+async function dealLinkedLast(page: Page) {
+  await page.route('**/data/clips.json', async (route) => {
+    let hash = new URL(route.request().frame().url()).hash
+    if (!hash.startsWith('#clip-')) return route.continue()
+    let response = await route.fetch()
+    let json = await response.json() as { clips: { id: string; cat: string; score: number }[] }
+    let linked = json.clips.find((clip) => `#clip-${clip.id}` === hash)!
+    let tail = [...json.clips.filter((clip) => clip.cat === 'travel' && clip !== linked), linked]
+    tail.forEach((clip, i) => { clip.score = -25 * (i + 1) })
+    await route.fulfill({ response, json })
+  })
+}
+let allClips = (page: Page) => page.waitForFunction(() => {
+  let track = document.querySelector<HTMLElement>('#outside [data-rail-track]')!
+  return track.querySelectorAll('[data-clip]').length === Number(track.dataset.total)
+})
+// where a row comes to rest: its scroll unchanged over five frames (snapping included)
+let resting = (page: Page, row: string) => page.evaluate((row) => new Promise<number>((done) => {
+  let track = document.querySelector<HTMLElement>(`#${row} [data-rail-track]`)!
+  let last = -1
+  let still = 0
+  let tick = () => {
+    still = track.scrollLeft === last ? still + 1 : 0
+    last = track.scrollLeft
+    if (still >= 5) done(last)
+    else requestAnimationFrame(tick)
+  }
+  tick()
+}), row)
+let frames = (page: Page) => page.evaluate(() => new Promise((done) => requestAnimationFrame(() => requestAnimationFrame(done))))
+
 describe('home page in a browser', () => {
   it('keeps the section, and the job, when the language changes', async (t) => {
     let page = await t.serve(await serveDist())
@@ -198,6 +231,101 @@ describe('home page in a browser', () => {
     assert.equal(await firstCard(page, 'career'), 'job-kinaxis')
     let clip = await pickTravel(page, '.lang-en')
     await carryClip(page, clip, '.lang-en', /\/#clip-/)
+  })
+
+  // The linked card (rails/rows.ts): what the visitor does wins over a #clip-… still on its way, the flag
+  // carries where a chip is taking the row, Back keeps the page where it was left, and on a phone the page
+  // lands on the clip itself.
+  it('leaves the row where a sideways wheel took it while a #clip-… waits for the clips', async (t) => {
+    let page = await t.serve(await serveDist())
+    await page.setViewportSize({ width: 1440, height: 900 })
+    let release!: () => void
+    let held = new Promise<void>((resolve) => (release = resolve))
+    await page.route('**/data/clips.json', async (route) => { await held; await route.continue() })
+    await open(page, '/#clip-h-ice')
+    let track = page.locator('#outside [data-rail-track]')
+    await track.hover()
+    await page.mouse.wheel(687, 0)
+    await page.waitForFunction(() => document.querySelector<HTMLElement>('#outside [data-rail-track]')!.scrollLeft > 400)
+    let left = await resting(page, 'outside')
+    release()
+    await allClips(page)
+    let after = await resting(page, 'outside')
+    assert.ok(Math.abs(after - left) < 2, `the row went from ${left} to ${after}px`)
+  })
+
+  it('carries the clip a chip is sliding to, when the flag is pressed on the way', async (t) => {
+    let page = await t.serve(await serveDist())
+    await page.setViewportSize({ width: 1440, height: 900 })
+    // every Travel clip dealt last, so the trip there is long
+    await page.route('**/data/clips.json', async (route) => {
+      let response = await route.fetch()
+      let json = await response.json() as { clips: { cat: string; score: number }[] }
+      json.clips.filter((clip) => clip.cat === 'travel').forEach((clip, i) => { clip.score = -25 * (i + 1) })
+      await route.fulfill({ response, json })
+    })
+    await open(page, '/pt/')
+    await scrollTo(page, 'outside')
+    await allClips(page)
+    await page.click('#outside [data-rail-cat="travel"]')
+    let clip = (await page.locator('#outside [data-rail-track] [data-cat="travel"]').first().getAttribute('id'))!
+    // still on the way: the row is sliding, and the Travel clip isn't in view yet
+    let onTheWay = await page.evaluate((id) => {
+      let track = document.querySelector<HTMLElement>('#outside [data-rail-track]')!
+      return track.classList.contains('is-jumping') && document.getElementById(id)!.getBoundingClientRect().left > innerWidth
+    }, clip)
+    assert.ok(onTheWay, 'the flag is pressed while the row is still sliding')
+    await frames(page)
+    await page.click('.lang-en')
+    await page.waitForURL(/\/#clip-/)
+    assert.equal(new URL(page.url()).hash, `#${clip}`)
+  })
+
+  it('comes back from a post to the posts, not to a clip the chips left in the address', async (t) => {
+    let page = await t.serve(await serveDist())
+    await page.setViewportSize({ width: 1440, height: 900 })
+    // every Travel clip dealt last: the clip in the address is not in the page, and has to load
+    await page.route('**/data/clips.json', async (route) => {
+      let response = await route.fetch()
+      let json = await response.json() as { clips: { cat: string; score: number }[] }
+      json.clips.filter((clip) => clip.cat === 'travel').forEach((clip, i) => { clip.score = -25 * (i + 1) })
+      await route.fulfill({ response, json })
+    })
+    await open(page, '/')
+    let clip = await pickTravel(page, '.lang-pt')
+    await scrollTo(page, 'posts')
+    let link = page.locator('#posts .post-card a').first()
+    let href = (await link.getAttribute('href'))!
+    await link.click()
+    await page.waitForURL(`**${href}`)
+    await page.waitForSelector('main.post-main')
+    await page.goBack()
+    await page.waitForURL((url) => url.hash === `#${clip}`)
+    await page.waitForFunction(() => document.documentElement.classList.contains('js-rails'))
+    await allClips(page)
+    await frames(page)
+    let posts = await page.evaluate(() => {
+      let box = document.getElementById('posts')!.getBoundingClientRect()
+      return { top: Math.round(box.top), bottom: Math.round(box.bottom) }
+    })
+    assert.ok(posts.top < 450 && posts.bottom > 450, `Posts at ${posts.top} to ${posts.bottom}px`)
+  })
+
+  it('lands the carried clip itself under the menu after a language switch on a phone', async (t) => {
+    let page = await t.serve(await serveDist())
+    await page.setViewportSize({ width: 390, height: 844 })
+    await dealLinkedLast(page)
+    await open(page, '/')
+    let clip = await pickTravel(page, '.lang-pt')
+    await page.click('.lang-pt')
+    await page.waitForURL(/\/pt\/#clip-/)
+    await waitForClip(page, '.lang-en', clip)
+    await allClips(page)
+    await page.waitForFunction((id) => {
+      let top = document.getElementById(id)!.getBoundingClientRect().top
+      let header = document.querySelector('.cin-nav')!.getBoundingClientRect().bottom
+      return top >= header && top < 200
+    }, clip, { timeout: 6000 })
   })
 
   // the other language's flag carries the clip in view (#clip-…): the page lands with the clip under the menu,

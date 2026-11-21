@@ -79,8 +79,11 @@ export function setUpNav(signal: AbortSignal, rails: Map<HTMLElement, Rail>) {
     toggle?.toggleAttribute('data-current', !!moreList?.querySelector(`[data-chapter-link="${chapter}"]`))
   }
   addEventListener('scroll', queue, { signal, passive: true })
-  careerTrack?.addEventListener('scroll', queue, { signal, passive: true })
-  clipsTrack?.addEventListener('scroll', queue, { signal, passive: true })
+  // (a row's linked card can change without a scroll: a chip picked, a #hash shown; rails/rows.ts)
+  for (let type of ['scroll', 'linkchange']) {
+    careerTrack?.addEventListener(type, queue, { signal, passive: true })
+    clipsTrack?.addEventListener(type, queue, { signal, passive: true })
+  }
   // a page opened at a #section scrolls there after this script has run
   addEventListener('load', queue, { signal, once: true })
   addEventListener('hashchange', queue, { signal })
