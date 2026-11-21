@@ -1,6 +1,7 @@
 """Synthetic render regression (python3 -B -m unittest discover -s scripts/clips)."""
 import io
 import json
+import os
 import subprocess
 import sys
 import tempfile
@@ -88,6 +89,89 @@ else:
             self.assertTrue(journal.is_dir())
             run('snapshot', 0)
             self.assertFalse(journal.exists())
+
+    def test_active_rebuild_rolls_back_pair_index_and_queue_together(self):
+        job = '''
+import os
+import sys
+from contextlib import contextmanager
+from pathlib import Path
+from unittest.mock import patch
+import clips
+import review_io
+
+phase = sys.argv[1]
+queue = Path(clips.REVIEW_QUEUE)
+replace = os.replace
+sync = review_io._sync_path
+
+@contextmanager
+def render(pieces):
+    yield Path(clips.MEDIA) / 'next.mp4', Path(clips.MEDIA) / 'next.jpg'
+
+def before_replace(source, destination):
+    if phase == 'kill' and Path(destination) == queue:
+        os._exit(71)
+    replace(source, destination)
+
+def before_sync(path):
+    if phase == 'sync' and path == queue:
+        assert clips.read_json(queue, None)['revision'] != 'previous'
+        raise OSError('queue sync failed')
+    sync(path)
+
+with patch.object(clips, 'render_clip', render), patch('os.replace', before_replace), patch.object(review_io, '_sync_path', before_sync):
+    try:
+        clips.rebuild('clip')
+    except OSError as error:
+        if str(error) != 'queue sync failed':
+            raise
+        sys.exit(72)
+'''
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            out = root / 'media' / 'clips'
+            out.mkdir(parents=True)
+            (root / 'work').mkdir()
+            (root / 'index').mkdir()
+            mp4, jpg = out / 'clip.mp4', out / 'clip.jpg'
+            recipe, drafts, checks = (root / 'index' / name for name in
+                                      ('montages.json', 'cut-drafts.json', 'cut-checks.json'))
+            queue = root / 'work' / 'review-queue.json'
+            before = {
+                mp4: b'old-video', jpg: b'old-poster', recipe: b'{"clips":{"clip":[]}}',
+                drafts: b'{"clip":[["vid","source.mp4",0.2,0.3,0.5]]}',
+                checks: b'{"clip":{"state":"kept"}}',
+                queue: b'{"revision":"previous","base":[],"clips":[],"changedAt":1}',
+            }
+            for path, data in before.items():
+                path.write_bytes(data)
+
+            def run(phase, status):
+                (root / 'next.mp4').write_bytes(b'next-video')
+                (root / 'next.jpg').write_bytes(b'next-poster')
+                result = subprocess.run([sys.executable, '-B', '-c', job, phase],
+                                        cwd=Path(__file__).resolve().parent, capture_output=True, timeout=10,
+                                        env=dict(os.environ, ANGELOOCANA_MEDIA=tmp, REVIEW_AUTOPUBLISH='1'))
+                self.assertEqual(result.returncode, status, result.stderr.decode())
+
+            run('kill', 71)
+            self.assertEqual((mp4.read_bytes(), jpg.read_bytes()), (b'next-video', b'next-poster'))
+            self.assertEqual(json.loads(drafts.read_bytes()), {})
+            self.assertEqual(queue.read_bytes(), before[queue])
+            with clips.review_lock(root):
+                self.assertEqual({path: path.read_bytes() for path in before}, before)
+
+            run('sync', 72)
+            self.assertEqual({path: path.read_bytes() for path in before}, before)
+            self.assertFalse((out / '.review-promotion').exists())
+
+            run('commit', 0)
+            self.assertEqual((mp4.read_bytes(), jpg.read_bytes()), (b'next-video', b'next-poster'))
+            self.assertEqual(json.loads(drafts.read_bytes()), {})
+            self.assertEqual(json.loads(checks.read_bytes())['clip']['state'], 'edited')
+            self.assertEqual(json.loads(recipe.read_bytes())['clips']['clip'], json.loads(before[drafts])['clip'])
+            self.assertNotEqual(json.loads(queue.read_bytes())['revision'], 'previous')
 
 
 class CutRebuildTest(unittest.TestCase):

@@ -102,10 +102,8 @@ def load_clips():
         return json.load(f)
 
 
-def queue_review_revision(clips=None):
-    """Bump the private revision under the same lock as media promotion. Don't rewrite the checkout."""
-    if not AUTOPUBLISH:
-        return
+def next_review_queue(clips=None):
+    """Prepare the private revision under the review lock without rewriting the checkout."""
     queue = read_json(REVIEW_QUEUE, None)
     if queue is None:
         base = subprocess.run(['git', 'show', 'HEAD:app/content/clips.json'], cwd=REPO,
@@ -114,12 +112,12 @@ def queue_review_revision(clips=None):
     if clips is not None:
         queue['clips'] = clips
     queue.update(revision=str(uuid.uuid4()), changedAt=time.time_ns() // 1_000_000)
-    write_json_atomic(REVIEW_QUEUE, queue)
+    return queue
 
 
 def save_clips(clips):
     if AUTOPUBLISH:
-        queue_review_revision(clips)
+        write_json_atomic(REVIEW_QUEUE, next_review_queue(clips))
     else:
         write_json_atomic(CLIPS_JSON, clips)
 
@@ -128,10 +126,26 @@ def recipes():
     return read_json(RECIPES, {'clips': {}})['clips']
 
 
-def save_recipe(name, pieces):
+def next_recipes(name, pieces):
     data = read_json(RECIPES, {'clips': {}})
     data['clips'][name] = pieces
-    write_json_atomic(RECIPES, data)
+    return data
+
+
+def save_recipe(name, pieces):
+    write_json_atomic(RECIPES, next_recipes(name, pieces))
+
+
+def finish_render(name, staged, updates, clips=None):
+    if AUTOPUBLISH:
+        return promote_clip(MEDIA, name, *staged,
+                            review_updates={**updates, REVIEW_QUEUE: next_review_queue(clips)})
+    mp4 = promote_clip(MEDIA, name, *staged)
+    for path, data in updates.items():
+        write_json_atomic(path, data)
+    if clips is not None:
+        save_clips(clips)
+    return mp4
 
 
 def sheet(item_id, start='0', length=None, step=None):
@@ -163,17 +177,13 @@ def cut(item_id, start, cat=None, en=None, pt=None, length='6'):
     with render_clip(pieces) as staged, review_lock(MEDIA):
         clips = load_clips()  # Preserve review edits made while ffmpeg was running.
         new = is_new(clips)
-        mp4 = promote_clip(MEDIA, cid, *staged)
-        save_recipe(cid, pieces)
         if new:
             source_kind = 'instagram' if it['source'].startswith('Instagram') else 'phone'
             clip = {'id': cid, 'cat': cat, 'label': {'en': en, 'pt': pt}, 'star': 0, 'rejected': False, 'score': 3, 'source': source_kind}
             if source_kind == 'instagram':
                 clip['igKind'] = it['source'].split('·')[-1].strip()
             clips.append(clip)
-            save_clips(clips)
-        else:
-            queue_review_revision()
+        mp4 = finish_render(cid, staged, {RECIPES: next_recipes(cid, pieces)}, clips if new else None)
     print(mp4)
 
 
@@ -237,9 +247,7 @@ def build(name):
     with render_clip(pieces) as staged, review_lock(MEDIA):
         if recipes().get(name) != pieces:
             raise RuntimeError(f'{name}: recipe changed while rendering; rebuild again')
-        mp4 = promote_clip(MEDIA, name, *staged)
-        queue_review_revision()
-        return mp4
+        return finish_render(name, staged, {})
 
 
 def montage(name):
@@ -300,15 +308,13 @@ def rebuild(*names, expected=None):
         with render_clip(pieces) as staged, review_lock(MEDIA):
             drafts = read_json(DRAFTS, {})
             require_cut(name, cut, cut_inputs(name, drafts))
-            mp4 = promote_clip(MEDIA, name, *staged)
+            updates = {}
             if draft is not None:
-                save_recipe(name, draft)
                 del drafts[name]
-                write_json_atomic(DRAFTS, drafts)
                 checks = read_json(CHECKS, {})
                 checks[name] = {'state': 'edited', 'at': time.strftime('%Y-%m-%dT%H:%M:%SZ', time.gmtime())}
-                write_json_atomic(CHECKS, checks)
-            queue_review_revision()
+                updates = {RECIPES: next_recipes(name, draft), DRAFTS: drafts, CHECKS: checks}
+            mp4 = finish_render(name, staged, updates)
         print(mp4, flush=True)
 
 

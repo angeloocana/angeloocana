@@ -1,6 +1,7 @@
 import { spawn } from 'node:child_process'
 import { closeSync, fsyncSync, mkdirSync, openSync, readFileSync } from 'node:fs'
 import { join } from 'node:path'
+import { fileURLToPath } from 'node:url'
 
 import { clipMediaId, isPublicMediaKey, versionedMediaKey } from '../app/content/media-keys.ts'
 import { writeJsonAtomic } from '../app/content/review-io.ts'
@@ -16,6 +17,7 @@ export interface ObjectStore {
 const BUCKET = 'angeloocana-media'
 const WRANGLER = ['-y', 'wrangler@4.151.1']
 const WRANGLER_TIMEOUT = 120_000
+const STORE_SUPERVISOR = fileURLToPath(new URL('./clips/review_io.py', import.meta.url))
 
 function versionedLogicalKey(object: string): string | undefined {
   let parts = /^versions\/([^/]+)\/(.+)$/.exec(object)
@@ -32,21 +34,21 @@ function objectClipId(object: string): string | undefined {
 
 function wrangler(args: string[]): Promise<void> {
   return new Promise((resolve, reject) => {
-    // Stay in the publisher guardian's process group, which it stops before releasing the lock.
+    let lock = Number(process.env.REVIEW_PUBLISH_LOCK_FD)
+    if (process.env.REVIEW_PUBLISH_LOCKED !== '1' || !Number.isInteger(lock) || lock < 3) {
+      reject(new Error('Wrangler media command requires the review publish lock'))
+      return
+    }
+    // The detached supervisor keeps the flock at fd 3 and drains the command's group on
+    // timeout or stdin EOF (Node death), even if the outer publisher guardian is already gone.
     // Raw CLI output can contain private paths or credentials; don't put it in the publish log.
-    let child = spawn('npx', [...WRANGLER, 'r2', 'object', ...args, '--remote'], { stdio: 'ignore' })
-    let timedOut = false
-    let timer = setTimeout(() => {
-      timedOut = true
-      child.kill('SIGKILL')
-    }, WRANGLER_TIMEOUT)
-    child.once('error', () => {
-      clearTimeout(timer)
-      reject(new Error('Could not start the Wrangler media command'))
-    })
+    let child = spawn(process.env.PYTHON ?? 'python3', [
+      STORE_SUPERVISOR, '--store-command', String(WRANGLER_TIMEOUT),
+      'npx', ...WRANGLER, 'r2', 'object', ...args, '--remote',
+    ], { detached: true, stdio: ['pipe', 'ignore', 'ignore', lock] })
+    child.once('error', () => reject(new Error('Could not start the Wrangler media command')))
     child.once('close', (code) => {
-      clearTimeout(timer)
-      if (timedOut) reject(new Error('Wrangler media command timed out'))
+      if (code === 124) reject(new Error('Wrangler media command timed out'))
       else if (code === 0) resolve()
       else reject(new Error('Wrangler media command failed'))
     })
@@ -149,6 +151,17 @@ export function openReviewMedia(mediaRoot: string, store: ObjectStore) {
   }
 
   return {
+    rememberManifest(prior: Manifest): void {
+      let next = { ...ledger }
+      let changed = false
+      for (let { key, object } of manifestEntries(prior)) {
+        if (key === object || next[object] !== undefined) continue
+        next[object] = 'available'
+        changed = true
+      }
+      if (changed) save(next)
+    },
+
     async upload({ key, object, file }: SnapshotUpload): Promise<void> {
       let logicalKey = versionedLogicalKey(object)
       if (!logicalKey || logicalKey !== key) throw new Error('Invalid snapshot upload object')
