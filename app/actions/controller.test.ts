@@ -246,6 +246,8 @@ describe('root controller', () => {
       let read = (origin: string) => router.fetch(new URL('/review/publish', origin))
       assert.equal((await read(local)).status, 200)
       assert.equal((await read(external)).status, 404)
+      let forwarded = await router.fetch(new Request(`${local}/review/publish`, { headers: { Host: 'example.com:44100' } }))
+      assert.equal(forwarded.status, 404)
       for (let path of ['/review', '/review/cut/h-ice', '/review/publish']) {
         for (let origin of [undefined, 'null', external, 'http://localhost:44101']) {
           let response = await router.fetch(new Request(`${local}${path}`, {
@@ -257,7 +259,8 @@ describe('root controller', () => {
       }
       let response = await router.fetch(new Request(`${local}/review`, {
         method: 'POST',
-        headers: { Origin: local, 'Content-Type': 'application/json' },
+        // HMR keeps the frontend URL for Origin checks even though Host points to its backend.
+        headers: { Host: '127.0.0.1:44102', Origin: local, 'Content-Type': 'application/json' },
         body: JSON.stringify({ id: 'not-a-clip' }),
       }))
       assert.deepEqual(await response.json(), { error: 'Unknown clip' })
