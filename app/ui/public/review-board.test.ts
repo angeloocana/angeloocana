@@ -11,11 +11,15 @@ type Sent = ReviewPatch & { id: string }
 
 it('serializes rapid absolute edits on one card without blocking another card', async () => {
   let first = Promise.withResolvers<Response>()
+  let last = Promise.withResolvers<Response>()
+  let lastStarted = Promise.withResolvers<void>()
   let sent: Sent[] = []
   let transport: typeof fetch = async (_url, init) => {
     let body = JSON.parse(String(init?.body)) as Sent
     sent.push(body)
-    return sent.length === 1 ? first.promise : Response.json({ ...clip, ...body })
+    if (sent.length === 1) return first.promise
+    if (sent.length === 3) { lastStarted.resolve(); return last.promise }
+    return Response.json({ ...clip, ...body })
   }
   let statuses: string[] = []
   let board = reviewWrites((patch) => postReviewPatch(clip.id, patch, signal, transport), () => {}, (feedback) => statuses.push(feedback.state))
@@ -28,8 +32,14 @@ it('serializes rapid absolute edits on one card without blocking another card', 
 
   assert.deepEqual(sent, [{ id: clip.id, star: 1 }, { id: 'h-second', star: 1 }])
   assert.deepEqual(statuses, ['saving'])
+  let left = false
+  let leaving = board.settle().then(() => { left = true })
   first.resolve(Response.json({ ...clip, star: 1 }))
-  await saving
+  await lastStarted.promise
+  assert.equal(left, false)
+  assert.equal(board.busy, true)
+  last.resolve(Response.json({ ...clip, ...sent[2] }))
+  await Promise.all([saving, leaving])
 
   assert.deepEqual(sent.slice(2), [{ id: clip.id, star: 3, rejected: false, captionRejected: false }])
   assert.deepEqual(statuses, ['saving', 'saved'])

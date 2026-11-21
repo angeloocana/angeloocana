@@ -5,6 +5,7 @@ import type { CutCheck, Moment, Piece, Source } from '../../content/cuts.ts'
 import type { PublishInfo } from '../../content/publish.ts'
 import { createCutWrites } from './cut-editor-writes.ts'
 import { PublishStatus } from './publish-status.tsx'
+import { guardReviewNavigation } from './review-navigation.ts'
 
 // The local cut editor (/review/cut/:id). On the right, every short moment of the clip's source videos:
 // hover one to watch it, click it to add it to the cut or take it out. On the left, the clip as it is now,
@@ -358,6 +359,7 @@ export const CutEditor = clientEntry(import.meta.url, function CutEditor(handle:
   }
 
   handle.queueTask(() => {
+    guardReviewNavigation(writes.pending, writes.settle, handle.signal)
     for (let id of panels) load(id)
     if (box) new ResizeObserver(() => place()).observe(box)
     player?.addEventListener('error', () => {
@@ -632,8 +634,9 @@ export const CutEditor = clientEntry(import.meta.url, function CutEditor(handle:
           </div>
           <p class="ce-status" aria-live="polite">
             {cut.status}
-            {cut.noteError && <>{cut.status && <br />}{cut.noteError}</>}
-            {previewError && <>{(cut.status || cut.noteError) && <br />}{previewError}</>}
+            {cut.rebuildError && <>{cut.status && <br />}{cut.rebuildError}</>}
+            {cut.noteError && <>{(cut.status || cut.rebuildError) && <br />}{cut.noteError}</>}
+            {previewError && <>{(cut.status || cut.rebuildError || cut.noteError) && <br />}{previewError}</>}
           </p>
           <textarea class="rv-note" rows={3} placeholder="Feedback for Claude (only saved on this Mac)" defaultValue={handle.props.note} mix={on('input', (e) => writes.saveNote((e.currentTarget as HTMLTextAreaElement).value))} />
           {cut.noteError && <button type="button" mix={on('click', writes.retryNote)}>Retry note save</button>}

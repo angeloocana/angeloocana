@@ -37,9 +37,11 @@ export function createCutWrites(id: string, initial: Initial, { fetch, signal, u
     marking: false,
     status: '',
     retry: null as 'save' | 'rebuild' | null,
+    rebuildError: '',
     noteError: '',
   }
   let tail = Promise.resolve()
+  let pendingWrites = 0
   let revision = 0
   let noteRevision = 0
   let note = ''
@@ -58,6 +60,7 @@ export function createCutWrites(id: string, initial: Initial, { fetch, signal, u
   ) {
     // Snapshot the submitted pieces now: the selection can change while this waits to send.
     let body = JSON.stringify(payload)
+    pendingWrites++
     let write = tail.then(async () => {
       if (signal.aborted || !needed()) return
       let result: { value: T } | { error: string }
@@ -77,7 +80,7 @@ export function createCutWrites(id: string, initial: Initial, { fetch, signal, u
       done(result)
       update()
     })
-    tail = write.catch(() => {})
+    tail = write.catch(() => {}).finally(() => { pendingWrites-- })
     return tail
   }
 
@@ -87,8 +90,13 @@ export function createCutWrites(id: string, initial: Initial, { fetch, signal, u
     update()
   }
 
-  function save() {
+  function cancelAutosave() {
     clearTimeout(saveTimer)
+    saveTimer = undefined
+  }
+
+  function save() {
+    cancelAutosave()
     if (!state.pieces.length) return
     let version = revision
     if (state.retry === 'save') saving()
@@ -115,10 +123,11 @@ export function createCutWrites(id: string, initial: Initial, { fetch, signal, u
 
   function rebuild() {
     if (state.busy || !state.pieces.length) return
-    clearTimeout(saveTimer)
+    cancelAutosave()
     let version = ++revision
     state.busy = 'rebuild'
     state.retry = null
+    state.rebuildError = ''
     state.status = 'Rebuilding the video…'
     update()
     return send(path, { action: 'rebuild', pieces: state.pieces }, ({ draft, current, check, video }) => {
@@ -132,10 +141,11 @@ export function createCutWrites(id: string, initial: Initial, { fetch, signal, u
         Object.assign(state, result.value, { hasDraft: false })
         rebuilt()
       }
+      if ('error' in result) state.rebuildError = `Rebuild failed: ${result.error}`
       if (version !== revision) return
       if ('error' in result) {
         state.unsaved = true
-        state.status = `Rebuild failed: ${result.error}`
+        state.status = ''
         state.retry = 'rebuild'
       } else {
         state.pieces = clone(state.current)
@@ -147,7 +157,7 @@ export function createCutWrites(id: string, initial: Initial, { fetch, signal, u
 
   function discard() {
     if (state.busy || (!state.hasDraft && !state.unsaved)) return
-    clearTimeout(saveTimer)
+    cancelAutosave()
     let version = ++revision
     state.busy = 'discard'
     state.retry = null
@@ -186,6 +196,7 @@ export function createCutWrites(id: string, initial: Initial, { fetch, signal, u
 
   function writeNote() {
     clearTimeout(noteTimer)
+    noteTimer = undefined
     let version = noteRevision
     if (state.noteError) {
       state.noteError = ''
@@ -207,5 +218,13 @@ export function createCutWrites(id: string, initial: Initial, { fetch, signal, u
     noteTimer = setTimeout(writeNote, 400)
   }
 
-  return { state, changed, save, rebuild, discard, mark, saveNote, retryNote: writeNote }
+  return {
+    state, changed, save, rebuild, discard, mark, saveNote, retryNote: writeNote,
+    pending: () => Boolean(pendingWrites || saveTimer || noteTimer || state.unsaved || state.noteError),
+    settle() {
+      if (saveTimer) void save()
+      if (noteTimer) void writeNote()
+      return tail
+    },
+  }
 }

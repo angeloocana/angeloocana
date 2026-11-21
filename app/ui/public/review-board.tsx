@@ -3,6 +3,7 @@ import type { Handle } from 'remix/component'
 
 import type { ReviewPatch } from '../../actions/review-page.tsx'
 import type { Clip } from '../../content/clips.ts'
+import { guardReviewNavigation } from './review-navigation.ts'
 
 // Behaviour for the local review page (/review): hover to play and save each change.
 
@@ -61,6 +62,7 @@ export function reviewWrites(
   let pending: ReviewPatch | undefined
   let running = false
   let failed = false
+  let active = Promise.resolve()
 
   async function flush() {
     if (running || failed || !pending) return
@@ -85,26 +87,35 @@ export function reviewWrites(
     onFeedback({ state: 'saved' })
   }
 
+  function drain() {
+    if (!running && !failed && pending) active = flush()
+    return active
+  }
+
   return {
     get busy() { return running || Boolean(pending) },
+    settle: () => active,
     edit(patch: ReviewPatch) {
       pending = mergePatch(pending, patch)
-      return flush()
+      return drain()
     },
     retry() {
       failed = false
-      return flush()
+      return drain()
     },
     // Do not race an urgent takedown with pending edits or a subsequent restore.
-    async exclusive(work: () => Promise<void>) {
+    exclusive(work: () => Promise<void>) {
       if (running || pending) return
       running = true
-      try {
-        await work()
-      } finally {
-        running = false
-        await flush()
-      }
+      active = (async () => {
+        try {
+          await work()
+        } finally {
+          running = false
+          await flush()
+        }
+      })()
+      return active
     },
   }
 }
@@ -210,6 +221,8 @@ export const ReviewBoard = clientEntry(import.meta.url, function ReviewBoard(han
       )
 
       return {
+        pending: () => writes.busy,
+        settle: writes.settle,
         save(patch: ReviewPatch) {
           // These controls use the latest local choice, not the last reply from the server.
           if (patch.star !== undefined) card.dataset.star = String(patch.star)
@@ -238,6 +251,18 @@ export const ReviewBoard = clientEntry(import.meta.url, function ReviewBoard(han
       }
     }
     let actions = new Map(cards.map((card) => [card, cardActions(card)]))
+    function editedField() {
+      let field = document.activeElement
+      return field instanceof HTMLTextAreaElement && field.matches('.rv textarea[data-field]') && field.value !== field.defaultValue ? field : undefined
+    }
+    guardReviewNavigation(
+      () => Boolean(editedField()) || [...actions.values()].some((card) => card.pending()),
+      async () => {
+        editedField()?.blur()
+        await Promise.all([...actions.values()].map((card) => card.settle()))
+      },
+      signal,
+    )
 
     // source filter (Instagram, the old phone, …) and cut filter (to check, edited, …)
     document.addEventListener('click', (event) => {
@@ -274,6 +299,7 @@ export const ReviewBoard = clientEntry(import.meta.url, function ReviewBoard(han
       // Captions and feedback save when the field loses focus (or on Enter for captions).
       if (target instanceof HTMLTextAreaElement) {
         let field = target.dataset.field
+        target.defaultValue = target.value // This value is now tracked by the card's write queue.
         if (field === 'en' || field === 'pt') controls.save({ label: { [field]: target.value } })
         if (field === 'note') controls.save({ note: target.value })
       }
