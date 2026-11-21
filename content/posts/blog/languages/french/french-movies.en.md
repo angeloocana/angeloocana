@@ -17,14 +17,14 @@ en: Young & Beautiful
 
 pt: Jovem e Bela
 
-[![Jeune & jolie](https://img.youtube.com/vi/3CTm06H2Vvo/0.jpg)](https://www.youtube.com/watch?v=3CTm06H2Vvo)
+[![Jeune & jolie](https://img.youtube.com/vi/2AG8LgY4N20/0.jpg)](https://www.youtube.com/watch?v=2AG8LgY4N20)
 
 ## Chroniques sexuelles d'une famille d'aujourd'hui
 en: Sexual Chronicles of a French Family
 
 pt: Crônicas Sexuais de uma Família Francesa
 
-[![Sexual Chronicles of a French Family](https://img.youtube.com/vi/i2A92JPM_Yw/0.jpg)](https://www.youtube.com/watch?v=i2A92JPM_Yw)
+[![Sexual Chronicles of a French Family](https://img.youtube.com/vi/EyNZJzx9DT8/0.jpg)](https://www.youtube.com/watch?v=EyNZJzx9DT8)
 
 ## La vie d'Adele
 en: Blue Is the Warmest Color
@@ -38,4 +38,4 @@ en: Bang Gang (A Modern Love Story)
 
 pt: Bang Gang (Uma historia de amor moderno)
 
-[![Bang Gang (A Modern Love Story)](https://img.youtube.com/vi/KGclrZDWRi0/0.jpg)](https://www.youtube.com/watch?v=KGclrZDWRi0)
+[![Bang Gang (A Modern Love Story)](https://img.youtube.com/vi/MUuUONDnD1Q/0.jpg)](https://www.youtube.com/watch?v=MUuUONDnD1Q)

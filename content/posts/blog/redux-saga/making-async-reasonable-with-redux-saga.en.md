@@ -466,6 +466,6 @@ function* logErrors() {
 
 - Advanced Redux https://app.pluralsight.com/library/courses/advanced-redux
 
-- Async React with Redux Saga https://egghead.io/courses/async-react-with-redux-saga
+- [Async React with Redux Saga](https://web.archive.org/web/20241007040931/https://egghead.io/courses/async-react-with-redux-saga)
 
 - Redux Saga docs https://redux-saga.js.org/
