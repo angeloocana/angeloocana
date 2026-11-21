@@ -252,13 +252,16 @@ describe('root controller', () => {
   })
 
   // HREF.pt is '/pt/', so a link built as `${home}/#posts` came out as /pt//#posts
-  it('never links to a doubled slash, on the home pages or any post', async () => {
+  it('never links to a doubled slash in a path on this site', async () => {
+    let origin = 'https://angeloocana.com'
     let paths = [routes.home.href(), routes.pt.href(), ...postsFor('en').map((post) => post.url), ...postsFor('pt').map((post) => post.url)]
     for (let path of new Set(paths)) {
-      let html = await (await router.fetch(new URL(path, 'http://localhost'))).text()
+      let url = new URL(path, origin)
+      let html = await (await router.fetch(url)).text()
       for (let [, href] of html.matchAll(/\shref="([^"]*)"/g)) {
-        let local = href.replace(/^https?:\/\/[^/]+/, '')
-        assert.ok(!local.includes('//'), `${path}: href="${href}"`)
+        let target = new URL(href, url)
+        // External services like Wayback use another full URL as part of their path.
+        if (target.origin === origin) assert.ok(!target.pathname.includes('//'), `${path}: href="${href}"`)
       }
     }
   })
