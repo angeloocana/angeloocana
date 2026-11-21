@@ -29,7 +29,7 @@ export const PROJECTS: Study[] = [
       meta: 'Open source · um plugin para Gatsby',
       body: 'Uma rota para cada idioma num site Gatsby. Mais de 400 estrelas no GitHub, e ainda mais de 10 mil downloads por mês.',
       items: [
-        { title: 'ptz-i18n', body: 'As funções por baixo, para qualquer projeto.', url: `${GH}/ptz-i18n` },
+        { title: 'ptz-i18n', body: 'Funções auxiliares, para qualquer projeto.', url: `${GH}/ptz-i18n` },
         { title: 'gatsby-starter-default-i18n', body: 'Um ponto de partida para um site novo em vários idiomas.', url: `${GH}/gatsby-starter-default-i18n` },
       ],
     },
@@ -82,7 +82,7 @@ export const PROJECTS: Study[] = [
       title: 'Projetos menores',
       items: [
         { title: 'Assistente de treino', body: '2025: um servidor MCP para uma IA registrar um treino, série por série.', url: `${GH}/workout` },
-        { title: 'moon-nodes', body: '2018: a lua está ascendente ou descendente? Qualquer dia até 2100.', url: `${GH}/moon-nodes` },
+        { title: 'moon-nodes', body: '2018: A Lua está subindo ou descendo? Qualquer dia até 2100.', url: `${GH}/moon-nodes` },
         { title: 'freecom.club', body: '2017: um app open source para cidadãos votarem nas propostas do bairro.', url: `${GH}/freecomclub` },
       ],
     },
