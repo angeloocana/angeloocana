@@ -10,7 +10,7 @@ import type { Clip } from '../app/content/clips.ts'
 import { versionedMediaKey } from '../app/content/media-keys.ts'
 import type { PublishState } from '../app/content/publish.ts'
 import { withReviewLock, writeJsonAtomic } from '../app/content/review-io.ts'
-import { acknowledgeReviewRevision, queueReviewRevision, readReviewQueue } from '../app/content/review-queue.ts'
+import { queueReviewRevision, readReviewQueue } from '../app/content/review-queue.ts'
 import { openReviewGit, requirePublishedLegacyBase } from './review-publish-git.ts'
 import { openReviewMedia, type ObjectStore } from './review-publish-media.ts'
 import { parseManifest, reconcileReviewRelease, urgentlyRemoveClip, type DeployCheck } from './review-release.ts'
@@ -195,14 +195,23 @@ it('urgent takedown is separate from deploying and refuses a restored clip', asy
   let dir = mkdtempSync(join(tmpdir(), 'review-takedown-'))
   let mediaRoot = join(dir, 'media-root')
   try {
-    let { source, original } = fixture(dir, { [HERO]: HISTORIC_VERSION })
+    let { source, peer, original } = fixture(dir, {
+      [POSTER]: createHash('sha256').update(POSTER).digest('hex').slice(0, 10),
+      [VIDEO]: createHash('sha256').update(VIDEO).digest('hex').slice(0, 10),
+      [HERO]: HISTORIC_VERSION,
+    })
+    for (let key of [POSTER, VIDEO]) {
+      let file = join(mediaRoot, 'media', key)
+      mkdirSync(dirname(file), { recursive: true })
+      writeFileSync(file, key)
+    }
     let current = original.map((item) => ({ ...item, rejected: item.id === 'h-fixture' }))
-    let pending = await withReviewLock(mediaRoot, () => queueReviewRevision(mediaRoot, original, current))
-    let git = openReviewGit(source, join(dir, 'scratch'))
+    await withReviewLock(mediaRoot, () => queueReviewRevision(mediaRoot, original, current))
+    let adapter = openReviewGit(source, join(dir, 'scratch'))
     try {
       let dropped: string[] = []
       let present = new Set([HISTORIC_HERO])
-      let deps = { git, mediaRoot, media: openReviewMedia(mediaRoot, {
+      let deps = { git: adapter, mediaRoot, media: openReviewMedia(mediaRoot, {
         async put() { throw new Error('Unexpected upload') }, async remove(key) { dropped.push(key); present.delete(key) },
       }), async deploy(): Promise<DeployCheck> { throw new Error('Unexpected deployment check') }, save() { throw new Error('Unexpected publish state change') } }
       await assert.rejects(urgentlyRemoveClip(deps, 'c12345678'), /Reject the clip/)
@@ -214,13 +223,27 @@ it('urgent takedown is separate from deploying and refuses a restored clip', asy
       present.add(HISTORIC_HERO) // An external uploader recreated the identical immutable key.
       await urgentlyRemoveClip(deps, 'h-fixture')
       assert.equal(present.has(HISTORIC_HERO), false)
+
+      present.add(HISTORIC_HERO)
+      let state: PublishState = {}
+      let release = { ...deps, save() {}, async deploy(): Promise<DeployCheck> { return { state: 'live' } } }
+      await reconcileReviewRelease(release, state)
+      assert.ok(state.pushed)
+      assert.ok(present.has(HISTORIC_HERO)) // An ordinary rejection does not clean before confirmed live.
+      await reconcileReviewRelease(release, state)
+      assert.ok(state.live)
+      assert.equal(present.has(HISTORIC_HERO), false)
+
+      // The settled historical rejection left in the queue isn't authorization for a new takedown.
+      git(peer, 'pull', '--ff-only', 'origin', 'master')
+      writeJsonAtomic(join(peer, CLIPS), original)
+      git(peer, 'add', CLIPS)
+      git(peer, 'commit', '-m', 'Approve the clip on origin again')
+      git(peer, 'push', 'origin', 'master')
       let count = dropped.length
-      // A historical, already acknowledged rejection in the queue is not authority to remove
-      // an approval from origin. The remote itself still has the original, approved record.
-      await withReviewLock(mediaRoot, () => acknowledgeReviewRevision(mediaRoot, { revision: pending.revision, desired: current, published: current }))
       await assert.rejects(urgentlyRemoveClip(deps, 'h-fixture'), /Reject the clip/)
       assert.equal(dropped.length, count)
-    } finally { git.close() }
+    } finally { adapter.close() }
   } finally { rmSync(dir, { recursive: true, force: true }) }
 })
 

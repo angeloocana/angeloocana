@@ -155,8 +155,12 @@ export function openReviewMedia(mediaRoot: string, store: ObjectStore) {
       let next = { ...ledger }
       let changed = false
       for (let { key, object } of manifestEntries(prior)) {
-        if (key === object || next[object] !== undefined) continue
-        next[object] = 'available'
+        let status = next[object]
+        // A current public reference can mean another uploader restored these exact bytes.
+        // Re-arm removal but keep the tombstone so an approval still forces a verified put.
+        if (status === 'deleted') next[object] = 'delete-pending'
+        else if (status === undefined && key !== object) next[object] = 'available'
+        else continue
         changed = true
       }
       if (changed) save(next)
