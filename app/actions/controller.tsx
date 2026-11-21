@@ -72,11 +72,15 @@ export default createController(routes, {
     reviewSource(context) {
       return reviewDenied(context.request) ?? sourceMedia(context.request)
     },
-    reviewPublish(context) {
+    async reviewPublish(context) {
       let denied = reviewDenied(context.request)
       if (denied) return denied
-      if (context.request.method === 'POST') startPublish()
-      return Response.json(publishInfo(), { headers: { 'Cache-Control': 'no-store' } })
+      let accepted = true
+      if (context.request.method === 'POST') {
+        let body = await context.request.json().catch(() => null)
+        accepted = startPublish(body?.intent === 'recover' ? 'recover' : 'publish')
+      }
+      return Response.json(publishInfo(), { status: accepted ? 200 : 409, headers: { 'Cache-Control': 'no-store' } })
     },
     reviewTakedown(context) {
       return reviewDenied(context.request) ?? takeDownReviewClip(context.request, context.params.id)

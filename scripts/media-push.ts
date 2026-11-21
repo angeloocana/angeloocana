@@ -31,14 +31,16 @@ if (process.env.REVIEW_PUBLISH_LOCKED !== '1') {
   if (needsLegacyRecovery()) throw new Error('Recover the previous review publish before uploading manually.')
   let media = openReviewMedia(MEDIA_DIR, makeR2ObjectStore())
   let prior = readFileSync(MANIFEST, 'utf8')
+  let previous = parseManifest(prior)
   let original = ''
   let snapshot = await capturePublishSnapshot(MEDIA_DIR, () => ({ revision: 'manual', clipsJson: original = READ() }),
-    media.availableManifest(parseManifest(prior)))
+    media.availableManifest(previous))
   try {
     console.log(`${Object.keys(snapshot.manifest).length} approved media files; ${snapshot.uploads.length} versioned uploads.`)
     if (dryRun) {
       for (let { object } of snapshot.uploads) console.log(`Would upload ${object}`)
     } else {
+      media.rememberManifest(previous)
       await uploadPublishSnapshot(snapshot, media.upload)
       await withReviewLock(MEDIA_DIR, () => {
         if (READ() !== original || readFileSync(MANIFEST, 'utf8') !== prior) {

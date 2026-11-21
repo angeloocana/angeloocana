@@ -1,4 +1,5 @@
-import { mkdtempSync, rmSync } from 'node:fs'
+import childProcess from 'node:child_process'
+import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import * as assert from 'remix/assert'
@@ -296,6 +297,48 @@ describe('root controller', () => {
       }))
       assert.equal(takedown.status, 409) // Not the always-on server; no publisher can start.
     } finally {
+      if (nodeEnv === undefined) delete process.env.NODE_ENV
+      else process.env.NODE_ENV = nodeEnv
+    }
+  })
+
+  it('serves finished local media but never exposes an interrupted promotion journal', async () => {
+    let nodeEnv = process.env.NODE_ENV
+    let journal = join(mediaRoot, 'media', 'clips', '.review-promotion')
+    process.env.NODE_ENV = 'development'
+    try {
+      mkdirSync(journal, { recursive: true })
+      writeFileSync(join(journal, 'review-queue.json'), '{"private":"synthetic backup"}')
+      writeFileSync(join(journal, '..', 'h-fixture.mp4'), 'finished synthetic bytes')
+      let get = (path: string) => router.fetch(new URL(path, 'http://localhost'))
+      assert.equal((await get('/media/clips/h-fixture.mp4')).status, 200)
+      assert.equal((await get('/media/clips/.review-promotion/review-queue.json')).status, 404)
+    } finally {
+      rmSync(journal, { recursive: true, force: true })
+      if (nodeEnv === undefined) delete process.env.NODE_ENV
+      else process.env.NODE_ENV = nodeEnv
+    }
+  })
+
+  it('does not treat a bodyless legacy publish request as approval to recover', async (t) => {
+    let spawn = t.mock.method(childProcess, 'spawn', () => { throw new Error('Unexpected publish attempt') })
+    let nodeEnv = process.env.NODE_ENV
+    process.env.NODE_ENV = 'development'
+    process.env.REVIEW_AUTOPUBLISH = '1'
+    let work = join(mediaRoot, 'work')
+    let marker = join(work, 'publish-pending')
+    try {
+      mkdirSync(work, { recursive: true })
+      writeFileSync(marker, 'synthetic unfinished legacy publish')
+      let response = await router.fetch(new Request('http://localhost/review/publish', {
+        method: 'POST', headers: { Origin: 'http://localhost' },
+      }))
+      assert.equal(response.status, 409)
+      assert.equal((await response.json()).action, 'Recover')
+      assert.equal(spawn.mock.calls.length, 0)
+    } finally {
+      process.env.REVIEW_AUTOPUBLISH = '0'
+      rmSync(marker, { force: true })
       if (nodeEnv === undefined) delete process.env.NODE_ENV
       else process.env.NODE_ENV = nodeEnv
     }

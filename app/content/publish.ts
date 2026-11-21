@@ -228,14 +228,15 @@ function launchPublisher(revision: string | undefined, recover = false) {
   }
 }
 
-function advance(manual: boolean) {
+function advance(manual: boolean, explicitRecovery = false) {
   clearTimeout(timer)
   if (!autoPublish()) return
   try {
     let { state, running, legacy, next } = currentProgress()
     if (child || running) return wakeIn(ACTIVE_CHECK_MS)
     let recover = Boolean(legacy.pending || legacy.sha)
-    if (recover && !manual) return wakeIn(30_000)
+    if (recover && !explicitRecovery) return wakeIn(30_000)
+    if (explicitRecovery && !recover) return
     if (manual) {
       if (!next && !state.failed && !legacy.pending && !legacy.sha) return
       launchFailure = undefined
@@ -252,8 +253,11 @@ function advance(manual: boolean) {
 }
 
 /** Manual retry/check (or start now instead of waiting for the debounce). */
-export function startPublish() {
-  advance(true)
+export function startPublish(intent: 'publish' | 'recover' = 'publish') {
+  let recover = intent === 'recover'
+  if (autoPublish() && needsLegacyRecovery() !== recover) return false
+  advance(true, recover)
+  return true
 }
 
 /** Re-read the durable queue and progress on startup and after every wake. */
@@ -285,7 +289,8 @@ export function publishInfo(): PublishInfo {
     if (running) return { ...warning, state: 'running', text: `${running.step}…`, detail: `Publishing since ${clock(running.startedAt)}` }
     if (child) return { ...warning, state: 'running', text: 'Starting publisher…' }
     if (launchFailure && launchFailure.revision === (next?.revision ?? failed?.revision)) {
-      return { ...warning, state: 'failed', text: 'Publisher failed to run', detail: launchFailure.message, action: 'Try again' }
+      return { ...warning, state: 'failed', text: 'Publisher failed to run', detail: launchFailure.message,
+        action: legacy.pending || legacy.sha ? 'Recover' : 'Try again' }
     }
     let earlierPush = legacy.sha && `Deploy of ${legacy.sha.slice(0, 7)} was not confirmed.`
     if (legacy.pending) {

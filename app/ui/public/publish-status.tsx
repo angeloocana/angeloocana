@@ -17,8 +17,12 @@ export const PublishStatus = clientEntry(import.meta.url, function PublishStatus
     asking = method
     if (method === 'POST') handle.update()
     try {
-      let response = await fetch('/review/publish', { method, signal: handle.signal })
-      if (response.ok) {
+      let action = method === 'POST' ? {
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ intent: info.action === 'Recover' ? 'recover' : 'publish' }),
+      } : undefined
+      let response = await fetch('/review/publish', { method, signal: handle.signal, ...action })
+      if (response.ok || (method === 'POST' && response.status === 409)) {
         let next = (await response.json()) as PublishInfo
         if (id === requestId) info = next
       }

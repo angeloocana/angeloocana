@@ -179,6 +179,8 @@ it('recovers a partial upload and ambiguous push, preserves newer edits, and cle
     assert.equal(removed.length, 0)
     nextDeploy = { state: 'live' }
     await run()
+    if (state().cleanup) await run() // Reauthorize the next bounded deletion batch.
+    assert.equal(state().cleanup, undefined)
     assert.equal(state().live?.sha, latest)
     assert.deepEqual(checks, [sent, sent, latest])
     assert.ok(removed.includes(HERO))
@@ -193,20 +195,25 @@ it('urgent takedown is separate from deploying and refuses a restored clip', asy
   let dir = mkdtempSync(join(tmpdir(), 'review-takedown-'))
   let mediaRoot = join(dir, 'media-root')
   try {
-    let { source, original } = fixture(dir)
+    let { source, original } = fixture(dir, { [HERO]: HISTORIC_VERSION })
     let current = original.map((item) => ({ ...item, rejected: item.id === 'h-fixture' }))
     let pending = await withReviewLock(mediaRoot, () => queueReviewRevision(mediaRoot, original, current))
     let git = openReviewGit(source, join(dir, 'scratch'))
     try {
       let dropped: string[] = []
+      let present = new Set([HISTORIC_HERO])
       let deps = { git, mediaRoot, media: openReviewMedia(mediaRoot, {
-        async put() { throw new Error('Unexpected upload') }, async remove(key) { dropped.push(key) },
+        async put() { throw new Error('Unexpected upload') }, async remove(key) { dropped.push(key); present.delete(key) },
       }), async deploy(): Promise<DeployCheck> { throw new Error('Unexpected deployment check') }, save() { throw new Error('Unexpected publish state change') } }
       await assert.rejects(urgentlyRemoveClip(deps, 'c12345678'), /Reject the clip/)
       assert.equal(dropped.length, 0)
       await urgentlyRemoveClip(deps, 'h-fixture')
       assert.ok(dropped.includes(HERO))
       assert.ok(dropped.every((key) => key.includes('h-fixture')))
+      assert.equal(present.has(HISTORIC_HERO), false)
+      present.add(HISTORIC_HERO) // An external uploader recreated the identical immutable key.
+      await urgentlyRemoveClip(deps, 'h-fixture')
+      assert.equal(present.has(HISTORIC_HERO), false)
       let count = dropped.length
       // A historical, already acknowledged rejection in the queue is not authority to remove
       // an approval from origin. The remote itself still has the original, approved record.
@@ -234,10 +241,11 @@ it('does not clean an old exclusion after a remote restore or an unconfirmed new
     let queue = await withReviewLock(mediaRoot, () => queueReviewRevision(mediaRoot, rejected))
     let state: PublishState = { candidate: { revision: queue.revision, sha: earlier, desired: rejected, published: rejected, manifest: {} } }
     let removed: string[] = []
+    let onRemove = () => {}
     let adapter = openReviewGit(source, join(dir, 'scratch'))
     try {
       let media = openReviewMedia(mediaRoot, {
-        async put() { throw new Error('Unexpected upload') }, async remove(key) { removed.push(key) },
+        async put() { throw new Error('Unexpected upload') }, async remove(key) { removed.push(key); onRemove() },
       })
       await reconcileReviewRelease({ mediaRoot, git: adapter, media, save() {}, async deploy(sha) {
         assert.equal(sha, earlier)
@@ -256,6 +264,22 @@ it('does not clean an old exclusion after a remote restore or an unconfirmed new
       } }, state)
       assert.equal(removed.length, 0)
       assert.ok(state.cleanup?.nextCheckAt)
+
+      for (let char of 'abcd') media.rememberManifest({ [HERO]: char.repeat(16) })
+      state.live = { revision: queue.revision, sha: latest, confirmedAt: new Date().toISOString() }
+      onRemove = () => {
+        onRemove = () => {}
+        publishPeer(original, 'Reapprove during first deletion batch')
+      }
+      let deps = { mediaRoot, git: adapter, media, save() {}, async deploy(): Promise<DeployCheck> {
+        throw new Error('The new approval cannot be treated as a rejection')
+      } }
+      await reconcileReviewRelease(deps, state)
+      assert.equal(removed.length, 6)
+      assert.ok(state.cleanup?.nextCheckAt)
+      await reconcileReviewRelease(deps, state)
+      assert.equal(removed.length, 6)
+      assert.equal(state.cleanup, undefined)
     } finally { adapter.close() }
   } finally { rmSync(dir, { recursive: true, force: true }) }
 })

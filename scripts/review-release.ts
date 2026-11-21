@@ -130,7 +130,14 @@ export async function reconcileReviewRelease(deps: Dependencies, state: PublishS
     let reviewed = readReviewQueue(mediaRoot)?.clips ?? []
     let approvedLocally = new Set(reviewed.filter((clip) => !clip.rejected).map((clip) => clip.id))
     // A restore that arrives after this check re-uploads tombstoned versions before its own push.
-    await media.removeRejected(ids.filter((id) => !approvedLocally.has(id)), [cleanup.manifest, manifest])
+    // Limit this authorization to one batch and get a fresh tip before the next batch.
+    let more = await media.removeRejected(ids.filter((id) => !approvedLocally.has(id)), [cleanup.manifest, manifest], { oneBatch: true })
+    if (more) {
+      cleanup.nextCheckAt = now().getTime() + 1000
+      delete state.failed
+      save(state)
+      return
+    }
     delete state.cleanup
     delete state.failed
     save(state)
@@ -249,5 +256,6 @@ export async function urgentlyRemoveClip(deps: Dependencies, id: string) {
     return pendingRejection || publishedRejection
   })
   if (!rejected) throw new Error('Reject the clip in review before removing its media.')
-  await media.removeRejected([id], [parseManifest(latest.mediaJson)])
+  // A previous tombstone does not prove another machine hasn't restored the exact object.
+  await media.removeRejected([id], [parseManifest(latest.mediaJson)], { forceKnown: true })
 }

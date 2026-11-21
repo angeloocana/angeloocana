@@ -183,7 +183,9 @@ export function openReviewMedia(mediaRoot: string, store: ObjectStore) {
         .map(({ key, version }) => [key, version]))
     },
 
-    async removeRejected(ids: readonly string[], manifests: readonly Manifest[]): Promise<void> {
+    async removeRejected(
+      ids: readonly string[], manifests: readonly Manifest[], options: { oneBatch?: boolean; forceKnown?: boolean } = {},
+    ): Promise<boolean> {
       let rejected = new Set(ids)
       let objects = new Set<string>()
       for (let id of rejected) {
@@ -200,16 +202,16 @@ export function openReviewMedia(mediaRoot: string, store: ObjectStore) {
         let id = objectClipId(object)
         if (id && rejected.has(id)) objects.add(object)
       }
-      let pending = [...objects].filter((object) => ledger[object] !== 'deleted')
-      if (!pending.length) return
-      if (pending.some((object) => ledger[object] !== 'delete-pending')) {
-        let next = { ...ledger }
-        for (let object of pending) next[object] = 'delete-pending'
-        save(next)
-      }
+      let pending = [...objects].filter((object) => options.forceKnown || ledger[object] !== 'deleted')
+      let dispatch = options.oneBatch ? pending.slice(0, 6) : pending
       let failures = 0
-      for (let i = 0; i < pending.length; i += 6) {
-        let batch = pending.slice(i, i + 6)
+      for (let i = 0; i < dispatch.length; i += 6) {
+        let batch = dispatch.slice(i, i + 6)
+        if (batch.some((object) => ledger[object] !== 'delete-pending')) {
+          let next = { ...ledger }
+          for (let object of batch) next[object] = 'delete-pending'
+          save(next)
+        }
         let results = await Promise.allSettled(batch.map(async (object) => store.remove(object)))
         for (let [offset, result] of results.entries()) {
           if (result.status === 'fulfilled') setStatus(batch[offset], 'deleted')
@@ -217,6 +219,7 @@ export function openReviewMedia(mediaRoot: string, store: ObjectStore) {
         }
       }
       if (failures) throw new Error(`Review media removal failed for ${failures} object(s)`)
+      return pending.length > dispatch.length
     },
   }
 }
