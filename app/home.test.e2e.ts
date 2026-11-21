@@ -427,9 +427,11 @@ describe('home page in a browser', () => {
     await page.locator('#track2fit [data-rail-next]').focus()
     await page.keyboard.press('Enter')
     await page.waitForFunction(() => !document.querySelector<HTMLButtonElement>('#track2fit [data-rail-prev]')!.disabled)
+    // each press pages the row along; the next waits for it to come to rest (on a busy machine a fixed pause
+    // ran out of presses before the end)
     for (let i = 0; i < 12 && !(await page.locator('#track2fit [data-rail-next]').isDisabled()); i++) {
       await page.keyboard.press('Enter')
-      await page.waitForTimeout(450)
+      await resting(page, 'track2fit')
     }
     assert.equal(await page.evaluate(() => document.activeElement?.matches('#track2fit [data-rail-prev]')), true, 'focus moves to the way back at the end')
   })
