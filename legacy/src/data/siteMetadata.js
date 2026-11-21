@@ -35,18 +35,6 @@ module.exports = {
       type: 'email',
       value: 'angeloocana@gmail.com',
       link: 'mailto:angeloocana@gmail.com'
-    },
-    {
-      type: 'phone',
-      value: '(613) 558-9571',
-      country: 'ca',
-      link: 'tel:(613) 558-9571'
-    },
-    {
-      type: 'phone',
-      value: '+55 11 99572-9944',
-      country: 'br',
-      link: 'tel:+55 11 99572-9944'
     }
   ]
 };

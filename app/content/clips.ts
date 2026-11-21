@@ -6,8 +6,9 @@ import { join } from 'node:path'
 import type { Lang } from '../copy.ts'
 import { takeTurns } from '../ui/public/take-turns.ts'
 import { MEDIA_DIR } from './media-dir.ts'
+import { CATEGORIES } from './public-clip-data.ts'
 
-export const CATEGORIES = ['ice', 'gym', 'wood', 'camping', 'food', 'snow', 'bike', 'travel', 'nature', 'music', 'other'] as const
+export { CATEGORIES }
 export type Category = (typeof CATEGORIES)[number]
 
 export const CATEGORY_NAMES: Record<Lang, Record<Category, string>> = {

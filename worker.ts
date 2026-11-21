@@ -18,7 +18,22 @@ export default {
   async fetch(request: Request, env: Env): Promise<Response> {
     let url = new URL(request.url)
     if (!url.pathname.startsWith('/media/')) return env.ASSETS.fetch(request)
-    if (request.method !== 'GET' && request.method !== 'HEAD') return new Response(null, { status: 405, headers: { Allow: 'GET, HEAD' } })
+
+    // _headers only applies to static assets; these are R2 responses, not site documents.
+    let headers = new Headers({
+      'X-Content-Type-Options': 'nosniff',
+      'Referrer-Policy': 'strict-origin-when-cross-origin',
+      'X-Frame-Options': 'DENY',
+      'Permissions-Policy': 'camera=(), microphone=(), geolocation=()',
+    })
+    if (url.protocol === 'https:' && (url.hostname === 'angeloocana.com' || url.hostname === 'www.angeloocana.com')) {
+      headers.set('Strict-Transport-Security', 'max-age=604800')
+    }
+
+    if (request.method !== 'GET' && request.method !== 'HEAD') {
+      headers.set('Allow', 'GET, HEAD')
+      return new Response(null, { status: 405, headers })
+    }
 
     let key = decodeURIComponent(url.pathname.slice('/media/'.length))
     let object: R2Object | R2ObjectBody | null
@@ -26,11 +41,13 @@ export default {
       object = await env.MEDIA.get(key, { range: request.headers, onlyIf: request.headers })
     } catch {
       // a range past the end of the file
-      return new Response(null, { status: 416 })
+      return new Response(null, { status: 416, headers })
     }
-    if (!object) return new Response('Not found', { status: 404, headers: { 'Cache-Control': 'no-store' } })
+    if (!object) {
+      headers.set('Cache-Control', 'no-store')
+      return new Response('Not found', { status: 404, headers })
+    }
 
-    let headers = new Headers()
     object.writeHttpMetadata(headers)
     headers.set('ETag', object.httpEtag)
     headers.set('Cache-Control', CACHE)

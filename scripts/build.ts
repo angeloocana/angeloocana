@@ -148,14 +148,42 @@ await save(
     .map((path) => `  <url><loc>${SITE_ORIGIN}${path}</loc></url>`)
     .join('\n')}\n</urlset>\n`,
 )
+// Diagnostic only: no reporting endpoint. The home pages have inline boot scripts and an import map;
+// cards and old posts use inline styles. Posts also embed videos and link to YouTube thumbnails.
+const CSP = [
+  "default-src 'self'",
+  "base-uri 'self'",
+  "form-action 'self'",
+  "object-src 'none'",
+  "frame-ancestors 'none'",
+  "script-src 'self' 'unsafe-inline'",
+  "style-src 'self' 'unsafe-inline'",
+  `img-src 'self' data: https://img.youtube.com ${SITE_ORIGIN}/imgs/`,
+  'frame-src https://www.youtube-nocookie.com',
+].join('; ')
+
 await save(
   '_headers',
-  // (/media/* gets its headers from worker.ts)
-  // (/fonts/ never change in place: a new font gets a new file name)
-  // (/css/ files are named by a hash of their contents, like /assets/)
-  ['/sw.js', '  Cache-Control: no-cache', '/assets/*', '  Cache-Control: public, max-age=31536000, immutable',
+  [
+    // These only apply to static assets. /media/* gets its baseline headers from worker.ts.
+    '/*',
+    '  X-Content-Type-Options: nosniff',
+    '  Referrer-Policy: strict-origin-when-cross-origin',
+    '  X-Frame-Options: DENY',
+    '  Permissions-Policy: camera=(), microphone=(), geolocation=()',
+    // Cloudflare's absolute URL rules match hostnames, so HSTS does not cover workers.dev.
+    `${SITE_ORIGIN}/*`, '  Strict-Transport-Security: max-age=604800',
+    'https://www.angeloocana.com/*', '  Strict-Transport-Security: max-age=604800',
+    ...['/', '/pt/', '/en/blog/*', '/pt/blog/*', '/Tutoriais/*', '/offline-plugin-app-shell-fallback/'].flatMap(
+      (path) => [path, `  Content-Security-Policy-Report-Only: ${CSP}`],
+    ),
+    '/sw.js', '  Cache-Control: no-cache',
+    '/assets/*', '  Cache-Control: public, max-age=31536000, immutable',
+    // Stylesheets carry content hashes; fonts get new filenames when they change.
     '/css/*', '  Cache-Control: public, max-age=31536000, immutable',
-    '/fonts/*', '  Cache-Control: public, max-age=31536000, immutable', ''].join('\n'),
+    '/fonts/*', '  Cache-Control: public, max-age=31536000, immutable',
+    '',
+  ].join('\n'),
 )
 
 console.log(`Built ${Object.keys(PAGES).length} pages, ${live.size} clips and ${seen.size} script files into ${OUT}/`)
