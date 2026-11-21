@@ -230,6 +230,20 @@ describe('root controller', () => {
     assert.equal(missing.status, 404)
   })
 
+  it('only advertises article translations and descriptions that exist', async () => {
+    let origin = 'https://angeloocana.com'
+    let stem = '/blog/functional-programming/examples/'
+    for (let lang of ['en', 'pt']) {
+      let path = `/${lang}${stem}`
+      let html = await (await router.fetch(new URL(path, origin))).text()
+      let head = html.split('</head>')[0]
+      assert.ok(head.includes(`<link rel="canonical" href="${origin}${path}"`))
+      assert.ok(head.includes(`hreflang="en" href="${origin}/en${stem}"`))
+      assert.ok(head.includes(`hreflang="pt-BR" href="${origin}/pt${stem}"`))
+      assert.ok(!/x-default|(?:name|property)="(?:og:)?description"/.test(head))
+    }
+  })
+
   it('keeps the clip review tools off outside development', async () => {
     for (let path of ['/review', '/review/cut/h-ice', '/review/moments/v226', '/review/sheet/v226', '/review/source?path=ig%3Areels%2Fx.mp4', '/review/publish']) {
       let response = await router.fetch(new URL(path, 'http://localhost'))

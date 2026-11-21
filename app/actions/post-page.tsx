@@ -1,6 +1,7 @@
 import type { Handle } from 'remix/component'
 import { unsafeHTML } from 'remix/component'
 
+import { postVideoEntry } from '../assets.ts'
 import { Document } from './document.tsx'
 import { formatDate } from './home-page.tsx'
 import type { Post } from '../content/posts.ts'
@@ -18,6 +19,7 @@ export function PostPage(handle: Handle<{ post: Post }>) {
     let t = COPY[lang]
     let translation = translationOf(post)
     let home = HREF[lang]
+    let watchUrl = post.youtubeId && `https://www.youtube.com/watch?v=${post.youtubeId}`
     return (
       <Document
         lang={lang}
@@ -35,8 +37,8 @@ export function PostPage(handle: Handle<{ post: Post }>) {
         alternates={translation ? { [lang]: post.url, [other]: translation.url } : { [lang]: post.url }}
       >
         <Cursor />
-        <SiteNav lang={lang} t={t} langHref={{ [lang]: post.url, [other]: translation?.url ?? HREF[other] } as Record<Lang, string>} />
-        <main class="post-main">
+        <SiteNav post lang={lang} t={t} langHref={{ [lang]: post.url, [other]: translation?.url ?? HREF[other] } as Record<Lang, string>} />
+        <main id="main" class="post-main" tabIndex={-1}>
           <article class="post">
             <a class="post-back" href={`${home}#posts`}>
               <span aria-hidden="true">←</span> {t.posts.back}
@@ -56,18 +58,26 @@ export function PostPage(handle: Handle<{ post: Post }>) {
                 {t.posts.readIn} <span aria-hidden="true">→</span>
               </a>
             )}
-            {post.youtubeId && (
+            {watchUrl && (
               <figure class="post-video">
-                <iframe
-                  src={`https://www.youtube-nocookie.com/embed/${post.youtubeId}`}
-                  title={post.title}
-                  loading="lazy"
-                  allow="accelerometer; encrypted-media; gyroscope; picture-in-picture"
-                  allowFullScreen
-                  referrerPolicy="strict-origin-when-cross-origin"
-                />
+                <a class="post-play post-player" href={watchUrl} rel="noopener" target="_blank">
+                  <span>
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z" /></svg>
+                    {t.posts.loadVideo}
+                  </span>
+                </a>
+                <template>
+                  <iframe
+                    class="post-player"
+                    src={`https://www.youtube-nocookie.com/embed/${post.youtubeId}?autoplay=1`}
+                    title={post.title}
+                    allow="autoplay; accelerometer; encrypted-media; gyroscope; picture-in-picture"
+                    allowFullScreen
+                    referrerPolicy="strict-origin-when-cross-origin"
+                  />
+                </template>
                 <figcaption>
-                  <a href={`https://www.youtube.com/watch?v=${post.youtubeId}`} rel="noopener" target="_blank">{t.posts.watch} ↗</a>
+                  <a href={watchUrl} rel="noopener" target="_blank">{t.posts.watch} ↗</a>
                 </figcaption>
               </figure>
             )}
@@ -75,6 +85,7 @@ export function PostPage(handle: Handle<{ post: Post }>) {
           </article>
         </main>
         <SiteFoot t={t} />
+        {watchUrl && <script type="module" src={postVideoEntry.href} />}
       </Document>
     )
   }
