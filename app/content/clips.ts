@@ -1,13 +1,15 @@
 // The home page's video row. The list itself lives in clips.json, which the local review page
 // (/review, development only) edits: reject clips, star the ones that should come first.
-import { existsSync, readFileSync, statSync, writeFileSync } from 'node:fs'
+import { existsSync, readFileSync, statSync } from 'node:fs'
 import { join } from 'node:path'
 
 import type { Lang } from '../copy.ts'
 import { takeTurns } from '../ui/public/take-turns.ts'
 import { MEDIA_DIR } from './media-dir.ts'
+import { CATEGORIES } from './public-clip-data.ts'
+import { writeJsonAtomic } from './review-io.ts'
 
-export const CATEGORIES = ['ice', 'gym', 'wood', 'camping', 'food', 'snow', 'bike', 'travel', 'nature', 'music', 'other'] as const
+export { CATEGORIES }
 export type Category = (typeof CATEGORIES)[number]
 
 export const CATEGORY_NAMES: Record<Lang, Record<Category, string>> = {
@@ -77,13 +79,11 @@ export function mediaUrl(key: string) {
  * A clip's video or poster URL. The ?v= tag changes whenever the file is re-cut, so browsers that
  * cached the old cut (media is cached for a week, see worker.ts) fetch the new one. It's the hash from
  * media.json. The dev server plays the local file, which the cut editor may have re-cut since it was
- * pushed, so there (and for a clip not pushed yet) it's the file's time instead.
+ * pushed, so only there it's the file's time instead.
  */
 export function clipUrl(id: string, ext: 'mp4' | 'jpg') {
-  let version = MEDIA_VERSIONS[`clips/${id}.${ext}`]
-  let file = join(MEDIA_DIR, 'media', 'clips', `${id}.${ext}`)
-  if ((!version || process.env.NODE_ENV === 'development') && existsSync(file)) version = Math.round(statSync(file).mtimeMs / 1000).toString(36)
-  return `/media/clips/${id}.${ext}?v=${version ?? '0'}`
+  let key = `clips/${id}.${ext}`
+  return `/media/${key}?v=${clipMediaVersion(key) ?? '0'}`
 }
 
 /**
@@ -94,10 +94,16 @@ export function clipUrl(id: string, ext: 'mp4' | 'jpg') {
  */
 export function heroClipUrl(id: string, cut: 'phone' | 'tile') {
   let key = `hero/${id}-${cut}.mp4`
-  let version = MEDIA_VERSIONS[key]
-  let file = join(MEDIA_DIR, 'media', key)
-  if ((!version || process.env.NODE_ENV === 'development') && existsSync(file)) version = Math.round(statSync(file).mtimeMs / 1000).toString(36)
+  let version = clipMediaVersion(key)
   return version ? `/media/${key}?v=${version}` : undefined
+}
+
+function clipMediaVersion(key: string) {
+  if (process.env.NODE_ENV === 'development') {
+    let file = join(MEDIA_DIR, 'media', key)
+    if (existsSync(file)) return Math.round(statSync(file).mtimeMs / 1000).toString(36)
+  }
+  return MEDIA_VERSIONS[key]
 }
 
 /** The clip's Instagram post, when it has one. */
@@ -111,7 +117,7 @@ export function loadClips(): Clip[] {
 }
 
 export function saveClips(clips: Clip[]) {
-  writeFileSync(FILE, JSON.stringify(clips, null, 1) + '\n')
+  writeJsonAtomic(FILE, clips)
 }
 
 /**

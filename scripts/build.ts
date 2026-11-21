@@ -5,6 +5,7 @@ import { cp, mkdir, rm, writeFile } from 'node:fs/promises'
 import { dirname, join } from 'node:path'
 
 import { MEDIA_VERSIONS, loadClips } from '../app/content/clips.ts'
+import { legacyBlogAssets } from '../app/content/legacy-blog-assets.ts'
 import { allPosts } from '../app/content/posts.ts'
 import { router } from '../app/router.ts'
 
@@ -34,6 +35,9 @@ await cp('public', OUT, {
   // review's only runs in development
   filter: (src) => !src.endsWith('.DS_Store') && !src.startsWith('public/styles') && !src.startsWith('public/media'),
 })
+
+// Publish only the original Redux Saga deck and article illustrations, not the legacy image directory.
+for (let path of legacyBlogAssets) await cp(join('legacy/static', path), join(OUT, path))
 
 // Browser modules compiled from .ts/.tsx keep their source names, which static hosts would serve
 // with the wrong type. Save them as .js and point every reference at the new name.
@@ -110,31 +114,28 @@ while (queue.length) {
 }
 
 // Old addresses: preview links, and the old site's pages that now live in a section of the home page.
-// French versions go to the English post. Posts themselves are real files, so they need no rule.
+const legacyHomes = Object.entries({ en: '/', pt: '/pt/', fr: '/' })
+const legacySections = Object.entries({ blog: '#posts', tags: '#posts', resume: '#career', about: '', contact: '#contact' })
 await save(
   '_redirects',
   [
-    '/concepts/* / 301',
     '/en / 301',
     '/en/ / 301',
-    '/en/blog/ /#posts 301',
-    '/pt/blog/ /pt/#posts 301',
-    '/en/tags/* /#posts 301',
-    '/pt/tags/* /pt/#posts 301',
-    '/en/resume/* /#career 301',
-    '/pt/resume/* /pt/#career 301',
-    '/en/about/ / 301',
-    '/pt/about/ /pt/ 301',
-    '/en/contact/ /#contact 301',
-    '/pt/contact/ /pt/#contact 301',
-    '/fr/blog/* /en/blog/:splat 301',
     '/fr / 301',
     '/fr/ / 301',
-    '/fr/blog/ /#posts 301',
-    '/fr/tags/* /#posts 301',
-    '/fr/resume/* /#career 301',
-    '/fr/about/ / 301',
-    '/fr/contact/ /#contact 301',
+    // Both spellings go straight to the destination. Keep exact rules ahead of splats:
+    // otherwise /fr/blog/ goes to /en/blog/ instead of directly to /#posts.
+    ...legacyHomes.flatMap(([lang, home]) => legacySections.flatMap(([page, section]) => [
+      `/${lang}/${page} ${home}${section} 301`,
+      `/${lang}/${page}/ ${home}${section} 301`,
+    ])),
+    '/concepts/* / 301',
+    ...legacyHomes.flatMap(([lang, home]) => [
+      `/${lang}/tags/* ${home}#posts 301`,
+      `/${lang}/resume/* ${home}#career 301`,
+    ]),
+    // French post URLs go to the English posts. Posts themselves are real files, so they need no rule.
+    '/fr/blog/* /en/blog/:splat 301',
     '',
   ].join('\n'),
 )
@@ -148,14 +149,42 @@ await save(
     .map((path) => `  <url><loc>${SITE_ORIGIN}${path}</loc></url>`)
     .join('\n')}\n</urlset>\n`,
 )
+// Diagnostic only: no reporting endpoint. The home pages have inline boot scripts and an import map;
+// cards and old posts use inline styles. Posts also embed videos and link to YouTube thumbnails.
+const CSP = [
+  "default-src 'self'",
+  "base-uri 'self'",
+  "form-action 'self'",
+  "object-src 'none'",
+  "frame-ancestors 'none'",
+  "script-src 'self' 'unsafe-inline'",
+  "style-src 'self' 'unsafe-inline'",
+  `img-src 'self' data: https://img.youtube.com ${SITE_ORIGIN}/imgs/`,
+  'frame-src https://www.youtube-nocookie.com',
+].join('; ')
+
 await save(
   '_headers',
-  // (/media/* gets its headers from worker.ts)
-  // (/fonts/ never change in place: a new font gets a new file name)
-  // (/css/ files are named by a hash of their contents, like /assets/)
-  ['/sw.js', '  Cache-Control: no-cache', '/assets/*', '  Cache-Control: public, max-age=31536000, immutable',
+  [
+    // These only apply to static assets. /media/* gets its baseline headers from worker.ts.
+    '/*',
+    '  X-Content-Type-Options: nosniff',
+    '  Referrer-Policy: strict-origin-when-cross-origin',
+    '  X-Frame-Options: DENY',
+    '  Permissions-Policy: camera=(), microphone=(), geolocation=()',
+    // Cloudflare's absolute URL rules match hostnames, so HSTS does not cover workers.dev.
+    `${SITE_ORIGIN}/*`, '  Strict-Transport-Security: max-age=604800',
+    'https://www.angeloocana.com/*', '  Strict-Transport-Security: max-age=604800',
+    ...['/', '/pt/', '/en/blog/*', '/pt/blog/*', '/Tutoriais/*', '/offline-plugin-app-shell-fallback/'].flatMap(
+      (path) => [path, `  Content-Security-Policy-Report-Only: ${CSP}`],
+    ),
+    '/sw.js', '  Cache-Control: no-cache',
+    '/assets/*', '  Cache-Control: public, max-age=31536000, immutable',
+    // Stylesheets carry content hashes; fonts get new filenames when they change.
     '/css/*', '  Cache-Control: public, max-age=31536000, immutable',
-    '/fonts/*', '  Cache-Control: public, max-age=31536000, immutable', ''].join('\n'),
+    '/fonts/*', '  Cache-Control: public, max-age=31536000, immutable',
+    '',
+  ].join('\n'),
 )
 
 console.log(`Built ${Object.keys(PAGES).length} pages, ${live.size} clips and ${seen.size} script files into ${OUT}/`)

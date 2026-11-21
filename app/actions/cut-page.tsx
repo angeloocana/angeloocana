@@ -7,8 +7,10 @@ import { createFileResponse } from 'remix/response/file'
 import { Document } from './document.tsx'
 import { loadNotes, reviewGroups } from './review-page.tsx'
 import { CATEGORY_NAMES, clipUrl, loadClips } from '../content/clips.ts'
-import { cleanPieces, clipSource, cutState, exclusive, loadChecks, loadDraft, loadDrafts, loadMoments, loadRecipe, loadSources, MOMENTS_DIR, rebuildClip, saveDraft, setCheck, sourceFile } from '../content/cuts.ts'
+import { cleanPieces, clipSource, cutState, exclusive, loadChecks, loadCutInputs, loadDraft, loadDrafts, loadMoments, loadRecipe, loadSources, MOMENTS_DIR, rebuildClip, saveDraft, setCheck, sourceFile } from '../content/cuts.ts'
+import { MEDIA_DIR } from '../content/media-dir.ts'
 import { publishInfo, reviewChanged } from '../content/publish.ts'
+import { withReviewLock } from '../content/review-io.ts'
 import { CutEditor } from '../ui/public/cut-editor.tsx'
 
 // Local-only cut editor (npm run dev → /review/cut/<clip id>): every short moment of the clip's source
@@ -51,22 +53,32 @@ export function CutPage(handle: Handle<{ id: string }>) {
 export const clipExists = (id: string) => loadClips().some((c) => c.id === id)
 
 /** POST /review/cut/:id with { action: 'save' | 'rebuild' | 'discard' | 'keep' | 'uncheck', pieces? } */
-export async function saveCut(request: Request, id: string) {
-  let body = (await request.json().catch(() => ({}))) as { action?: string; pieces?: unknown }
-  if (body.action === 'keep' || body.action === 'uncheck') {
-    return Response.json({ check: await exclusive(() => setCheck(id, body.action === 'keep' ? 'kept' : null)) })
-  }
-  if (body.action === 'discard') return Response.json({ draft: await exclusive(() => saveDraft(id, null)) })
+export function saveCut(request: Request, id: string) {
+  let parsed = request.json().catch(() => ({}))
+  return exclusive(async () => {
+    let body = (await parsed) as { action?: string; pieces?: unknown }
+    let expected = await withReviewLock(MEDIA_DIR, () => {
+      if (body.action === 'keep' || body.action === 'uncheck') {
+        return Response.json({ check: setCheck(id, body.action === 'keep' ? 'kept' : null) })
+      }
+      if (body.action === 'discard') return Response.json({ draft: saveDraft(id, null) })
 
-  let pieces = body.pieces === undefined && body.action === 'rebuild' ? undefined : cleanPieces(body.pieces)
-  if (typeof pieces === 'string') return Response.json({ error: pieces }, { status: 400 })
-  let draft = pieces ? await exclusive(() => saveDraft(id, pieces)) : Boolean(loadDraft(id))
-  if (body.action !== 'rebuild') return Response.json({ draft })
+      let pieces = body.pieces === undefined && body.action === 'rebuild' ? undefined : cleanPieces(body.pieces)
+      if (typeof pieces === 'string') return Response.json({ error: pieces }, { status: 400 })
+      let draft = pieces ? saveDraft(id, pieces) : false
+      return body.action === 'rebuild' ? loadCutInputs(id) : Response.json({ draft })
+    })
+    if (expected instanceof Response) return expected
 
-  let result = await rebuildClip(id)
-  if (!result.ok) return Response.json({ error: result.output.split('\n').slice(-6).join('\n') || 'Rebuild failed' }, { status: 500 })
-  reviewChanged()
-  return Response.json({ draft: false, video: clipUrl(id, 'mp4'), current: loadRecipe(id), check: loadChecks()[id] ?? null })
+    // clips.py takes the same lock to verify the inputs and promote; only the server queue stays held.
+    let result = await rebuildClip(id, expected)
+    if (result === 'stale') return Response.json({ error: 'Cut changed; review it and rebuild again.' }, { status: 409 })
+    if (result === 'failed') return Response.json({ error: 'Could not render the cut.' }, { status: 500 })
+    return withReviewLock(MEDIA_DIR, () => {
+      reviewChanged()
+      return Response.json({ draft: false, video: clipUrl(id, 'mp4'), current: loadRecipe(id), check: loadChecks()[id] ?? null })
+    })
+  })
 }
 
 /** GET /review/moments/:vid: the moments of one source video (found on first request). */

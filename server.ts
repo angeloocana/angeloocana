@@ -11,7 +11,9 @@ const isHmr = process.env.REMIX_NODE_HMR === '1'
 
 const server = http.createServer(createRequestListener(router.fetch, { trustProxy: isHmr }))
 
-server.listen(port, () => {
+// Development serves private footage and can publish review changes. Never listen on the LAN.
+const host = process.env.NODE_ENV === 'development' ? '127.0.0.1' : undefined
+server.listen(port, host, () => {
   if (isHmr) {
     import('remix/node-hmr/runtime').then((nodeHmr) => nodeHmr.emitServerReady())
   }

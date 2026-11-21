@@ -6,12 +6,13 @@
 //   work/moments/          each source video split into short moments (v226.json) with a thumbnail sheet (v226.jpg)
 import { spawn } from 'node:child_process'
 import { createHash } from 'node:crypto'
-import { existsSync, readFileSync, renameSync, statSync, writeFileSync } from 'node:fs'
+import { existsSync, readFileSync, statSync } from 'node:fs'
 import { homedir } from 'node:os'
 import { isAbsolute, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
 
 import { MEDIA_DIR } from './media-dir.ts'
+import { writeJsonAtomic } from './review-io.ts'
 
 /** A video piece is `seconds` long from `start`; cx/cy place the 9:16 crop (0..1), zoom > 1 crops closer.
  *  A photo piece shows a still for `seconds` with a slow zoom in or out. */
@@ -57,11 +58,6 @@ function readJson<T>(file: string, fallback: T): T {
   return existsSync(file) ? (JSON.parse(readFileSync(file, 'utf8')) as T) : fallback
 }
 
-function writeJson(file: string, data: unknown) {
-  writeFileSync(`${file}.tmp`, JSON.stringify(data, null, 1) + '\n')
-  renameSync(`${file}.tmp`, file)
-}
-
 const num = (value: unknown, fallback: number) => (typeof value === 'number' && Number.isFinite(value) ? value : fallback)
 const round = (value: number) => Math.round(value * 1000) / 1000
 
@@ -80,6 +76,13 @@ export function toRaw(piece: Piece): RawPiece {
 const recipes = () => readJson<{ clips: Record<string, RawPiece[]> }>(RECIPES, { clips: {} }).clips
 export const loadDrafts = () => readJson<Record<string, RawPiece[]>>(DRAFTS, {})
 
+type CutInputs = { draft: RawPiece[] | null; recipe: RawPiece[] | null }
+
+/** Raw render inputs, captured under the review lock after saving any submitted pieces. */
+export function loadCutInputs(id: string): CutInputs {
+  return { draft: loadDrafts()[id] ?? null, recipe: recipes()[id] ?? null }
+}
+
 /** How the clip's video file is made now, or null if that was never recorded. */
 export function loadRecipe(id: string): Piece[] | null {
   return recipes()[id]?.map(toPiece) ?? null
@@ -97,7 +100,7 @@ export function saveDraft(id: string, pieces: Piece[] | null): boolean {
   let same = raw && JSON.stringify(raw) === JSON.stringify(recipes()[id]?.map((p) => toRaw(toPiece(p))))
   if (!raw || same) delete drafts[id]
   else drafts[id] = raw
-  writeJson(DRAFTS, drafts)
+  writeJsonAtomic(DRAFTS, drafts)
   return Boolean(drafts[id])
 }
 
@@ -108,7 +111,7 @@ export function setCheck(id: string, state: 'kept' | null): CutCheck | null {
   let checks = loadChecks()
   if (state) checks[id] = { state, at: new Date().toISOString().slice(0, 19) + 'Z' }
   else delete checks[id]
-  writeJson(CHECKS, checks)
+  writeJsonAtomic(CHECKS, checks)
   return checks[id] ?? null
 }
 
@@ -205,7 +208,7 @@ export function cleanPieces(input: unknown): Piece[] | string {
   return pieces
 }
 
-// One clips.py job at a time: rebuilds and draft saves all rewrite the same index files.
+// One complete cut action at a time, from saving through rendering and reading back the result.
 let queue: Promise<unknown> = Promise.resolve()
 export function exclusive<T>(job: () => T | Promise<T>): Promise<T> {
   let run = queue.then(job, job)
@@ -213,19 +216,26 @@ export function exclusive<T>(job: () => T | Promise<T>): Promise<T> {
   return run
 }
 
-export function runClips(...args: string[]): Promise<{ ok: boolean; output: string }> {
+function runClips(args: string[], input?: string): Promise<number | null> {
   return new Promise((resolve) => {
-    let child = spawn(process.env.PYTHON ?? 'python3', [SCRIPT, ...args], { env: { ...process.env, ANGELOOCANA_MEDIA: MEDIA_DIR } })
-    let output = ''
-    child.stdout.on('data', (chunk) => (output += chunk))
-    child.stderr.on('data', (chunk) => (output += chunk))
-    child.on('error', (error) => resolve({ ok: false, output: String(error) }))
-    child.on('close', (code) => resolve({ ok: code === 0, output: output.trim() }))
+    let child = spawn(process.env.PYTHON ?? 'python3', [SCRIPT, ...args], {
+      env: { ...process.env, ANGELOOCANA_MEDIA: MEDIA_DIR },
+      // ffmpeg errors can include private source paths.
+      stdio: ['pipe', 'ignore', 'ignore'],
+    })
+    child.stdin.on('error', () => {}) // The child may exit before reading the input.
+    child.on('error', () => resolve(null))
+    child.on('close', resolve)
+    child.stdin.end(input)
   })
 }
 
-/** Render the clip from its draft (or recipe) with clips.py; the draft becomes the recipe. */
-export const rebuildClip = (id: string) => exclusive(() => runClips('rebuild', id))
+/** Render the exact cut captured by this action; Python checks both inputs before promoting. */
+export async function rebuildClip(id: string, expected: CutInputs) {
+  // Keep private source paths out of process arguments.
+  let code = await runClips(['rebuild-expected', id], JSON.stringify(expected))
+  return code === 0 ? 'ok' : code === 3 ? 'stale' : 'failed'
+}
 
 // Finding moments takes a second or two per video; ask clips.py once, even if the page asks twice.
 const finding = new Map<string, Promise<boolean>>()
@@ -236,7 +246,7 @@ export async function loadMoments(vid: string) {
   let file = join(MOMENTS_DIR, `${vid}.json`)
   let fresh = () => readJson<{ version?: number }>(file, {}).version === MOMENTS_VERSION
   if (!fresh()) {
-    if (!finding.has(vid)) finding.set(vid, runClips('moments', vid).then((r) => (finding.delete(vid), r.ok)))
+    if (!finding.has(vid)) finding.set(vid, runClips(['moments', vid]).then((code) => (finding.delete(vid), code === 0)))
     await finding.get(vid)
     if (!fresh()) return undefined
   }

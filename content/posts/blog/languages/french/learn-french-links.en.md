@@ -12,5 +12,4 @@ If you want to learn this amazing language, here you can find my link collection
 
 ## Links
 
- - Learn French with Vincent
-    https://www.youtube.com/watch?v=AdfwQXJ0ZVM
+ - [Learn French with Vincent](https://www.youtube.com/watch?v=keBSvVsEibI)

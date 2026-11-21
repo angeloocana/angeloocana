@@ -32,5 +32,10 @@ media-originals/
 # Videos and screenshots live outside the repo (see app/content/media-dir.ts); never copy them here
 public/media/
 
-# private notes from the local clip review page (now kept in the media folder)
+# Local clip catalogue, sources and scratch files; keep these in the shared media folder
 clip-feedback.json
+/index/
+/work/
+/sources/huawei/
+/media/
+/instagram*/

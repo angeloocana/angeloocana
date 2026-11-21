@@ -1,3 +1,4 @@
+import { clipPoster } from '../clip-card.ts'
 import type { Motion } from './motion.ts'
 
 // Videos play only while on screen, and never for reduced motion or data saver. Clips are stills until they
@@ -92,7 +93,7 @@ export function setUpMedia(signal: AbortSignal, motion: Motion): Media {
           video.setAttribute('playsinline', '')
           video.setAttribute('aria-hidden', 'true')
           video.preload = 'metadata'
-          video.poster = slide.dataset.poster ?? ''
+          video.poster = clipPoster(slide)
           video.src = slide.dataset.video!
           slide.querySelector('img.clip-video')?.after(video)
           watch(video)

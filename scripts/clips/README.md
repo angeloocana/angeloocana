@@ -46,8 +46,10 @@ has its own start, length, zoom and framing, and **Play your cut** previews it a
 
 Every change saves as a draft in `index/cut-drafts.json`. **Rebuild video** renders it right away
 (`clips.py rebuild <id>`); `clips.py rebuild` with no id renders every draft. Rebuilding makes the draft
-the clip's recipe in `montages.json`. Moments are found the first time a video is opened (or all at once
-with `clips.py moments all`) and kept in `work/moments/`.
+the clip's recipe in `montages.json`. It renders a new MP4 and poster before replacing the old ones, so a
+failed render leaves the last good cut in place. The editor and CLI share `work/review-data.lock` for
+writes; don't replace rendered files or shared JSON by hand while editing. Moments are found the first
+time a video is opened (or all at once with `clips.py moments all`) and kept in `work/moments/`.
 
 To go through every clip: rebuilding a draft marks the clip **edited**, and **Keep this cut** marks one that
 is fine as it is **kept** (`index/cut-checks.json`). `/review` shows the mark on each card, how many cuts

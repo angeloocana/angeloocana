@@ -72,18 +72,23 @@ export const ReviewBoard = clientEntry(import.meta.url, function ReviewBoard(han
       card.classList.add('is-saving')
       let response = await fetch('/review', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id: card.dataset.id, ...patch }) })
       card.classList.remove('is-saving')
+      let saved = card.querySelector<HTMLElement>('.rv-saved')
       if (!response.ok) {
         card.classList.add('is-error')
+        if (saved) {
+          let body = await response.json().catch(() => null)
+          saved.textContent = typeof body?.error === 'string' ? body.error : 'Could not save.'
+        }
         return
       }
+      card.classList.remove('is-error')
       let clip = (await response.json()) as { star: number; rejected: boolean; cat: string }
       window.dispatchEvent(new Event('review:changed'))
       card.dataset.moved = card.closest('section')?.id === clip.cat ? undefined : 'true'
       if (card.dataset.moved !== 'true') delete card.dataset.moved
-      let saved = card.querySelector<HTMLElement>('.rv-saved')
       if (saved) {
         saved.textContent = 'Saved'
-        setTimeout(() => (saved.textContent = ''), 1400)
+        setTimeout(() => { if (saved.textContent === 'Saved') saved.textContent = '' }, 1400)
       }
       tally()
     }

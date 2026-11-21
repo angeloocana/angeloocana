@@ -119,9 +119,9 @@ export function Document(handle: Handle<DocumentProps>) {
           <meta name="viewport" content="width=device-width, initial-scale=1" />
           <meta name="color-scheme" content="dark" />
           <meta name="theme-color" content={themeColor} />
-          <meta name="description" content={description} />
+          {(description || ogType !== 'article') && <meta name="description" content={description} />}
           <meta property="og:title" content={fullTitle} />
-          <meta property="og:description" content={description} />
+          {(description || ogType !== 'article') && <meta property="og:description" content={description} />}
           <meta property="og:type" content={ogType} />
           <meta property="og:url" content={url} />
           <meta property="og:locale" content={locale} />
@@ -134,7 +134,7 @@ export function Document(handle: Handle<DocumentProps>) {
           {LANGS.filter((code) => alternates[code]).map((code) => (
             <link key={code} rel="alternate" hrefLang={code === 'pt' ? 'pt-BR' : 'en'} href={`${ORIGIN}${alternates[code]}`} />
           ))}
-          <link rel="alternate" hrefLang="x-default" href={`${ORIGIN}/`} />
+          {ogType !== 'article' && <link rel="alternate" hrefLang="x-default" href={`${ORIGIN}/`} />}
           <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
           {fonts.map((font) => (
             <link key={font} rel="preload" href={font} as="font" type="font/woff2" crossOrigin="anonymous" />

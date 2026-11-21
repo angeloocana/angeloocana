@@ -22,7 +22,13 @@ import math
 import os
 import subprocess
 import sys
+import tempfile
 import time
+from contextlib import contextmanager
+
+# Keep the CLI from creating an untracked __pycache__ in the checkout.
+sys.dont_write_bytecode = True
+from review_io import promote_clip, review_lock, write_json_atomic
 
 REPO = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 MEDIA = os.environ.get('ANGELOOCANA_MEDIA') or os.path.expanduser('~/dev/angeloocana-media')
@@ -49,16 +55,11 @@ WEB = ['-c:v', 'libx264', '-preset', 'slow', '-crf', '27', '-maxrate', '700k', '
 
 
 def read_json(path, default):
-    return json.load(open(path)) if os.path.exists(path) else default
-
-
-def write_json(path, data):
-    """Write to a temporary file first, so the dev server never reads half a file."""
-    tmp = path + '.tmp'
-    with open(tmp, 'w') as f:
-        json.dump(data, f, ensure_ascii=False, indent=1)
-        f.write('\n')
-    os.replace(tmp, path)
+    try:
+        with open(path, encoding='utf-8') as f:
+            return json.load(f)
+    except FileNotFoundError:
+        return default
 
 
 def config():
@@ -86,17 +87,17 @@ def ffmpeg(*args):
 
 
 def poster(mp4, jpg):
-    ffmpeg('-i', mp4, '-map_metadata', '-1', '-vf', 'select=eq(n\\,12),scale=540:-2', '-frames:v', '1', '-q:v', '4', jpg)
+    # Pick a frame near the start, even when the video ends before frame 12.
+    ffmpeg('-xerror', '-i', mp4, '-map_metadata', '-1', '-vf', 'thumbnail=13,scale=540:-2', '-frames:v', '1', '-q:v', '4', jpg)
 
 
 def load_clips():
-    return json.load(open(CLIPS_JSON))
+    with open(CLIPS_JSON, encoding='utf-8') as f:
+        return json.load(f)
 
 
 def save_clips(clips):
-    with open(CLIPS_JSON, 'w') as f:
-        json.dump(clips, f, ensure_ascii=False, indent=1)
-        f.write('\n')
+    write_json_atomic(CLIPS_JSON, clips)
 
 
 def recipes():
@@ -106,7 +107,7 @@ def recipes():
 def save_recipe(name, pieces):
     data = read_json(RECIPES, {'clips': {}})
     data['clips'][name] = pieces
-    write_json(RECIPES, data)
+    write_json_atomic(RECIPES, data)
 
 
 def sheet(item_id, start='0', length=None, step=None):
@@ -125,19 +126,28 @@ def cut(item_id, start, cat=None, en=None, pt=None, length='6'):
     """A 6-second 9:16 loop starting at `start` seconds. Adds the clip to clips.json if it is new."""
     it = items()[item_id]
     cid = clip_id(it)
-    clips = load_clips()
-    if not any(c['id'] == cid for c in clips) and not (cat and en and pt):
-        sys.exit(f'{cid} is new: pass a category and EN and PT captions')
+
+    def is_new(clips):
+        new = not any(c['id'] == cid for c in clips)
+        if new and not (cat and en and pt):
+            sys.exit(f'{cid} is new: pass a category and EN and PT captions')
+        return new
+
+    with review_lock(MEDIA):
+        is_new(load_clips())
     pieces = [['vid', it['path'], float(start), float(length), 0.5]]
-    mp4 = build(cid, pieces)
-    save_recipe(cid, pieces)
-    if not any(c['id'] == cid for c in clips):
-        source_kind = 'instagram' if it['source'].startswith('Instagram') else 'phone'
-        clip = {'id': cid, 'cat': cat, 'label': {'en': en, 'pt': pt}, 'star': 0, 'rejected': False, 'score': 3, 'source': source_kind}
-        if source_kind == 'instagram':
-            clip['igKind'] = it['source'].split('·')[-1].strip()
-        clips.append(clip)
-        save_clips(clips)
+    with render_clip(pieces) as staged, review_lock(MEDIA):
+        clips = load_clips()  # Preserve review edits made while ffmpeg was running.
+        new = is_new(clips)
+        mp4 = promote_clip(MEDIA, cid, *staged)
+        save_recipe(cid, pieces)
+        if new:
+            source_kind = 'instagram' if it['source'].startswith('Instagram') else 'phone'
+            clip = {'id': cid, 'cat': cat, 'label': {'en': en, 'pt': pt}, 'star': 0, 'rejected': False, 'score': 3, 'source': source_kind}
+            if source_kind == 'instagram':
+                clip['igKind'] = it['source'].split('·')[-1].strip()
+            clips.append(clip)
+            save_clips(clips)
     print(mp4)
 
 
@@ -163,10 +173,10 @@ def joined(pieces):
     return out
 
 
-def build(name, pieces=None):
-    """Render a clip from its pieces (default: its recipe) in one pass: each piece is cropped to 9:16,
-    then they play one after another. Writes media/clips/<name>.mp4 and its poster."""
-    pieces = joined(pieces if pieces is not None else recipes()[name])
+@contextmanager
+def render_clip(pieces):
+    """Crop and join the pieces in one pass; stage a complete pair without the review lock."""
+    pieces = joined(pieces)
     inputs, chains = [], []
     for i, p in enumerate(pieces):
         if p[0] == 'img':
@@ -183,12 +193,25 @@ def build(name, pieces=None):
             chains.append(f'[{i}:v]setpts=PTS-STARTPTS,{pre}{SCALE},crop=720:1280:(iw-720)*{cx}:(ih-1280)/2,setsar=1,fps={FPS},format=yuv420p[p{i}]')
     graph = ';'.join(chains) + ';' + ''.join(f'[p{i}]' for i in range(len(pieces))) + f'concat=n={len(pieces)}:v=1:a=0[out]'
     os.makedirs(OUT, exist_ok=True)
-    mp4, tmp = os.path.join(OUT, f'{name}.mp4'), os.path.join(OUT, f'{name}.part.mp4')
-    ffmpeg(*inputs, '-filter_complex', graph + ';[out]scale=540:960:flags=lanczos[web]', '-map', '[web]', '-an',
-           '-map_metadata', '-1', '-map_chapters', '-1', *WEB, tmp)
-    os.replace(tmp, mp4)
-    poster(mp4, os.path.join(OUT, f'{name}.jpg'))
-    return mp4
+    with tempfile.TemporaryDirectory(dir=OUT, prefix='.render-') as scratch:
+        mp4, jpg = os.path.join(scratch, 'clip.mp4'), os.path.join(scratch, 'clip.jpg')
+        ffmpeg('-xerror', *inputs, '-filter_complex', graph + ';[out]scale=540:960:flags=lanczos[web]', '-map', '[web]', '-an',
+               '-map_metadata', '-1', '-map_chapters', '-1', *WEB, mp4)
+        # Decoding to a poster also rejects video containers that were written without any frames.
+        poster(mp4, jpg)
+        if not all(os.path.isfile(path) and os.path.getsize(path) > 0 for path in (mp4, jpg)):
+            raise RuntimeError('Render did not produce a video and poster')
+        yield mp4, jpg
+
+
+def build(name):
+    """Render the recorded recipe and promote the finished pair."""
+    with review_lock(MEDIA):
+        pieces = recipes()[name]
+    with render_clip(pieces) as staged, review_lock(MEDIA):
+        if recipes().get(name) != pieces:
+            raise RuntimeError(f'{name}: recipe changed while rendering; rebuild again')
+        return promote_clip(MEDIA, name, *staged)
 
 
 def montage(name):
@@ -196,23 +219,68 @@ def montage(name):
     print(build(name))
 
 
-def rebuild(*names):
+class StaleCut(RuntimeError):
+    pass
+
+
+def cut_inputs(name, drafts):
+    return {'draft': drafts.get(name), 'recipe': recipes().get(name)}
+
+
+def require_cut(name, expected, actual):
+    def identity(value):
+        # Compare raw pieces, without filling defaults or joining. JS can re-encode numbers,
+        # so 1.0 equals 1, but Python must not also consider true equal to 1.
+        if isinstance(value, list):
+            return tuple(map(identity, value))
+        return type(value) is bool, value
+
+    if any(identity(expected[key]) != identity(actual[key]) for key in ('draft', 'recipe')):
+        raise StaleCut(f'{name}: cut changed; review it and rebuild again')
+
+
+def rebuild_expected(name):
+    """The web action supplies its snapshot on stdin; never echo those private inputs."""
+    try:
+        expected = json.load(sys.stdin)
+    except ValueError:
+        sys.exit('Invalid expected cut')
+    if not isinstance(expected, dict) or expected.keys() != {'draft', 'recipe'}:
+        sys.exit('Invalid expected cut')
+    rebuild(name, expected=expected)
+
+
+def rebuild(*names, expected=None):
     """Apply the cuts saved on /review/cut: render each one, then make it the clip's recipe."""
-    drafts = read_json(DRAFTS, {})
-    todo = names or list(drafts)
+    todo = names
     if not todo:
-        print('No changed cuts to rebuild')
+        with review_lock(MEDIA):
+            todo = list(read_json(DRAFTS, {}))
+        if not todo:
+            print('No changed cuts to rebuild')
     for name in todo:
-        pieces = drafts.get(name)
-        print(build(name, pieces), flush=True)
-        if pieces is not None:
-            save_recipe(name, pieces)
+        with review_lock(MEDIA):
+            cut = cut_inputs(name, read_json(DRAFTS, {}))
+            if expected is not None:
+                require_cut(name, expected, cut)
+            draft = cut['draft']
+            if draft is None and not names:
+                continue
+            pieces = draft if draft is not None else cut['recipe']
+            if pieces is None:
+                raise RuntimeError(f'{name}: no recorded cut')
+        with render_clip(pieces) as staged, review_lock(MEDIA):
             drafts = read_json(DRAFTS, {})
-            drafts.pop(name, None)
-            write_json(DRAFTS, drafts)
-            checks = read_json(CHECKS, {})
-            checks[name] = {'state': 'edited', 'at': time.strftime('%Y-%m-%dT%H:%M:%SZ', time.gmtime())}
-            write_json(CHECKS, checks)
+            require_cut(name, cut, cut_inputs(name, drafts))
+            mp4 = promote_clip(MEDIA, name, *staged)
+            if draft is not None:
+                save_recipe(name, draft)
+                del drafts[name]
+                write_json_atomic(DRAFTS, drafts)
+                checks = read_json(CHECKS, {})
+                checks[name] = {'state': 'edited', 'at': time.strftime('%Y-%m-%dT%H:%M:%SZ', time.gmtime())}
+                write_json_atomic(CHECKS, checks)
+        print(mp4, flush=True)
 
 
 # ---- moments: every source video split into short pieces to choose from on /review/cut ----
@@ -289,10 +357,13 @@ def find_moments(it):
         sheet_img.paste(Image.fromarray(f), ((i % SHEET_COLS) * tw, (i // SHEET_COLS) * th))
     os.makedirs(MOMENTS, exist_ok=True)
     jpg = os.path.join(MOMENTS, f'{it["id"]}.jpg')
-    sheet_img.save(jpg + '.tmp', 'JPEG', quality=72)
-    os.replace(jpg + '.tmp', jpg)
     data = {'version': MOMENTS_VERSION, 'id': it['id'], 'dur': round(dur, 2), 'w': tw, 'h': th, 'cols': cols, 'moments': moments}
-    write_json(os.path.join(MOMENTS, f'{it["id"]}.json'), data)
+    with tempfile.TemporaryDirectory(dir=MOMENTS, prefix='.moments-') as scratch:
+        image = os.path.join(scratch, 'sheet.jpg')
+        sheet_img.save(image, 'JPEG', quality=72)
+        with review_lock(MEDIA):
+            os.replace(image, jpg)
+            write_json_atomic(os.path.join(MOMENTS, f'{it["id"]}.json'), data)
     return data
 
 
@@ -349,8 +420,10 @@ def find_recipes():
 
     by_clip = {clip_id(it): it for it in items().values()}
     hints = {r['id']: r.get('start') for r in read_json(os.path.join(MEDIA, 'index', 'reviews.json'), [])}
-    have = recipes()
-    for c in load_clips():
+    with review_lock(MEDIA):
+        have = recipes()
+        clips = load_clips()
+    for c in clips:
         it = by_clip.get(c['id'])
         if c['id'] in have or not it:
             continue
@@ -361,7 +434,11 @@ def find_recipes():
         if start is None or error > 12:
             print(f"{c['id']} ({it['id']}): no match (off by {error:.1f}), skipped", flush=True)
             continue
-        save_recipe(c['id'], [['vid', it['path'], start, round(length, 2), 0.5]])
+        with review_lock(MEDIA):
+            # A rebuild may have recorded the recipe while this match was running.
+            if c['id'] in recipes():
+                continue
+            save_recipe(c['id'], [['vid', it['path'], start, round(length, 2), 0.5]])
         print(f"{c['id']} ({it['id']}): starts at {start}s, {length:.2f}s long (off by {error:.1f})", flush=True)
 
 
@@ -379,21 +456,26 @@ def links():
         got[vid] = i
         used.add(i)
     by_clip = {clip_id(it): it['id'] for it in videos}
-    clips = load_clips()
-    n = 0
-    for c in clips:
-        vid = by_clip.get(c['id'])
-        if vid in got:
-            p = posts[got[vid]]
-            c['ig'] = f"/{p['kind']}/{p['code']}/"
-            n += 1
-    save_clips(clips)
+    with review_lock(MEDIA):
+        clips = load_clips()
+        n = 0
+        for c in clips:
+            vid = by_clip.get(c['id'])
+            if vid in got:
+                p = posts[got[vid]]
+                c['ig'] = f"/{p['kind']}/{p['code']}/"
+                n += 1
+        save_clips(clips)
     print(f'{n} clips linked')
 
 
 if __name__ == '__main__':
     commands = {'sheet': sheet, 'cut': cut, 'build': lambda name: print(build(name)), 'montage': montage, 'rebuild': rebuild,
-                'moments': moments, 'recipes': find_recipes, 'links': links}
+                'rebuild-expected': rebuild_expected, 'moments': moments, 'recipes': find_recipes, 'links': links}
     if len(sys.argv) < 2 or sys.argv[1] not in commands:
         sys.exit(__doc__)
-    commands[sys.argv[1]](*sys.argv[2:])
+    try:
+        commands[sys.argv[1]](*sys.argv[2:])
+    except StaleCut as error:
+        print(error, file=sys.stderr)
+        sys.exit(3)  # The web action maps this retryable conflict to HTTP 409.

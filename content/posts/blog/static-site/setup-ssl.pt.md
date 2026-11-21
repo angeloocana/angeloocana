@@ -53,7 +53,7 @@ structuredData:
 Como configurar **https://** usando **surge.sh** e **ssl.com**.
 Foi um pouco difícil juntar todas as peças, espero poder ajudar quem esteja com problemas.
 
-Você pode seguir o tutorial oficial aqui https://surge.sh/help/securing-your-custom-domain-with-ssl
+Você pode seguir o tutorial oficial aqui https://surge.sh/docs/platform/ssl
 
 Mas continue aqui, eu fiz algumas coisas bem diferentes e é focado no **ssl.com**
 

@@ -42,6 +42,7 @@ body.rv-page { margin: 0; background: #0b0b0b; color: #ece7df; font: 14px/1.45 s
 .hide-rejected .rv[data-rejected='true'] { display: none; }
 .rv.is-saving { opacity: 0.6; }
 .rv.is-error { border-color: #c0392b; }
+.rv.is-error .rv-saved { color: #ef8d83; }
 .rv[data-moved]::after { content: 'Moved: reload to regroup'; display: block; padding: 0 0.6rem 0.5rem; color: #e8b86a; font-size: 0.7rem; }
 /* caption boxes grow to show the whole caption */
 .rv-caption textarea { resize: none; field-sizing: content; min-height: 1.9em; line-height: 1.35; overflow: hidden; }

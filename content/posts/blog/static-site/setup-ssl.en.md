@@ -53,7 +53,7 @@ structuredData:
 How to setup https / ssl for surge.sh and ssl.com, It was hard to grab all the pieces,
 So I hope I can help who is in trouble.
 
-You can follow the oficial tutorial at https://surge.sh/help/securing-your-custom-domain-with-ssl
+You can follow the oficial tutorial at https://surge.sh/docs/platform/ssl
 But keep checking here, I did somethings different and it is focused to ssl.com
 
 ## Generate .pem file

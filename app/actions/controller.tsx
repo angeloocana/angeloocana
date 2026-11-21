@@ -6,7 +6,7 @@ import { routes } from '../routes.ts'
 import { clipsJson, HomePage } from './home-page.tsx'
 import { PostPage } from './post-page.tsx'
 import { postAt } from '../content/posts.ts'
-import { ReviewPage, reviewEnabled, saveReview } from './review-page.tsx'
+import { ReviewPage, reviewDenied, saveReview } from './review-page.tsx'
 import { clipExists, CutPage, momentsJson, saveCut, sheetFile, sourceMedia } from './cut-page.tsx'
 import { publishInfo, startPublish } from '../content/publish.ts'
 import { bundleCss, bundleHref, isBundle } from '../styles.ts'
@@ -49,27 +49,31 @@ export default createController(routes, {
       return new Response(null, { status: 301, headers: { Location: routes.home.href() } })
     },
     review(context) {
-      if (!reviewEnabled()) return new Response('Not Found', { status: 404 })
+      let denied = reviewDenied(context.request)
+      if (denied) return denied
       if (context.request.method === 'POST') return saveReview(context.request)
       return context.render(<ReviewPage />)
     },
     reviewCut(context) {
+      let denied = reviewDenied(context.request)
+      if (denied) return denied
       let { id } = context.params
-      if (!reviewEnabled() || !clipExists(id)) return new Response('Not Found', { status: 404 })
+      if (!clipExists(id)) return new Response('Not Found', { status: 404 })
       if (context.request.method === 'POST') return saveCut(context.request, id)
       return context.render(<CutPage id={id} />)
     },
     reviewMoments(context) {
-      return reviewEnabled() ? momentsJson(context.params.vid) : new Response('Not Found', { status: 404 })
+      return reviewDenied(context.request) ?? momentsJson(context.params.vid)
     },
     reviewSheet(context) {
-      return reviewEnabled() ? sheetFile(context.request, context.params.vid) : new Response('Not Found', { status: 404 })
+      return reviewDenied(context.request) ?? sheetFile(context.request, context.params.vid)
     },
     reviewSource(context) {
-      return reviewEnabled() ? sourceMedia(context.request) : new Response('Not Found', { status: 404 })
+      return reviewDenied(context.request) ?? sourceMedia(context.request)
     },
     reviewPublish(context) {
-      if (!reviewEnabled()) return new Response('Not Found', { status: 404 })
+      let denied = reviewDenied(context.request)
+      if (denied) return denied
       if (context.request.method === 'POST') startPublish()
       return Response.json(publishInfo(), { headers: { 'Cache-Control': 'no-store' } })
     },

@@ -1,12 +1,22 @@
+import { mkdtempSync, rmSync } from 'node:fs'
+import { tmpdir } from 'node:os'
+import { join } from 'node:path'
 import * as assert from 'remix/assert'
-import { describe, it } from 'remix/test'
+import { afterAll, describe, it } from 'remix/test'
 
-import { loadClips } from '../content/clips.ts'
 import { SOCIALS } from '../content.ts'
+import { withReviewLock } from '../content/review-io.ts'
 import { COPY } from '../copy.ts'
 import { plain, postsFor } from '../content/posts.ts'
-import { router } from '../router.ts'
 import { routes } from '../routes.ts'
+
+// The router captures the media root on import; even an unknown review clip takes the lock.
+let mediaRoot = mkdtempSync(join(tmpdir(), 'review-router-'))
+process.env.ANGELOOCANA_MEDIA = mediaRoot
+let { loadClips } = await import('../content/clips.ts')
+let { loadNotes, saveReview } = await import('./review-page.tsx')
+let { router } = await import('../router.ts')
+afterAll(() => rmSync(mediaRoot, { recursive: true, force: true }))
 
 // The home page's weight on a phone: the clips past the first few come from /data/clips.json instead.
 const HOME_BUDGET = 130_000
@@ -28,8 +38,10 @@ describe('root controller', () => {
   it('keeps both home pages under the size budget', async () => {
     for (let path of [routes.home.href(), routes.pt.href()]) {
       let html = await (await router.fetch(new URL(path, 'http://localhost'))).text()
-      let bytes = new TextEncoder().encode(html).length
-      assert.ok(bytes <= HOME_BUDGET, `${path} is ${bytes} bytes, over ${HOME_BUDGET}`)
+      // Also budget for every legacy media URL becoming a 16-character versioned URL after a recut.
+      let versioned = html.replace(/(\/media\/[^\s"?]+\?v=)[0-9a-f]{10}(?![A-Za-z0-9_-])/g, '$1abcdefghijklmnop')
+      let bytes = new TextEncoder().encode(versioned).length
+      assert.ok(bytes <= HOME_BUDGET, `${path} is ${bytes} bytes with versioned media, over ${HOME_BUDGET}`)
     }
   })
 
@@ -230,6 +242,20 @@ describe('root controller', () => {
     assert.equal(missing.status, 404)
   })
 
+  it('only advertises article translations and descriptions that exist', async () => {
+    let origin = 'https://angeloocana.com'
+    let stem = '/blog/functional-programming/examples/'
+    for (let lang of ['en', 'pt']) {
+      let path = `/${lang}${stem}`
+      let html = await (await router.fetch(new URL(path, origin))).text()
+      let head = html.split('</head>')[0]
+      assert.ok(head.includes(`<link rel="canonical" href="${origin}${path}"`))
+      assert.ok(head.includes(`hreflang="en" href="${origin}/en${stem}"`))
+      assert.ok(head.includes(`hreflang="pt-BR" href="${origin}/pt${stem}"`))
+      assert.ok(!/x-default|(?:name|property)="(?:og:)?description"/.test(head))
+    }
+  })
+
   it('keeps the clip review tools off outside development', async () => {
     for (let path of ['/review', '/review/cut/h-ice', '/review/moments/v226', '/review/sheet/v226', '/review/source?path=ig%3Areels%2Fx.mp4', '/review/publish']) {
       let response = await router.fetch(new URL(path, 'http://localhost'))
@@ -237,14 +263,78 @@ describe('root controller', () => {
     }
   })
 
+  it('only serves development review to loopback origins, and only accepts same-origin edits', async () => {
+    let nodeEnv = process.env.NODE_ENV
+    process.env.NODE_ENV = 'development'
+    try {
+      let local = 'http://localhost:44100'
+      let external = 'http://example.com:44100'
+      let read = (origin: string) => router.fetch(new URL('/review/publish', origin))
+      assert.equal((await read(local)).status, 200)
+      assert.equal((await read(external)).status, 404)
+      let forwarded = await router.fetch(new Request(`${local}/review/publish`, { headers: { Host: 'example.com:44100' } }))
+      assert.equal(forwarded.status, 404)
+      for (let path of ['/review', '/review/cut/h-ice', '/review/publish']) {
+        for (let origin of [undefined, 'null', external, 'http://localhost:44101']) {
+          let response = await router.fetch(new Request(`${local}${path}`, {
+            method: 'POST',
+            headers: origin ? { Origin: origin } : undefined,
+          }))
+          assert.equal(response.status, 403, `${path} from ${origin}`)
+        }
+      }
+      let response = await router.fetch(new Request(`${local}/review`, {
+        method: 'POST',
+        // HMR keeps the frontend URL for Origin checks even though Host points to its backend.
+        headers: { Host: '127.0.0.1:44102', Origin: local, 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id: 'not-a-clip' }),
+      }))
+      assert.deepEqual(await response.json(), { error: 'Unknown clip' })
+    } finally {
+      if (nodeEnv === undefined) delete process.env.NODE_ENV
+      else process.env.NODE_ENV = nodeEnv
+    }
+  })
+
+  it('keeps board writes in receipt order while a snapshot holds the lock', async () => {
+    let id = loadClips()[0].id
+    let locked = Promise.withResolvers<void>()
+    let releaseLock = Promise.withResolvers<void>()
+    let holding = withReviewLock(mediaRoot, async () => { locked.resolve(); await releaseLock.promise })
+    await locked.promise
+
+    let readingFirst = Promise.withResolvers<void>()
+    let releaseFirst = Promise.withResolvers<void>()
+    let first = new Request('http://localhost/review', { method: 'POST' })
+    first.json = async () => { readingFirst.resolve(); await releaseFirst.promise; return { id, note: 'First edit' } }
+    let second = new Request('http://localhost/review', { method: 'POST' })
+    let skippedFirst = false
+    second.json = async () => { skippedFirst = true; return { id, note: 'Second edit' } }
+
+    let one = saveReview(first)
+    await readingFirst.promise
+    let two = saveReview(second)
+    await Promise.resolve()
+    let overtook = skippedFirst
+    releaseFirst.resolve()
+    releaseLock.resolve()
+    await Promise.all([holding, one, two])
+
+    assert.equal(overtook, false)
+    assert.equal(loadNotes()[id], 'Second edit')
+  })
+
   // HREF.pt is '/pt/', so a link built as `${home}/#posts` came out as /pt//#posts
-  it('never links to a doubled slash, on the home pages or any post', async () => {
+  it('never links to a doubled slash in a path on this site', async () => {
+    let origin = 'https://angeloocana.com'
     let paths = [routes.home.href(), routes.pt.href(), ...postsFor('en').map((post) => post.url), ...postsFor('pt').map((post) => post.url)]
     for (let path of new Set(paths)) {
-      let html = await (await router.fetch(new URL(path, 'http://localhost'))).text()
+      let url = new URL(path, origin)
+      let html = await (await router.fetch(url)).text()
       for (let [, href] of html.matchAll(/\shref="([^"]*)"/g)) {
-        let local = href.replace(/^https?:\/\/[^/]+/, '')
-        assert.ok(!local.includes('//'), `${path}: href="${href}"`)
+        let target = new URL(href, url)
+        // External services like Wayback use another full URL as part of their path.
+        if (target.origin === origin) assert.ok(!target.pathname.includes('//'), `${path}: href="${href}"`)
       }
     }
   })
