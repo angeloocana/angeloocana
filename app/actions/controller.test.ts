@@ -237,6 +237,36 @@ describe('root controller', () => {
     }
   })
 
+  it('only serves development review to loopback origins, and only accepts same-origin edits', async () => {
+    let nodeEnv = process.env.NODE_ENV
+    process.env.NODE_ENV = 'development'
+    try {
+      let local = 'http://localhost:44100'
+      let external = 'http://example.com:44100'
+      let read = (origin: string) => router.fetch(new URL('/review/publish', origin))
+      assert.equal((await read(local)).status, 200)
+      assert.equal((await read(external)).status, 404)
+      for (let path of ['/review', '/review/cut/h-ice', '/review/publish']) {
+        for (let origin of [undefined, 'null', external, 'http://localhost:44101']) {
+          let response = await router.fetch(new Request(`${local}${path}`, {
+            method: 'POST',
+            headers: origin ? { Origin: origin } : undefined,
+          }))
+          assert.equal(response.status, 403, `${path} from ${origin}`)
+        }
+      }
+      let response = await router.fetch(new Request(`${local}/review`, {
+        method: 'POST',
+        headers: { Origin: local, 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id: 'not-a-clip' }),
+      }))
+      assert.deepEqual(await response.json(), { error: 'Unknown clip' })
+    } finally {
+      if (nodeEnv === undefined) delete process.env.NODE_ENV
+      else process.env.NODE_ENV = nodeEnv
+    }
+  })
+
   // HREF.pt is '/pt/', so a link built as `${home}/#posts` came out as /pt//#posts
   it('never links to a doubled slash, on the home pages or any post', async () => {
     let paths = [routes.home.href(), routes.pt.href(), ...postsFor('en').map((post) => post.url), ...postsFor('pt').map((post) => post.url)]

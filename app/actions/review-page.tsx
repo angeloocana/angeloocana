@@ -13,7 +13,20 @@ import { ReviewBoard } from '../ui/public/review-board.tsx'
 // Reject what should not go, star what should come first (★ to ★★★), or move a clip to another
 // category. Each change is saved to app/content/clips.json right away. It is never built or deployed.
 
-export const reviewEnabled = () => process.env.NODE_ENV === 'development'
+const loopback = new Set(['localhost', '127.0.0.1', '[::1]'])
+
+export function reviewDenied(request: Request): Response | undefined {
+  let url = new URL(request.url)
+  let host = request.headers.get('Host')
+  // Check the effective URL (including through HMR) and the HTTP authority, not Origin alone.
+  if (process.env.NODE_ENV !== 'development' || !loopback.has(url.hostname) ||
+      (host !== null && !loopback.has(URL.parse(`http://${host}`)?.hostname ?? ''))) {
+    return new Response('Not Found', { status: 404 })
+  }
+  if (request.method !== 'GET' && request.method !== 'HEAD' && request.headers.get('Origin') !== url.origin) {
+    return new Response('Review changes require a same-origin request', { status: 403 })
+  }
+}
 
 // Feedback notes stay on this machine, in the shared media folder, so they never reach the public repo.
 const NOTES = join(MEDIA_DIR, 'clip-feedback.json')
