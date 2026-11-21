@@ -200,7 +200,9 @@ function cspRule(path: string, hashes: string[]) {
     "form-action 'self'",
     "object-src 'none'",
     "frame-ancestors 'none'",
-    ["script-src 'self'", ...hashes].join(' '),
+    // Cloudflare injects its Web Analytics beacon at the edge, after the build.
+    ["script-src 'self' https://static.cloudflareinsights.com", ...hashes].join(' '),
+    "connect-src 'self' https://cloudflareinsights.com",
     "style-src 'self'",
     `img-src 'self' data: https://img.youtube.com ${SITE_ORIGIN}/imgs/`,
     'frame-src https://www.youtube-nocookie.com',

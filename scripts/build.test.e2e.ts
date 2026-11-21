@@ -29,6 +29,10 @@ describe('static build recovery URLs', () => {
     assert.match(config, /"not_found_handling"\s*:\s*"404-page"/)
     assert.match(html, /<h1>Page not found<\/h1>/)
     assert.match(html, /<section lang="pt-BR">\s*<h2>Página não encontrada<\/h2>/)
+    // Nested misses under the blog/tutorial wildcards receive their CSP, which blocks inline styles.
+    assert.doesNotMatch(html, /<style\b|<[a-z][^>]*\sstyle\s*=/i)
+    assert.match(html, /<link rel="stylesheet" href="\/404\.css">/)
+    assert.match(await readFile(new URL('404.css', DIST), 'utf8'), /\.languages \{ display: grid;/)
     assert.deepEqual([...html.matchAll(/<a href="([^"]+)"/g)].map(([, href]) => href), ['/', '/#posts', '/pt/', '/pt/#posts'])
   })
 })
@@ -69,6 +73,7 @@ describe('static build CSP', () => {
         return [name, values]
       }))
       assert.deepEqual(directives.get('style-src'), ["'self'"], path)
+      assert.deepEqual(directives.get('connect-src'), ["'self'", 'https://cloudflareinsights.com'], path)
       assert.deepEqual(directives.get('img-src'), ["'self'", 'data:', 'https://img.youtube.com', 'https://angeloocana.com/imgs/'], path)
       assert.deepEqual(directives.get('frame-src'), ['https://www.youtube-nocookie.com'], path)
       let html = await readFile(local, 'utf8')
@@ -82,7 +87,7 @@ describe('static build CSP', () => {
         assert.equal(inline.length, 0, path)
       }
       let hashes = new Set(inline.map(([, , body]) => `'sha256-${createHash('sha256').update(body).digest('base64')}'`))
-      assert.deepEqual(directives.get('script-src')?.slice().sort(), ["'self'", ...hashes].sort(), path)
+      assert.deepEqual(directives.get('script-src')?.slice().sort(), ["'self'", 'https://static.cloudflareinsights.com', ...hashes].sort(), path)
     }
     for (let path of [...homes, '/redux-saga-presentation.html', '/data/clips.json']) assert.ok(checked.has(path), path)
     for (let prefix of posts) assert.ok([...checked].some((path) => path.startsWith(prefix)), prefix)
