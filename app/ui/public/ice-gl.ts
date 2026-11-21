@@ -21,6 +21,12 @@
 // While the page scrolls, the parts of the thickness map that come from the page (where the cards are, and
 // the clear places around the words) are kept in cells fixed to the page, and only the rows that scroll
 // into view are worked out; each frame only adds the screen's own frost to them.
+//
+// Now and then something swims under the sheet (ice-animals.ts), seen only where it has been melted: its
+// silhouette is a tiny texture the frame samples only inside the animal's own small box.
+
+import { SPECIES, SWIM, along, drawAnimal, isKind, pick, plan, random, schedule, TH, TW } from './ice-animals.ts'
+import type { Kind, Point } from './ice-animals.ts'
 
 const VERT = 'attribute vec2 a;void main(){gl_Position=vec4(a,0.,1.);}'
 
@@ -63,12 +69,15 @@ void main(){
 // how clear the words keep it); O places it: 1 / its size in CSS px, and how far its top is above the
 // screen's. N is the menu's height, Q the screen edge frost (strength, reach in px), V how far the page
 // scrolled since the last frame (the clear places reach that much further up and down, so a fast scroll
-// never slides words under frost before the next frame)
+// never slides words under frost before the next frame). K is the animal's silhouette (R its body, G the
+// water it moves), Z its box's middle (CSS px from the top left) and heading, Y the box's half length and
+// half width, how much of it shows (0: none here, the box is skipped) and its stroke; X how far it sways
 const ICE = `${NOISE}
-uniform sampler2D B, L, M;
+uniform sampler2D B, L, M, K;
 uniform vec2 R, P, Q;
 uniform vec3 O;
-uniform float S, T, A, E, N, V;
+uniform vec4 Z, Y;
+uniform float S, T, A, E, N, V, X;
 uniform vec3 C[4];
 // rays out of a point: N sectors, each with one straight, slightly kinked ray of its own length
 float rays(vec2 d, float r, float N, float seed, float len, float wd){
@@ -139,6 +148,23 @@ void main(){
   a = max(a, rim*(.16 + .32*l));
   float wet = hole*pow(max(dot(normalize(vec3((b.zw - .5)*.4, 1.)), H), 0.), 90.)*.35*th;
   col += wet; a += wet*.3;
+  // something swimming under the ice: a shadow under the frost, blurred more the more frost it is under,
+  // and in the open water a darker shape in water lit faintly around it. Only where there is ice (th), so
+  // never over the words, and all but invisible under ice nobody has melted
+  if (Y.z > 0.){
+    vec2 d = vec2(c.x, yt) - Z.xy;
+    vec2 lc = vec2(dot(d, Z.zw), dot(d, vec2(-Z.w, Z.z)))/Y.xy;
+    if (abs(lc.x) < 1. && abs(lc.y) < 1.){
+      float tl = .5 - .5*lc.x;
+      lc.y += X*sin(Y.w + lc.x*2.5)*tl*tl;
+      vec4 an = texture2D(K, lc*.5 + .5);
+      float open = smoothstep(.12, .45, mt);
+      float vis = Y.z*th*(.04 + .96*open);
+      float water = an.g*vis*hole*.075*(1. - an.r);
+      col = mix(col, vec3(.4, .55, .65), water/max(a + water, .001)); a += water;
+      dark += mix(an.g*.6, an.r, open)*vis*.6;
+    }
+  }
   // cracks with depth: a dark cut, lit on the side toward the light
   float k = 0., hi = 0., pw = 0.;
   for (int i = 0; i < 4; i++){
@@ -213,7 +239,7 @@ export async function mountIce(canvas: HTMLCanvasElement, signal: AbortSignal) {
   let [base, ice] = programs
   let uniforms = (prog: WebGLProgram, names: string[]) => Object.fromEntries(names.map((k) => [k, g.getUniformLocation(prog, k)]))
   let ub = uniforms(base, ['S'])
-  let u = uniforms(ice, ['B', 'L', 'M', 'R', 'P', 'Q', 'O', 'S', 'T', 'A', 'E', 'N', 'V', 'C'])
+  let u = uniforms(ice, ['B', 'L', 'M', 'K', 'R', 'P', 'Q', 'O', 'Z', 'Y', 'S', 'T', 'A', 'E', 'N', 'V', 'X', 'C'])
   let buffer = g.createBuffer()
   g.bindBuffer(g.ARRAY_BUFFER, buffer)
   g.bufferData(g.ARRAY_BUFFER, new Float32Array([-1, -1, 3, -1, -1, 3]), g.STATIC_DRAW)
@@ -473,8 +499,40 @@ export async function mountIce(canvas: HTMLCanvasElement, signal: AbortSignal) {
       for (let i = 1; i <= steps; i++) brush(last[0] + ((x - last[0]) * i) / steps, last[1] + ((y - last[1]) * i) / steps, r, 0.1)
     } else brush(x, y, r, 0.25)
     last = [x, y]
+    if (!animal && swims.input(t)) swim(next0 ?? pick(rng), [x, y])
     stir()
   }
+
+  // Something swimming under the ice (ice-animals.ts): due only on real input (above), at most one, gone the
+  // moment the motion goes off, the tab is hidden or the sheet comes down. Its silhouette goes into a tiny
+  // texture, made the first time one comes.
+  let rng = random((Math.random() * 2 ** 32) | 0)
+  let swims = schedule(rng)
+  let animal: { kind: Kind; path: [Point, Point, Point]; at: number; time: number } | null = null
+  let animalTex: WebGLTexture | null = null, drawnKind: Kind | null = null
+  // PREVIEW (for review on a phone; remove before shipping): ?animal=pike|trout|otter|beaver|seal brings that
+  // one as soon as the sheet has frozen in, and again on the next input once it has passed, each in a melt
+  // of its own, so it shows without a swipe in the right place
+  let preview = new URLSearchParams(location.search).get('animal')
+  let next0: Kind | null = isKind(preview) ? preview : null, shown0 = false
+  if (next0) { rng = random(18); swims = { input: () => !animal, retry() {}, reset() {} } }
+  let swim = (kind: Kind, near: Point) => {
+    let s = SPECIES[kind]
+    let path = plan(rng, near, s.speed * SWIM, thickness)
+    if (!path) return swims.retry(t)
+    if (!animalTex) animalTex = texture(4)
+    if (drawnKind !== kind) {
+      let canvas = document.createElement('canvas')
+      drawAnimal(canvas, kind)
+      g.activeTexture(g.TEXTURE4)
+      g.bindTexture(g.TEXTURE_2D, animalTex)
+      g.texImage2D(g.TEXTURE_2D, 0, g.RGBA, g.RGBA, g.UNSIGNED_BYTE, canvas)
+      drawnKind = kind
+    }
+    animal = { kind, path, at: t, time: SWIM * (0.9 + 0.2 * rng()) }
+    stir()
+  }
+  let gone = () => { animal = null; swims.reset() }
   // a card held melted: it clears, and the frost just around it. The warmth fades in over FEATHER px from
   // the edge, so the melt's edge falls where the frost's grain puts it (the shader), like the clear places
   // around the words, never along a straight line
@@ -562,6 +620,17 @@ export async function mountIce(canvas: HTMLCanvasElement, signal: AbortSignal) {
       }
     }
     let since = t - frozenAt
+    if (animal && next0 && t - animal.at < animal.time) {
+      let [[x, y]] = along(animal.path, (t - animal.at) / animal.time)
+      brush(x, y, 90, 0.012)
+    }
+    if (next0 && !shown0 && t - frozenAt > FREEZE + 0.4) {
+      shown0 = true
+      // (near the thickest ice in the screen's middle, away from the words)
+      let near: Point = [W / 2, H / 2], top = 0
+      for (let y = H * 0.25; y < H * 0.85; y += 24) for (let x = W * 0.2; x < W * 0.8; x += 24) if (thickness(x, y) > top) { top = thickness(x, y); near = [x, y] }
+      swim(next0, near)
+    }
     for (let b of breaths) {
       let p = (since - b.at) / 0.7
       if (p < 0 || p > 1) continue
@@ -619,6 +688,18 @@ export async function mountIce(canvas: HTMLCanvasElement, signal: AbortSignal) {
     let dx = W * 0.7, dy = H * 0.4
     g.uniform2f(u.P, ptr.x + (dx - ptr.x) * away, H - (ptr.y + (dy - ptr.y) * away))
     g.uniform3fv(u.C, still ? [0, 0, -99, 0, 0, -99, 0, 0, -99, 0, 0, -99] : cracks)
+    // the animal: where it is along its path, faded in and out at its ends
+    let p = animal ? (t - animal.at) / animal.time : 1
+    if (animal && p >= 1) animal = null
+    if (animal && !still) {
+      let s = SPECIES[animal.kind]
+      let [[x, y], [dx, dy]] = along(animal.path, p)
+      let half = s.length / 0.8 / 2
+      g.uniform1i(u.K, 4)
+      g.uniform4f(u.Z, x, y, dx, dy)
+      g.uniform4f(u.Y, half, (half * TH) / TW, Math.min(1, p * 6, (1 - p) * 6), t * s.beat * 6.2832)
+      g.uniform1f(u.X, s.wave)
+    } else g.uniform4f(u.Y, 1, 1, 0, 0)
     g.clearColor(0, 0, 0, 0)
     g.clear(g.COLOR_BUFFER_BIT)
     g.drawArrays(g.TRIANGLES, 0, 3)
@@ -653,7 +734,7 @@ export async function mountIce(canvas: HTMLCanvasElement, signal: AbortSignal) {
     if (still || document.hidden) { then = 0; return }
     // something melting, cracking, scrolling, freezing in or creeping, or the light still on its way back:
     // the next frame; otherwise the sheet has settled and nothing more is drawn until something moves it
-    let busy = t < warmUntil || t - ptr.at < 2.6 || t - frozenAt < FREEZE + 2 || t - creepAt < CREEP || cracks.some((c, i) => i % 3 === 2 && t - c < 9)
+    let busy = t < warmUntil || !!animal || t - ptr.at < 2.6 || t - frozenAt < FREEZE + 2 || t - creepAt < CREEP || cracks.some((c, i) => i % 3 === 2 && t - c < 9)
     if (busy) raf = requestAnimationFrame(frame)
     else then = 0
   }
@@ -690,6 +771,7 @@ export async function mountIce(canvas: HTMLCanvasElement, signal: AbortSignal) {
     still = now
     if (still) {
       halt()
+      gone()
       melt.fill(0)
       meltDirty = true
       hovered = focused = null
@@ -702,7 +784,7 @@ export async function mountIce(canvas: HTMLCanvasElement, signal: AbortSignal) {
   }
   let paused = new MutationObserver(setStill)
   paused.observe(root, { attributes: true, attributeFilter: ['class'] })
-  document.addEventListener('visibilitychange', () => (document.hidden ? halt() : go()), { signal })
+  document.addEventListener('visibilitychange', () => { if (document.hidden) { halt(); gone() } else go() }, { signal })
   // the screen changed size: a new sheet; the page changed size, or a row got new cards: measure again
   let sized = new ResizeObserver(() => {
     if (canvas.clientWidth === W && canvas.clientHeight === H) return
@@ -721,12 +803,13 @@ export async function mountIce(canvas: HTMLCanvasElement, signal: AbortSignal) {
   // goes back at once rather than whenever the canvas is collected.
   let release = () => {
     halt()
+    animal = null
     sized.disconnect()
     page.disconnect()
     rows.disconnect()
     paused.disconnect()
     if (g.isContextLost()) return
-    for (let tex of [grainTex, layoutTex, meltTex, plainTex]) g.deleteTexture(tex)
+    for (let tex of [grainTex, layoutTex, meltTex, plainTex, animalTex]) g.deleteTexture(tex)
     for (let prog of programs) g.deleteProgram(prog)
     g.deleteFramebuffer(fbo)
     g.deleteBuffer(buffer)
