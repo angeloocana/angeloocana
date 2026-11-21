@@ -79,9 +79,22 @@ let waitForClip = (page: Page, flag: string, clip: string) => page.waitForFuncti
   return Math.min(row.right, box.right) - Math.max(row.left, box.left) >= box.width / 2
 }, { flag, clip }, { timeout: 6000 })
 
+// A hobby chip, the way a visitor reaches it: on a phone the chips scroll sideways in their own strip, and one
+// out of sight there is brought into view along it first, then pressed where it shows. (Left to Playwright,
+// the click scrolled the page as well, and on a busy machine that took the page off the row, old code or new.)
+async function pressChip(page: Page, selector: string) {
+  let chip = page.locator(selector).first()
+  await chip.evaluate((el) => {
+    let strip = el.closest<HTMLElement>('.clip-chips')!
+    strip.scrollLeft += el.getBoundingClientRect().left - strip.getBoundingClientRect().left - 16
+  })
+  let box = (await chip.boundingBox())!
+  await page.mouse.click(box.x + box.width / 2, box.y + box.height / 2)
+}
+
 async function pickTravel(page: Page, flag: string) {
   await scrollTo(page, 'outside')
-  await page.click('#outside [data-rail-cat="travel"]')
+  await pressChip(page, '#outside [data-rail-cat="travel"]')
   await page.waitForSelector('#outside [data-rail-cat="travel"][aria-pressed="true"]')
   // The chip jumps to the first Travel clip in the shuffled rail, even if another clip shares its view.
   let clip = (await page.locator('#outside [data-rail-track] [data-cat="travel"]').first().getAttribute('id'))!
@@ -267,7 +280,7 @@ describe('home page in a browser', () => {
     await open(page, '/pt/')
     await scrollTo(page, 'outside')
     await allClips(page)
-    await page.click('#outside [data-rail-cat="travel"]')
+    await pressChip(page, '#outside [data-rail-cat="travel"]')
     let clip = (await page.locator('#outside [data-rail-track] [data-cat="travel"]').first().getAttribute('id'))!
     // still on the way: the row is sliding, and the Travel clip isn't in view yet
     let onTheWay = await page.evaluate((id) => {
@@ -413,7 +426,7 @@ describe('home page in a browser', () => {
     await page.waitForTimeout(800)
     total = await page.evaluate(() => Number(document.querySelector<HTMLElement>('#outside [data-rail-track]')!.dataset.total))
     assert.ok(await page.evaluate(() => document.querySelectorAll('#outside [data-clip]').length) < total, 'the failed load added nothing')
-    await page.click('#outside [data-rail-cat]')
+    await pressChip(page, '#outside [data-rail-cat]')
     await page.waitForFunction((n) => document.querySelectorAll('#outside [data-clip]').length === n, total)
   })
 
