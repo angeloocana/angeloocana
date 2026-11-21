@@ -1,44 +1,50 @@
 #!/usr/bin/env bash
-# Blocks commits that could leak secrets or personal media into this PUBLIC repo.
-# Enable once per clone:  git config core.hooksPath .githooks
-set -u
+# Enable in each clone: git config core.hooksPath .githooks
+# CI may pass a base commit to check the PR's indexed tree against instead of HEAD.
+set -euo pipefail
+shopt -s nocasematch
+
+staged=$(mktemp)
+trap 'rm -f "$staged"' EXIT
+git diff --cached ${1:+"$1"} --name-only --diff-filter=ACMR -z > "$staged"
+[ -s "$staged" ] || exit 0
 
 fail=0
-staged=$(git diff --cached --name-only --diff-filter=ACMR)
-[ -z "$staged" ] && exit 0
+block() { printf 'Blocked: %s (%q)\n' "$1" "$2" >&2; fail=1; }
+credentials='(^|/)(\.env(\..*)?|\.dev\.vars(\..*)?|\.wrangler(/.*)?|.*\.(pem|key|p12|pfx|crt|csr|keystore)|id_(rsa|ed25519)|.*credentials.*\.json|\.npmrc)$'
+private_media='(^|/)(index/(items|montages|reviews|ig-posts|cut-drafts|cut-checks|config)\.json|clip-feedback\.json|instagram[^/]*/|media-originals/|sources/huawei/|work/moments/|public/media/)|^media/'
+originals='\.(mp4|mov|m4v|avi|mkv|webm|ogv|flv|mts|m2ts|heic|raw|dng|cr2|cr3|psd|xcf)$'
+while IFS= read -r -d '' file; do
+  if [[ $file =~ $credentials ]]; then
+    block 'credential-looking file' "$file"
+  elif [[ $file =~ $private_media || $file =~ $originals ]]; then
+    block 'private review data or media; keep it outside Git' "$file"
+  fi
+  bytes=$(git cat-file -s ":$file")
+  if [[ $bytes -gt 1500000 ]]; then block 'staged blob over 1.5 MB' "$file"; fi
+  if [[ $file == app/content/clips.json ]]; then
+    if ! git show ':app/content/clips.json' | node --input-type=module -e '
+      import { readFileSync } from "node:fs"
+      import { assertPublicClipData } from "./app/content/public-clip-data.ts"
+      let clips
+      try { clips = JSON.parse(readFileSync(0, "utf8")) }
+      catch { console.error("Public clips: invalid JSON."); process.exit(1) }
+      try { assertPublicClipData(clips) }
+      catch (error) { console.error(error.message); process.exit(1) }
+    '; then fail=1; fi
+  fi
+done < "$staged"
 
-# 1. File names that should never be committed.
-bad_names=$(echo "$staged" | grep -E -i '(^|/)(\.env(\..*)?|\.dev\.vars|.*\.(pem|key|p12|pfx|crt|csr|keystore)|id_(rsa|ed25519)|.*credentials.*\.json|\.npmrc)$' || true)
-if [ -n "$bad_names" ]; then
-  echo "✗ Blocked: secret-looking files staged:"; echo "$bad_names" | sed 's/^/    /'; fail=1
+# Scan additions only; the lockfile's generated text is not useful for these heuristics.
+# Never print matching lines: the caller may be writing a public CI log.
+patterns='(-----BEGIN [A-Z ]*PRIVATE KEY-----|AKIA[0-9A-Z]{16}|ghp_[A-Za-z0-9]{30,}|github_pat_[A-Za-z0-9_]{30,}|xox[abp]-[A-Za-z0-9-]{10,}|sk_live_[A-Za-z0-9]+|sk-ant-[A-Za-z0-9_-]{20,}|AIza[0-9A-Za-z_-]{35}|(CLOUDFLARE|CF)_API_(TOKEN|KEY)[[:space:]]*[=:][[:space:]]*[^[:space:]]+|(api[_-]?key|secret|token|password)["'"']?[[:space:]]*[:=][[:space:]]*["'"'][A-Za-z0-9/+_=-]{16,}["'"'])'
+phones='(\(?[0-9]{3}\)?[ .-][0-9]{3}[ .-][0-9]{4}|\+55[ .-]?(\([0-9]{2}\)|[0-9]{2})[ .-]?9?[0-9]{4}[ .-]?[0-9]{4})'
+patch=$(git diff --cached ${1:+"$1"} --no-ext-diff --no-textconv -U0 --diff-filter=ACMR -- . ':(exclude)package-lock.json')
+added=$(grep '^+' <<< "$patch" | grep -v '^+++ ' || true)
+if grep -Ei "$patterns" <<< "$added" > /dev/null; then
+  echo 'Blocked: possible secret in staged changes.' >&2; fail=1
 fi
-
-# 2. Raw media. Videos and originals live in R2, never in git. Photos must be small web exports.
-raw_media=$(echo "$staged" | grep -E -i '\.(mp4|mov|m4v|avi|mkv|heic|raw|dng|cr2|psd|xcf)$' || true)
-if [ -n "$raw_media" ]; then
-  echo "✗ Blocked: raw video/photo originals staged (upload to R2 instead):"; echo "$raw_media" | sed 's/^/    /'; fail=1
+if grep -E "$phones" <<< "$added" > /dev/null; then
+  echo 'Blocked: phone-number-like text in staged changes.' >&2; fail=1
 fi
-
-big=$(echo "$staged" | while read -r f; do
-  [ -f "$f" ] && [ "$(wc -c < "$f")" -gt 1500000 ] && echo "$f"
-done)
-if [ -n "$big" ]; then
-  echo "✗ Blocked: files over 1.5 MB (compress them or put them in R2):"; echo "$big" | sed 's/^/    /'; fail=1
-fi
-
-# 3. Secret patterns inside the staged text.
-patterns='(-----BEGIN [A-Z ]*PRIVATE KEY-----|AKIA[0-9A-Z]{16}|ghp_[A-Za-z0-9]{30,}|github_pat_[A-Za-z0-9_]{30,}|xox[abp]-[A-Za-z0-9-]{10,}|sk_live_[A-Za-z0-9]+|sk-ant-[A-Za-z0-9_-]{20,}|AIza[0-9A-Za-z_-]{35}|CLOUDFLARE_API_TOKEN\s*[=:]\s*\S+|(api[_-]?key|secret|token|password)["'"'"']?\s*[:=]\s*["'"'"'][A-Za-z0-9/+_=-]{16,}["'"'"'])'
-hits=$(git diff --cached -U0 --diff-filter=ACMR -- . ':(exclude)package-lock.json' | grep -E '^\+[^+]' | grep -E -i "$patterns" || true)
-if [ -n "$hits" ]; then
-  echo "✗ Blocked: possible secret in staged changes:"; echo "$hits" | cut -c1-120 | sed 's/^/    /'; fail=1
-fi
-
-# 4. Personal data: phone numbers and street addresses do not belong in a public repo.
-phones=$(git diff --cached -U0 --diff-filter=ACMR -- . ':(exclude)package-lock.json' | grep -E '^\+[^+]' | grep -E '(\(?[0-9]{3}\)?[ .-][0-9]{3}[ .-][0-9]{4}|\+55 ?[0-9]{2} ?9?[0-9]{4}-?[0-9]{4})' || true)
-if [ -n "$phones" ]; then
-  echo "✗ Blocked: phone-number-like text staged (commit with --no-verify only if intentional):"; echo "$phones" | cut -c1-120 | sed 's/^/    /'; fail=1
-fi
-
-[ $fail -eq 0 ] && exit 0
-echo; echo "Fix the above, or bypass deliberately with: git commit --no-verify"
-exit 1
+exit "$fail"

@@ -5,6 +5,7 @@ import { Document } from './document.tsx'
 import { CATEGORIES, CATEGORY_NAMES, clipUrl, instagramUrl, loadClips, saveClips, type Category, type Clip } from '../content/clips.ts'
 import { cutState, loadChecks, loadDrafts, type CutCheck, type CutState } from '../content/cuts.ts'
 import { MEDIA_DIR } from '../content/media-dir.ts'
+import { assertPublicClipData } from '../content/public-clip-data.ts'
 import { publishInfo, reviewChanged } from '../content/publish.ts'
 import { PublishStatus } from '../ui/public/publish-status.tsx'
 import { ReviewBoard } from '../ui/public/review-board.tsx'
@@ -35,6 +36,11 @@ export async function saveReview(request: Request) {
   if (body.label) {
     let clean = (text: unknown, fallback: string) => (typeof text === 'string' && text.trim() ? text.trim().slice(0, 120) : fallback)
     clip.label = { en: clean(body.label.en, clip.label.en), pt: clean(body.label.pt, clip.label.pt) }
+    try {
+      assertPublicClipData(clips)
+    } catch (error) {
+      return Response.json({ error: (error as Error).message }, { status: 422 })
+    }
   }
   if (body.note !== undefined) {
     let notes = loadNotes()
