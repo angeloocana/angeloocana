@@ -1,16 +1,16 @@
 import * as assert from 'remix/assert'
-import { it } from 'remix/test'
+import { describe, it } from 'remix/test'
 
 import worker from './worker.ts'
 
 const ETAG = '"clip-version"'
-const MEDIA_URL = 'https://angeloocana.com/media/clips/test.mp4?v=clip-version'
+const MEDIA_URL = 'https://angeloocana.com/media/clips/c12345678.mp4?v=0123456789'
 
 const env: Parameters<typeof worker.fetch>[1] = {
   ASSETS: { async fetch() { throw new Error('Media should not reach the static asset binding') } },
   MEDIA: {
     async get(key, { range, onlyIf }) {
-      assert.equal(key, 'clips/test.mp4')
+      assert.equal(key, 'clips/c12345678.mp4')
       let object = {
         size: 4,
         httpEtag: ETAG,
@@ -52,4 +52,64 @@ it('adds security headers without changing full, ranged or revalidated media res
   preview.hostname = 'angeloocana.angeloocana.workers.dev'
   let response = await worker.fetch(new Request(preview), env)
   assert.equal(response.headers.get('Strict-Transport-Security'), null)
+})
+
+const KEY = 'clips/c12345678.mp4'
+const HASH = 'a'.repeat(64)
+const VERSIONED_KEY = `versions/${HASH}/${KEY}`
+
+function mediaWorker() {
+  let lookups: string[] = []
+  let objects = new Map([[KEY, 'original cut'], [VERSIONED_KEY, 'new cut']])
+  let env = {
+    ASSETS: { async fetch(): Promise<Response> { throw new Error('Unexpected asset request') } },
+    MEDIA: {
+      async get(key: string) {
+        lookups.push(key)
+        let bytes = objects.get(key)
+        if (bytes === undefined) return null
+        return { size: bytes.length, httpEtag: '"fake"', writeHttpMetadata() {}, body: new Response(bytes).body! }
+      },
+    },
+  }
+  return { lookups, fetch: (path: string) => worker.fetch(new Request(`https://example.test/media/${path}`), env) }
+}
+
+describe('media worker', () => {
+  it('keeps legacy URLs on the original object and serves only exact versioned objects', async () => {
+    let worker = mediaWorker()
+    for (let suffix of ['', '?v=0123456789', '?v=0']) {
+      let response = await worker.fetch(`${KEY}${suffix}`)
+      assert.equal(response.status, 200)
+      assert.equal(await response.text(), 'original cut')
+    }
+    let latest = await worker.fetch(`${KEY}?v=sha256-${HASH}`)
+    assert.equal(latest.status, 200)
+    assert.equal(await latest.text(), 'new cut')
+
+    let missingHash = 'b'.repeat(64)
+    let missing = await worker.fetch(`${KEY}?v=sha256-${missingHash}`)
+    assert.equal(missing.status, 404)
+    assert.equal(missing.headers.get('Cache-Control'), 'no-store')
+    assert.deepEqual(worker.lookups, [KEY, KEY, KEY, VERSIONED_KEY, `versions/${missingHash}/${KEY}`])
+  })
+
+  it('rejects private or malformed media URLs without contacting R2', async () => {
+    let worker = mediaWorker()
+    for (let path of [
+      VERSIONED_KEY,
+      `versions%2F${HASH}/${KEY}`,
+      'clips/%ZZ.mp4',
+      'joj/unlisted.webp',
+      `${KEY}?v=`,
+      `${KEY}?v=unexpected`,
+      `${KEY}?v=0&v=sha256-${HASH}`,
+    ]) {
+      let response = await worker.fetch(path)
+      assert.equal(response.status, 404, path)
+      assert.equal(response.headers.get('Cache-Control'), 'no-store', path)
+      assert.equal(response.headers.get('X-Content-Type-Options'), 'nosniff', path)
+    }
+    assert.deepEqual(worker.lookups, [])
+  })
 })

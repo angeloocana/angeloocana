@@ -4,6 +4,8 @@
 // be built and deployed from git alone. Videos need byte ranges: Safari on iPhone asks for a video in
 // pieces and won't play one served whole.
 
+import { isPublicMediaKey, versionedMediaKey } from './app/content/media-keys.ts'
+
 /** The few R2 binding types this file uses (the full set lives in @cloudflare/workers-types). */
 type R2Range = { offset: number; length?: number } | { offset?: number; length: number } | { suffix: number }
 type R2Object = { size: number; httpEtag: string; range?: R2Range; writeHttpMetadata(headers: Headers): void }
@@ -35,7 +37,9 @@ export default {
       return new Response(null, { status: 405, headers })
     }
 
-    let key = decodeURIComponent(url.pathname.slice('/media/'.length))
+    let key = mediaObjectKey(url)
+    if (!key) return notFound(headers)
+
     let object: R2Object | R2ObjectBody | null
     try {
       object = await env.MEDIA.get(key, { range: request.headers, onlyIf: request.headers })
@@ -43,10 +47,7 @@ export default {
       // a range past the end of the file
       return new Response(null, { status: 416, headers })
     }
-    if (!object) {
-      headers.set('Cache-Control', 'no-store')
-      return new Response('Not found', { status: 404, headers })
-    }
+    if (!object) return notFound(headers)
 
     object.writeHttpMetadata(headers)
     headers.set('ETag', object.httpEtag)
@@ -64,6 +65,30 @@ export default {
     }
     return new Response(object.body, { status: partial ? 206 : 200, headers })
   },
+}
+
+function mediaObjectKey(url: URL): string | undefined {
+  // Every public key has a canonical ASCII path. No decoding means encoded separators and
+  // malformed escapes cannot become logical keys, or expose the private versions/ prefix.
+  let key = url.pathname.slice('/media/'.length)
+  let [version, extra] = url.searchParams.getAll('v')
+  if (extra !== undefined) return
+
+  if (version === undefined || version === '0' || /^[0-9a-f]{10}$/.test(version)) {
+    return isPublicMediaKey(key) ? key : undefined
+  }
+
+  // A versioned URL names one immutable object, even when that object is missing.
+  try {
+    return versionedMediaKey(key, version)
+  } catch {
+    return undefined
+  }
+}
+
+function notFound(headers: Headers) {
+  headers.set('Cache-Control', 'no-store')
+  return new Response('Not found', { status: 404, headers })
 }
 
 // R2 fills in all three keys of the range, the unused ones as undefined, so test the values, not the keys
