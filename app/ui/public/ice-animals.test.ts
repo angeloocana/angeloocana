@@ -10,17 +10,20 @@ describe('what swims under the ice', () => {
     assert.deepEqual(counts, { pike: 30, trout: 30, otter: 30, seal: 7, beaver: 3 })
   })
 
-  it('waits 45–75 seconds of ice motion and comes only with new input', () => {
+  it('waits 5–20 seconds after settling or a swim ending, and defers while motion is off', () => {
     let value = 0
     let visits = schedule(() => value)
-    assert.equal(visits.input(10), false, 'first input only starts the clock')
-    assert.equal(visits.input(54.9), false)
+    assert.equal(visits.ready(0, true), false, 'no swim before the first rest')
+    assert.equal(visits.wait(1_000), 5_000)
+    assert.equal(visits.wait(2_000), null, 'an existing gap is not moved')
+    assert.equal(visits.ready(5_999, true), false)
+    assert.equal(visits.ready(6_000, false), false, 'hidden or paused at the deadline')
+    assert.equal(visits.ready(7_000, true), true, 'the overdue swim can start on return')
+    assert.equal(visits.ready(17_000, true), false, 'no second swim before the first leaves')
     value = 0.999
-    assert.equal(visits.input(55), true)
-    assert.equal(visits.input(129.9), false)
-    assert.equal(visits.input(130), true)
-    visits.reset() // tab hidden, or motion turned off
-    assert.equal(visits.input(500), false, 'no immediate swim on return')
+    assert.equal(visits.wait(18_000), 19_985, 'the next gap starts when the previous swim ends')
+    assert.equal(visits.ready(37_984, true), false)
+    assert.equal(visits.ready(37_985, true), true)
   })
 
   it('passes close to the pointer, but not if there is no ice nearby', () => {
