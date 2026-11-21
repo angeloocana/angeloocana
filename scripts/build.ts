@@ -1,6 +1,8 @@
 // Prerenders the site to plain files in dist/, ready for any static host (Cloudflare, see wrangler.jsonc).
 // Run with `npm run build`. It renders each page through the real router, then follows every
 // /assets/ URL (scripts, import maps, chunks) so the browser islands work without a server.
+import { createHash } from 'node:crypto'
+import { existsSync } from 'node:fs'
 import { cp, mkdir, rm, writeFile } from 'node:fs/promises'
 import { dirname, join } from 'node:path'
 
@@ -11,11 +13,19 @@ import { router } from '../app/router.ts'
 
 const ORIGIN = 'http://localhost'
 const OUT = 'dist'
+const OFFLINE = '/offline-plugin-app-shell-fallback/'
+const POST_PREFIXES = ['/en/blog/', '/pt/blog/', '/Tutoriais/']
+const SCRIPT_TAG = /<script\b/i
 // the home pages' clips JSON is built like a page: the router answers it
 // /pt/, not /pt: the host serves pt/index.html there, and its own /pt → /pt/ redirect drops any #section
 const PAGES: Record<string, string> = { '/': 'index.html', '/pt/': 'pt/index.html', '/data/clips.json': 'data/clips.json' }
 // every post keeps the URL it had on the old site: /en/blog/git/git-setup/ → en/blog/git/git-setup/index.html
-for (let post of allPosts()) PAGES[post.url] = `${post.url.slice(1)}index.html`
+for (let post of allPosts()) {
+  if (!POST_PREFIXES.some((prefix) => post.url.startsWith(prefix))) throw new Error(`${post.url}: no post CSP rule`)
+  // Raw rendered Markdown must not bring its own scripts, even if they look like our external modules.
+  if (SCRIPT_TAG.test(post.html)) throw new Error(`${post.url}: script tags are not allowed in article content`)
+  PAGES[post.url] = `${post.url.slice(1)}index.html`
+}
 const SITEMAP = Object.keys(PAGES).filter((path) => !path.endsWith('.json'))
 
 await rm(OUT, { recursive: true, force: true })
@@ -38,6 +48,10 @@ await cp('public', OUT, {
 
 // Publish only the original Redux Saga deck and article illustrations, not the legacy image directory.
 for (let path of legacyBlogAssets) await cp(join('legacy/static', path), join(OUT, path))
+// These prefixes have wildcard CSP rules and are reserved for generated posts, not copied assets.
+for (let prefix of POST_PREFIXES) {
+  if (existsSync(join(OUT, prefix))) throw new Error(`${prefix}: copied assets overlap a post CSP rule`)
+}
 
 // Browser modules compiled from .ts/.tsx keep their source names, which static hosts would serve
 // with the wrong type. Save them as .js and point every reference at the new name.
@@ -51,13 +65,16 @@ const asJs = (path: string) => (/\.tsx?$/.test(path) ? `${path}.js` : path)
 // one extra round trip per script, so references use that spelling from the start.
 const ASSET_URL = /\/assets\/[^"'`\s)]+/g
 
+async function saveText(path: string, body: string) {
+  let emitted = body
+    .replace(TS_URL, '$1.js')
+    .replace(RELATIVE_TS_IMPORT, '$1$2$3.js$2')
+    .replace(ASSET_URL, (url) => url.replaceAll('@', '%40'))
+  await save(path, emitted)
+  return emitted
+}
+
 async function save(path: string, body: string | Uint8Array) {
-  if (typeof body === 'string') {
-    body = body
-      .replace(TS_URL, '$1.js')
-      .replace(RELATIVE_TS_IMPORT, '$1$2$3.js$2')
-      .replace(ASSET_URL, (url) => url.replaceAll('@', '%40'))
-  }
   // URLs are percent-encoded (%40remix-run); files on disk are not (@remix-run)
   let file = join(OUT, decodeURIComponent(asJs(path)))
   await mkdir(dirname(file), { recursive: true })
@@ -82,15 +99,45 @@ function collect(text: string, from: string) {
   }
 }
 
+// Recognize the script tags our prerenderer emits, and reject unfamiliar forms instead of silently
+// dropping a needed hash. Only the trusted home renderer gets hashes; posts share a hashless policy.
+function inlineScriptHashes(path: string, html: string, home: boolean) {
+  let hashes = new Set<string>()
+  for (let [, attrs, body, close] of html.matchAll(/<script\b([^<>]*)>([^]*?)(<\/script\b[^>]*>)|<script\b/gi)) {
+    if (attrs === undefined || close !== '</script>' || SCRIPT_TAG.test(body)) {
+      throw new Error(`${path}: unexpected script markup in prerendered HTML`)
+    }
+    if (body === '' && /^ type="module" src="\/assets\/[^"\s<>]+"$/.test(attrs)) continue
+    if (home && attrs === ' type="application/json" id="rmx-data"') continue
+    if (!home || !['', ' type="module"', ' data-rmx-import-map type="importmap"'].includes(attrs)) {
+      throw new Error(`${path}: unexpected script attributes in prerendered HTML: ${attrs}`)
+    }
+    if (/[\r\0]/.test(body)) throw new Error(`${path}: inline script would be normalized by the HTML parser`)
+    hashes.add(`'sha256-${createHash('sha256').update(body).digest('base64')}'`)
+  }
+  return [...hashes]
+}
+
 // each kind of page's one stylesheet (/css/home.Ab12Cd34.css, app/styles.ts), saved as the pages name them
 let stylesheets = new Set<string>()
+let homeHashes = new Map<string, string[]>()
 for (let [path, file] of Object.entries(PAGES)) {
   let html = await (await get(path)).text()
-  await save(file, html)
+  let emitted = await saveText(file, html)
   collect(html, path)
   for (let [url] of html.matchAll(/\/css\/[\w-]+\.[\w-]+\.css/g)) stylesheets.add(url)
+  if (!file.endsWith('.html')) continue
+  let home = path === '/' || path === '/pt/'
+  let hashes = inlineScriptHashes(path, emitted, home)
+  if (home) homeHashes.set(path, hashes)
+  // The old offline service worker answers page loads with this address. It needs the exact home
+  // page (and policy), not a redirect, until those old workers are gone (see public/sw.js).
+  if (path === '/') {
+    await save(`${OFFLINE.slice(1)}index.html`, emitted)
+    homeHashes.set(OFFLINE, hashes)
+  }
 }
-for (let url of stylesheets) await save(url, await (await get(url)).text())
+for (let url of stylesheets) await saveText(url, await (await get(url)).text())
 
 // Every script URL carries a hash of the file (rails.@a1b2c3.tsx, see app/assets.ts), which is what
 // lets _headers below cache /assets/ for a year. A URL without one is only a name the import map
@@ -107,7 +154,7 @@ while (queue.length) {
   if (/javascript|json|css|text/.test(type)) {
     let text = await response.text()
     collect(text, url)
-    await save(url, text)
+    await saveText(url, text)
   } else {
     await save(url, new Uint8Array(await response.arrayBuffer()))
   }
@@ -139,9 +186,6 @@ await save(
     '',
   ].join('\n'),
 )
-// The old site's offline service worker answers page loads with this address. A redirect there makes
-// the browser show an error, so it gets the home page itself until those old workers are gone (see public/sw.js).
-await save('offline-plugin-app-shell-fallback/index.html', (await (await get('/')).text()))
 const SITE_ORIGIN = 'https://angeloocana.com'
 await save(
   'sitemap.xml',
@@ -149,42 +193,43 @@ await save(
     .map((path) => `  <url><loc>${SITE_ORIGIN}${path}</loc></url>`)
     .join('\n')}\n</urlset>\n`,
 )
-// Diagnostic only: no reporting endpoint. The home pages have inline boot scripts and an import map;
-// cards and old posts use inline styles. Posts also embed videos and link to YouTube thumbnails.
-const CSP = [
-  "default-src 'self'",
-  "base-uri 'self'",
-  "form-action 'self'",
-  "object-src 'none'",
-  "frame-ancestors 'none'",
-  "script-src 'self' 'unsafe-inline'",
-  "style-src 'self' 'unsafe-inline'",
-  `img-src 'self' data: https://img.youtube.com ${SITE_ORIGIN}/imgs/`,
-  'frame-src https://www.youtube-nocookie.com',
-].join('; ')
+function cspRule(path: string, hashes: string[]) {
+  let policy = [
+    "default-src 'self'",
+    "base-uri 'self'",
+    "form-action 'self'",
+    "object-src 'none'",
+    "frame-ancestors 'none'",
+    ["script-src 'self'", ...hashes].join(' '),
+    "style-src 'self'",
+    `img-src 'self' data: https://img.youtube.com ${SITE_ORIGIN}/imgs/`,
+    'frame-src https://www.youtube-nocookie.com',
+  ].join('; ')
+  return [path, `  Content-Security-Policy: ${policy}`]
+}
 
-await save(
-  '_headers',
-  [
-    // These only apply to static assets. /media/* gets its baseline headers from worker.ts.
-    '/*',
-    '  X-Content-Type-Options: nosniff',
-    '  Referrer-Policy: strict-origin-when-cross-origin',
-    '  X-Frame-Options: DENY',
-    '  Permissions-Policy: camera=(), microphone=(), geolocation=()',
-    // Cloudflare's absolute URL rules match hostnames, so HSTS does not cover workers.dev.
-    `${SITE_ORIGIN}/*`, '  Strict-Transport-Security: max-age=31536000',
-    'https://www.angeloocana.com/*', '  Strict-Transport-Security: max-age=31536000',
-    ...['/', '/pt/', '/en/blog/*', '/pt/blog/*', '/Tutoriais/*', '/offline-plugin-app-shell-fallback/'].flatMap(
-      (path) => [path, `  Content-Security-Policy-Report-Only: ${CSP}`],
-    ),
-    '/sw.js', '  Cache-Control: no-cache',
-    '/assets/*', '  Cache-Control: public, max-age=31536000, immutable',
-    // Stylesheets carry content hashes; fonts get new filenames when they change.
-    '/css/*', '  Cache-Control: public, max-age=31536000, immutable',
-    '/fonts/*', '  Cache-Control: public, max-age=31536000, immutable',
-    '',
-  ].join('\n'),
-)
+let headers = [
+  // These only apply to static assets. /media/* gets its baseline headers from worker.ts.
+  '/*',
+  '  X-Content-Type-Options: nosniff',
+  '  Referrer-Policy: strict-origin-when-cross-origin',
+  '  X-Frame-Options: DENY',
+  '  Permissions-Policy: camera=(), microphone=(), geolocation=()',
+  // Cloudflare's absolute URL rules match hostnames, so HSTS does not cover workers.dev.
+  `${SITE_ORIGIN}/*`, '  Strict-Transport-Security: max-age=31536000',
+  'https://www.angeloocana.com/*', '  Strict-Transport-Security: max-age=31536000',
+  ...Array.from(homeHashes, ([path, hashes]) => cspRule(path, hashes)).flat(),
+  ...POST_PREFIXES.flatMap((prefix) => cspRule(`${prefix}*`, [])),
+  '/sw.js', '  Cache-Control: no-cache',
+  '/assets/*', '  Cache-Control: public, max-age=31536000, immutable',
+  // Stylesheets carry content hashes; fonts get new filenames when they change.
+  '/css/*', '  Cache-Control: public, max-age=31536000, immutable',
+  '/fonts/*', '  Cache-Control: public, max-age=31536000, immutable',
+  '',
+]
+for (let line of headers) {
+  if (Buffer.byteLength(line) > 2000) throw new Error('Cloudflare _headers lines cannot exceed 2,000 characters')
+}
+await save('_headers', headers.join('\n'))
 
 console.log(`Built ${Object.keys(PAGES).length} pages, ${live.size} clips and ${seen.size} script files into ${OUT}/`)
