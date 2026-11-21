@@ -377,9 +377,10 @@ export function setUpRail(rail: HTMLElement, { signal, motion, clips }: { signal
   // The page opened at one of this row's cards (#job-… or #clip-…, carried by the other language's flag),
   // or a link changed the #hash to one. The browser only scrolls the row until the card is somewhere in view,
   // often at its right edge with the card before it taking the screen: the row moves on so the card is its
-  // first one, at once, and the page so the card's top sits under the menu (scroll-margin-top, home.css; a
-  // clip not in the page yet was never scrolled to at all). A clip may wait for the rest of the clips, and
-  // the row deals them again once they are all in, so a clip waits for the whole row.
+  // first one, at once. The browser brings the page to the card itself (its top under the menu:
+  // scroll-margin-top, home.css), smoothly, and a scroll of ours on top would knock it off course; but a clip
+  // not in the page yet it never found, so the page goes to that one here. A clip may wait for the rest of the
+  // clips, and the row deals them again once they are all in, so a clip waits for the whole row.
   //
   // Back, forward or a reload: the browser puts the page back where the visitor left it. The #hash is only
   // where the row was on the way there (a chip writes it), so it never moves the page then; if the visitor
@@ -390,7 +391,8 @@ export function setUpRail(rail: HTMLElement, { signal, motion, clips }: { signal
     let id = location.hash.slice(1)
     let find = () => track.querySelector<HTMLElement>(`:scope > [id="${CSS.escape(id)}"]`)
     if (!id.startsWith('clip-') && !id.startsWith('job-')) return
-    if (!find() && !(more && id.startsWith('clip-'))) return
+    let missing = !find()
+    if (missing && !(more && id.startsWith('clip-'))) return
     let wait: Linked = { state: 'arriving', id }
     setLinked(wait)
     if (more && id.startsWith('clip-')) await clips.loadMore(track)
@@ -408,7 +410,7 @@ export function setUpRail(rail: HTMLElement, { signal, motion, clips }: { signal
     track.classList.add('is-jumping')
     track.scrollLeft = slide.offsetLeft - slides()[0].offsetLeft
     requestAnimationFrame(() => track.classList.remove('is-jumping'))
-    if (!restored && !pageTouched) {
+    if (missing && !restored && !pageTouched) {
       // measured from the row, not from the card, which may still be growing into place (slide-in)
       let top = track.getBoundingClientRect().top + slide.offsetTop - (slide.offsetParent === track ? 0 : track.offsetTop)
       let margin = parseFloat(getComputedStyle(slide).scrollMarginTop) || 0
