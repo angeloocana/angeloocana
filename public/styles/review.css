@@ -212,3 +212,20 @@ body.rv-page { margin: 0; background: #0b0b0b; color: #ece7df; font: 14px/1.45 s
 }
 .ce-side > .pub { margin: -0.2rem 0 0.6rem; }
 @keyframes pub-pulse { from { opacity: 0.35; } to { opacity: 1; } }
+
+/* Private video intake: the review title control and the cut editor's approval card. */
+.rv-intake-title, .rv-add-video, .ce-intake-action { display: flex; flex-wrap: wrap; align-items: center; gap: 0.35rem 0.6rem; }
+.rv-intake-title { margin-bottom: 0.2rem; }
+.rv-head .rv-intake-title h1 { margin: 0; }
+.rv-add-video button { font: inherit; font-size: 0.8rem; white-space: nowrap; color: #ece7df; background: #1f1f1f; border: 1px solid #444; border-radius: 999px; padding: 0.25rem 0.65rem; cursor: pointer; }
+.rv-add-video button:disabled { opacity: 0.6; cursor: wait; }
+.rv-intake-status { margin: 0; font-size: 0.78rem; color: #a8a196; overflow-wrap: anywhere; }
+.rv-intake-status[data-error='true'] { color: #ef8d83; }
+.ce-intake-approval { display: grid; gap: 0.55rem; margin-top: 0.9rem; padding: 0.7rem; background: #151515; border: 1px solid #2a2a2a; border-radius: 10px; }
+.ce-side .ce-intake-approval h2 { margin: 0; }
+.ce-intake-approval > p { margin: 0; color: #a8a196; font-size: 0.8rem; }
+.ce-intake-approval > label { color: #cfc8bc; font-size: 0.8rem; }
+.ce-intake-approval > label:not(.ce-intake-hide) { display: grid; gap: 0.15rem; }
+.ce-intake-hide { display: flex; align-items: center; gap: 0.35rem; }
+.ce-intake-approval select, .ce-intake-approval input[type='text'] { width: 100%; min-width: 0; padding: 0.35rem 0.5rem; font: inherit; color: #ece7df; background: #0f0f0f; border: 1px solid #333; border-radius: 6px; }
+.rv-add-video button:focus-visible, .ce-intake-approval :is(button, select, input):focus-visible { outline: 2px solid #e8b86a; outline-offset: 2px; }
