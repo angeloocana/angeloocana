@@ -63,6 +63,7 @@ export function reviewWrites(
   let running = false
   let failed = false
   let active = Promise.resolve()
+  let failures = 0
 
   async function flush() {
     if (running || failed || !pending) return
@@ -78,6 +79,7 @@ export function reviewWrites(
         pending = mergePatch(patch, pending)
         running = false
         failed = true
+        failures++
         onFeedback({ state: 'error', message: (error as Error).message })
         return
       }
@@ -94,7 +96,11 @@ export function reviewWrites(
 
   return {
     get busy() { return running || Boolean(pending) },
-    settle: () => active,
+    async settle() {
+      let before = failures
+      await active
+      return !failed && before === failures
+    },
     edit(patch: ReviewPatch) {
       pending = mergePatch(pending, patch)
       return drain()
@@ -104,12 +110,12 @@ export function reviewWrites(
       return drain()
     },
     // Do not race an urgent takedown with pending edits or a subsequent restore.
-    exclusive(work: () => Promise<void>) {
+    exclusive(work: () => Promise<boolean>) {
       if (running || pending) return
       running = true
       active = (async () => {
         try {
-          await work()
+          if (!await work()) failures++
         } finally {
           running = false
           await flush()
@@ -185,6 +191,7 @@ export const ReviewBoard = clientEntry(import.meta.url, function ReviewBoard(han
       let status = card.querySelector<HTMLElement>('.rv-saved')!
       let retry = card.querySelector<HTMLButtonElement>('[data-act="retry"]')!
       let takedown = card.querySelector<HTMLButtonElement>('[data-act="takedown"]')
+      let takedownError = ''
       let savedCategory: string | undefined
       let clearStatus: ReturnType<typeof setTimeout> | undefined
 
@@ -194,7 +201,7 @@ export const ReviewBoard = clientEntry(import.meta.url, function ReviewBoard(han
         card.classList.toggle('is-saving', state === 'saving')
         card.classList.toggle('is-error', state === 'error')
         card.classList.toggle('has-save-error', retryable)
-        status.textContent = message
+        status.textContent = [message, takedownError].filter(Boolean).join(' ')
         retry.hidden = !retryable
         if (takedown) takedown.disabled = state === 'saving' || retryable
         applyFilters()
@@ -215,7 +222,7 @@ export const ReviewBoard = clientEntry(import.meta.url, function ReviewBoard(han
           if (result.state === 'saved') {
             card.toggleAttribute('data-moved', card.closest('section')?.id !== savedCategory)
             feedback('saved', 'Saved')
-            clearStatus = setTimeout(() => { status.textContent = '' }, 1400)
+            clearStatus = setTimeout(() => { status.textContent = takedownError }, 1400)
           }
         },
       )
@@ -235,6 +242,7 @@ export const ReviewBoard = clientEntry(import.meta.url, function ReviewBoard(han
           if (!takedown || writes.busy || isLive(card) || card.dataset.rejected !== 'true' ||
               !window.confirm('Remove this rejected clip’s public files now? Older pages may still link to them and copies already cached can remain. Your original files on this Mac are not deleted.')) return
           void writes.exclusive(async () => {
+            takedownError = ''
             feedback('saving', 'Removing public files…')
             try {
               let response = await fetch(`/review/takedown/${encodeURIComponent(id)}`, {
@@ -243,8 +251,11 @@ export const ReviewBoard = clientEntry(import.meta.url, function ReviewBoard(han
               let result = await response.json().catch(() => null)
               if (!response.ok || !result?.removed) throw new Error(result?.error ?? 'Takedown did not finish. Try again.')
               feedback('saved', 'Public files removed. Cached copies can still remain.')
+              return true
             } catch (error) {
-              feedback('error', (error as Error).message || 'Takedown did not finish. Try again.')
+              takedownError = (error as Error).message || 'Takedown did not finish. Try again.'
+              feedback('error', '')
+              return false
             }
           })
         },
@@ -259,9 +270,8 @@ export const ReviewBoard = clientEntry(import.meta.url, function ReviewBoard(han
       () => Boolean(editedField()) || [...actions.values()].some((card) => card.pending()),
       async () => {
         editedField()?.blur()
-        let activeCards = [...actions].filter(([, card]) => card.pending())
-        await Promise.all(activeCards.map(([, card]) => card.settle()))
-        return activeCards.every(([element]) => !element.classList.contains('is-error'))
+        let activeCards = [...actions.values()].filter((card) => card.pending())
+        return (await Promise.all(activeCards.map((card) => card.settle()))).every(Boolean)
       },
       signal,
     )

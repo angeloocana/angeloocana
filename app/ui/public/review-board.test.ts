@@ -5,7 +5,7 @@ import type { ReviewPatch } from '../../actions/review-page.tsx'
 import { postReviewPatch, reviewWrites } from './review-board.tsx'
 
 const signal = new AbortController().signal
-const clip = { id: 'h-synthetic', cat: 'other', rejected: false, star: 0, label: { en: 'A clip', pt: 'Um trecho' } }
+const clip = { id: 'h-synthetic', cat: 'other' as const, rejected: false, star: 0, label: { en: 'A clip', pt: 'Um trecho' } }
 
 type Sent = ReviewPatch & { id: string }
 
@@ -43,6 +43,20 @@ it('serializes rapid absolute edits on one card without blocking another card', 
 
   assert.deepEqual(sent.slice(2), [{ id: clip.id, star: 3, rejected: false, captionRejected: false }])
   assert.deepEqual(statuses, ['saving', 'saved'])
+  assert.equal(board.busy, false)
+})
+
+it('does not navigate on a failed urgent removal merely because the queued note saves', async () => {
+  let removal = Promise.withResolvers<boolean>()
+  let sent: ReviewPatch[] = []
+  let board = reviewWrites(async (patch) => { sent.push(patch); return clip }, () => {}, () => {})
+  void board.exclusive(() => removal.promise)
+  void board.edit({ note: 'Keep this separate from the removal.' })
+  let leaving = board.settle()
+  assert.deepEqual(sent, [])
+  removal.resolve(false)
+  assert.equal(await leaving, false)
+  assert.deepEqual(sent, [{ note: 'Keep this separate from the removal.' }])
   assert.equal(board.busy, false)
 })
 
