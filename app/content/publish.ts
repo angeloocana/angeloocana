@@ -177,6 +177,8 @@ function currentProgress() {
 
 function wakeIn(ms: number) {
   timer = setTimeout(resumePublishing, ms)
+  // The web listener owns the real server lifetime; a poll should not keep it alive.
+  timer.unref?.()
 }
 
 function launchPublisher(revision: string | undefined) {
@@ -200,7 +202,7 @@ function launchPublisher(revision: string | undefined) {
       })
       child.once('exit', (code) => {
         child = undefined
-        if (!code || code === 75) return // Success, interruption (resumable), or another holder has the lock.
+        if (!code || code === 74 || code === 75) return // Success, interruption (resumable), or another holder has the lock.
         try {
           let { failed } = readState()
           if (failed && Date.parse(failed.at) >= startedAt) return
@@ -231,7 +233,8 @@ function advance(manual: boolean) {
       if (!next && !state.failed && !legacy.pending && !legacy.sha) return
       launchFailure = undefined
     } else {
-      if (!next || (launchFailure && launchFailure.revision === next.revision)) return
+      if (!next) return wakeIn(30_000) // An explicitly auto-publishing CLI may queue a cut too.
+      if (launchFailure && launchFailure.revision === next.revision) return wakeIn(30_000)
       let wait = next.at - Date.now()
       if (wait > 0) return wakeIn(Math.min(wait, 2 ** 31 - 1))
     }

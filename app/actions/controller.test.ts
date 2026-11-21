@@ -13,6 +13,7 @@ import { routes } from '../routes.ts'
 // The router captures the media root on import; even an unknown review clip takes the lock.
 let mediaRoot = mkdtempSync(join(tmpdir(), 'review-router-'))
 process.env.ANGELOOCANA_MEDIA = mediaRoot
+process.env.REVIEW_AUTOPUBLISH = '0'
 let { loadClips } = await import('../content/clips.ts')
 let { loadNotes, saveReview } = await import('./review-page.tsx')
 let { router } = await import('../router.ts')

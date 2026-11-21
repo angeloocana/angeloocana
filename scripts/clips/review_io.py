@@ -115,7 +115,8 @@ def run_publisher(media_root, args):
         env = dict(os.environ, REVIEW_PUBLISH_LOCKED='1')
         command = subprocess.Popen(args, start_new_session=True, pass_fds=(lock.fileno(),), env=env)
         try:
-            return command.wait()
+            code = command.wait()
+            return 74 if code < 0 else code  # Interrupted; reconcile the durable state without claiming success.
         finally:
             # If Node dies during a put, don't let its local Wrangler process keep running
             # after we release the lock and allow a takedown. An already sent call is journaled.
