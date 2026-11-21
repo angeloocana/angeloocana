@@ -41,6 +41,11 @@ export function loadNotes(): Record<string, string> {
 // requests before reading their bodies so a later reject can't be overtaken by an earlier restore.
 let boardWrites: Promise<unknown> = Promise.resolve()
 
+export type ReviewPatch = Partial<Pick<Clip, 'star' | 'rejected' | 'cat' | 'captionRejected'>> & {
+  label?: Partial<Clip['label']>
+  note?: string
+}
+
 /** POST /review with { id, star?, rejected?, cat?, label?, captionRejected?, note? } */
 export function saveReview(request: Request) {
   let saved = boardWrites.then(() => applyReview(request))
@@ -49,7 +54,7 @@ export function saveReview(request: Request) {
 }
 
 async function applyReview(request: Request) {
-  let body = (await request.json()) as Partial<Clip> & { id: string; note?: string }
+  let body = (await request.json()) as ReviewPatch & { id: string }
   return withReviewLock(MEDIA_DIR, () => {
     let clips = loadReviewClips()
     let clip = clips.find((c) => c.id === body.id)
@@ -154,7 +159,7 @@ export function ReviewPage() {
           <div>
             <h1>Review clips</h1>
             <p>
-              <b data-live>{live}</b> on the home page · {clips.length - live} rejected. Hover to play. <b>★</b> moves a clip to the front
+              <b data-live>{live}</b> on the home page · <b data-rejected-count>{clips.length - live}</b> rejected. Hover to play. <b>★</b> moves a clip to the front
               (★★★ first). Edit captions in place, reject a caption to hide it, or leave feedback for Claude. {publishes ? 'Publishing starts two minutes after your last change.' : 'This checkout does not publish changes.'} <a href="/">Open the home page</a> to see the local order. <b>Edit cut</b> shows every moment of a clip's videos, so you can choose which ones it uses; clips you edit or keep there get a green mark.
             </p>
           </div>
@@ -187,7 +192,7 @@ export function ReviewPage() {
         <nav class="rv-tabs" aria-label="Categories">
           {groups.map((g) => (
             <a key={g.cat} href={`#${g.cat}`}>
-              {names[g.cat]} <span>{g.clips.filter((c) => !c.rejected).length}/{g.clips.length}</span>
+              {names[g.cat]} <span data-cat-live={g.cat}>{g.clips.filter((c) => !c.rejected).length}/{g.clips.length}</span>
               {(() => {
                 let done = g.clips.filter((c) => !c.rejected && (state(c) === 'edited' || state(c) === 'kept')).length
                 return <em data-cat-checked={g.cat} hidden={!done}>✓{done}</em>
@@ -201,7 +206,7 @@ export function ReviewPage() {
               <h2>{names[g.cat]}</h2>
               <ul class="rv-grid">
                 {g.clips.map((clip) => (
-                  <li key={clip.id} id={clip.id} class="rv" data-id={clip.id} data-star={String(clip.star)} data-rejected={String(clip.rejected)} data-caption-rejected={String(!!clip.captionRejected)} data-sources={sourceKeys(clip).join(' ')} data-cut={state(clip)}>
+                  <li key={clip.id} id={clip.id} class="rv" data-id={clip.id} data-star={String(clip.star)} data-rejected={String(clip.rejected)} data-saved-rejected={String(clip.rejected)} data-caption-rejected={String(!!clip.captionRejected)} data-sources={sourceKeys(clip).join(' ')} data-cut={state(clip)}>
                     {state(clip) !== 'todo' && <span class="rv-mark">{cutMark(state(clip), checks[clip.id])}</span>}
                     <video muted loop playsInline preload="none" poster={clipUrl(clip.id, 'jpg')} src={clipUrl(clip.id, 'mp4')} />
                     <div class="rv-info">
@@ -235,7 +240,10 @@ export function ReviewPage() {
                       {publishes && <button type="button" class="rv-takedown" data-act="takedown">Remove public files now…</button>}
                     </div>
                     <textarea class="rv-note" data-field="note" rows={2} placeholder="Feedback for Claude (only saved on this Mac)" value={notes[clip.id] ?? ''} />
-                    <p class="rv-saved" aria-live="polite" />
+                    <div class="rv-feedback">
+                      <p class="rv-saved" role="status" />
+                      <button type="button" class="rv-retry" data-act="retry" hidden>Retry save</button>
+                    </div>
                   </li>
                 ))}
               </ul>

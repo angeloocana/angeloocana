@@ -21,7 +21,9 @@ body.rv-page { margin: 0; background: #0b0b0b; color: #ece7df; font: 14px/1.45 s
 .rv-caption textarea, .rv-note { width: 100%; font: inherit; font-size: 0.78rem; color: #ece7df; background: #0f0f0f; border: 1px solid #2c2c2c; border-radius: 6px; padding: 0.3rem 0.4rem; }
 .rv-caption textarea:focus, .rv-note:focus { outline: none; border-color: #e8b86a; }
 .rv-note { display: block; width: calc(100% - 1.2rem); margin: 0 0.6rem 0.4rem; resize: vertical; min-height: 2.4rem; }
-.rv-saved { margin: 0 0.6rem 0.4rem; min-height: 1em; color: #7fc97a; font-size: 0.7rem; }
+.rv-feedback { display: flex; align-items: center; flex-wrap: wrap; gap: 0.35rem; margin: 0 0.6rem 0.4rem; }
+.rv-saved { flex: 1 1 7rem; margin: 0; min-height: 1em; color: #7fc97a; font-size: 0.75rem; }
+.rv-retry { font: inherit; font-size: 0.75rem; color: #f6aaa0; background: #271717; border: 1px solid #80504a; border-radius: 999px; padding: 0.25rem 0.55rem; cursor: pointer; }
 .rv .if-cap-off, .rv[data-caption-rejected='true'] .if-cap-ok { display: none; }
 .rv[data-caption-rejected='true'] .if-cap-off { display: inline; }
 .rv[data-caption-rejected='true'] .rv-caption textarea { text-decoration: line-through; color: #8f887d; }
@@ -42,10 +44,11 @@ body.rv-page { margin: 0; background: #0b0b0b; color: #ece7df; font: 14px/1.45 s
 .rv-actions .rv-takedown:disabled { opacity: 0.6; cursor: wait; }
 .rv-reject { border-color: #5a2a2a !important; }
 .rv[data-rejected='true'] .rv-reject { border-color: #2f5a2a !important; }
-.hide-rejected .rv[data-rejected='true'] { display: none; }
-.rv.is-saving { opacity: 0.6; }
-.rv.is-error { border-color: #c0392b; }
-.rv.is-error .rv-saved { color: #ef8d83; }
+.rv.is-saving .rv-saved { color: #e8b86a; }
+.rv[data-star].is-error { border-color: #c0392b; }
+.rv[data-rejected='true'].is-error { opacity: 1; }
+.rv.is-error .rv-feedback { padding: 0.35rem 0.45rem; border-radius: 6px; background: #271717; }
+.rv.is-error .rv-saved { color: #f6aaa0; }
 .rv[data-moved]::after { content: 'Moved: reload to regroup'; display: block; padding: 0 0.6rem 0.5rem; color: #e8b86a; font-size: 0.7rem; }
 /* caption boxes grow to show the whole caption */
 .rv-caption textarea { resize: none; field-sizing: content; min-height: 1.9em; line-height: 1.35; overflow: hidden; }
