@@ -17,7 +17,7 @@
 .post-translation:hover { background: rgb(232 184 106 / 0.1); }
 .post-video { margin: 0.6rem 0 0; display: grid; gap: 0.5rem; }
 .post-player { width: 100%; aspect-ratio: 16 / 9; border: 0; border-radius: 16px; background: #000; }
-.post-play { display: grid; place-items: center; background: radial-gradient(ellipse at center, #242321, #0f0e0d 75%); border: 1px solid var(--line); text-align: center; text-decoration: none; }
+.post-play { display: grid; place-items: center; padding: 0; background: radial-gradient(ellipse at center, #242321, #0f0e0d 75%); border: 1px solid var(--line); font: inherit; text-align: center; text-decoration: none; cursor: pointer; }
 .post-play span { display: grid; justify-items: center; gap: 0.65rem; color: var(--text); font-size: 0.9rem; }
 .post-play svg { width: 2.8rem; height: 2.8rem; padding: 0.65rem; fill: #0f0e0d; background: var(--amber); border-radius: 50%; }
 .post-play:hover span { color: var(--amber); }

@@ -1,9 +1,34 @@
 // The home page in a real browser, against the built site in dist/ (run `npm run test:browser`, which builds
 // first). Media is not in git, so /media answers 404 here; the clip playback test makes its own video.
+import { createServer } from 'node:http'
+import { readFile, stat } from 'node:fs/promises'
+import { extname, join } from 'node:path'
+import { fileURLToPath } from 'node:url'
 import * as assert from 'remix/assert'
 import { describe, it } from 'remix/test'
 import type { Page } from 'playwright'
-import { serveDist } from './test-support/serve-dist.ts'
+
+const DIST = fileURLToPath(new URL('../dist/', import.meta.url))
+const TYPES: Record<string, string> = { '.html': 'text/html', '.js': 'text/javascript', '.css': 'text/css', '.json': 'application/json', '.svg': 'image/svg+xml', '.woff2': 'font/woff2' }
+
+// dist/ served the way Cloudflare serves it: a folder answers with its index.html
+async function serveDist() {
+  let server = createServer(async (req, res) => {
+    let file = join(DIST, decodeURIComponent(new URL(req.url ?? '/', 'http://x').pathname))
+    try {
+      if ((await stat(file)).isDirectory()) file = join(file, 'index.html')
+      let body = await readFile(file)
+      res.writeHead(200, { 'Content-Type': TYPES[extname(file)] ?? 'application/octet-stream' })
+      res.end(body)
+    } catch {
+      res.writeHead(404)
+      res.end()
+    }
+  })
+  await new Promise<void>((resolve) => server.listen(0, '127.0.0.1', resolve))
+  let { port } = server.address() as { port: number }
+  return { baseUrl: `http://127.0.0.1:${port}`, close: () => new Promise<void>((resolve) => server.close(() => resolve())) }
+}
 
 // A playable clip for the tests: media is not in git, and the test browser (Playwright's Chromium) plays
 // no H.264, so the browser records a half-second WebM of a canvas once, and every /media/ video request

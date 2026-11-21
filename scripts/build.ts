@@ -5,6 +5,7 @@ import { cp, mkdir, rm, writeFile } from 'node:fs/promises'
 import { dirname, join } from 'node:path'
 
 import { MEDIA_VERSIONS, loadClips } from '../app/content/clips.ts'
+import { legacyBlogAssets } from '../app/content/legacy-blog-assets.ts'
 import { allPosts } from '../app/content/posts.ts'
 import { router } from '../app/router.ts'
 
@@ -36,9 +37,7 @@ await cp('public', OUT, {
 })
 
 // Publish only the original Redux Saga deck and article illustrations, not the legacy image directory.
-for (let image of ['Redux-Saga-Logo-Landscape.png', 'redux-saga-stars.png', 'redux-2.png', 'positive.svg', 'negative.svg']) {
-  await cp(join('legacy/static/imgs', image), join(OUT, 'imgs', image))
-}
+for (let path of legacyBlogAssets) await cp(join('legacy/static', path), join(OUT, path))
 
 // Browser modules compiled from .ts/.tsx keep their source names, which static hosts would serve
 // with the wrong type. Save them as .js and point every reference at the new name.

@@ -1,6 +1,14 @@
+import { fileURLToPath } from 'node:url'
 import * as assert from 'remix/assert'
+import { staticFiles } from 'remix/middleware/static'
+import { createTestServer } from 'remix/node-fetch-server/test'
+import { createRouter } from 'remix/router'
 import { describe, it } from 'remix/test'
-import { serveDist } from './test-support/serve-dist.ts'
+
+function serveDist() {
+  let router = createRouter({ middleware: [staticFiles(fileURLToPath(new URL('../dist/', import.meta.url)))] })
+  return createTestServer(router.fetch)
+}
 
 const gitPost = 'blog/git/git-setup/'
 const tutorial = '/Tutoriais/DicaRapida_1_Melhorar_Performance_MVC/'
@@ -37,22 +45,22 @@ describe('posts in a browser', () => {
       requests.push(route.request().url())
       return route.fulfill({ contentType: 'text/html', body: '<title>Video player</title>' })
     })
-    await page.goto(tutorial)
-    let play = page.locator('.post-play')
-    await play.scrollIntoViewIfNeeded()
-    assert.equal(await page.locator('.post-video iframe').count(), 0)
-    assert.equal(requests.length, 0)
-    let youtube = 'https://www.youtube.com/watch?v=HG8WBYvoOdA'
-    assert.equal(await play.getAttribute('href'), youtube)
-    assert.equal(await page.locator('.post-video figcaption a').getAttribute('href'), youtube)
+    for (let key of ['Space', 'Enter']) {
+      requests.length = 0
+      await page.goto(tutorial)
+      let play = page.getByRole('button', { name: 'Tocar o vídeo (carrega o YouTube)' })
+      await play.scrollIntoViewIfNeeded()
+      assert.equal(await page.locator('.post-video iframe').count(), 0)
+      assert.equal(requests.length, 0)
+      assert.equal(await page.locator('.post-video figcaption a').getAttribute('href'), 'https://www.youtube.com/watch?v=HG8WBYvoOdA')
 
-    let box = await play.boundingBox()
-    await play.focus()
-    await page.keyboard.press('Enter')
-    await page.waitForSelector('.post-video iframe')
-    assert.deepEqual(requests, ['https://www.youtube-nocookie.com/embed/HG8WBYvoOdA?autoplay=1'])
-    let player = await page.locator('.post-video iframe').boundingBox()
-    assert.equal(player?.height, box?.height)
-    assert.equal(player?.width, box?.width)
+      let box = await play.boundingBox()
+      let embed = 'https://www.youtube-nocookie.com/embed/HG8WBYvoOdA?autoplay=1'
+      await Promise.all([page.waitForResponse(embed), play.press(key)])
+      assert.deepEqual(requests, [embed])
+      let player = await page.locator('.post-video iframe').boundingBox()
+      assert.equal(player?.height, box?.height)
+      assert.equal(player?.width, box?.width)
+    }
   })
 })

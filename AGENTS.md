@@ -61,6 +61,8 @@ Clip tools (cut, montage, contact sheets, Instagram links) are in `scripts/clips
 - `app/content.ts`: email and social links.
 - `content/posts/`: blog posts in Markdown, kept as first published, at their old URLs
   (`blog/x/y.en.md` → `/en/blog/x/y/`, `.pt.md` → `/pt/blog/x/y/`, `Tutoriais/X.md` → `/Tutoriais/X/`).
+  The original Redux Saga slides are at `/redux-saga-presentation.html`; the deck and article share only
+  the five tracked graphics allowlisted by `app/content/legacy-blog-assets.ts`.
 - `app/content/clips.json`: the home row's clips (category, EN/PT caption, star, rejected, source,
   Instagram link). Ângelo curates them at http://localhost:44144/review: reject, star (★★★ opens the
   row), edit or reject captions, filter by source, leave notes. Dev only; never built.
@@ -93,7 +95,8 @@ Clip tools (cut, montage, contact sheets, Instagram links) are in `scripts/clips
 - **The home page's scripts and most of its fonts wait for its first paint** (`app/actions/document.tsx`):
   the Remix client, the islands and every font but Instrument Serif load after it, under the title card on a
   first visit. Loaded with the page, they held the first paint back by about a second on phones. Posts load
-  no Remix client at all, only the pointer ring (`app/ui/public/cursor.ts`).
+  no Remix client at all: just the pointer ring (`app/ui/public/cursor.ts`) and, for video tutorials,
+  the small Play control. Tutorials do not load YouTube until Play; the direct watch link works without JS.
 - **`public/sw.js`** removes the old Gatsby site's offline service worker from returning visitors, and
   `/offline-plugin-app-shell-fallback/` serves the home page for the same reason. Keep both until 2027.
 - **Old URLs** (`/en/…`, `/fr/…`, tags, resume, about, contact) redirect in `scripts/build.ts`.
