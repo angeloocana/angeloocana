@@ -7,7 +7,12 @@ import { describe, it } from 'remix/test'
 
 function serveDist() {
   let router = createRouter({ middleware: [staticFiles(fileURLToPath(new URL('../dist/', import.meta.url)))] })
-  return createTestServer(router.fetch)
+  return createTestServer((request) => {
+    // Wrangler resolves the URL-encoded @ in a fingerprint to the filename on disk.
+    let url = new URL(request.url)
+    if (url.pathname.startsWith('/assets/')) url.pathname = url.pathname.replaceAll('%40', '@')
+    return router.fetch(new Request(url, request))
+  })
 }
 
 const gitPost = 'blog/git/git-setup/'
