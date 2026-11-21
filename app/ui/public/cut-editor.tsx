@@ -5,6 +5,7 @@ import type { CutCheck, Moment, Piece, Source } from '../../content/cuts.ts'
 import type { PublishInfo } from '../../content/publish.ts'
 import { createCutWrites } from './cut-editor-writes.ts'
 import { PublishStatus } from './publish-status.tsx'
+import { IntakeApproval } from './intake-approval.tsx'
 import { guardReviewNavigation } from './review-navigation.ts'
 
 // The local cut editor (/review/cut/:id). On the right, every short moment of the clip's source videos:
@@ -30,6 +31,7 @@ type Props = {
   progress: { checked: number; total: number }
   /** Whether the review's changes are live yet. */
   publish: PublishInfo
+  intake?: { revision?: string; canApprove: boolean; categories: readonly { key: string; label: string }[] }
 }
 
 type MomentSet = { id: string; dur: number; w: number; h: number; cols: number; moments: Moment[]; sheet: string }
@@ -41,7 +43,6 @@ const round = (n: number) => Math.round(n * 100) / 100
 const overlap = (a0: number, a1: number, b0: number, b1: number) => Math.max(0, Math.min(a1, b1) - Math.max(a0, b0))
 const end = (p: Piece & { kind: 'vid' }) => p.start + p.secs
 const day = (at: string) => new Date(at).toLocaleDateString('en', { month: 'short', day: 'numeric' })
-const sourceUrl = (path: string) => `/review/source?path=${encodeURIComponent(path)}`
 function time(seconds: number) {
   let m = Math.floor(seconds / 60)
   let s = seconds - m * 60
@@ -51,7 +52,9 @@ function time(seconds: number) {
 const motionLevel = (motion: number) => Math.max(0, Math.min(1, Math.log10(Math.max(motion, 0.002) / 0.002) / Math.log10(25)))
 
 export const CutEditor = clientEntry(import.meta.url, function CutEditor(handle: Handle<Props>) {
-  let { clip, sources, next, progress } = handle.props
+  let { clip, sources, next, progress, intake } = handle.props
+  let sourceUrl = (path: string) => `/review/source?path=${encodeURIComponent(path)}${intake ? `&cut=${clip.id}` : ''}`
+  let approving = false
   let byPath = new Map(sources.map((s) => [s.path, s]))
   let byId = new Map(sources.map((s) => [s.id, s]))
   let writes = createCutWrites(clip.id, handle.props, {
@@ -112,7 +115,7 @@ export const CutEditor = clientEntry(import.meta.url, function CutEditor(handle:
     sets.set(id, 'loading')
     handle.update()
     try {
-      let response = await fetch(`/review/moments/${id}`, { signal: handle.signal })
+      let response = await fetch(`/review/moments/${id}${intake ? `?cut=${clip.id}` : ''}`, { signal: handle.signal })
       if (!response.ok) throw new Error(String(response.status))
       sets.set(id, (await response.json()) as MomentSet)
     } catch {
@@ -359,7 +362,7 @@ export const CutEditor = clientEntry(import.meta.url, function CutEditor(handle:
   }
 
   handle.queueTask(() => {
-    guardReviewNavigation(writes.pending, writes.settle, handle.signal)
+    guardReviewNavigation(() => approving || writes.pending(), writes.settle, handle.signal)
     for (let id of panels) load(id)
     if (box) new ResizeObserver(() => place()).observe(box)
     player?.addEventListener('error', () => {
@@ -560,6 +563,7 @@ export const CutEditor = clientEntry(import.meta.url, function CutEditor(handle:
 
   return () => {
     let { pieces, video, busy } = cut
+    let revision = busy || cut.unsaved ? undefined : cut.previewRevision
     let total = pieces.reduce((sum, p) => sum + p.secs, 0)
     let focused = pieces[focus]
     return (
@@ -567,16 +571,17 @@ export const CutEditor = clientEntry(import.meta.url, function CutEditor(handle:
         <aside class="ce-side">
           <nav class="ce-back">
             <a href={`/review#${clip.id}`}>← All clips</a>
-            <span title="Clips on the home page whose cut you edited or kept">{othersChecked + Number(isChecked())} of {progress.total} checked</span>
+            {!intake && <span title="Clips on the home page whose cut you edited or kept">{othersChecked + Number(isChecked())} of {progress.total} checked</span>}
             {next && <a class="ce-next" href={`/review/cut/${next.id}`} title={next.title}>Next to check →</a>}
           </nav>
           <PublishStatus initial={handle.props.publish} />
           <h1>{clip.title} <small>{clip.cat}{clip.rejected ? ' · rejected' : ''}</small></h1>
-          {checkState()}
+          {intake ? <p class="ce-check" data-state="draft">Private draft · nothing goes on the site until you choose Add to site.</p> : checkState()}
           <div class="ce-players">
             <figure>
-              <video src={video} autoplay muted loop playsInline />
-              <figcaption>The clip now</figcaption>
+              {video && (!intake || revision) ? <video src={video} autoplay muted loop playsInline />
+                : <div class="ce-intake-empty">Render a preview to see the finished clip.</div>}
+              <figcaption>{intake ? 'Private render' : 'The clip now'}</figcaption>
             </figure>
             <figure>
               <div class="ce-preview" mix={ref((node) => (box = node as HTMLElement))}>
@@ -596,6 +601,7 @@ export const CutEditor = clientEntry(import.meta.url, function CutEditor(handle:
             </label>
           </div>
 
+          <section inert={approving || undefined}>
           <h2>
             Your cut <small>{pieces.length} piece{pieces.length === 1 ? '' : 's'} · {total.toFixed(1)} s</small>
           </h2>
@@ -627,7 +633,8 @@ export const CutEditor = clientEntry(import.meta.url, function CutEditor(handle:
 
           <div class="ce-row ce-actions">
             <button type="button" class="ce-primary" disabled={Boolean(busy) || !pieces.length} mix={on('click', writes.rebuild)}>
-              {busy === 'rebuild' ? 'Rebuilding…' : cut.retry === 'rebuild' ? 'Retry rebuild' : 'Rebuild video'}
+              {intake ? (busy === 'rebuild' ? 'Rendering…' : cut.retry === 'rebuild' ? 'Retry preview' : 'Render private preview')
+                : (busy === 'rebuild' ? 'Rebuilding…' : cut.retry === 'rebuild' ? 'Retry rebuild' : 'Rebuild video')}
             </button>
             <button type="button" disabled={Boolean(busy) || (!cut.hasDraft && !cut.unsaved)} mix={on('click', writes.discard)}>Undo changes</button>
             {cut.retry === 'save' && <button type="button" mix={on('click', writes.save)}>Retry save</button>}
@@ -638,22 +645,25 @@ export const CutEditor = clientEntry(import.meta.url, function CutEditor(handle:
             {cut.noteError && <>{(cut.status || cut.rebuildError) && <br />}{cut.noteError}</>}
             {previewError && <>{(cut.status || cut.rebuildError || cut.noteError) && <br />}{previewError}</>}
           </p>
-          <textarea class="rv-note" rows={3} placeholder="Feedback for Claude (only saved on this Mac)" defaultValue={handle.props.note} mix={on('input', (e) => writes.saveNote((e.currentTarget as HTMLTextAreaElement).value))} />
-          {cut.noteError && <button type="button" mix={on('click', writes.retryNote)}>Retry note save</button>}
+          </section>
+          {intake ? <IntakeApproval clipId={clip.id} revision={revision} canApprove={intake.canApprove} categories={intake.categories} onPending={(pending) => { approving = pending; handle.update() }} /> : <>
+            <textarea class="rv-note" rows={3} placeholder="Feedback for Claude (only saved on this Mac)" defaultValue={handle.props.note} mix={on('input', (e) => writes.saveNote((e.currentTarget as HTMLTextAreaElement).value))} />
+            {cut.noteError && <button type="button" mix={on('click', writes.retryNote)}>Retry note save</button>}
+          </>}
         </aside>
 
-        <main class="ce-main">
+        <main class="ce-main" inert={approving || undefined}>
           <header class="ce-head">
             <div>
               <h2>Moments</h2>
               <p>
-                Hover to watch, click to add or take out. <span class="ce-key is-now">in the clip now</span> <span class="ce-key is-picked">in your cut</span>{' '}
+                Hover to watch, click to add or take out. {!intake && <span class="ce-key is-now">in the clip now</span>} <span class="ce-key is-picked">in your cut</span>{' '}
                 The bar under each moment shows how much motion it has.
               </p>
             </div>
-            <button type="button" class="ce-primary" mix={on('click', () => { picker = !picker; query = ''; handle.update() })}>
+            {!intake && <button type="button" class="ce-primary" mix={on('click', () => { picker = !picker; query = ''; handle.update() })}>
               {picker ? 'Close' : '+ Footage from another video'}
-            </button>
+            </button>}
           </header>
           {picker && pickerList()}
           <div mix={[on('click', (e) => { let tile = tileOf(e); if (tile) toggle(tile.dataset.vid!, Number(tile.dataset.moment)) }), on<HTMLDivElement, 'mouseover'>('mouseover', hoverTile), on<HTMLDivElement, 'mouseleave'>('mouseleave', leaveTiles)]}>

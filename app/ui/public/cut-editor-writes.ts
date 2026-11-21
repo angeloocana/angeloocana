@@ -2,7 +2,7 @@ import type { CutCheck, Piece } from '../../content/cuts.ts'
 
 type Action = 'save' | 'rebuild' | 'discard' | 'keep' | 'uncheck'
 type Reply = Record<string, unknown>
-type Initial = { current: Piece[]; draft: Piece[] | null; check: CutCheck | null; video: string }
+type Initial = { current: Piece[]; draft: Piece[] | null; check: CutCheck | null; video: string; intake?: { revision?: string } }
 type Options = {
   fetch: typeof fetch
   signal: AbortSignal
@@ -32,6 +32,7 @@ export function createCutWrites(id: string, initial: Initial, { fetch, signal, u
     hasDraft: initial.draft !== null,
     check: initial.check,
     video: initial.video,
+    previewRevision: initial.intake?.revision,
     unsaved: false,
     busy: null as 'rebuild' | 'discard' | null,
     marking: false,
@@ -110,12 +111,20 @@ export function createCutWrites(id: string, initial: Initial, { fetch, signal, u
         state.retry = 'save'
       } else {
         state.unsaved = false
-        state.status = result.value ? 'Saved as a draft. Rebuild to put it in the clip.' : 'Same as the clip now.'
+        state.status = initial.intake ? 'Saved privately. Render a preview before adding it.'
+          : result.value ? 'Saved as a draft. Rebuild to put it in the clip.' : 'Same as the clip now.'
       }
     }, () => version === revision)
   }
 
+  function clearIntakePreview() {
+    if (!initial.intake) return
+    state.previewRevision = undefined
+    state.video = ''
+  }
+
   function changed() {
+    clearIntakePreview()
     revision++
     state.unsaved = true
     saving()
@@ -130,29 +139,39 @@ export function createCutWrites(id: string, initial: Initial, { fetch, signal, u
     state.busy = 'rebuild'
     state.retry = null
     state.rebuildError = ''
-    state.status = 'Rebuilding the video…'
+    clearIntakePreview()
+    state.status = initial.intake ? 'Rendering a private preview…' : 'Rebuilding the video…'
     update()
-    return send(path, { action: 'rebuild', pieces: state.pieces }, ({ draft, current, check, video }) => {
-      if (draft === false && Array.isArray(current) && current.length && current.every(isPiece) && isCheck(check) && typeof video === 'string' && video) {
+    type Rendered = { current: Piece[]; check: CutCheck | null; video: string } | { previewRevision: string; video: string }
+    return send<Rendered>(path, { action: 'rebuild', pieces: state.pieces }, ({ draft, current, check, video, revision: rendered }) => {
+      if (typeof video !== 'string' || !video) return
+      if (initial.intake) {
+        if (draft === true && typeof rendered === 'string' && video === `/review/intake/${id}/${rendered}/clip.mp4`) return { previewRevision: rendered, video }
+      } else if (draft === false && Array.isArray(current) && current.length && current.every(isPiece) && isCheck(check)) {
         return { current, check, video }
       }
     }, (result) => {
       state.busy = null
-      if ('value' in result) {
+      if ('value' in result && 'current' in result.value) {
         // "The clip now" is the rendered cut, even if "Your cut" has moved on.
         Object.assign(state, result.value, { hasDraft: false })
         rebuilt()
       }
-      if ('error' in result) state.rebuildError = `Rebuild failed: ${result.error}`
+      if ('error' in result) state.rebuildError = `${initial.intake ? 'Preview' : 'Rebuild'} failed: ${result.error}`
       if (version !== revision) return
       if ('error' in result) {
         state.unsaved = true
         state.status = ''
         state.retry = 'rebuild'
       } else {
-        state.pieces = clone(state.current)
         state.unsaved = false
-        state.status = 'Rebuilt: the clip now uses this cut.'
+        if ('previewRevision' in result.value) {
+          Object.assign(state, result.value, { hasDraft: true })
+          state.status = 'Private preview ready. Nothing has been added to the site.'
+        } else {
+          state.pieces = clone(state.current)
+          state.status = 'Rebuilt: the clip now uses this cut.'
+        }
       }
     })
   }
@@ -175,7 +194,8 @@ export function createCutWrites(id: string, initial: Initial, { fetch, signal, u
       } else {
         state.pieces = clone(state.current)
         state.unsaved = false
-        state.status = 'Back to the cut the clip uses now.'
+        clearIntakePreview()
+        state.status = initial.intake ? 'Back to the starting cut.' : 'Back to the cut the clip uses now.'
         discarded()
       }
     })

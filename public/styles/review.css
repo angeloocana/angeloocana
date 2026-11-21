@@ -216,6 +216,8 @@ body.rv-page { margin: 0; background: #0b0b0b; color: #ece7df; font: 14px/1.45 s
 /* Private video intake: the review title control and the cut editor's approval card. */
 .rv-intake-title, .rv-add-video, .ce-intake-action { display: flex; flex-wrap: wrap; align-items: center; gap: 0.35rem 0.6rem; }
 .rv-intake-title { margin-bottom: 0.2rem; }
+.rv-head .rv-intake-draft { margin: 0.3rem 0; }
+.ce-intake-empty { display: grid; place-items: center; aspect-ratio: 9 / 16; padding: 0.8rem; text-align: center; font-size: 0.82rem; color: #a8a196; background: #191919; border: 1px dashed #4a4340; border-radius: 10px; }
 .rv-head .rv-intake-title h1 { margin: 0; }
 .rv-add-video button { font: inherit; font-size: 0.8rem; white-space: nowrap; color: #ece7df; background: #1f1f1f; border: 1px solid #444; border-radius: 999px; padding: 0.25rem 0.65rem; cursor: pointer; }
 .rv-add-video button:disabled { opacity: 0.6; cursor: wait; }

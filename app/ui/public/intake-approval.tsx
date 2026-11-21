@@ -6,6 +6,7 @@ type Props = {
   revision?: string
   canApprove: boolean
   categories: readonly { key: string; label: string }[]
+  onPending: (pending: boolean) => void
 }
 
 export function IntakeApproval(handle: Handle<Props>) {
@@ -30,6 +31,7 @@ export function IntakeApproval(handle: Handle<Props>) {
 
     let signal = handle.signal
     pending = true
+    handle.props.onPending(true)
     error = ''
     handle.update()
     try {
@@ -42,6 +44,7 @@ export function IntakeApproval(handle: Handle<Props>) {
       let result = (await response.json().catch(() => null)) as { added?: boolean; error?: string } | null
       if (signal.aborted) return
       if (response.ok && result?.added === true) {
+        handle.props.onPending(false)
         window.location.assign(`/review#${encodeURIComponent(clipId)}`)
         return
       }
@@ -51,6 +54,7 @@ export function IntakeApproval(handle: Handle<Props>) {
       error = 'Couldn’t reach the review server. Try again.'
     }
     pending = false
+    handle.props.onPending(false)
     handle.update()
   }
 
@@ -58,11 +62,11 @@ export function IntakeApproval(handle: Handle<Props>) {
     let { clipId, revision, canApprove, categories } = handle.props
     let heading = `intake-approval-${clipId}`
     let status = `${heading}-status`
-    let blocker = !canApprove ? 'Publishing is off in this checkout.' : !revision ? 'Rebuild the video before adding it to the site.' : ''
+    let blocker = !canApprove ? 'Review publishing is not ready.' : !revision ? 'Render a private preview before adding it to the site.' : ''
     return (
       <form class="ce-intake-approval" method="post" aria-labelledby={heading} mix={on('submit', approve)}>
         <h2 id={heading}>Review for the site</h2>
-        <p>Watch the rebuilt clip and check who appears. Avoid cuts that focus on children or strangers.</p>
+        <p>Watch the rendered clip and check who appears. Avoid making strangers the focus, and don’t feature strangers’ children.</p>
         <label>
           Category
           <select name="cat" required disabled={pending}>

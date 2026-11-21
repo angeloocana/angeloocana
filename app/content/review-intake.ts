@@ -7,8 +7,9 @@ import { Transform } from 'node:stream'
 import { pipeline } from 'node:stream/promises'
 import { promisify } from 'node:util'
 
-import { loadClips, MEDIA_VERSIONS } from './clips.ts'
-import { loadItems, sourceClipId, type Item } from './cuts.ts'
+import { CATEGORY_NAMES, CATEGORIES, loadClips, MEDIA_VERSIONS, type Category, type Clip } from './clips.ts'
+import { loadCutInputs, loadItems, sourceClipId, type Item, type Piece } from './cuts.ts'
+import { assertPublicClipData } from './public-clip-data.ts'
 import { MEDIA_DIR } from './media-dir.ts'
 import { withReviewLock, writeJsonAtomic } from './review-io.ts'
 import { readReviewQueue } from './review-queue.ts'
@@ -26,9 +27,55 @@ export class ReviewIntakeError extends Error {
   }
 }
 
+const intakeId = /^c[0-9a-f]{8}$/
+const revisionId = /^[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}$/
+const intakeDir = (id: string) => join(MEDIA_DIR, 'work', 'intake', id)
+
 export function findIntake(clipId: string, mediaRoot = MEDIA_DIR): Item | undefined {
-  if (!/^c[0-9a-f]{8}$/.test(clipId)) return undefined
+  if (!intakeId.test(clipId)) return undefined
   return loadItems(mediaRoot).find((it) => it.privateFor === clipId)
+}
+
+export function initialIntakeCut(item: Item): Piece[] {
+  return [{ kind: 'vid', path: item.path, start: 0, secs: Math.min(6, item.dur), cx: 0.5, zoom: 1, cy: 0.5 }]
+}
+
+/** Current playable receipt. Python rechecks the draft, input and both hashes before promoting. */
+export function latestIntakePreview(id: string): string | undefined {
+  if (!findIntake(id)) return undefined
+  let file = join(intakeDir(id), 'preview.json')
+  if (!existsSync(file)) return undefined
+  let receipt = JSON.parse(readFileSync(file, 'utf8'))
+  if (!receipt || typeof receipt.revision !== 'string' || !revisionId.test(receipt.revision)) return undefined
+  let { draft, recipe } = loadCutInputs(id)
+  if (!draft || recipe || JSON.stringify(draft) !== JSON.stringify(receipt.draft)) return undefined
+  return receipt.revision
+}
+
+export function intakePreviewFile(id: string, revision: string, filename: string) {
+  if ((filename !== 'clip.mp4' && filename !== 'clip.jpg') || !revisionId.test(revision) || latestIntakePreview(id) !== revision) return undefined
+  let file = join(intakeDir(id), revision, filename)
+  return existsSync(file) ? file : undefined
+}
+
+export function intakeClip(id: string, input: { cat?: unknown; label?: unknown; captionRejected?: unknown }): Clip {
+  if (typeof input.cat !== 'string' || !CATEGORIES.includes(input.cat as Category) || typeof input.captionRejected !== 'boolean') {
+    throw new ReviewIntakeError(422, 'Choose a category and whether to hide the captions.')
+  }
+  let cat = input.cat as Category
+  let label = input.label as Partial<Record<'en' | 'pt', unknown>> | undefined
+  let caption = (lang: 'en' | 'pt') => {
+    let value = label?.[lang]
+    if (typeof value !== 'string' || value.trim().length > 120) throw new ReviewIntakeError(422, 'Keep captions within 120 characters.')
+    return value.trim() || (input.captionRejected ? CATEGORY_NAMES[lang][cat] : '')
+  }
+  let clip: Clip = { id, cat, label: { en: caption('en'), pt: caption('pt') }, star: 0, score: 3, rejected: false, source: 'phone', captionRejected: input.captionRejected || undefined }
+  try {
+    assertPublicClipData([clip])
+  } catch (error) {
+    throw new ReviewIntakeError(422, (error as Error).message)
+  }
+  return clip
 }
 
 const tooLarge = () => new ReviewIntakeError(413, 'Video must be at most 256 MiB.')

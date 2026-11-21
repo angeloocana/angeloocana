@@ -95,8 +95,8 @@ def clip_id(item):
     return 'c' + hashlib.sha1(item['src'].encode()).hexdigest()[:8]
 
 
-def ffmpeg(*args, quiet=False):
-    subprocess.run(['ffmpeg', '-nostdin', '-v', 'error', '-y', *args], check=True,
+def ffmpeg(*args, quiet=False, timeout=None):
+    subprocess.run(['ffmpeg', '-nostdin', '-v', 'error', '-y', *args], check=True, timeout=timeout,
                    stderr=subprocess.DEVNULL if quiet else None)
 
 
@@ -223,6 +223,10 @@ def joined(pieces):
     return out
 
 
+def upload_input(path):
+    return ['-f', 'mov', '-protocol_whitelist', 'file', '-enable_drefs', '0', '-use_absolute_path', '0', '-threads', '2'] if path.startswith('sources/uploads/') else []
+
+
 @contextmanager
 def render_clip(pieces, *, private_dir=None):
     """Crop and join the pieces in one pass; stage a complete pair without the review lock."""
@@ -239,9 +243,7 @@ def render_clip(pieces, *, private_dir=None):
         else:
             _, path, start, secs, cx, zoom, cy = p
             pre = f'crop=iw/{zoom}:ih/{zoom}:(iw-iw/{zoom})*{cx}:(ih-ih/{zoom})*{cy},' if zoom != 1 else ''
-            if private_dir is not None:
-                inputs += ['-protocol_whitelist', 'file', '-f', 'mov']
-            inputs += ['-ss', f'{start:.3f}', '-t', f'{secs:.3f}', '-i', source(path)]
+            inputs += [*upload_input(path), '-ss', f'{start:.3f}', '-t', f'{secs:.3f}', '-i', source(path)]
             chains.append(f'[{i}:v]setpts=PTS-STARTPTS,{pre}{SCALE},crop=720:1280:(iw-720)*{cx}:(ih-1280)/2,setsar=1,fps={FPS},format=yuv420p[p{i}]')
     graph = ';'.join(chains) + ';' + ''.join(f'[p{i}]' for i in range(len(pieces))) + f'concat=n={len(pieces)}:v=1:a=0[out]'
     out = private_dir if private_dir is not None else OUT
@@ -249,8 +251,9 @@ def render_clip(pieces, *, private_dir=None):
     with tempfile.TemporaryDirectory(dir=out, prefix='.render-') as scratch:
         mp4, jpg = os.path.join(scratch, 'clip.mp4'), os.path.join(scratch, 'clip.jpg')
         quiet = private_dir is not None  # ffmpeg diagnostics can name the uploaded original.
-        ffmpeg('-xerror', *inputs, '-filter_complex', graph + ';[out]scale=540:960:flags=lanczos[web]', '-map', '[web]', '-an',
-               '-map_metadata', '-1', '-map_chapters', '-1', *WEB, mp4, quiet=quiet)
+        limits = ['-max_alloc', '134217728', '-filter_complex_threads', '2'] if quiet else []
+        ffmpeg('-xerror', *limits, *inputs, '-filter_complex', graph + ';[out]scale=540:960:flags=lanczos[web]', '-map', '[web]', '-an',
+               '-map_metadata', '-1', '-map_chapters', '-1', *WEB, mp4, quiet=quiet, timeout=120 if quiet else None)
         # Decoding to a poster also rejects video containers that were written without any frames.
         poster(mp4, jpg, quiet=quiet)
         if not all(os.path.isfile(path) and os.path.getsize(path) > 0 for path in (mp4, jpg)):
@@ -379,6 +382,9 @@ def preview_intake(name):
             write_json_atomic(os.path.join(directory, 'preview.json'), {
                 'revision': revision, 'draft': expected['draft'], 'item': original, 'hashes': hashes,
             })
+            for old in os.listdir(directory):
+                if old != revision and re.fullmatch(r'[0-9a-f-]{36}', old):
+                    shutil.rmtree(os.path.join(directory, old), ignore_errors=True)
     except StaleCut:
         raise
     except (OSError, ValueError, TypeError, KeyError, RuntimeError, subprocess.SubprocessError):
@@ -423,6 +429,7 @@ def approve_intake(name):
                     RECIPES: next_recipes(name, draft), DRAFTS: drafts, CHECKS: checks,
                     items_path(): catalogue, REVIEW_QUEUE: queue,
                 })
+            shutil.rmtree(os.path.join(directory, revision), ignore_errors=True)
     except StaleCut:
         raise
     except (OSError, ValueError, TypeError, KeyError, RuntimeError, subprocess.SubprocessError):
@@ -479,13 +486,18 @@ def find_moments(it):
     from PIL import Image
 
     src = source(it['path'])
-    first = subprocess.run(['ffmpeg', '-nostdin', '-v', 'error', '-i', src, '-frames:v', '1', '-vf', f'scale=-2:{THUMB_H}',
-                            '-f', 'image2pipe', '-vcodec', 'png', '-'], capture_output=True, check=True).stdout
+    source_opts = upload_input(it['path'])
+    cmd = ['ffmpeg', '-nostdin', '-v', 'error', *source_opts, '-i', src]
+    scale = f"scale='min(320,iw)':{THUMB_H}:force_original_aspect_ratio=decrease:force_divisible_by=2" if source_opts else f'scale=-2:{THUMB_H}'
+    timeout = 60 if source_opts else None
+    first = subprocess.run([*cmd, '-frames:v', '1', '-vf', scale,
+                            '-f', 'image2pipe', '-vcodec', 'png', '-'], capture_output=True, check=True, timeout=timeout).stdout
     tw, th = Image.open(io.BytesIO(first)).size
     dur = float(it['dur'])
-    rate = min(6.0, 1800 / dur)  # frames looked at per second; long videos get fewer
-    raw = subprocess.run(['ffmpeg', '-nostdin', '-v', 'error', '-i', src, '-an', '-vf', f'fps={rate:.4f},scale={tw}:{th}',
-                          '-f', 'rawvideo', '-pix_fmt', 'rgb24', '-'], capture_output=True, check=True).stdout
+    rate = min(6.0, (480 if source_opts else 1800) / dur)  # long videos get fewer samples
+    limit = ['-frames:v', '480'] if source_opts else []
+    raw = subprocess.run([*cmd, '-an', '-vf', f'fps={rate:.4f},scale={tw}:{th}', *limit,
+                          '-f', 'rawvideo', '-pix_fmt', 'rgb24', '-'], capture_output=True, check=True, timeout=timeout).stdout
     frames = np.frombuffer(raw, np.uint8).reshape(-1, th, tw, 3)
     n = len(frames)
     if not n:

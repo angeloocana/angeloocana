@@ -12,6 +12,7 @@ import { isAbsolute, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
 
 import { MEDIA_DIR } from './media-dir.ts'
+import type { Clip } from './clips.ts'
 import { writeJsonAtomic } from './review-io.ts'
 
 /** A video piece is `seconds` long from `start`; cx/cy place the 9:16 crop (0..1), zoom > 1 crops closer.
@@ -182,8 +183,8 @@ function knownPaths(forCut?: { id?: string }): Set<string> {
 }
 
 /** Where a path from the index is on disk: 'ig:…' is inside the Instagram export, others are in the media folder. */
-export function sourceFile(path: string): string | undefined {
-  if (!knownPaths().has(path)) return undefined
+export function sourceFile(path: string, privateClipId?: string): string | undefined {
+  if (!knownPaths({ id: privateClipId }).has(path)) return undefined
   if (path.startsWith('ig:')) {
     let exported = readJson<{ instagram_export?: string }>(join(INDEX, 'config.json'), {}).instagram_export
     if (!exported) return undefined
@@ -242,18 +243,27 @@ function runClips(args: string[], input?: string): Promise<number | null> {
 }
 
 /** Render the exact cut captured by this action; Python checks both inputs before promoting. */
-export async function rebuildClip(id: string, expected: CutInputs) {
+export async function rebuildClip(id: string, expected: CutInputs, intake = false) {
   // Keep private source paths out of process arguments.
-  let code = await runClips(['rebuild-expected', id], JSON.stringify(expected))
+  let code = await runClips([intake ? 'preview-intake' : 'rebuild-expected', id], JSON.stringify(expected))
   return code === 0 ? 'ok' : code === 3 ? 'stale' : 'failed'
+}
+
+export async function approveIntake(id: string, revision: string, clip: Clip) {
+  let code = await runClips(['approve-intake', id], JSON.stringify({ revision, clip }))
+  return code === 0 ? 'ok' : code === 3 ? 'stale' : 'failed'
+}
+
+export function canReadSource(vid: string, privateClipId?: string): boolean {
+  return /^v\d+$/.test(vid) && loadItems().some((it) => it.id === vid && (!it.privateFor || it.privateFor === privateClipId))
 }
 
 // Finding moments takes a second or two per video; ask clips.py once, even if the page asks twice.
 const finding = new Map<string, Promise<boolean>>()
 
 /** The moments of a source video (found now if they never were), and the URL of their thumbnail sheet. */
-export async function loadMoments(vid: string) {
-  if (!/^v\d+$/.test(vid) || !loadItems().some((it) => it.id === vid)) return undefined
+export async function loadMoments(vid: string, privateClipId?: string) {
+  if (!canReadSource(vid, privateClipId)) return undefined
   let file = join(MOMENTS_DIR, `${vid}.json`)
   let fresh = () => readJson<{ version?: number }>(file, {}).version === MOMENTS_VERSION
   if (!fresh()) {
@@ -263,5 +273,5 @@ export async function loadMoments(vid: string) {
   }
   let data = readJson<{ id: string; dur: number; w: number; h: number; cols: number; moments: Moment[] }>(file, null as never)
   let version = Math.round(statSync(join(MOMENTS_DIR, `${vid}.jpg`)).mtimeMs / 1000).toString(36)
-  return { ...data, sheet: `/review/sheet/${vid}?v=${version}` }
+  return { ...data, sheet: `/review/sheet/${vid}?v=${version}${privateClipId ? `&cut=${encodeURIComponent(privateClipId)}` : ''}` }
 }

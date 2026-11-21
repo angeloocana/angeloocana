@@ -3,7 +3,7 @@ import { join } from 'node:path'
 
 import { Document } from './document.tsx'
 import { CATEGORIES, CATEGORY_NAMES, clipUrl, instagramUrl, loadCommittedClips, loadReviewClips, saveClips, type Category, type Clip } from '../content/clips.ts'
-import { cutState, loadChecks, loadDrafts, type CutCheck, type CutState } from '../content/cuts.ts'
+import { cutState, loadChecks, loadDrafts, loadItems, type CutCheck, type CutState } from '../content/cuts.ts'
 import { MEDIA_DIR } from '../content/media-dir.ts'
 import { assertPublicClipData } from '../content/public-clip-data.ts'
 import { autoPublish, needsLegacyRecovery, publishInfo, reviewChanged } from '../content/publish.ts'
@@ -11,6 +11,7 @@ import { withReviewLock, writeJsonAtomic } from '../content/review-io.ts'
 import { queueReviewRevision, readReviewQueue } from '../content/review-queue.ts'
 import { PublishStatus } from '../ui/public/publish-status.tsx'
 import { ReviewBoard } from '../ui/public/review-board.tsx'
+import { AddVideo } from '../ui/public/add-video.tsx'
 
 // Local-only page (npm run dev → /review) for curating the home row: every clip grouped by category.
 // Reject what should not go, star what should come first (★ to ★★★), or move a clip to another
@@ -157,7 +158,10 @@ export function ReviewPage() {
         <ReviewBoard />
         <header class="rv-head">
           <div>
-            <h1>Review clips</h1>
+            <div class="rv-intake-title"><h1>Review clips</h1><AddVideo /></div>
+            {loadItems().filter((item) => item.privateFor).map((item) => (
+              <p key={item.id} class="rv-intake-draft"><a href={`/review/cut/${item.privateFor}`}>Continue private cut · {item.id}</a></p>
+            ))}
             <p>
               <b data-live>{live}</b> on the home page · <b data-rejected-count>{clips.length - live}</b> rejected. Hover to play. <b>★</b> moves a clip to the front
               (★★★ first). Edit captions in place, reject a caption to hide it, or leave feedback for Claude. {publishes ? 'Publishing starts two minutes after your last change.' : 'This checkout does not publish changes.'} <a href="/">Open the home page</a> to see the local order. <b>Edit cut</b> shows every moment of a clip's videos, so you can choose which ones it uses; clips you edit or keep there get a green mark.

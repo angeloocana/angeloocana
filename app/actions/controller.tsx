@@ -7,7 +7,8 @@ import { clipsJson, HomePage } from './home-page.tsx'
 import { PostPage } from './post-page.tsx'
 import { postAt } from '../content/posts.ts'
 import { ReviewPage, reviewDenied, saveReview } from './review-page.tsx'
-import { clipExists, CutPage, momentsJson, saveCut, sheetFile, sourceMedia } from './cut-page.tsx'
+import { clipExists, CutPage, momentsJson, saveCut, sheetFile, sourceMedia, uploadIntake, privateIntakeMedia } from './cut-page.tsx'
+import { findIntake } from '../content/review-intake.ts'
 import { publishInfo, startPublish } from '../content/publish.ts'
 import { takeDownReviewClip } from '../content/review-takedown.ts'
 import { bundleCss, bundleHref, isBundle } from '../styles.ts'
@@ -59,12 +60,19 @@ export default createController(routes, {
       let denied = reviewDenied(context.request)
       if (denied) return denied
       let { id } = context.params
-      if (!clipExists(id)) return new Response('Not Found', { status: 404 })
+      if (!findIntake(id) && !clipExists(id)) return new Response('Not Found', { status: 404 })
       if (context.request.method === 'POST') return saveCut(context.request, id)
       return context.render(<CutPage id={id} />)
     },
+    reviewIntake(context) {
+      return reviewDenied(context.request) ?? uploadIntake(context.request)
+    },
+    reviewIntakePreview(context) {
+      let { id, revision, filename } = context.params
+      return reviewDenied(context.request) ?? privateIntakeMedia(context.request, id, revision, filename)
+    },
     reviewMoments(context) {
-      return reviewDenied(context.request) ?? momentsJson(context.params.vid)
+      return reviewDenied(context.request) ?? momentsJson(context.request, context.params.vid)
     },
     reviewSheet(context) {
       return reviewDenied(context.request) ?? sheetFile(context.request, context.params.vid)
