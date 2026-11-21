@@ -5,6 +5,7 @@ import * as assert from 'remix/assert'
 import { afterAll, describe, it } from 'remix/test'
 
 import { SOCIALS } from '../content.ts'
+import { withReviewLock } from '../content/review-io.ts'
 import { COPY } from '../copy.ts'
 import { plain, postsFor } from '../content/posts.ts'
 import { routes } from '../routes.ts'
@@ -13,6 +14,7 @@ import { routes } from '../routes.ts'
 let mediaRoot = mkdtempSync(join(tmpdir(), 'review-router-'))
 process.env.ANGELOOCANA_MEDIA = mediaRoot
 let { loadClips } = await import('../content/clips.ts')
+let { loadNotes, saveReview } = await import('./review-page.tsx')
 let { router } = await import('../router.ts')
 afterAll(() => rmSync(mediaRoot, { recursive: true, force: true }))
 
@@ -278,6 +280,34 @@ describe('root controller', () => {
       if (nodeEnv === undefined) delete process.env.NODE_ENV
       else process.env.NODE_ENV = nodeEnv
     }
+  })
+
+  it('keeps board writes in receipt order while a snapshot holds the lock', async () => {
+    let id = loadClips()[0].id
+    let locked = Promise.withResolvers<void>()
+    let releaseLock = Promise.withResolvers<void>()
+    let holding = withReviewLock(mediaRoot, async () => { locked.resolve(); await releaseLock.promise })
+    await locked.promise
+
+    let readingFirst = Promise.withResolvers<void>()
+    let releaseFirst = Promise.withResolvers<void>()
+    let first = new Request('http://localhost/review', { method: 'POST' })
+    first.json = async () => { readingFirst.resolve(); await releaseFirst.promise; return { id, note: 'First edit' } }
+    let second = new Request('http://localhost/review', { method: 'POST' })
+    let skippedFirst = false
+    second.json = async () => { skippedFirst = true; return { id, note: 'Second edit' } }
+
+    let one = saveReview(first)
+    await readingFirst.promise
+    let two = saveReview(second)
+    await Promise.resolve()
+    let overtook = skippedFirst
+    releaseFirst.resolve()
+    releaseLock.resolve()
+    await Promise.all([holding, one, two])
+
+    assert.equal(overtook, false)
+    assert.equal(loadNotes()[id], 'Second edit')
   })
 
   // HREF.pt is '/pt/', so a link built as `${home}/#posts` came out as /pt//#posts

@@ -36,8 +36,18 @@ export function loadNotes(): Record<string, string> {
   return existsSync(NOTES) ? JSON.parse(readFileSync(NOTES, 'utf8')) : {}
 }
 
+// Kernel locks keep processes out of one another's writes, but don't promise FIFO. Enqueue board
+// requests before reading their bodies so a later reject can't be overtaken by an earlier restore.
+let boardWrites: Promise<unknown> = Promise.resolve()
+
 /** POST /review with { id, star?, rejected?, cat?, label?, captionRejected?, note? } */
-export async function saveReview(request: Request) {
+export function saveReview(request: Request) {
+  let saved = boardWrites.then(() => applyReview(request))
+  boardWrites = saved.catch(() => {})
+  return saved
+}
+
+async function applyReview(request: Request) {
   let body = (await request.json()) as Partial<Clip> & { id: string; note?: string }
   return withReviewLock(MEDIA_DIR, () => {
     let clips = loadClips()

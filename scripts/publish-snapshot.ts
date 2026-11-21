@@ -7,6 +7,13 @@ import { assertPublicClipData } from '../app/content/public-clip-data.ts'
 import { withReviewLock } from '../app/content/review-io.ts'
 
 type Manifest = Readonly<Record<string, string>>
+type HeroProvenance = Readonly<Record<string, { variant: string; source: string }>>
+// These variants were made from this specific cut (3950212 and 2279d98). A legacy manifest
+// may list a newer full cut next to the same old variants; that does not change their source.
+const LEGACY_HERO: HeroProvenance = {
+  'hero/h-ice-phone.mp4': { variant: '7ba4abe8c0', source: '169c416526' },
+  'hero/h-ice-tile.mp4': { variant: '2a23f01081', source: '169c416526' },
+}
 type ReviewRevision = { revision: string; clipsJson: string }
 export type SnapshotUpload = Readonly<{ key: string; object: string; file: string }>
 export type PublishSnapshot = Readonly<ReviewRevision & {
@@ -40,6 +47,7 @@ export async function capturePublishSnapshot(
   mediaRoot: string,
   readReview: () => ReviewRevision,
   previous: Manifest,
+  heroProvenance: HeroProvenance = LEGACY_HERO,
 ): Promise<PublishSnapshot> {
   let directory: string | undefined
   try {
@@ -66,11 +74,13 @@ export async function capturePublishSnapshot(
         add(`clips/${clip.id}.jpg`, true)
         for (let size of ['phone', 'tile']) {
           let key = `hero/${clip.id}-${size}.mp4`
-          if (Object.hasOwn(previous, key)) add(key, false)
+          if (heroProvenance[key] && previous[key] === heroProvenance[key].variant) add(key, false)
         }
       }
       for (let key of PROJECT_MEDIA_KEYS) add(key, Object.hasOwn(previous, key))
-      return { revision, clipsJson, directory: target, files }
+      // Publish only parsed, validated values. Duplicate keys or other unvalidated bytes in the
+      // original text must not survive into public Git history.
+      return { revision, clipsJson: JSON.stringify(clips, null, 1) + '\n', directory: target, files }
     })
 
     let manifest: Record<string, string> = {}
@@ -84,7 +94,7 @@ export async function capturePublishSnapshot(
         // Existing hero variants are manually made from the previously approved video. If either
         // changes, use the full clip until there is a way to certify a new variant's source version.
         let video = `clips/${clipMediaId(key)}.mp4`
-        if (!same || manifest[video] !== previous[video]) continue
+        if (!same || manifest[video] !== heroProvenance[key].source) continue
       }
       manifest[key] = same ? old : version
       if (!same) uploads.push(Object.freeze({ key, object: versionedMediaKey(key, version), file }))
