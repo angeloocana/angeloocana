@@ -22,8 +22,6 @@
 /* ---------- keyboard: one visible focus ring everywhere ---------- */
 .cin :focus-visible { outline: 2px solid var(--amber); outline-offset: 3px; }
 main:focus { outline: none; }
-.skip-link { position: absolute; z-index: 70; left: 1rem; top: 0.6rem; display: inline-flex; align-items: center; min-height: 2.75rem; padding: 0.7rem 1rem; border-radius: 999px; background: var(--amber); color: #111; font: 600 0.8rem/1 var(--sans); text-decoration: none; transform: translateY(-200%); }
-.skip-link:focus { transform: none; }
 
 /* ---------- cursor ---------- */
 .cur { position: fixed; z-index: 1500; left: 0; top: 0; width: 34px; height: 34px; margin: -17px 0 0 -17px; border-radius: 50%; border: 1px solid rgb(236 231 223 / 0.6); pointer-events: none; opacity: 0; display: grid; place-items: center; transition: width 0.35s var(--ease), height 0.35s var(--ease), margin 0.35s var(--ease), background 0.3s, border-color 0.3s, opacity 0.3s; mix-blend-mode: difference; }

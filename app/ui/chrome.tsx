@@ -83,7 +83,7 @@ export function SiteNav(handle: Handle<{ lang: Lang; t: Copy; home?: boolean; la
     let inPage = home ? true : undefined
     return (
       <header class="cin-nav">
-        <a class="skip-link" href="#main" data-rmx-document={inPage}>{t.nav.skip}</a>
+        {home && <a class="skip-link" href="#main" data-rmx-document>{t.nav.skip}</a>}
         <a href={home ? '#top' : base} data-rmx-document={inPage} class="cin-mark" aria-label={`Ângelo Ocanã · ${t.nav.top}`}>ÂO</a>
         {/* Phones show the first two sections and More; the rest open under it as a small list. On the home
             page More is a native <details>, so it opens before the scripts have loaded and without JS;
