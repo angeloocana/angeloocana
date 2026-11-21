@@ -13,9 +13,11 @@ from contextlib import contextmanager
 from pathlib import Path
 
 
-def _promotion_journal(media_root):
-    # Keep backups on the same filesystem as the canonical pair; hidden dirs are not published.
-    return Path(media_root) / 'media' / 'clips' / '.review-promotion'
+def _promotion_journal(media_root, *, private=False):
+    # The dev static server serves hidden files in media/. Intake backs up the source catalogue,
+    # so keep that journal in work/ on the same volume, outside the served tree.
+    root = Path(media_root)
+    return (root / 'work' if private else root / 'media' / 'clips') / '.review-promotion'
 
 
 def _clip_pair(out, name):
@@ -25,7 +27,8 @@ def _clip_pair(out, name):
 
 
 # Recovery only writes fixed review paths; a journal cannot choose arbitrary destinations.
-_REVIEW_FILES = ('index/montages.json', 'index/cut-drafts.json', 'index/cut-checks.json', 'work/review-queue.json')
+_REVIEW_FILES = ('index/montages.json', 'index/cut-drafts.json', 'index/cut-checks.json', 'index/items.json',
+                 'work/review-queue.json')
 
 
 def _sync_path(path):
@@ -37,14 +40,18 @@ def _sync_path(path):
 
 
 def _recover_promotion(media_root):
-    journal = _promotion_journal(media_root)
+    for private in (False, True):
+        _recover_journal(media_root, _promotion_journal(media_root, private=private))
+
+
+def _recover_journal(media_root, journal):
     try:
         journal.lstat()
     except FileNotFoundError:
         return
     with (journal / 'state.json').open(encoding='utf-8') as f:
         state = json.load(f)
-    pair = _clip_pair(journal.parent, state['clip'])
+    pair = _clip_pair(Path(media_root) / 'media' / 'clips', state['clip'])
     present = state['present']  # Older journals only record the pair.
     review = state.get('review', {})
     if (not isinstance(present, list) or len(present) != len(pair)
@@ -70,11 +77,11 @@ def _recover_promotion(media_root):
 def promote_clip(media_root, name, staged_mp4, staged_jpg, *, review_updates=None):
     """Promote a verified pair and optional private review updates under the caller's lock."""
     media_root = Path(media_root)
-    journal = _promotion_journal(media_root)
-    pair = _clip_pair(journal.parent, name)
+    pair = _clip_pair(media_root / 'media' / 'clips', name)
     updates = {Path(path): data for path, data in (review_updates or {}).items()}
     if not updates.keys() <= {media_root / path for path in _REVIEW_FILES}:
         raise ValueError('Invalid review promotion update path')
+    journal = _promotion_journal(media_root, private=media_root / 'index' / 'items.json' in updates)
     with tempfile.TemporaryDirectory(dir=journal.parent, prefix='.promotion-') as scratch:
         scratch = Path(scratch)
         pending = scratch / 'pending'
@@ -105,7 +112,7 @@ def promote_clip(media_root, name, staged_mp4, staged_jpg, *, review_updates=Non
                     _sync_path(parent)
             journal.rename(scratch / 'resolved')
         except BaseException:
-            _recover_promotion(media_root)
+            _recover_journal(media_root, journal)
             raise
     return str(pair[0])
 

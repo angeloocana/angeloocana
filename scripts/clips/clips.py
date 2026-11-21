@@ -7,6 +7,8 @@
     python3 scripts/clips/clips.py build h-wood             rebuild a clip from its recipe (index/montages.json)
     python3 scripts/clips/clips.py rebuild                  rebuild every clip whose cut was changed on /review/cut
     python3 scripts/clips/clips.py rebuild ca94616f1        ...just this one
+    python3 scripts/clips/clips.py preview-intake <clipId>  render a staged upload privately (expected cut on stdin)
+    python3 scripts/clips/clips.py approve-intake <clipId>  queue the verified pair (revision and public clip on stdin)
     python3 scripts/clips/clips.py moments v226             split a source video into short moments, for /review/cut
     python3 scripts/clips/clips.py moments all              ...every source video (skips the ones already done)
     python3 scripts/clips/clips.py recipes                  find the recipe of clips cut before recipes were kept
@@ -20,6 +22,9 @@ import io
 import json
 import math
 import os
+import re
+import shutil
+import stat
 import subprocess
 import sys
 import tempfile
@@ -77,21 +82,28 @@ def source(path):
     return path if os.path.isabs(path) else os.path.join(MEDIA, path)
 
 
+def items_path():
+    return os.path.join(MEDIA, 'index', 'items.json')
+
+
 def items():
-    return {it['id']: it for it in json.load(open(os.path.join(MEDIA, 'index', 'items.json')))}
+    with open(items_path(), encoding='utf-8') as f:
+        return {it['id']: it for it in json.load(f)}
 
 
 def clip_id(item):
     return 'c' + hashlib.sha1(item['src'].encode()).hexdigest()[:8]
 
 
-def ffmpeg(*args):
-    subprocess.run(['ffmpeg', '-nostdin', '-v', 'error', '-y', *args], check=True)
+def ffmpeg(*args, quiet=False):
+    subprocess.run(['ffmpeg', '-nostdin', '-v', 'error', '-y', *args], check=True,
+                   stderr=subprocess.DEVNULL if quiet else None)
 
 
-def poster(mp4, jpg):
+def poster(mp4, jpg, *, quiet=False):
     # Pick a frame near the start, even when the video ends before frame 12.
-    ffmpeg('-xerror', '-i', mp4, '-map_metadata', '-1', '-vf', 'thumbnail=13,scale=540:-2', '-frames:v', '1', '-q:v', '4', jpg)
+    ffmpeg('-xerror', '-i', mp4, '-map_metadata', '-1', '-vf', 'thumbnail=13,scale=540:-2', '-frames:v', '1', '-q:v', '4', jpg,
+           quiet=quiet)
 
 
 def load_clips():
@@ -163,6 +175,8 @@ def sheet(item_id, start='0', length=None, step=None):
 def cut(item_id, start, cat=None, en=None, pt=None, length='6'):
     """A 6-second 9:16 loop starting at `start` seconds. Adds the clip to clips.json if it is new."""
     it = items()[item_id]
+    if it.get('privateFor'):
+        raise StaleCut('Intake cuts must be previewed and approved before publishing')
     cid = clip_id(it)
 
     def is_new(clips):
@@ -210,7 +224,7 @@ def joined(pieces):
 
 
 @contextmanager
-def render_clip(pieces):
+def render_clip(pieces, *, private_dir=None):
     """Crop and join the pieces in one pass; stage a complete pair without the review lock."""
     pieces = joined(pieces)
     inputs, chains = [], []
@@ -225,16 +239,20 @@ def render_clip(pieces):
         else:
             _, path, start, secs, cx, zoom, cy = p
             pre = f'crop=iw/{zoom}:ih/{zoom}:(iw-iw/{zoom})*{cx}:(ih-ih/{zoom})*{cy},' if zoom != 1 else ''
+            if private_dir is not None:
+                inputs += ['-protocol_whitelist', 'file', '-f', 'mov']
             inputs += ['-ss', f'{start:.3f}', '-t', f'{secs:.3f}', '-i', source(path)]
             chains.append(f'[{i}:v]setpts=PTS-STARTPTS,{pre}{SCALE},crop=720:1280:(iw-720)*{cx}:(ih-1280)/2,setsar=1,fps={FPS},format=yuv420p[p{i}]')
     graph = ';'.join(chains) + ';' + ''.join(f'[p{i}]' for i in range(len(pieces))) + f'concat=n={len(pieces)}:v=1:a=0[out]'
-    os.makedirs(OUT, exist_ok=True)
-    with tempfile.TemporaryDirectory(dir=OUT, prefix='.render-') as scratch:
+    out = private_dir if private_dir is not None else OUT
+    os.makedirs(out, exist_ok=True)
+    with tempfile.TemporaryDirectory(dir=out, prefix='.render-') as scratch:
         mp4, jpg = os.path.join(scratch, 'clip.mp4'), os.path.join(scratch, 'clip.jpg')
+        quiet = private_dir is not None  # ffmpeg diagnostics can name the uploaded original.
         ffmpeg('-xerror', *inputs, '-filter_complex', graph + ';[out]scale=540:960:flags=lanczos[web]', '-map', '[web]', '-an',
-               '-map_metadata', '-1', '-map_chapters', '-1', *WEB, mp4)
+               '-map_metadata', '-1', '-map_chapters', '-1', *WEB, mp4, quiet=quiet)
         # Decoding to a poster also rejects video containers that were written without any frames.
-        poster(mp4, jpg)
+        poster(mp4, jpg, quiet=quiet)
         if not all(os.path.isfile(path) and os.path.getsize(path) > 0 for path in (mp4, jpg)):
             raise RuntimeError('Render did not produce a video and poster')
         yield mp4, jpg
@@ -286,16 +304,144 @@ def rebuild_expected(name):
     rebuild(name, expected=expected)
 
 
+def pending_intakes():
+    return {item['privateFor'] for item in read_json(items_path(), []) if item.get('privateFor')}
+
+
+def read_intake_request(name, keys):
+    data = json.load(sys.stdin)
+    if not re.fullmatch(r'c[0-9a-f]{8}', name) or not isinstance(data, dict) or data.keys() != keys:
+        raise ValueError('Invalid intake request')
+    return data
+
+
+def intake_file(path):
+    try:
+        info = os.lstat(path)
+    except FileNotFoundError:
+        raise StaleCut('Intake source or preview is no longer available') from None
+    if not stat.S_ISREG(info.st_mode) or not info.st_size:
+        raise StaleCut('Intake source or preview is no longer available')
+    return info
+
+
+def intake_inputs(name, expected, previous_item=None):
+    """Under the review lock, match the exact draft and the still-pending catalogue entry."""
+    drafts = read_json(DRAFTS, {})
+    require_cut(name, expected, cut_inputs(name, drafts))
+    catalogue = read_json(items_path(), [])
+    matches = [item for item in catalogue if item.get('privateFor') == name]
+    if len(matches) != 1:
+        raise StaleCut('Intake is no longer pending')
+    item = matches[0]
+    path = item['path']
+    if not re.fullmatch(r'v[0-9]{3,}', item['id']) or not re.fullmatch(r'sources/uploads/[A-Za-z0-9_-]+\.(?:mp4|mov)', path):
+        raise ValueError('Invalid intake source')
+    info = intake_file(source(path))
+    # The original stays put. Bind the receipt to the catalogue row and detect a replaced or edited original.
+    fingerprint = json.dumps([item, info.st_dev, info.st_ino, info.st_size, info.st_mtime_ns, info.st_ctime_ns], sort_keys=True)
+    digest = hashlib.sha256(fingerprint.encode()).hexdigest()
+    if previous_item is not None and digest != previous_item:
+        raise StaleCut('Intake source changed; preview it again')
+    draft = expected['draft']
+    if not isinstance(draft, list) or not draft or any(
+            not isinstance(piece, list) or not 5 <= len(piece) <= 7 or piece[:2] != ['vid', path] for piece in draft):
+        raise ValueError('Invalid intake draft')
+    return drafts, catalogue, item, digest
+
+
+def intake_pair_hashes(pair):
+    hashes = []
+    for path in pair:
+        intake_file(path)
+        digest = hashlib.sha256()
+        with open(path, 'rb') as f:
+            for chunk in iter(lambda: f.read(1024 * 1024), b''):
+                digest.update(chunk)
+        hashes.append(digest.hexdigest())
+    return hashes
+
+
+def preview_intake(name):
+    try:
+        expected = read_intake_request(name, {'draft', 'recipe'})
+        if expected['recipe'] is not None or not isinstance(expected['draft'], list) or not expected['draft']:
+            raise ValueError('Invalid expected intake cut')
+        with review_lock(MEDIA):
+            _, _, _, original = intake_inputs(name, expected)
+        directory = os.path.join(WORK, 'intake', name)
+        revision = str(uuid.uuid4())
+        with render_clip(expected['draft'], private_dir=directory) as staged, review_lock(MEDIA):
+            intake_inputs(name, expected, original)
+            hashes = intake_pair_hashes(staged)
+            # Activate this revision only once both finished files are in place.
+            os.rename(os.path.dirname(staged[0]), os.path.join(directory, revision))
+            write_json_atomic(os.path.join(directory, 'preview.json'), {
+                'revision': revision, 'draft': expected['draft'], 'item': original, 'hashes': hashes,
+            })
+    except StaleCut:
+        raise
+    except (OSError, ValueError, TypeError, KeyError, RuntimeError, subprocess.SubprocessError):
+        sys.exit('Intake preview could not be completed')
+
+
+def approve_intake(name):
+    if not AUTOPUBLISH:
+        sys.exit('Intake approval requires active review publishing')
+    try:
+        data = read_intake_request(name, {'revision', 'clip'})
+        revision, clip = data['revision'], data['clip']
+        if (not isinstance(revision, str) or str(uuid.UUID(revision)) != revision
+                or not isinstance(clip, dict) or clip.get('id') != name or clip.get('rejected') is not False):
+            raise ValueError('Invalid intake approval')
+        directory = os.path.join(WORK, 'intake', name)
+        with review_lock(MEDIA):
+            receipt = read_json(os.path.join(directory, 'preview.json'), {})
+            if not isinstance(receipt, dict) or receipt.get('revision') != revision:
+                raise StaleCut('Intake preview changed; preview it again')
+            draft = receipt['draft']
+            if not isinstance(receipt.get('item'), str):
+                raise ValueError('Invalid intake receipt')
+            drafts, catalogue, item, _ = intake_inputs(name, {'draft': draft, 'recipe': None}, receipt['item'])
+            pair = [os.path.join(directory, revision, f'clip.{ext}') for ext in ('mp4', 'jpg')]
+            if receipt.get('hashes') != intake_pair_hashes(pair):
+                raise StaleCut('Intake preview changed; preview it again')
+            queue = next_review_queue()
+            if (any(c['id'] == name for c in [*queue['clips'], *queue['base'], *read_json(CLIPS_JSON, [])])
+                    or any(os.path.lexists(os.path.join(OUT, f'{name}.{ext}')) for ext in ('mp4', 'jpg'))):
+                raise StaleCut('Intake clip already exists')
+            del item['privateFor']
+            del drafts[name]
+            checks = read_json(CHECKS, {})
+            checks[name] = {'state': 'edited', 'at': time.strftime('%Y-%m-%dT%H:%M:%SZ', time.gmtime())}
+            queue['clips'].append(clip)  # The caller has run the shared public-clip validator.
+            os.makedirs(OUT, exist_ok=True)
+            # The journal consumes the staged pair. Keep the verified private preview retryable if it rolls back.
+            with tempfile.TemporaryDirectory(dir=directory, prefix='.approve-') as scratch:
+                staged = [shutil.copyfile(path, os.path.join(scratch, os.path.basename(path))) for path in pair]
+                promote_clip(MEDIA, name, *staged, review_updates={
+                    RECIPES: next_recipes(name, draft), DRAFTS: drafts, CHECKS: checks,
+                    items_path(): catalogue, REVIEW_QUEUE: queue,
+                })
+    except StaleCut:
+        raise
+    except (OSError, ValueError, TypeError, KeyError, RuntimeError, subprocess.SubprocessError):
+        sys.exit('Intake approval could not be completed')
+
+
 def rebuild(*names, expected=None):
     """Apply the cuts saved on /review/cut: render each one, then make it the clip's recipe."""
     todo = names
     if not todo:
         with review_lock(MEDIA):
-            todo = list(read_json(DRAFTS, {}))
+            pending = pending_intakes()
+            todo = [name for name in read_json(DRAFTS, {}) if name not in pending]
         if not todo:
             print('No changed cuts to rebuild')
     for name in todo:
         with review_lock(MEDIA):
+            if name in pending_intakes():
+                raise StaleCut('Intake cuts must be previewed and approved before publishing')
             cut = cut_inputs(name, read_json(DRAFTS, {}))
             if expected is not None:
                 require_cut(name, expected, cut)
@@ -308,6 +454,8 @@ def rebuild(*names, expected=None):
         with render_clip(pieces) as staged, review_lock(MEDIA):
             drafts = read_json(DRAFTS, {})
             require_cut(name, cut, cut_inputs(name, drafts))
+            if name in pending_intakes():
+                raise StaleCut('Intake cuts must be previewed and approved before publishing')
             updates = {}
             if draft is not None:
                 del drafts[name]
@@ -506,7 +654,8 @@ def links():
 
 if __name__ == '__main__':
     commands = {'sheet': sheet, 'cut': cut, 'build': lambda name: print(build(name)), 'montage': montage, 'rebuild': rebuild,
-                'rebuild-expected': rebuild_expected, 'moments': moments, 'recipes': find_recipes, 'links': links}
+                'rebuild-expected': rebuild_expected, 'preview-intake': preview_intake, 'approve-intake': approve_intake,
+                'moments': moments, 'recipes': find_recipes, 'links': links}
     if len(sys.argv) < 2 or sys.argv[1] not in commands:
         sys.exit(__doc__)
     try:
