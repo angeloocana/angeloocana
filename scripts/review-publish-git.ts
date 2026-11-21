@@ -22,7 +22,8 @@ function gitFailure(action: string, result: SpawnSyncReturns<string>, rejection?
   // Git and remote hooks may print credentials, paths, or arbitrary text. Show only fixed diagnostics.
   const stderr = result.stderr ?? ''
   let reason = `Git exited with status ${result.status ?? result.signal ?? 'unknown'}`
-  if (result.error) reason = 'could not run Git'
+  if ((result.error as NodeJS.ErrnoException | undefined)?.code === 'ETIMEDOUT') reason = 'Git timed out; check the connection to origin'
+  else if (result.error) reason = 'could not run Git'
   else if (/hook declined/.test(rejection ?? '')) reason = 'the remote rejected the push with a hook'
   else if (/authentication failed|could not read (username|password)|permission denied|access denied|(?:error|HTTP)[: ]+(?:401|403)\b/i.test(stderr)) {
     reason = 'Git authentication failed or access was denied'
@@ -43,7 +44,7 @@ export function openReviewGit(sourceRepo: string, scratchRoot: string): ReviewGi
   env.GIT_NO_REPLACE_OBJECTS = '1'
 
   function git(cwd: string, args: string[], input?: string) {
-    return spawnSync('git', args, { cwd, env, input, encoding: 'utf8', maxBuffer: 16 * 1024 * 1024 })
+    return spawnSync('git', args, { cwd, env, input, encoding: 'utf8', maxBuffer: 16 * 1024 * 1024, timeout: 60_000 })
   }
   function checked(cwd: string, action: string, args: string[], input?: string): string {
     const result = git(cwd, args, input)
