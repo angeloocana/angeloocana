@@ -124,9 +124,14 @@ export function setUpRail(rail: HTMLElement, { signal, motion, clips }: { signal
   // No other row uses it.
   let lifts = rail.classList.contains('row-career')
   let liftTimer = 0
+  // Nor while the page itself scrolls: opened at a #clip-… further down, the browser is still on its way there
+  // when the row is first measured, and the page getting shorter above it would carry it past the clip. At
+  // rest, the browser keeps what is on screen in place as the row's height changes above it.
+  let pageY = -1
   let settleLift = () => {
     clearTimeout(liftTimer)
-    liftTimer = window.setTimeout(() => {
+    liftTimer = window.setTimeout(function apply() {
+      if (scrollY !== pageY) { pageY = scrollY; liftTimer = window.setTimeout(apply, 160); return }
       if (stale) measure()
       let v = view()
       // every card with any of it in view, the slice of one peeking in at a side too: none is ever cut short

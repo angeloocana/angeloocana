@@ -866,10 +866,11 @@ pre.rf-code { margin: 0; width: 100%; height: 100%; padding: 1.2rem 1.4rem; font
   .row-career .job-meta { margin-bottom: 0.9rem; }
   .row-career .job h3 { margin-block: 0.6rem 0.5rem; }
   /* long tech lists fold to their first six on a phone, where they wrap into many lines; a last tag says how
-     many more, and a press shows them in place (career.tsx, PHONE_TAGS; rails/rows.ts). Without JS there is
-     nothing to press: all of them show. */
-  .js-rails .row-career .job-tech:not(:has([aria-expanded='true'])) li:nth-child(n+7):not(.tech-more) { display: none; }
-  .js-rails .row-career .job-tech .tech-more { display: block; padding: 0; border-style: dashed; background: none; }
+     many more, and a press shows them in place (career.tsx, PHONE_TAGS; rails/rows.ts). Folded from the first
+     paint, so the page's height above a #clip-… doesn't change under the browser on its way there; without JS
+     there is nothing to press, and all of them show (home-page.tsx). */
+  .row-career .job-tech:not(:has([aria-expanded='true'])) li:nth-child(n+7):not(.tech-more) { display: none; }
+  .row-career .job-tech .tech-more { display: block; padding: 0; border-style: dashed; background: none; }
   /* the whole chip is the button, its tap area 44px tall; open, it reads − (its name stays "+12 more") */
   .tech-more button { all: unset; position: relative; display: block; padding: 0.4rem 0.6rem; border-radius: inherit; color: var(--dim); cursor: pointer; }
   .tech-more button::after { content: ''; position: absolute; inset: -0.6rem 0; }

@@ -161,6 +161,18 @@ describe('home page in a browser', () => {
     await carryClip(page, '.lang-en', /\/#clip-/)
   })
 
+  // the other language's flag carries the clip in view (#clip-…): the page lands with the clip under the menu,
+  // and nothing above it (the career's height, its folded tags) moves it on the way
+  it('lands a #clip-… under the menu on a phone', async (t) => {
+    let page = await t.serve(await serveDist())
+    await page.setViewportSize({ width: 390, height: 844 })
+    await page.addInitScript(() => { try { localStorage.setItem('ao-intro', '1') } catch {} })
+    await page.goto('/pt/#clip-h-iron', { waitUntil: 'load' })
+    await page.waitForTimeout(2500)
+    let { top, header } = await page.evaluate(() => ({ top: document.getElementById('clip-h-iron')!.getBoundingClientRect().top, header: document.querySelector('.cin-nav')!.getBoundingClientRect().bottom }))
+    assert.ok(top >= header && top < 200, `the clip's top at ${top}px, the menu ends at ${header}px`)
+  })
+
   it('plays a clip near the screen, takes its player away once it is far, and gives it back', async (t) => {
     let page = await t.serve(await serveDist())
     let clip = await recordClip(page)
@@ -299,6 +311,8 @@ describe('home page in a browser', () => {
     assert.equal(await learning.isVisible(), true)
     await learning.click()
     await page.waitForURL('**/#learning')
+    // a job's tags all show (no "+12 more" to press)
+    assert.equal(await page.evaluate(() => [...document.querySelectorAll<HTMLElement>('#job-kinaxis .job-tech li')].filter((li) => li.offsetWidth).length), 18)
     let clips = await page.evaluate(() => [...document.querySelectorAll<HTMLAnchorElement>('#outside .clip-ig')].map((a) => a.tabIndex))
     assert.ok(clips.length >= 10, `${clips.length} clip links`)
     assert.deepEqual(clips.filter((i) => i !== 0), [], 'every clip link is a Tab stop')
