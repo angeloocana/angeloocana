@@ -1,91 +1,57 @@
-// Uploads the site's media to the R2 bucket that serves /media (worker.ts), and writes
-// app/content/media.json: each file's content hash, which becomes its ?v= on the page and lets the
-// next run skip what hasn't changed. Run it after cutting clips, then commit media.json:
-//
-//   npm run media:push
-//
-// Only what the site shows goes up: the screenshots and every clip that isn't rejected. Rejected
-// clips never leave this machine, and one that went up before is taken down again. The media folder
-// itself (app/content/media-dir.ts) is only read, never changed.
-import { spawn } from 'node:child_process'
-import { createHash } from 'node:crypto'
-import { existsSync, readFileSync, readdirSync, writeFileSync } from 'node:fs'
-import { join, relative, sep } from 'node:path'
+// Manual uploader for a branch: upload an immutable snapshot, then write its two JSON files.
+// The automated publisher uses the same snapshot/storage modules, but owns its own Git commit.
+import { spawnSync } from 'node:child_process'
+import { readFileSync } from 'node:fs'
+import { fileURLToPath } from 'node:url'
 
-import { loadClips } from '../app/content/clips.ts'
 import { MEDIA_DIR } from '../app/content/media-dir.ts'
+import { needsLegacyRecovery } from '../app/content/publish.ts'
+import { withReviewLock, writeJsonAtomic } from '../app/content/review-io.ts'
+import { capturePublishSnapshot, removePublishSnapshot, uploadPublishSnapshot } from './publish-snapshot.ts'
+import { makeR2ObjectStore, openReviewMedia } from './review-publish-media.ts'
+import { parseManifest } from './review-release.ts'
 
-const BUCKET = 'angeloocana-media'
-const MANIFEST = 'app/content/media.json'
-const WRANGLER = ['-y', 'wrangler@4.151.1']
-const TYPES: Record<string, string> = { mp4: 'video/mp4', jpg: 'image/jpeg', jpeg: 'image/jpeg', webp: 'image/webp', png: 'image/png' }
+const CLIPS = new URL('../app/content/clips.json', import.meta.url)
+const MANIFEST = new URL('../app/content/media.json', import.meta.url)
+const READ = () => readFileSync(CLIPS, 'utf8')
+const dryRun = process.argv[2] === '--dry-run' && process.argv.length === 3
 
-const root = join(MEDIA_DIR, 'media')
-if (!existsSync(root)) throw new Error(`No media folder at ${root}. Set ANGELOOCANA_MEDIA if it lives elsewhere.`)
+if (process.argv.length > 2 && !dryRun) throw new Error('Usage: npm run media:push -- [--dry-run]')
+// An old launchd publisher may still invoke the old script name immediately after an upgrade.
+if (process.env.REVIEW_AUTOPUBLISH === '1') throw new Error('Restart the idle review server to use the new publisher.')
 
-const live = new Set(loadClips().filter((clip) => !clip.rejected).map((clip) => clip.id))
-const wanted = (key: string) => {
-  let clip = key.match(/^clips\/([^/]+)\.(mp4|jpg)$/)
-  return clip ? live.has(clip[1]) : !key.startsWith('clips/')
+if (process.env.REVIEW_PUBLISH_LOCKED !== '1') {
+  let result = spawnSync(process.env.PYTHON ?? 'python3', [
+    fileURLToPath(new URL('./clips/review_io.py', import.meta.url)), '--publish-lock', MEDIA_DIR,
+    process.execPath, '--import', 'remix/node-tsx', fileURLToPath(import.meta.url), ...process.argv.slice(2),
+  ], { stdio: 'inherit' })
+  if (result.status === 75) console.error('A review release or takedown is using the media store. Try again later.')
+  process.exitCode = result.status ?? 1
+} else {
+  if (needsLegacyRecovery()) throw new Error('Recover the previous review publish before uploading manually.')
+  let media = openReviewMedia(MEDIA_DIR, makeR2ObjectStore())
+  let prior = readFileSync(MANIFEST, 'utf8')
+  let previous = parseManifest(prior)
+  let original = ''
+  let snapshot = await capturePublishSnapshot(MEDIA_DIR, () => ({ revision: 'manual', clipsJson: original = READ() }),
+    media.availableManifest(previous))
+  try {
+    console.log(`${Object.keys(snapshot.manifest).length} approved media files; ${snapshot.uploads.length} versioned uploads.`)
+    if (dryRun) {
+      for (let { object } of snapshot.uploads) console.log(`Would upload ${object}`)
+    } else {
+      media.rememberManifest(previous)
+      await uploadPublishSnapshot(snapshot, media.upload)
+      await withReviewLock(MEDIA_DIR, () => {
+        if (READ() !== original || readFileSync(MANIFEST, 'utf8') !== prior) {
+          throw new Error('Clip data changed during the upload. Retry before committing.')
+        }
+        if (original !== snapshot.clipsJson) writeJsonAtomic(CLIPS, JSON.parse(snapshot.clipsJson))
+        writeJsonAtomic(MANIFEST, snapshot.manifest, 2)
+      })
+      console.log('Commit the captured clips.json and media.json together. No objects were removed.')
+    }
+  } finally {
+    removePublishSnapshot(snapshot)
+  }
 }
-
-function walk(dir: string): string[] {
-  return readdirSync(dir, { withFileTypes: true }).flatMap((entry) =>
-    entry.name.startsWith('.') ? [] : entry.isDirectory() ? walk(join(dir, entry.name)) : [join(dir, entry.name)],
-  )
-}
-
-let before: Record<string, string> = existsSync(MANIFEST) ? JSON.parse(readFileSync(MANIFEST, 'utf8')) : {}
-let after: Record<string, string> = {}
-let uploads: { key: string; file: string }[] = []
-for (let file of walk(root)) {
-  let key = relative(root, file).split(sep).join('/')
-  let ext = key.split('.').pop()!.toLowerCase()
-  if (!TYPES[ext] || !wanted(key)) continue
-  after[key] = createHash('sha256').update(readFileSync(file)).digest('hex').slice(0, 10)
-  if (before[key] !== after[key]) uploads.push({ key, file })
-}
-let removals = Object.keys(before).filter((key) => !(key in after))
-
-let missing = [...live].flatMap((id) => [`clips/${id}.mp4`, `clips/${id}.jpg`]).filter((key) => !(key in after))
-if (missing.length) throw new Error(`Missing ${missing.length} live clip files in ${root} (${missing.slice(0, 3).join(', ')}…). Cut them first.`)
-
-function wrangler(args: string[]) {
-  return new Promise<void>((resolve, reject) => {
-    let child = spawn('npx', [...WRANGLER, ...args], { stdio: ['ignore', 'ignore', 'pipe'] })
-    let errors = ''
-    child.stderr.on('data', (chunk) => (errors += chunk))
-    child.on('close', (code) => (code === 0 ? resolve() : reject(new Error(`wrangler ${args.slice(0, 4).join(' ')} failed:\n${errors}`))))
-  })
-}
-
-/** Run the jobs a few at a time; each wrangler call is a few seconds of mostly waiting. */
-async function inBatches<T>(items: T[], run: (item: T) => Promise<void>, size = 6) {
-  let next = 0
-  let done = 0
-  await Promise.all(
-    Array.from({ length: Math.min(size, items.length) }, async () => {
-      while (next < items.length) {
-        await run(items[next++])
-        done += 1
-        if (done % 20 === 0 || done === items.length) console.log(`  ${done} of ${items.length}`)
-      }
-    }),
-  )
-}
-
-console.log(`${Object.keys(after).length} files for the site: ${uploads.length} to upload, ${removals.length} to take down.`)
-// --dry-run: list what would change, and touch nothing
-if (process.argv.includes('--dry-run')) {
-  for (let { key } of uploads) console.log(`  up    ${key}`)
-  for (let key of removals) console.log(`  down  ${key}`)
-  process.exit(0)
-}
-await inBatches(uploads, ({ key, file }) =>
-  wrangler(['r2', 'object', 'put', `${BUCKET}/${key}`, '--file', file, '--content-type', TYPES[key.split('.').pop()!.toLowerCase()], '--remote']),
-)
-await inBatches(removals, (key) => wrangler(['r2', 'object', 'delete', `${BUCKET}/${key}`, '--remote']))
-
-let sorted = Object.fromEntries(Object.entries(after).sort(([a], [b]) => a.localeCompare(b)))
-writeFileSync(MANIFEST, `${JSON.stringify(sorted, null, 2)}\n`)
-console.log(`Wrote ${MANIFEST}. Commit it so the build and the site use the new versions.`)

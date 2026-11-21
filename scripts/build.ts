@@ -27,7 +27,7 @@ const live = new Set(loadClips().filter((clip) => !clip.rejected).map((clip) => 
 // publish a page with a broken video.
 let missing = [...live].flatMap((id) => [`clips/${id}.mp4`, `clips/${id}.jpg`]).filter((key) => !MEDIA_VERSIONS[key])
 if (missing.length) {
-  throw new Error(`${missing.length} live clip files aren't in the bucket yet (${missing.slice(0, 3).join(', ')}…). Run \`npm run media:push\` and commit app/content/media.json.`)
+  throw new Error(`${missing.length} live clip files aren't in the bucket yet (${missing.slice(0, 3).join(', ')}…). Run \`npm run media:push\` on your branch and commit both clip and media manifests.`)
 }
 await cp('public', OUT, {
   recursive: true,
@@ -173,8 +173,8 @@ await save(
     '  X-Frame-Options: DENY',
     '  Permissions-Policy: camera=(), microphone=(), geolocation=()',
     // Cloudflare's absolute URL rules match hostnames, so HSTS does not cover workers.dev.
-    `${SITE_ORIGIN}/*`, '  Strict-Transport-Security: max-age=604800',
-    'https://www.angeloocana.com/*', '  Strict-Transport-Security: max-age=604800',
+    `${SITE_ORIGIN}/*`, '  Strict-Transport-Security: max-age=31536000',
+    'https://www.angeloocana.com/*', '  Strict-Transport-Security: max-age=31536000',
     ...['/', '/pt/', '/en/blog/*', '/pt/blog/*', '/Tutoriais/*', '/offline-plugin-app-shell-fallback/'].flatMap(
       (path) => [path, `  Content-Security-Policy-Report-Only: ${CSP}`],
     ),

@@ -1,68 +1,122 @@
-// Publishing what changes on the review pages (/review, /review/cut) without anyone running a command.
-// Only the always-on review server (scripts/review-server.sh) does it: it runs with REVIEW_AUTOPUBLISH=1.
-// Each change (a clip rejected, starred, re-captioned or re-cut) marks the review as changed; two minutes
-// after the last one, the server starts scripts/publish-review.ts, which uploads re-cut clips, commits
-// clips.json and media.json to master and pushes (pushes to master deploy the site). Its progress is kept
-// in the media folder, so the pages can show it and a restarted server picks up where it left off:
-//   work/publish-pending  touched on every change: its time is when the review last changed
-//   work/publish.json     the publisher's progress and its last result (PublishState)
-//   work/publish.lock     the pid of the publisher while it runs
-//   work/publish.log      everything the publisher printed
-import { spawn } from 'node:child_process'
-import { existsSync, mkdirSync, openSync, readFileSync, statSync, writeFileSync } from 'node:fs'
+// The always-on review server nudges a detached publisher, which owns work/publish.json.
+// Both the release progress and the latest review revision survive a server restart.
+import childProcess from 'node:child_process'
+import { closeSync, mkdirSync, openSync, readFileSync, statSync } from 'node:fs'
 import { join } from 'node:path'
 import { fileURLToPath } from 'node:url'
 
+import type { Clip } from './clips.ts'
 import { MEDIA_DIR } from './media-dir.ts'
 import { writeJsonAtomic } from './review-io.ts'
+import { readReviewQueue, type ReviewQueue } from './review-queue.ts'
 
 const WORK = join(MEDIA_DIR, 'work')
-export const PENDING = join(WORK, 'publish-pending')
+export const PENDING = join(WORK, 'publish-pending') // Legacy marker, only read during migration.
 export const STATE = join(WORK, 'publish.json')
-export const LOCK = join(WORK, 'publish.lock')
 export const LOG = join(WORK, 'publish.log')
 export const REPO = fileURLToPath(new URL('../../', import.meta.url))
-/** How long after the last change the publish starts, so a few edits in a row go out together. */
-export const DELAY_MS = 2 * 60_000
+const DEBOUNCE_MS = 2 * 60_000
+const ACTIVE_CHECK_MS = 3_000
+
+export type Release = {
+  revision: string
+  sha: string
+  desired: Clip[]
+  published: Clip[]
+  manifest: Record<string, string>
+}
 
 export type PublishState = {
-  /** A publish in progress: changes made before startedAt are in it. */
   running?: { pid: number; startedAt: string; step: string }
-  /** The last publish that worked. live: Cloudflare deployed it (null: not confirmed); no commit: nothing had changed. */
-  done?: { startedAt: string; finishedAt: string; commit?: string; live: boolean | null; summary?: string }
-  /** The last publish that didn't, until one works. */
-  failed?: { at: string; message: string }
+  candidate?: Release
+  pushed?: Release & { pushedAt: string; nextCheckAt: number; acknowledged?: boolean }
+  live?: { revision: string; sha: string; confirmedAt: string }
+  cleanup?: { revision: string; ids: string[]; manifest: Record<string, string>; nextCheckAt?: number }
+  failed?: { phase: 'prepare' | 'push' | 'deploy' | 'cleanup'; revision?: string; at: string; message: string }
 }
 
-/** What the review pages show about publishing (app/ui/public/publish-status.tsx). */
 export type PublishInfo = {
-  state: 'off' | 'live' | 'waiting' | 'running' | 'failed'
+  state: 'off' | 'idle' | 'queued' | 'running' | 'pushed' | 'failed' | 'live'
   text: string
   detail?: string
-  /** When a waiting publish starts (ms since 1970). */
+  action?: 'Publish now' | 'Try again' | 'Check again' | 'Recover'
   dueAt?: number
+  cleanupWarning?: string
 }
+
+type LegacyState = {
+  version?: undefined
+  running?: PublishState['running']
+  done?: { startedAt?: string; commit?: string; live?: boolean | null }
+  failed?: { at: string; message: string }
+}
+type StateRecord = (PublishState & { version: 2 }) | LegacyState
 
 export const autoPublish = () => process.env.REVIEW_AUTOPUBLISH === '1'
 
-export function readState(): PublishState {
+function readRecord(): StateRecord {
+  let json: string
   try {
-    return JSON.parse(readFileSync(STATE, 'utf8')) as PublishState
-  } catch {
-    return {}
+    json = readFileSync(STATE, 'utf8')
+  } catch (error) {
+    if ((error as NodeJS.ErrnoException).code === 'ENOENT') return {}
+    throw error
   }
+  let record: StateRecord
+  try {
+    record = JSON.parse(json)
+  } catch {
+    // A parser error can echo contents of a private file.
+    throw new Error('Invalid publishing progress JSON.')
+  }
+  if (!record || typeof record !== 'object' || Array.isArray(record) || (record.version !== 2 && record.version !== undefined)) {
+    throw new Error('Unrecognized publishing progress format.')
+  }
+  return record
+}
+
+function v2State(record: StateRecord): PublishState {
+  if (record.version !== 2) return {}
+  let { version, ...state } = record
+  return state
+}
+
+export function readState(): PublishState {
+  return v2State(readRecord())
 }
 
 export function writeState(state: PublishState) {
   mkdirSync(WORK, { recursive: true })
-  writeJsonAtomic(STATE, state)
+  writeJsonAtomic(STATE, { ...state, version: 2 })
 }
 
-/** When the review last changed (ms), or 0. */
-export const changedAt = () => (existsSync(PENDING) ? statSync(PENDING).mtimeMs : 0)
+function readLegacy(record: StateRecord): { pending: boolean; sha?: string; startedAt?: string } {
+  let changedAt = 0
+  try {
+    changedAt = statSync(PENDING).mtimeMs
+  } catch (error) {
+    if ((error as NodeJS.ErrnoException).code !== 'ENOENT') throw error
+  }
+  let legacy = record.version === 2 ? undefined : record
+  let startedAt = legacy?.done?.startedAt
+  return {
+    pending: changedAt > (Date.parse(startedAt ?? '') || 0) || Boolean(legacy?.running || legacy?.failed),
+    sha: legacy?.done?.live !== true ? legacy?.done?.commit : undefined,
+    startedAt,
+  }
+}
+
+export function legacyProgress() {
+  return readLegacy(readRecord())
+}
+
+export function needsLegacyRecovery() {
+  let { pending, sha } = legacyProgress()
+  return Boolean(pending || sha)
+}
 
 export function alive(pid: number | undefined) {
-  if (!pid) return false
+  if (pid === undefined || !Number.isInteger(pid) || pid <= 0) return false
   try {
     process.kill(pid, 0)
     return true
@@ -71,65 +125,196 @@ export function alive(pid: number | undefined) {
   }
 }
 
-const isRunning = (state: PublishState) => alive(state.running?.pid)
-/** Changes up to this time are live (or on their way); later ones are waiting. */
-const publishedUpTo = (state: PublishState) => Date.parse(state.done?.startedAt ?? '') || 0
+function confirmedLive(state: PublishState) {
+  let live = state.live
+  if (typeof live?.confirmedAt === 'string' && Number.isFinite(Date.parse(live.confirmedAt))) return live
+}
+
+function hasFailed(state: PublishState, revision: string, changedAt?: number) {
+  let failed = state.failed
+  return Boolean(failed && (failed.revision === revision ||
+    (failed.revision === undefined && (changedAt === undefined || changedAt <= Date.parse(failed.at)))))
+}
+
+type QueuedWork = { kind: 'queue'; revision: string; at: number }
+type NextWork = QueuedWork | { kind: 'check' | 'resume' | 'cleanup'; revision: string; at: number }
+
+function queuedWork(state: PublishState, queue: ReviewQueue | undefined): QueuedWork | undefined {
+  if (queue && queue.revision !== confirmedLive(state)?.revision &&
+      queue.revision !== state.candidate?.revision && queue.revision !== state.pushed?.revision &&
+      (state.failed?.phase === 'cleanup' || !hasFailed(state, queue.revision, queue.changedAt))) {
+    return { kind: 'queue', revision: queue.revision, at: queue.changedAt + DEBOUNCE_MS }
+  }
+}
+
+function nextWork(state: PublishState, queued: QueuedWork | undefined): NextWork | undefined {
+  // Resolve the last release before starting a new one unless the old release has a terminal failure.
+  let { pushed, candidate, cleanup, failed } = state
+  if (pushed && (failed?.phase === 'cleanup' || !hasFailed(state, pushed.revision))) {
+    return { kind: 'check', revision: pushed.revision, at: pushed.nextCheckAt }
+  }
+  if (candidate && (failed?.phase === 'cleanup' || !hasFailed(state, candidate.revision))) {
+    return { kind: 'resume', revision: candidate.revision, at: 0 }
+  }
+  if (queued) return queued
+  if (cleanup && !failed) {
+    return { kind: 'cleanup', revision: cleanup.revision, at: cleanup.nextCheckAt ?? 0 }
+  }
+}
 
 let timer: ReturnType<typeof setTimeout> | undefined
-let dueAt = 0
+let child: childProcess.ChildProcess | undefined
+let launchFailure: { revision?: string; message: string } | undefined
 
-function schedule(ms: number) {
-  clearTimeout(timer)
-  dueAt = Date.now() + ms
-  timer = setTimeout(startPublish, ms)
+function currentProgress() {
+  let record = readRecord()
+  let state = v2State(record)
+  let running = record.running
+  let queued = queuedWork(state, readReviewQueue(MEDIA_DIR))
+  return {
+    state,
+    running: running && alive(running.pid) ? running : undefined,
+    legacy: readLegacy(record),
+    queued,
+    next: nextWork(state, queued),
+  }
 }
 
-/** Call after a change the live site shows. Publishes it two minutes after the last such change. */
-export function reviewChanged() {
+function wakeIn(ms: number) {
+  timer = setTimeout(resumePublishing, ms)
+  // The web listener owns the real server lifetime; a poll should not keep it alive.
+  timer.unref?.()
+}
+
+function launchPublisher(revision: string | undefined, recover = false) {
+  let startedAt = Date.now()
+  let failedToStart = (error: unknown) => {
+    console.error('Could not start the review publisher:', error)
+    launchFailure = { revision, message: 'Check the review server log and try again.' }
+  }
+  try {
+    mkdirSync(WORK, { recursive: true })
+    let log = openSync(LOG, 'a')
+    try {
+      // The child can outlive the server. The Python wrapper keeps the kernel publish lock across exec.
+      child = childProcess.spawn(process.env.PYTHON ?? 'python3', [
+        'scripts/clips/review_io.py', '--publish-lock', MEDIA_DIR,
+        process.execPath, '--import', 'remix/node-tsx', 'scripts/publish-review.ts', ...(recover ? ['--recover'] : []),
+      ], { cwd: REPO, detached: true, stdio: ['ignore', log, log] })
+      child.once('error', (error) => {
+        child = undefined
+        failedToStart(error)
+      })
+      child.once('exit', (code) => {
+        child = undefined
+        if (!code || code === 74 || code === 75) return // Success, interruption (resumable), or another holder has the lock.
+        try {
+          let { failed } = readState()
+          if (failed && Date.parse(failed.at) >= startedAt) return
+        } catch {
+          // The scheduler will report malformed state separately.
+        }
+        // The wrapper or migration can fail before the CLI records a durable result.
+        console.error(`Review publisher exited unexpectedly (${code}); see ${LOG}`)
+        launchFailure = { revision, message: 'The publisher stopped before recording its result. Check the publish log and try again.' }
+      })
+      child.unref()
+      wakeIn(ACTIVE_CHECK_MS)
+    } finally {
+      closeSync(log)
+    }
+  } catch (error) {
+    failedToStart(error)
+  }
+}
+
+function advance(manual: boolean, explicitRecovery = false) {
+  clearTimeout(timer)
   if (!autoPublish()) return
-  mkdirSync(WORK, { recursive: true })
-  writeFileSync(PENDING, new Date().toISOString() + '\n')
-  schedule(DELAY_MS)
+  try {
+    let { state, running, legacy, next } = currentProgress()
+    if (child || running) return wakeIn(ACTIVE_CHECK_MS)
+    let recover = Boolean(legacy.pending || legacy.sha)
+    if (recover && !explicitRecovery) return wakeIn(30_000)
+    if (explicitRecovery && !recover) return
+    if (manual) {
+      if (!next && !state.failed && !legacy.pending && !legacy.sha) return
+      launchFailure = undefined
+    } else {
+      if (!next) return wakeIn(30_000) // An explicitly auto-publishing CLI may queue a cut too.
+      if (launchFailure && launchFailure.revision === next.revision) return wakeIn(30_000)
+      let wait = next.at - Date.now()
+      if (wait > 0) return wakeIn(Math.min(wait, 2 ** 31 - 1))
+    }
+    launchPublisher(next?.revision ?? state.failed?.revision, recover)
+  } catch (error) {
+    console.error('Could not read review publishing progress:', error)
+  }
 }
 
-/** Start publishing now (unless it already is: a running publish goes again for changes made meanwhile). */
-export function startPublish() {
-  clearTimeout(timer)
-  dueAt = 0
-  if (!autoPublish() || isRunning(readState())) return
-  mkdirSync(WORK, { recursive: true })
-  let log = openSync(LOG, 'a')
-  // detached: the dev server restarts when the publish brings in new code, and the publish carries on
-  spawn(process.execPath, ['--import', 'remix/node-tsx', 'scripts/publish-review.ts'], { cwd: REPO, detached: true, stdio: ['ignore', log, log] }).unref()
+/** Manual retry/check (or start now instead of waiting for the debounce). */
+export function startPublish(intent: 'publish' | 'recover' = 'publish') {
+  let recover = intent === 'recover'
+  if (autoPublish() && needsLegacyRecovery() !== recover) return false
+  advance(true, recover)
+  return true
 }
 
-/** When the server starts: changes that were waiting when it stopped are published as if just made. */
+/** Re-read the durable queue and progress on startup and after every wake. */
 export function resumePublishing() {
-  let state = readState()
-  let failedAt = Date.parse(state.failed?.at ?? '') || 0
-  if (autoPublish() && !isRunning(state) && changedAt() > Math.max(publishedUpTo(state), failedAt)) schedule(DELAY_MS)
+  advance(false)
+}
+
+/** The review writer has already recorded a new revision under the review lock. */
+export function reviewChanged() {
+  resumePublishing()
 }
 
 const clock = (iso: string) => new Date(iso).toLocaleString('en', { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' })
+const failureTitle = { prepare: 'Could not prepare the publish', push: 'Could not push the changes', deploy: 'Deploy was not confirmed' }
 
 export function publishInfo(): PublishInfo {
   if (!autoPublish()) {
     return {
       state: 'off',
       text: 'Not published from here',
-      detail: 'Only the always-on review server (scripts/review-server.sh) publishes. Clips re-cut here go out with its next publish; other changes stay in this checkout.',
+      detail: 'Only the always-on review server (scripts/review-server.sh) publishes.',
     }
   }
-  let state = readState()
-  if (isRunning(state)) return { state: 'running', text: `${state.running!.step}…`, detail: `Publishing since ${clock(state.running!.startedAt)}` }
-  let failedAt = Date.parse(state.failed?.at ?? '') || 0
-  if (state.failed && failedAt >= changedAt()) return { state: 'failed', text: 'Not live: publishing failed', detail: state.failed.message }
-  if (changedAt() > publishedUpTo(state)) return { state: 'waiting', text: 'Changes not live yet', dueAt: dueAt || undefined }
-  let done = state.done
-  if (!done) return { state: 'live', text: 'Live: nothing waiting' }
-  let when = clock(done.finishedAt)
-  if (!done.commit) return { state: 'live', text: 'Live: nothing waiting', detail: `Checked ${when}` }
-  return done.live
-    ? { state: 'live', text: `Live since ${when}`, detail: `${done.summary ?? 'Published'} (commit ${done.commit.slice(0, 7)})` }
-    : { state: 'live', text: `Pushed ${when}`, detail: `Cloudflare's deploy of ${done.commit.slice(0, 7)} wasn't confirmed; it usually takes a minute or two.` }
+  try {
+    let { state, running, legacy, queued, next } = currentProgress()
+    let failed = state.failed
+    let cleanup = failed?.phase === 'cleanup' ? failed.message : undefined
+    let warning = cleanup ? { cleanupWarning: cleanup } : {}
+    if (running) return { ...warning, state: 'running', text: `${running.step}…`, detail: `Publishing since ${clock(running.startedAt)}` }
+    if (child) return { ...warning, state: 'running', text: 'Starting publisher…' }
+    if (launchFailure && launchFailure.revision === (next?.revision ?? failed?.revision)) {
+      return { ...warning, state: 'failed', text: 'Publisher failed to run', detail: launchFailure.message,
+        action: legacy.pending || legacy.sha ? 'Recover' : 'Try again' }
+    }
+    let earlierPush = legacy.sha && `Deploy of ${legacy.sha.slice(0, 7)} was not confirmed.`
+    if (legacy.pending) {
+      return { ...warning, state: 'failed', text: 'Earlier review changes need recovery', detail: earlierPush || 'Publishing did not finish with the old review server.', action: 'Recover' }
+    }
+    if (earlierPush) {
+      return { ...warning, state: 'pushed', text: 'Earlier push not confirmed', detail: earlierPush, action: 'Recover' }
+    }
+    if (next?.kind === 'check' && state.pushed) {
+      return { ...warning, state: 'pushed', text: 'Pushed · checking deploy', detail: `Awaiting confirmation for ${state.pushed.sha.slice(0, 7)}.`, action: 'Check again' }
+    }
+    if (next?.kind === 'resume' || queued) {
+      return { ...warning, state: 'queued', text: 'Changes queued to publish', dueAt: next?.kind === 'resume' ? undefined : queued?.at, action: 'Publish now' }
+    }
+    if (failed && failed.phase !== 'cleanup') {
+      return { state: 'failed', text: failureTitle[failed.phase], detail: failed.message, action: 'Try again' }
+    }
+    let action = cleanup ? 'Try again' as const : undefined
+    let live = confirmedLive(state)
+    if (live) {
+      return { ...warning, state: 'live', text: `Live since ${clock(live.confirmedAt)}`, detail: `Deploy confirmed for ${live.sha.slice(0, 7)}.`, action }
+    }
+    return { ...warning, state: 'idle', text: 'No changes waiting', action }
+  } catch {
+    return { state: 'failed', text: 'Could not read publishing progress', detail: 'Check the review queue and publishing state on the review server.' }
+  }
 }

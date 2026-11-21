@@ -1,5 +1,6 @@
 // The home page's video row. The list itself lives in clips.json, which the local review page
 // (/review, development only) edits: reject clips, star the ones that should come first.
+import { execFileSync } from 'node:child_process'
 import { existsSync, readFileSync, statSync } from 'node:fs'
 import { join } from 'node:path'
 
@@ -8,6 +9,7 @@ import { takeTurns } from '../ui/public/take-turns.ts'
 import { MEDIA_DIR } from './media-dir.ts'
 import { CATEGORIES } from './public-clip-data.ts'
 import { writeJsonAtomic } from './review-io.ts'
+import { readReviewQueue } from './review-queue.ts'
 
 export { CATEGORIES }
 export type Category = (typeof CATEGORIES)[number]
@@ -101,7 +103,7 @@ export function heroClipUrl(id: string, cut: 'phone' | 'tile') {
 function clipMediaVersion(key: string) {
   if (process.env.NODE_ENV === 'development') {
     let file = join(MEDIA_DIR, 'media', key)
-    if (existsSync(file)) return Math.round(statSync(file).mtimeMs / 1000).toString(36)
+    if (existsSync(file)) return Math.round(statSync(file).mtimeMs).toString(36)
   }
   return MEDIA_VERSIONS[key]
 }
@@ -120,12 +122,24 @@ export function saveClips(clips: Clip[]) {
   writeJsonAtomic(FILE, clips)
 }
 
+/** The private review working copy is never used by a production build. */
+export function loadReviewClips(): Clip[] {
+  return (process.env.REVIEW_AUTOPUBLISH === '1' ? readReviewQueue(MEDIA_DIR)?.clips : undefined) ?? loadClips()
+}
+
+/** Track the local working copy's committed base, even if a legacy review left unstaged edits. */
+export function loadCommittedClips(): Clip[] {
+  return JSON.parse(execFileSync('git', ['show', 'HEAD:app/content/clips.json'], {
+    cwd: new URL('../../', import.meta.url), encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'],
+  })) as Clip[]
+}
+
 /**
  * The order the home row starts in: starred first, then the best clip that keeps the mix going.
  * A category waits until two others have had a turn, so hobbies alternate. `jitter` (0 on the server)
  * lets the browser deal a slightly different order each visit (rails/clips.ts deals with the same takeTurns).
  */
-export function homeOrder(clips: Clip[] = loadClips(), jitter = 0): Clip[] {
+export function homeOrder(clips: Clip[] = process.env.NODE_ENV === 'development' ? loadReviewClips() : loadClips(), jitter = 0): Clip[] {
   let live = clips.filter((clip) => !clip.rejected)
   let starred = live.filter((c) => c.star > 0).sort((a, b) => b.star - a.star || b.score - a.score)
   let rest = live.filter((c) => c.star === 0)

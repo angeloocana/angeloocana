@@ -29,7 +29,7 @@ export default {
       'Permissions-Policy': 'camera=(), microphone=(), geolocation=()',
     })
     if (url.protocol === 'https:' && (url.hostname === 'angeloocana.com' || url.hostname === 'www.angeloocana.com')) {
-      headers.set('Strict-Transport-Security', 'max-age=604800')
+      headers.set('Strict-Transport-Security', 'max-age=31536000')
     }
 
     if (request.method !== 'GET' && request.method !== 'HEAD') {

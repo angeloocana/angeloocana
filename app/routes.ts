@@ -1,4 +1,4 @@
-import { get, route } from 'remix/routes'
+import { get, post, route } from 'remix/routes'
 
 export const routes = route({
   assets: get('/assets/*path'),
@@ -23,6 +23,7 @@ export const routes = route({
   reviewSource: get('/review/source'),
   // whether the review's changes are live yet (GET), or publish them now (POST)
   reviewPublish: '/review/publish',
+  reviewTakedown: post('/review/takedown/:id'),
   // Old preview links (/concepts/cinematic and friends) now live at the home page.
   concepts: get('/concepts/*rest'),
 })

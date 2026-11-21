@@ -24,6 +24,7 @@ import subprocess
 import sys
 import tempfile
 import time
+import uuid
 from contextlib import contextmanager
 
 # Keep the CLI from creating an untracked __pycache__ in the checkout.
@@ -35,6 +36,8 @@ MEDIA = os.environ.get('ANGELOOCANA_MEDIA') or os.path.expanduser('~/dev/angeloo
 CLIPS_JSON = os.path.join(REPO, 'app', 'content', 'clips.json')
 OUT = os.path.join(MEDIA, 'media', 'clips')
 WORK = os.path.join(MEDIA, 'work')
+REVIEW_QUEUE = os.path.join(WORK, 'review-queue.json')
+AUTOPUBLISH = os.environ.get('REVIEW_AUTOPUBLISH') == '1'
 # How every clip is made: {"clips": {clip id: [piece, …]}}. The name is from when only montages had one.
 RECIPES = os.path.join(MEDIA, 'index', 'montages.json')
 # Cuts changed on /review/cut that have not been rebuilt yet: {clip id: [piece, …]}.
@@ -92,22 +95,57 @@ def poster(mp4, jpg):
 
 
 def load_clips():
+    queue = read_json(REVIEW_QUEUE, None) if AUTOPUBLISH else None
+    if queue is not None:
+        return queue['clips']
     with open(CLIPS_JSON, encoding='utf-8') as f:
         return json.load(f)
 
 
+def next_review_queue(clips=None):
+    """Prepare the private revision under the review lock without rewriting the checkout."""
+    queue = read_json(REVIEW_QUEUE, None)
+    if queue is None:
+        base = subprocess.run(['git', 'show', 'HEAD:app/content/clips.json'], cwd=REPO,
+                              capture_output=True, check=True).stdout
+        queue = {'base': json.loads(base), 'clips': load_clips()}
+    if clips is not None:
+        queue['clips'] = clips
+    queue.update(revision=str(uuid.uuid4()), changedAt=time.time_ns() // 1_000_000)
+    return queue
+
+
 def save_clips(clips):
-    write_json_atomic(CLIPS_JSON, clips)
+    if AUTOPUBLISH:
+        write_json_atomic(REVIEW_QUEUE, next_review_queue(clips))
+    else:
+        write_json_atomic(CLIPS_JSON, clips)
 
 
 def recipes():
     return read_json(RECIPES, {'clips': {}})['clips']
 
 
-def save_recipe(name, pieces):
+def next_recipes(name, pieces):
     data = read_json(RECIPES, {'clips': {}})
     data['clips'][name] = pieces
-    write_json_atomic(RECIPES, data)
+    return data
+
+
+def save_recipe(name, pieces):
+    write_json_atomic(RECIPES, next_recipes(name, pieces))
+
+
+def finish_render(name, staged, updates, clips=None):
+    if AUTOPUBLISH:
+        return promote_clip(MEDIA, name, *staged,
+                            review_updates={**updates, REVIEW_QUEUE: next_review_queue(clips)})
+    mp4 = promote_clip(MEDIA, name, *staged)
+    for path, data in updates.items():
+        write_json_atomic(path, data)
+    if clips is not None:
+        save_clips(clips)
+    return mp4
 
 
 def sheet(item_id, start='0', length=None, step=None):
@@ -139,15 +177,13 @@ def cut(item_id, start, cat=None, en=None, pt=None, length='6'):
     with render_clip(pieces) as staged, review_lock(MEDIA):
         clips = load_clips()  # Preserve review edits made while ffmpeg was running.
         new = is_new(clips)
-        mp4 = promote_clip(MEDIA, cid, *staged)
-        save_recipe(cid, pieces)
         if new:
             source_kind = 'instagram' if it['source'].startswith('Instagram') else 'phone'
             clip = {'id': cid, 'cat': cat, 'label': {'en': en, 'pt': pt}, 'star': 0, 'rejected': False, 'score': 3, 'source': source_kind}
             if source_kind == 'instagram':
                 clip['igKind'] = it['source'].split('·')[-1].strip()
             clips.append(clip)
-            save_clips(clips)
+        mp4 = finish_render(cid, staged, {RECIPES: next_recipes(cid, pieces)}, clips if new else None)
     print(mp4)
 
 
@@ -211,7 +247,7 @@ def build(name):
     with render_clip(pieces) as staged, review_lock(MEDIA):
         if recipes().get(name) != pieces:
             raise RuntimeError(f'{name}: recipe changed while rendering; rebuild again')
-        return promote_clip(MEDIA, name, *staged)
+        return finish_render(name, staged, {})
 
 
 def montage(name):
@@ -272,14 +308,13 @@ def rebuild(*names, expected=None):
         with render_clip(pieces) as staged, review_lock(MEDIA):
             drafts = read_json(DRAFTS, {})
             require_cut(name, cut, cut_inputs(name, drafts))
-            mp4 = promote_clip(MEDIA, name, *staged)
+            updates = {}
             if draft is not None:
-                save_recipe(name, draft)
                 del drafts[name]
-                write_json_atomic(DRAFTS, drafts)
                 checks = read_json(CHECKS, {})
                 checks[name] = {'state': 'edited', 'at': time.strftime('%Y-%m-%dT%H:%M:%SZ', time.gmtime())}
-                write_json_atomic(CHECKS, checks)
+                updates = {RECIPES: next_recipes(name, draft), DRAFTS: drafts, CHECKS: checks}
+            mp4 = finish_render(name, staged, updates)
         print(mp4, flush=True)
 
 

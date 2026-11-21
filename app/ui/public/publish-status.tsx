@@ -8,19 +8,31 @@ import type { PublishInfo } from '../../content/publish.ts'
 // the page saves a change (the 'review:changed' event).
 export const PublishStatus = clientEntry(import.meta.url, function PublishStatus(handle: Handle<{ initial: PublishInfo }>) {
   let info = handle.props.initial
-  let asking = false
+  let asking: 'GET' | 'POST' | undefined
+  let requestId = 0
 
   async function refresh(method: 'GET' | 'POST' = 'GET') {
-    if (asking && method === 'GET') return
-    asking = true
+    if (asking && (method === 'GET' || asking === 'POST')) return
+    let id = ++requestId
+    asking = method
+    if (method === 'POST') handle.update()
     try {
-      let response = await fetch('/review/publish', { method, signal: handle.signal })
-      if (response.ok) info = (await response.json()) as PublishInfo
+      let action = method === 'POST' ? {
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ intent: info.action === 'Recover' ? 'recover' : 'publish' }),
+      } : undefined
+      let response = await fetch('/review/publish', { method, signal: handle.signal, ...action })
+      if (response.ok || (method === 'POST' && response.status === 409)) {
+        let next = (await response.json()) as PublishInfo
+        if (id === requestId) info = next
+      }
     } catch {
-      // the dev server is restarting (it does after a publish brings in new code); try again later
+      // The dev server may be restarting; try again on the next poll.
     }
-    asking = false
-    handle.update()
+    if (id === requestId) {
+      asking = undefined
+      handle.update()
+    }
   }
 
   handle.queueTask(() => {
@@ -30,13 +42,14 @@ export const PublishStatus = clientEntry(import.meta.url, function PublishStatus
       clearTimeout(soon)
       soon = setTimeout(() => refresh(), 400)
     }, { signal })
-    // the countdown ticks every second; the server is asked every 3 s while busy, else every 20 s
     let ticks = 0
     let timer = setInterval(() => {
       ticks += 1
-      let busy = info.state === 'waiting' || info.state === 'running'
-      if (ticks % (busy ? 3 : 20) === 0) refresh()
-      else if (info.state === 'waiting' && info.dueAt) handle.update()
+      let busy = info.state === 'queued' || info.state === 'running' || info.state === 'pushed'
+      if (ticks >= (busy ? 3 : 20)) {
+        ticks = 0
+        void refresh()
+      }
     }, 1000)
     signal.addEventListener('abort', () => {
       clearInterval(timer)
@@ -44,23 +57,17 @@ export const PublishStatus = clientEntry(import.meta.url, function PublishStatus
     })
   })
 
-  return () => {
-    let text = info.text
-    if (info.state === 'waiting' && info.dueAt) {
-      let seconds = Math.max(0, Math.round((info.dueAt - Date.now()) / 1000))
-      text = seconds ? `Goes live in ${Math.floor(seconds / 60)}:${String(seconds % 60).padStart(2, '0')}` : 'Publishing…'
-    }
-    return (
-      <div class="pub" data-state={info.state} title={info.detail}>
-        <span class="pub-dot" aria-hidden="true" />
-        <span class="pub-text" aria-live="polite">{text}</span>
-        {(info.state === 'waiting' || info.state === 'failed') && (
-          <button type="button" class="pub-now" mix={on('click', () => refresh('POST'))}>
-            {info.state === 'failed' ? 'Try again' : 'Publish now'}
-          </button>
-        )}
-        {info.state === 'failed' && info.detail && <small class="pub-detail">{info.detail}</small>}
-      </div>
-    )
-  }
+  return () => (
+    <div class="pub" data-state={info.state} title={info.detail}>
+      <span class="pub-dot" aria-hidden="true" />
+      <span class="pub-text" aria-live="polite">{info.text}</span>
+      {info.action && (
+        <button type="button" class="pub-now" disabled={asking === 'POST'} mix={on('click', () => refresh('POST'))}>
+          {info.action}
+        </button>
+      )}
+      {info.state === 'failed' && info.detail && <small class="pub-detail">{info.detail}</small>}
+      {info.cleanupWarning && <small class="pub-cleanup" aria-live="polite">Cleanup failed: {info.cleanupWarning}</small>}
+    </div>
+  )
 })

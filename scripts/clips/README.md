@@ -14,6 +14,7 @@ index/reviews.json    the first automatic review of every source video (category
 index/config.json     where the Instagram export is (its media/ folder holds the originals)
 sources/huawei/   originals from the old phone (not in the Instagram export)
 work/             contact sheets and other scratch output
+work/review-queue.json   approved review edits waiting to publish (always-on server only)
 work/moments/     each source video split into short moments (v226.json) and their thumbnails (v226.jpg)
 clip-feedback.json    notes left on the /review page
 ```
@@ -56,11 +57,17 @@ is fine as it is **kept** (`index/cut-checks.json`). `/review` shows the mark on
 are checked, and a **To check** filter; **Next to check →** in the editor opens the next unchecked clip.
 
 A clip's id is `c` + the first 8 hex characters of the sha1 of its `src` in `items.json`; montages are `h-…`.
-Check the result on `/review` (or the home page), then `npm run media:push` to upload it to the R2 bucket
-the site serves `/media` from, and commit `app/content/media.json` (merging to master deploys). Re-cut
-files get a new `?v=` tag in their URL from that file, so visitors see the new cut right away.
-On the always-on review server (http://localhost:44144, `scripts/review-server.sh`) that happens by itself
-two minutes after the last change: see `scripts/publish-review.ts`.
+The always-on review server (http://localhost:44144/review, `scripts/review-server.sh`) queues the rebuilt
+cut privately and starts a publish two minutes after the last change. Once Workers Builds confirms the
+deploy, the review status shows Live and the publisher removes rejected public media. Use **Remove public
+files now…** only for urgent takedowns; copies already cached may remain. Neither action removes local files.
+When cutting manually from a branch, check the result, run `npm run media:push`, and commit its captured
+`app/content/clips.json` and `media.json` together. The manual command never takes media down. Re-cuts get
+new versioned R2 objects and `?v=` URLs; an older page doesn't silently get the new bytes.
+
+After upgrading the always-on server, use **Recover** if the previous publisher left unfinished work.
+It preserves the old progress until it can recover it safely. If local master has unpublished commits,
+reconcile the old clip edits with origin/master first; the publisher won't reset or push the checkout.
 
 ## Choosing footage
 

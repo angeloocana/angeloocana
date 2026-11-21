@@ -2,18 +2,19 @@ import { existsSync, readFileSync } from 'node:fs'
 import { join } from 'node:path'
 
 import { Document } from './document.tsx'
-import { CATEGORIES, CATEGORY_NAMES, clipUrl, instagramUrl, loadClips, saveClips, type Category, type Clip } from '../content/clips.ts'
+import { CATEGORIES, CATEGORY_NAMES, clipUrl, instagramUrl, loadCommittedClips, loadReviewClips, saveClips, type Category, type Clip } from '../content/clips.ts'
 import { cutState, loadChecks, loadDrafts, type CutCheck, type CutState } from '../content/cuts.ts'
 import { MEDIA_DIR } from '../content/media-dir.ts'
 import { assertPublicClipData } from '../content/public-clip-data.ts'
-import { publishInfo, reviewChanged } from '../content/publish.ts'
+import { autoPublish, needsLegacyRecovery, publishInfo, reviewChanged } from '../content/publish.ts'
 import { withReviewLock, writeJsonAtomic } from '../content/review-io.ts'
+import { queueReviewRevision, readReviewQueue } from '../content/review-queue.ts'
 import { PublishStatus } from '../ui/public/publish-status.tsx'
 import { ReviewBoard } from '../ui/public/review-board.tsx'
 
 // Local-only page (npm run dev → /review) for curating the home row: every clip grouped by category.
 // Reject what should not go, star what should come first (★ to ★★★), or move a clip to another
-// category. Each change is saved to app/content/clips.json right away. It is never built or deployed.
+// category. Changes are queued privately on the always-on server. This page is never deployed.
 
 const loopback = new Set(['localhost', '127.0.0.1', '[::1]'])
 
@@ -40,6 +41,11 @@ export function loadNotes(): Record<string, string> {
 // requests before reading their bodies so a later reject can't be overtaken by an earlier restore.
 let boardWrites: Promise<unknown> = Promise.resolve()
 
+export type ReviewPatch = Partial<Pick<Clip, 'star' | 'rejected' | 'cat' | 'captionRejected'>> & {
+  label?: Partial<Clip['label']>
+  note?: string
+}
+
 /** POST /review with { id, star?, rejected?, cat?, label?, captionRejected?, note? } */
 export function saveReview(request: Request) {
   let saved = boardWrites.then(() => applyReview(request))
@@ -48,9 +54,9 @@ export function saveReview(request: Request) {
 }
 
 async function applyReview(request: Request) {
-  let body = (await request.json()) as Partial<Clip> & { id: string; note?: string }
+  let body = (await request.json()) as ReviewPatch & { id: string }
   return withReviewLock(MEDIA_DIR, () => {
-    let clips = loadClips()
+    let clips = loadReviewClips()
     let clip = clips.find((c) => c.id === body.id)
     if (!clip) return Response.json({ error: 'Unknown clip' }, { status: 404 })
     let before = JSON.stringify(clip)
@@ -67,6 +73,10 @@ async function applyReview(request: Request) {
         return Response.json({ error: (error as Error).message }, { status: 422 })
       }
     }
+    let changed = JSON.stringify(clip) !== before
+    if (changed && autoPublish() && needsLegacyRecovery()) {
+      return Response.json({ error: 'Use Recover to finish the previous publish before saving public edits.' }, { status: 409 })
+    }
     if (body.note !== undefined) {
       let notes = loadNotes()
       let note = String(body.note).trim().slice(0, 2000)
@@ -75,9 +85,14 @@ async function applyReview(request: Request) {
       writeJsonAtomic(NOTES, notes)
     }
     // A note isn't on the site; only changes to the public clip are saved and queued.
-    if (JSON.stringify(clip) !== before) {
-      saveClips(clips)
-      reviewChanged()
+    if (changed) {
+      if (autoPublish()) {
+        let base = readReviewQueue(MEDIA_DIR)?.base ?? loadCommittedClips()
+        queueReviewRevision(MEDIA_DIR, base, clips)
+        reviewChanged()
+      } else {
+        saveClips(clips)
+      }
     }
     return Response.json(clip)
   })
@@ -127,7 +142,8 @@ const inCutFilter = (key: string, clip: Clip, state: CutState) => key === 'all' 
 
 export function ReviewPage() {
   return () => {
-    let clips = loadClips()
+    let clips = loadReviewClips()
+    let publishes = autoPublish()
     let names = CATEGORY_NAMES.en
     let groups = reviewGroups(clips)
     let live = clips.filter((c) => !c.rejected).length
@@ -143,8 +159,8 @@ export function ReviewPage() {
           <div>
             <h1>Review clips</h1>
             <p>
-              <b data-live>{live}</b> on the home page · {clips.length - live} rejected. Hover to play. <b>★</b> moves a clip to the front
-              (★★★ first). Edit captions in place, reject a caption to hide it, or leave feedback for Claude. Changes save right away and go live by themselves two minutes after your last one; <a href="/">open the home page</a> to see the order. <b>Edit cut</b> shows every moment of a clip's videos, so you can choose which ones it uses; clips you edit or keep there get a green mark.
+              <b data-live>{live}</b> on the home page · <b data-rejected-count>{clips.length - live}</b> rejected. Hover to play. <b>★</b> moves a clip to the front
+              (★★★ first). Edit captions in place, reject a caption to hide it, or leave feedback for Claude. {publishes ? 'Publishing starts two minutes after your last change.' : 'This checkout does not publish changes.'} <a href="/">Open the home page</a> to see the local order. <b>Edit cut</b> shows every moment of a clip's videos, so you can choose which ones it uses; clips you edit or keep there get a green mark.
             </p>
           </div>
           <div class="rv-progress" title="Clips on the home page whose cut you edited or kept in Edit cut">
@@ -176,7 +192,7 @@ export function ReviewPage() {
         <nav class="rv-tabs" aria-label="Categories">
           {groups.map((g) => (
             <a key={g.cat} href={`#${g.cat}`}>
-              {names[g.cat]} <span>{g.clips.filter((c) => !c.rejected).length}/{g.clips.length}</span>
+              {names[g.cat]} <span data-cat-live={g.cat}>{g.clips.filter((c) => !c.rejected).length}/{g.clips.length}</span>
               {(() => {
                 let done = g.clips.filter((c) => !c.rejected && (state(c) === 'edited' || state(c) === 'kept')).length
                 return <em data-cat-checked={g.cat} hidden={!done}>✓{done}</em>
@@ -190,7 +206,7 @@ export function ReviewPage() {
               <h2>{names[g.cat]}</h2>
               <ul class="rv-grid">
                 {g.clips.map((clip) => (
-                  <li key={clip.id} id={clip.id} class="rv" data-id={clip.id} data-star={String(clip.star)} data-rejected={String(clip.rejected)} data-caption-rejected={String(!!clip.captionRejected)} data-sources={sourceKeys(clip).join(' ')} data-cut={state(clip)}>
+                  <li key={clip.id} id={clip.id} class="rv" data-id={clip.id} data-star={String(clip.star)} data-rejected={String(clip.rejected)} data-saved-rejected={String(clip.rejected)} data-caption-rejected={String(!!clip.captionRejected)} data-sources={sourceKeys(clip).join(' ')} data-cut={state(clip)}>
                     {state(clip) !== 'todo' && <span class="rv-mark">{cutMark(state(clip), checks[clip.id])}</span>}
                     <video muted loop playsInline preload="none" poster={clipUrl(clip.id, 'jpg')} src={clipUrl(clip.id, 'mp4')} />
                     <div class="rv-info">
@@ -221,9 +237,13 @@ export function ReviewPage() {
                           <option key={cat} value={cat} selected={cat === clip.cat}>{names[cat]}</option>
                         ))}
                       </select>
+                      {publishes && <button type="button" class="rv-takedown" data-act="takedown">Remove public files now…</button>}
                     </div>
                     <textarea class="rv-note" data-field="note" rows={2} placeholder="Feedback for Claude (only saved on this Mac)" value={notes[clip.id] ?? ''} />
-                    <p class="rv-saved" aria-live="polite" />
+                    <div class="rv-feedback">
+                      <p class="rv-saved" role="status" />
+                      <button type="button" class="rv-retry" data-act="retry" hidden>Retry save</button>
+                    </div>
                   </li>
                 ))}
               </ul>
