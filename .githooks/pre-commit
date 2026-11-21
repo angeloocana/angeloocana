@@ -4,36 +4,46 @@
 set -euo pipefail
 shopt -s nocasematch
 
-staged=$(mktemp)
-trap 'rm -f "$staged"' EXIT
-git diff --cached ${1:+"$1"} --name-only --diff-filter=ACMR -z > "$staged"
-[ -s "$staged" ] || exit 0
+scratch=$(mktemp -d)
+trap 'rm -rf -- "$scratch"' EXIT
+git diff --cached ${1:+"$1"} --name-only --diff-filter=ACMR -z > "$scratch/staged"
+[ -s "$scratch/staged" ] || exit 0
 
 fail=0
-block() { printf 'Blocked: %s (%q)\n' "$1" "$2" >&2; fail=1; }
+file_number=0
+# A filename may itself contain personal data; log only its position and the reason.
+block() { printf 'Blocked staged file %s: %s\n' "$file_number" "$1" >&2; fail=1; }
 credentials='(^|/)(\.env(\..*)?|\.dev\.vars(\..*)?|\.wrangler(/.*)?|.*\.(pem|key|p12|pfx|crt|csr|keystore)|id_(rsa|ed25519)|.*credentials.*\.json|\.npmrc)$'
-private_media='(^|/)(index/(items|montages|reviews|ig-posts|cut-drafts|cut-checks|config)\.json|clip-feedback\.json|instagram[^/]*/|media-originals/|sources/huawei/|work/moments/|public/media/)|^media/'
+private_media='(^|/)(index/(items|montages|reviews|ig-posts|cut-drafts|cut-checks|config)\.json|clip-feedback\.json|instagram[^/]*/|media-originals/|sources/huawei/|work/moments/|public/media/)|^(media|work|index)/'
 originals='\.(mp4|mov|m4v|avi|mkv|webm|ogv|flv|mts|m2ts|heic|raw|dng|cr2|cr3|psd|xcf)$'
 while IFS= read -r -d '' file; do
+  ((file_number += 1))
   if [[ $file =~ $credentials ]]; then
-    block 'credential-looking file' "$file"
+    block 'credential-looking file'
   elif [[ $file =~ $private_media || $file =~ $originals ]]; then
-    block 'private review data or media; keep it outside Git' "$file"
+    block 'private review data or media; keep it outside Git'
   fi
-  bytes=$(git cat-file -s ":$file")
-  if [[ $bytes -gt 1500000 ]]; then block 'staged blob over 1.5 MB' "$file"; fi
+  if ! bytes=$(git cat-file -s ":$file" 2>/dev/null); then
+    block 'cannot read staged blob'
+    continue
+  fi
+  if [[ $bytes -gt 1500000 ]]; then block 'staged blob over 1.5 MB'; fi
   if [[ $file == app/content/clips.json ]]; then
-    if ! git show ':app/content/clips.json' | node --input-type=module -e '
+    if ! git show ':app/content/public-clip-data.ts' > "$scratch/public-clip-data.ts" 2>/dev/null; then
+      block 'cannot read staged clip validator'
+    elif ! git show ":$file" 2>/dev/null | node --input-type=module -e '
       import { readFileSync } from "node:fs"
-      import { assertPublicClipData } from "./app/content/public-clip-data.ts"
-      let clips
+      import { pathToFileURL } from "node:url"
+      let clips, validate
       try { clips = JSON.parse(readFileSync(0, "utf8")) }
       catch { console.error("Public clips: invalid JSON."); process.exit(1) }
-      try { assertPublicClipData(clips) }
+      try { ({ assertPublicClipData: validate } = await import(pathToFileURL(process.argv[1]).href)) }
+      catch { console.error("Public clips: cannot load staged validator."); process.exit(1) }
+      try { validate(clips) }
       catch (error) { console.error(error.message); process.exit(1) }
-    '; then fail=1; fi
+    ' "$scratch/public-clip-data.ts"; then fail=1; fi
   fi
-done < "$staged"
+done < "$scratch/staged"
 
 # Scan additions only; the lockfile's generated text is not useful for these heuristics.
 # Never print matching lines: the caller may be writing a public CI log.
