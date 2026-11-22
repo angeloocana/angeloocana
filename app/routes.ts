@@ -18,6 +18,8 @@ export const routes = route({
   review: '/review',
   // Local cut editor for one clip (GET page, POST draft or rebuild), and what it plays. Development only.
   reviewCut: '/review/cut/:id',
+  reviewIntake: post('/review/intake'),
+  reviewIntakePreview: get('/review/intake/:id/:revision/clip.:ext'),
   reviewMoments: get('/review/moments/:vid'),
   reviewSheet: get('/review/sheet/:vid'),
   reviewSource: get('/review/source'),

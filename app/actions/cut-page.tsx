@@ -6,8 +6,9 @@ import { createFileResponse } from 'remix/response/file'
 
 import { Document } from './document.tsx'
 import { loadNotes, reviewGroups } from './review-page.tsx'
-import { CATEGORY_NAMES, clipUrl, loadReviewClips } from '../content/clips.ts'
-import { cleanPieces, clipSource, cutState, exclusive, loadChecks, loadCutInputs, loadDraft, loadDrafts, loadMoments, loadRecipe, loadSources, MOMENTS_DIR, rebuildClip, saveDraft, setCheck, sourceFile } from '../content/cuts.ts'
+import { CATEGORIES, CATEGORY_NAMES, clipUrl, loadReviewClips } from '../content/clips.ts'
+import { approveIntake, canReadSource, cleanPieces, clipSource, cutState, exclusive, loadChecks, loadCutInputs, loadDraft, loadDrafts, loadMoments, loadRecipe, loadSources, MOMENTS_DIR, rebuildClip, saveDraft, setCheck, sourceFile } from '../content/cuts.ts'
+import { findIntake, initialIntakeCut, intakeClip, intakePreviewFile, latestIntakePreview, ReviewIntakeError, stagePrivateVideo } from '../content/review-intake.ts'
 import { MEDIA_DIR } from '../content/media-dir.ts'
 import { autoPublish, needsLegacyRecovery, publishInfo, reviewChanged } from '../content/publish.ts'
 import { withReviewLock } from '../content/review-io.ts'
@@ -19,6 +20,29 @@ import { CutEditor } from '../ui/public/cut-editor.tsx'
 /** GET /review/cut/:id */
 export function CutPage(handle: Handle<{ id: string }>) {
   return () => {
+    let { id } = handle.props
+    let intake = findIntake(id)
+    if (intake) {
+      let revision = latestIntakePreview(id)
+      return (
+        <Document title="Private video cut" bodyClass="rv-page ce-page" styles={['/styles/review.css']}>
+          <CutEditor
+            clip={{ id, title: 'Private video cut', cat: '', rejected: false }}
+            current={initialIntakeCut(intake)}
+            draft={loadDraft(id)}
+            ownSource={intake.path}
+            sources={loadSources(id).filter((source) => source.id === intake.id)}
+            video={revision ? previewUrl(id, revision) : ''}
+            note=""
+            check={null}
+            next={null}
+            publish={publishInfo()}
+            progress={{ checked: 0, total: 0 }}
+            intake={{ revision, canApprove: autoPublish() && !needsLegacyRecovery(), categories: CATEGORIES.map((key) => ({ key, label: CATEGORY_NAMES.en[key] })) }}
+          />
+        </Document>
+      )
+    }
     let clips = loadReviewClips()
     let clip = clips.find((c) => c.id === handle.props.id)!
     let current = loadRecipe(clip.id) ?? []
@@ -52,32 +76,81 @@ export function CutPage(handle: Handle<{ id: string }>) {
 
 export const clipExists = (id: string) => loadReviewClips().some((c) => c.id === id)
 
-/** POST /review/cut/:id with { action: 'save' | 'rebuild' | 'discard' | 'keep' | 'uncheck', pieces? } */
+const previewUrl = (id: string, revision: string) => `/review/intake/${id}/${revision}/clip.mp4`
+const cutError = (error: string, status: number) => Response.json({ error }, { status, headers: { 'Cache-Control': 'no-store' } })
+
+export async function uploadIntake(request: Request) {
+  try {
+    return Response.json(await stagePrivateVideo(request), { status: 201, headers: { 'Cache-Control': 'no-store' } })
+  } catch (error) {
+    return error instanceof ReviewIntakeError ? cutError(error.message, error.status) : cutError('Could not prepare this video. Try again.', 500)
+  }
+}
+
+/** POST /review/cut/:id. A staged clip can only save, discard, render privately or approve. */
 export function saveCut(request: Request, id: string) {
-  let parsed = request.json().catch(() => ({}))
+  let parsed = request.json().catch(() => null)
   return exclusive(async () => {
-    let body = (await parsed) as { action?: string; pieces?: unknown }
-    let expected = await withReviewLock(MEDIA_DIR, () => {
-      if (body.action === 'keep' || body.action === 'uncheck') {
-        return Response.json({ check: setCheck(id, body.action === 'keep' ? 'kept' : null) })
+    let body = (await parsed) as { action?: string; pieces?: unknown; revision?: unknown; cat?: unknown; label?: unknown; captionRejected?: unknown } | null
+    if (!body) return cutError('Unknown cut action.', 400)
+    let action = body.action
+    let privateWrite = action === 'save-preview' || action === 'discard-preview' || action === 'render-preview'
+    if (action === 'approve') {
+      let revision = body.revision
+      if (typeof revision !== 'string' || !await withReviewLock(MEDIA_DIR, () => latestIntakePreview(id) === revision)) {
+        return cutError('That private preview is no longer current. Reload the cut before adding it.', 409)
       }
-      if (body.action === 'discard') return Response.json({ draft: saveDraft(id, null) })
-      if (body.action === 'rebuild' && autoPublish() && needsLegacyRecovery()) {
+      if (!autoPublish() || needsLegacyRecovery()) return cutError('Review publishing must be ready before adding a clip.', 409)
+      let clip
+      try {
+        clip = intakeClip(id, body)
+      } catch (error) {
+        if (error instanceof ReviewIntakeError) return cutError(error.message, error.status)
+        throw error
+      }
+      let result = await approveIntake(id, revision, clip)
+      if (result === 'stale') return cutError('That private preview changed. Render it again before adding it.', 409)
+      if (result === 'failed') return cutError('Could not add the clip. The private draft is still available.', 500)
+      reviewChanged()
+      return Response.json({ added: true }, { headers: { 'Cache-Control': 'no-store' } })
+    }
+    if (!privateWrite && !['save', 'rebuild', 'discard', 'keep', 'uncheck'].includes(action ?? '')) return cutError('Unknown cut action.', 400)
+    let expected = await withReviewLock(MEDIA_DIR, () => {
+      let intake = findIntake(id)
+      if (privateWrite && !intake) return cutError('This private draft is no longer open. Reload the cut.', 409)
+      if (!privateWrite && intake) return cutError('This clip is still private.', 409)
+      if (!intake && !clipExists(id)) return cutError('Unknown clip.', 404)
+      if (action === 'keep' || action === 'uncheck') {
+        return Response.json({ check: setCheck(id, action === 'keep' ? 'kept' : null) })
+      }
+      if (action === 'discard' || action === 'discard-preview') return Response.json({ draft: saveDraft(id, null) })
+      if (action === 'rebuild' && autoPublish() && needsLegacyRecovery()) {
         return Response.json({ error: 'Use Recover to finish the previous publish before rebuilding.' }, { status: 409 })
       }
 
-      let pieces = body.pieces === undefined && body.action === 'rebuild' ? undefined : cleanPieces(body.pieces)
-      if (typeof pieces === 'string') return Response.json({ error: pieces }, { status: 400 })
+      let render = action === 'rebuild' || action === 'render-preview'
+      let pieces = body.pieces === undefined && render
+        ? (intake ? loadDraft(id) ?? initialIntakeCut(intake) : undefined)
+        : cleanPieces(body.pieces, intake ? id : undefined)
+      if (typeof pieces === 'string') return cutError(pieces, 400)
+      if (intake && pieces?.some((piece) => piece.kind !== 'vid' || piece.path !== intake.path || piece.start + piece.secs > intake.dur + 0.02)) {
+        return cutError('Keep every piece within the uploaded video.', 422)
+      }
       let draft = pieces ? saveDraft(id, pieces) : false
-      return body.action === 'rebuild' ? loadCutInputs(id) : Response.json({ draft })
+      return render ? loadCutInputs(id) : Response.json({ draft })
     })
     if (expected instanceof Response) return expected
 
     // clips.py takes the same lock to verify the inputs and promote; only the server queue stays held.
-    let result = await rebuildClip(id, expected)
+    let result = await rebuildClip(id, expected, privateWrite)
     if (result === 'stale') return Response.json({ error: 'Cut changed; review it and rebuild again.' }, { status: 409 })
-    if (result === 'failed') return Response.json({ error: 'Could not render the cut.' }, { status: 500 })
+    if (result === 'failed') return cutError('Could not render the cut.', 500)
     return withReviewLock(MEDIA_DIR, () => {
+      if (privateWrite) {
+        let revision = latestIntakePreview(id)
+        return revision ? Response.json({ draft: true, revision, video: previewUrl(id, revision) }, { headers: { 'Cache-Control': 'no-store' } })
+          : cutError('The draft changed. Render it again.', 409)
+      }
       reviewChanged()
       return Response.json({ draft: false, video: clipUrl(id, 'mp4'), current: loadRecipe(id), check: loadChecks()[id] ?? null })
     })
@@ -85,25 +158,50 @@ export function saveCut(request: Request, id: string) {
 }
 
 /** GET /review/moments/:vid: the moments of one source video (found on first request). */
-export async function momentsJson(vid: string) {
-  let data = await loadMoments(vid)
-  return data ? Response.json(data, { headers: { 'Cache-Control': 'no-cache' } }) : new Response('Not Found', { status: 404 })
+const mediaPolicy = 'Cross-Origin-Resource-Policy'
+
+export async function momentsJson(request: Request, vid: string) {
+  let cut = new URL(request.url).searchParams.get('cut') ?? undefined
+  if (!await withReviewLock(MEDIA_DIR, () => canReadSource(vid, cut))) return new Response('Not Found', { status: 404 })
+  let data = await loadMoments(vid, cut)
+  return data ? Response.json(data, { headers: { 'Cache-Control': cut ? 'no-store' : 'no-cache', [mediaPolicy]: 'same-origin' } }) : new Response('Not Found', { status: 404 })
+}
+
+async function reviewFile(request: Request, file: string, type: string, privateMedia: boolean) {
+  let response = await createFileResponse(openLazyFile(file, { type }), request, { cacheControl: privateMedia ? 'no-store' : 'no-cache' })
+  response.headers.set(mediaPolicy, 'same-origin')
+  return response
 }
 
 /** GET /review/sheet/:vid: the thumbnail sheet of those moments. */
 export async function sheetFile(request: Request, vid: string) {
-  let file = join(MOMENTS_DIR, `${vid}.jpg`)
-  if (!/^v\d+$/.test(vid) || !existsSync(file)) return new Response('Not Found', { status: 404 })
-  return createFileResponse(openLazyFile(file, { type: 'image/jpeg' }), request, { cacheControl: 'no-cache' })
+  let cut = new URL(request.url).searchParams.get('cut') ?? undefined
+  return withReviewLock(MEDIA_DIR, () => {
+    let file = join(MOMENTS_DIR, `${vid}.jpg`)
+    if (!canReadSource(vid, cut) || !existsSync(file)) return new Response('Not Found', { status: 404 })
+    return reviewFile(request, file, 'image/jpeg', Boolean(cut))
+  })
 }
 
 const TYPES: Record<string, string> = { '.mp4': 'video/mp4', '.mov': 'video/quicktime', '.jpg': 'image/jpeg', '.jpeg': 'image/jpeg', '.png': 'image/png', '.webp': 'image/webp' }
 
 /** GET /review/source?path=ig:reels/…: a source video or photo, so the editor can play any moment of it. */
 export async function sourceMedia(request: Request) {
-  let path = new URL(request.url).searchParams.get('path') ?? ''
-  let file = sourceFile(path)
-  let type = TYPES[extname(path).toLowerCase()]
-  if (!file || !type || !existsSync(file)) return new Response('Not Found', { status: 404 })
-  return createFileResponse(openLazyFile(file, { type }), request, { cacheControl: 'no-cache' })
+  let params = new URL(request.url).searchParams
+  let path = params.get('path') ?? ''
+  let cut = params.get('cut') ?? undefined
+  return withReviewLock(MEDIA_DIR, () => {
+    let file = sourceFile(path, cut)
+    let type = TYPES[extname(path).toLowerCase()]
+    if (!file || !type || !existsSync(file)) return new Response('Not Found', { status: 404 })
+    return reviewFile(request, file, type, Boolean(cut))
+  })
+}
+
+export async function privateIntakeMedia(request: Request, id: string, revision: string, filename: string) {
+  return withReviewLock(MEDIA_DIR, () => {
+    let file = intakePreviewFile(id, revision, filename)
+    if (!file) return new Response('Not Found', { status: 404 })
+    return reviewFile(request, file, TYPES[extname(filename)], true)
+  })
 }

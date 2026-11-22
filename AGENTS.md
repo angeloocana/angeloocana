@@ -69,6 +69,11 @@ Clip tools (cut, montage, contact sheets, Instagram links) are in `scripts/clips
   **Edit cut** on a card opens `/review/cut/<id>`: every short moment of the clip's source videos, the ones
   it uses now, and a new selection to rebuild it from (`clips.py rebuild` applies saved drafts). Clips
   rebuilt there, or marked "Keep this cut", get a mark on /review and drop out of its "To check" filter.
+  **Add video** stages one MP4/MOV (up to 256 MiB and 180 seconds) with a generated local source name.
+  Use the cut editor to render a private preview, then choose a category and write or hide both captions.
+  Only **Add to site** on the always-on server promotes the verified MP4/poster pair and queues the clip.
+  Unfinished cuts can be resumed from /review. Originals stay in `sources/uploads/` on the Mac; previews
+  are under `work/intake/`. Neither is served by the public site or eligible for upload.
   Port 44144 is the **always-on review server**: a launchd agent (`scripts/review-server.sh`) runs the dev
   server from the main checkout, at login and again whenever it stops; don't stop it or take its port.
   Approved changes are queued privately in `work/review-queue.json`, leaving the checkout clean. Two minutes

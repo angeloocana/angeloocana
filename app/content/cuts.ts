@@ -12,6 +12,7 @@ import { isAbsolute, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
 
 import { MEDIA_DIR } from './media-dir.ts'
+import type { Clip } from './clips.ts'
 import { writeJsonAtomic } from './review-io.ts'
 
 /** A video piece is `seconds` long from `start`; cx/cy place the 9:16 crop (0..1), zoom > 1 crops closer.
@@ -47,7 +48,6 @@ export type Source = {
 export type Moment = { s: number; e: number; shot: boolean; motion: number; sharp: number }
 
 const INDEX = join(MEDIA_DIR, 'index')
-const RECIPES = join(INDEX, 'montages.json')
 const DRAFTS = join(INDEX, 'cut-drafts.json')
 const CHECKS = join(INDEX, 'cut-checks.json')
 export const MOMENTS_DIR = join(MEDIA_DIR, 'work', 'moments')
@@ -73,7 +73,7 @@ export function toRaw(piece: Piece): RawPiece {
   return raw
 }
 
-const recipes = () => readJson<{ clips: Record<string, RawPiece[]> }>(RECIPES, { clips: {} }).clips
+const recipes = (mediaRoot = MEDIA_DIR) => readJson<{ clips: Record<string, RawPiece[]> }>(join(mediaRoot, 'index', 'montages.json'), { clips: {} }).clips
 export const loadDrafts = () => readJson<Record<string, RawPiece[]>>(DRAFTS, {})
 
 type CutInputs = { draft: RawPiece[] | null; recipe: RawPiece[] | null }
@@ -119,20 +119,27 @@ export function cutState(id: string, drafts: Record<string, unknown>, checks: Re
   return drafts[id] ? 'draft' : (checks[id]?.state ?? 'todo')
 }
 
-type Item = { id: string; src: string; path: string; source: string; caption?: string; ts: number; dur: number; w: number; h: number }
+export type Item = {
+  id: string; src: string; path: string; source: string; caption?: string; ts: number; dur: number; w: number; h: number
+  /** The staged cut that may use this original before approval. Missing for ordinary sources. */
+  privateFor?: string
+}
 type Review = { id: string; category?: string; label?: string }
 
-const items = () => readJson<Item[]>(join(INDEX, 'items.json'), [])
+export const loadItems = (mediaRoot = MEDIA_DIR) => readJson<Item[]>(join(mediaRoot, 'index', 'items.json'), [])
 
-/** The source video a single clip was first cut from (a clip's id is c + the sha1 of its source). */
+/** Matches clips.py's clip_id. */
+export const sourceClipId = (src: string) => 'c' + createHash('sha1').update(src).digest('hex').slice(0, 8)
+
+/** The source video a single clip was first cut from. */
 export function clipSource(id: string): string | undefined {
-  return items().find((it) => 'c' + createHash('sha1').update(it.src).digest('hex').slice(0, 8) === id)?.path
+  return loadItems().find((it) => (it.privateFor ?? sourceClipId(it.src)) === id)?.path
 }
 
-export function loadSources(): Source[] {
-  let reviews = new Map(readJson<Review[]>(join(INDEX, 'reviews.json'), []).map((r) => [r.id, r]))
+export function loadSources(privateClipId?: string, mediaRoot = MEDIA_DIR): Source[] {
+  let reviews = new Map(readJson<Review[]>(join(mediaRoot, 'index', 'reviews.json'), []).map((r) => [r.id, r]))
   let usedBy = new Map<string, string[]>()
-  for (let [clip, pieces] of Object.entries(recipes())) {
+  for (let [clip, pieces] of Object.entries(recipes(mediaRoot))) {
     for (let p of pieces) {
       let path = String(p[1])
       let list = usedBy.get(path) ?? []
@@ -140,10 +147,11 @@ export function loadSources(): Source[] {
       usedBy.set(path, list)
     }
   }
-  return items()
+  return loadItems(mediaRoot)
+    .filter((it) => it.privateFor === undefined || it.privateFor === privateClipId)
     .map((it) => {
       let review = reviews.get(it.id)
-      let moments = readJson<{ version?: number; w?: number; h?: number; moments?: unknown[] }>(join(MOMENTS_DIR, `${it.id}.json`), {})
+      let moments = readJson<{ version?: number; w?: number; h?: number; moments?: unknown[] }>(join(mediaRoot, 'work', 'moments', `${it.id}.json`), {})
       let count = moments.moments?.length ?? 0
       return {
         id: it.id,
@@ -164,15 +172,19 @@ export function loadSources(): Source[] {
 }
 
 /** Paths the editor may play or use: every source video and every piece already in a recipe or draft. */
-function knownPaths(): Set<string> {
-  let paths = new Set(items().map((it) => it.path))
+function knownPaths(forCut?: { id?: string }): Set<string> {
+  let items = loadItems()
+  let paths = new Set(items.map((it) => it.path))
   for (let pieces of [...Object.values(recipes()), ...Object.values(loadDrafts())]) for (let p of pieces) paths.add(String(p[1]))
+  if (forCut) {
+    for (let it of items) if (it.privateFor !== undefined && it.privateFor !== forCut.id) paths.delete(it.path)
+  }
   return paths
 }
 
 /** Where a path from the index is on disk: 'ig:…' is inside the Instagram export, others are in the media folder. */
-export function sourceFile(path: string): string | undefined {
-  if (!knownPaths().has(path)) return undefined
+export function sourceFile(path: string, privateClipId?: string): string | undefined {
+  if (!knownPaths({ id: privateClipId }).has(path)) return undefined
   if (path.startsWith('ig:')) {
     let exported = readJson<{ instagram_export?: string }>(join(INDEX, 'config.json'), {}).instagram_export
     if (!exported) return undefined
@@ -182,10 +194,10 @@ export function sourceFile(path: string): string | undefined {
 }
 
 /** Check pieces sent by the editor. Returns the clean pieces, or what is wrong with them. */
-export function cleanPieces(input: unknown): Piece[] | string {
+export function cleanPieces(input: unknown, privateClipId?: string): Piece[] | string {
   if (!Array.isArray(input) || !input.length) return 'A cut needs at least one piece'
   if (input.length > 40) return 'Too many pieces'
-  let known = knownPaths()
+  let known = knownPaths({ id: privateClipId })
   let clamp = (value: unknown, min: number, max: number, fallback: number) => Math.min(max, Math.max(min, num(value, fallback)))
   let pieces: Piece[] = []
   for (let p of input as Record<string, unknown>[]) {
@@ -231,18 +243,27 @@ function runClips(args: string[], input?: string): Promise<number | null> {
 }
 
 /** Render the exact cut captured by this action; Python checks both inputs before promoting. */
-export async function rebuildClip(id: string, expected: CutInputs) {
+export async function rebuildClip(id: string, expected: CutInputs, intake = false) {
   // Keep private source paths out of process arguments.
-  let code = await runClips(['rebuild-expected', id], JSON.stringify(expected))
+  let code = await runClips([intake ? 'preview-intake' : 'rebuild-expected', id], JSON.stringify(expected))
   return code === 0 ? 'ok' : code === 3 ? 'stale' : 'failed'
+}
+
+export async function approveIntake(id: string, revision: string, clip: Clip) {
+  let code = await runClips(['approve-intake', id], JSON.stringify({ revision, clip }))
+  return code === 0 ? 'ok' : code === 3 ? 'stale' : 'failed'
+}
+
+export function canReadSource(vid: string, privateClipId?: string): boolean {
+  return /^v\d+$/.test(vid) && loadItems().some((it) => it.id === vid && (!it.privateFor || it.privateFor === privateClipId))
 }
 
 // Finding moments takes a second or two per video; ask clips.py once, even if the page asks twice.
 const finding = new Map<string, Promise<boolean>>()
 
 /** The moments of a source video (found now if they never were), and the URL of their thumbnail sheet. */
-export async function loadMoments(vid: string) {
-  if (!/^v\d+$/.test(vid) || !items().some((it) => it.id === vid)) return undefined
+export async function loadMoments(vid: string, privateClipId?: string) {
+  if (!canReadSource(vid, privateClipId)) return undefined
   let file = join(MOMENTS_DIR, `${vid}.json`)
   let fresh = () => readJson<{ version?: number }>(file, {}).version === MOMENTS_VERSION
   if (!fresh()) {
@@ -252,5 +273,5 @@ export async function loadMoments(vid: string) {
   }
   let data = readJson<{ id: string; dur: number; w: number; h: number; cols: number; moments: Moment[] }>(file, null as never)
   let version = Math.round(statSync(join(MOMENTS_DIR, `${vid}.jpg`)).mtimeMs / 1000).toString(36)
-  return { ...data, sheet: `/review/sheet/${vid}?v=${version}` }
+  return { ...data, sheet: `/review/sheet/${vid}?v=${version}${privateClipId ? `&cut=${encodeURIComponent(privateClipId)}` : ''}` }
 }
