@@ -12,7 +12,7 @@ afterAll(() => rmSync(root, { recursive: true, force: true }))
 let { saveCut } = await import('./cut-page.tsx')
 
 it('rebuilds submitted pieces before the next save and falls back to the recipe without a draft', async () => {
-  let id = 'h-test'
+  let id = 'h-ice' // A known catalogue ID; footage and cut state are still synthetic.
   let path = 'synthetic source.mp4'
   let raw = (start: number) => [['vid', path, start, 0.3, 0.5]]
   let piece = (start: number) => ({ kind: 'vid', path, start, secs: 0.3, cx: 0.5 })
