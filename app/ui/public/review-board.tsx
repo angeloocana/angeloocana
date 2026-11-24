@@ -3,7 +3,8 @@ import type { Handle } from 'remix/component'
 
 import type { ReviewPatch } from '../../actions/review-page.tsx'
 import type { Clip } from '../../content/clips.ts'
-import { guardReviewNavigation } from './review-navigation.ts'
+import { allAcknowledged, guardReviewNavigation } from './review-navigation.ts'
+import type { WriteOutcome } from './review-navigation.ts'
 
 // Behaviour for the local review page (/review): hover to play and save each change.
 
@@ -96,10 +97,10 @@ export function reviewWrites(
 
   return {
     get busy() { return running || Boolean(pending) },
-    async settle() {
+    async settle(): Promise<WriteOutcome> {
       let before = failures
       await active
-      return !failed && before === failures
+      return !failed && before === failures ? 'acknowledged' : 'unconfirmed'
     },
     edit(patch: ReviewPatch) {
       pending = mergePatch(pending, patch)
@@ -271,7 +272,7 @@ export const ReviewBoard = clientEntry(import.meta.url, function ReviewBoard(han
       async () => {
         editedField()?.blur()
         let activeCards = [...actions.values()].filter((card) => card.pending())
-        return (await Promise.all(activeCards.map((card) => card.settle()))).every(Boolean)
+        return allAcknowledged(await Promise.all(activeCards.map((card) => card.settle())))
       },
       signal,
     )

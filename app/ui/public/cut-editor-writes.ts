@@ -1,4 +1,5 @@
 import type { CutCheck, Piece } from '../../content/cuts.ts'
+import type { WriteOutcome } from './review-navigation.ts'
 
 type Action = 'save' | 'rebuild' | 'discard' | 'keep' | 'uncheck' | 'save-preview' | 'discard-preview' | 'render-preview'
 type Reply = Record<string, unknown>
@@ -243,12 +244,12 @@ export function createCutWrites(id: string, initial: Initial, { fetch, signal, u
   return {
     state, changed, save, rebuild, discard, mark, saveNote, retryNote: writeNote,
     pending: () => Boolean(pendingWrites || saveTimer || noteTimer || state.unsaved || state.noteError),
-    async settle() {
+    async settle(): Promise<WriteOutcome> {
       let failures = failedWrites
       if (saveTimer) void save()
       if (noteTimer) void writeNote()
       await tail
-      return failures === failedWrites
+      return failures === failedWrites ? 'acknowledged' : 'unconfirmed'
     },
   }
 }
