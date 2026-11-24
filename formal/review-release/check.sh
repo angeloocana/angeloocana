@@ -4,24 +4,13 @@
 #                                          transition still breaks its rule (the check can fail)
 #   formal/review-release/check.sh <bug>   one of those runs, printing its trace: current or a bug name
 # The same command runs locally and in CI (.github/workflows/formal.yml). Needs Java 11 or later
-# (JAVA overrides `java`); the jar is downloaded once into a cache and checked against its hash.
+# (JAVA overrides `java`); the jar is pinned in ../tlc.sh, downloaded once and checked against its hash.
 set -euo pipefail
 
-TLC_VERSION=1.7.4
-TLC_SHA256=936a262061c914694dfd669a543be24573c45d5aa0ff20a8b96b23d01e050e88
 here=$(cd "$(dirname "$0")" && pwd)
-cache=${TLA2TOOLS_CACHE:-${XDG_CACHE_HOME:-$HOME/.cache}/tla2tools}
-jar=$cache/tla2tools-$TLC_VERSION.jar
-java=${JAVA:-java}
 bugs=(receiptAsLive retryFailedDeploy oneAuthAllBatches tombstoneHidesRestore rearmOnlyOnPrepare urgentForgets)
-
-sha256() { if command -v sha256sum > /dev/null; then sha256sum "$1"; else shasum -a 256 "$1"; fi; }
-if [[ ! -f $jar ]] || ! sha256 "$jar" | grep -q "^$TLC_SHA256 "; then
-  mkdir -p "$cache"
-  curl -fsSL -o "$jar.part" "https://github.com/tlaplus/tlaplus/releases/download/v$TLC_VERSION/tla2tools.jar"
-  sha256 "$jar.part" | grep -q "^$TLC_SHA256 " || { echo "tla2tools.jar does not match its pinned hash" >&2; exit 1; }
-  mv "$jar.part" "$jar"
-fi
+# shellcheck source=../tlc.sh
+source "$here/../tlc.sh"
 
 # The rule each historical transition breaks (README.md, "Counterexamples").
 expected() {
