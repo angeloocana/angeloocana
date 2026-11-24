@@ -45,10 +45,15 @@ async function run(
   let name = `${ops.join(' → ')}, link after ${at}, replies ${results.map((ok) => ok ? 'ok' : 'fail').join(' ')}`
   assert.ok(settled, `settle never answered: ${name}`)
   let leaves = leaveWithoutAsking(settled!, writes.pending())
-  // Replies still owed after settle answered are new writes: pending() keeps them on the page.
-  let allSent = sent === requests.length
+  // The outcome alone, not masked by pending(): a reply that failed before settle answered is unconfirmed.
+  if (failedBefore) assert.equal(settled, 'unconfirmed', `called a failed reply acknowledged: ${name}`)
   if (failedBefore) assert.equal(leaves, false, `left after a failed reply: ${name}`)
-  if (!failedBefore && at === ops.length && allSent) assert.equal(leaves, true, `asked although every reply was confirmed: ${name}`)
+  if (at === ops.length) {
+    // Nothing issued after the link: settle waits for every reply, and with none failed, leaves.
+    assert.equal(sent, requests.length, `settle answered with a reply still owed: ${name}`)
+    if (!failedBefore) assert.equal(settled, 'acknowledged', `called confirmed replies unconfirmed: ${name}`)
+    if (!failedBefore) assert.equal(leaves, true, `asked although every reply was confirmed: ${name}`)
+  }
   return failedBefore ? 'stays' : leaves ? 'leaves' : 'other'
 }
 
