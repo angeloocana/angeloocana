@@ -6,7 +6,8 @@ by `rebuild()` in `scripts/clips/clips.py`. It checks every order in which two r
 cut editor and a reader can interleave, with any process dying after any step.
 
 **The promise:** old-or-new **to readers that take the review lock**. Such a reader sees the
-clip's MP4, poster, index and review queue from one whole commit, never a mix. A newer cut, once
+clip's MP4, poster, recipe, pending draft, check and review queue as one whole edit or commit
+left them, never a mix. A newer cut, once
 it has landed, is never replaced by an older one. This is not atomic replacement of several files
 by the filesystem: a reader that skips the lock can still see a half-finished commit. The lock
 plus recovery-before-grant is what makes it look atomic.
@@ -29,15 +30,18 @@ passes only when TLC exits with its violation status, 12, on the expected rule.
 
 | Rule | In plain words |
 |---|---|
-| `ReadersSeeOldOrNew` | A reader holding the review lock sees all four files from the same commit. |
+| `ReadersSeeOldOrNew` | A reader holding the review lock sees every file, the pending draft included, as the last whole edit or commit left it. |
 | `NoStaleWin` | A commit never lands a cut generation older than one that already landed. |
 | `TypeOK` | The lock is held only in a step that runs under it. |
 
 ## What the model holds
 
-One clip with four files, each holding the generation it was written by (0 is the cut before any
-edit): `mp4`, `jpg`, `index` (the recipe, draft and check, kept as one file here because they are
-written in one commit) and `queue` (`work/review-queue.json`). The cut editor saves draft 1, then
+One clip with six files, each holding the generation that wrote it (0 is the cut before any
+edit): `mp4`, `jpg`, `recipe` (`index/montages.json`), `drafts` (`index/cut-drafts.json`: the
+generation of the pending draft, 0 for none), `checks` (`index/cut-checks.json`) and `queue`
+(`work/review-queue.json`). Each is its own rename, in `finish_render()`'s order. A ghost
+variable, `want`, records every file as the last completed edit or commit left it, and the
+reader compares against it, so a recovery that dropped only the pending draft also breaks the rule. The cut editor saves draft 1, then
 draft 2; each save starts its own rebuild job with the inputs it saved. A job reads the cut under
 the lock, renders without it, takes the lock again, re-checks the cut and commits. A reader (the
 review page, the cut page or the publisher's snapshot) takes the lock and reads all four files.
@@ -52,7 +56,7 @@ files and the journal stay. Each step is one rename or one lock action.
 | `JobStart`, `Read` | `clips.py:453–457` `rebuild()`: `cut_inputs` and `require_cut(name, expected, cut)` under the lock |
 | `Rendered` | `clips.py:464` `with render_clip(pieces) as staged, review_lock(MEDIA)` |
 | `Check` | `clips.py:466` `require_cut(name, cut, cut_inputs(name, drafts))` |
-| `Commit` | `clips.py:151–154,475` `finish_render()` → `review_io.py:77–118` `promote_clip()`: `pending.rename(journal)` (`:100`), the pair (`:104–105`), each review file (`:106–107`), `journal.rename(... 'resolved')` (`:113`) |
+| `Commit` | `clips.py:151–154,469–475` `finish_render()` → `review_io.py:77–118` `promote_clip()`: `pending.rename(journal)` (`:100`), the pair (`:104–105`), recipe, drafts (`del drafts[name]`), checks and queue (`:106–107`, in `review_updates` order), `journal.rename(... 'resolved')` (`:113`) |
 | `ReaderStart`, `ReaderRead` | `controller.tsx:59,66` the review and cut pages, `publish-snapshot.ts:54`, each in `withReviewLock()` (`app/content/review-io.ts`, which runs `review_io.py`'s `review_lock`) |
 | `Die` | `os._exit`, SIGKILL or a crash after any step; `promote_clip`'s `except BaseException` rollback (`:114–116`) is not credited: the model assumes the worst, that the process just stops |
 
@@ -62,25 +66,33 @@ intake preview and approval (`preview_intake`, `approve_intake`: same journal, t
 `work/`), `build`, `cut` and `montage` (the same commit, without a draft), and the intake check in
 `rebuild()`. One clip and two edits.
 
-**Bounds:** two draft generations, two process deaths. That run covers 4,062 distinct states in
-under a second. Four probes confirmed it is not vacuous: TLC reaches a reader running recovery
+**Bounds:** two draft generations, two process deaths. That run covers 8,422 distinct states in
+about a second. Four probes confirmed it is not vacuous: TLC reaches a reader running recovery
 after a death, a free lock with a half-promoted pair behind a journal, job 1 refused as stale once
 generation 2 landed, and generation 2 landing at all.
 
-## Known gap: the CLI without the review server
+## Known gap: without `REVIEW_AUTOPUBLISH=1`
 
-`Autopublish = FALSE` in the config models `clips.py` run by hand without `REVIEW_AUTOPUBLISH=1`.
-There `finish_render()` (`clips.py:155–158`) journals only the pair, then writes the recipe, draft
-and check after the journal resolves. A death between them leaves a new video with the old recipe
-and draft, and no journal to roll it back; the model breaks `ReadersSeeOldOrNew` in 14 states.
-Replayed on a real filesystem: `rebuild('clip')` killed while writing the recipe leaves
-`next-video` with the old recipe and the draft still pending.
+The boundary is the environment flag, not who runs it. With `REVIEW_AUTOPUBLISH=1` (the always-on
+review server on port 44144, and `clips.py` run with it set), `finish_render()` takes the journaled
+path. Without it (`npm run dev` in another checkout, whose web rebuilds inherit its environment
+through `runClips` in `app/content/cuts.ts`, or a hand-run `clips.py rebuild`, `build` or `cut`),
+`finish_render()` (`clips.py:155–160`) journals only the pair, then writes the recipe, draft and
+check after the journal resolves; it writes no queue. A death between them leaves the new pair
+with the old recipe and the draft still pending, and no journal to roll it back.
 
-It is real but small. The always-on review server and every web rebuild run with
-`REVIEW_AUTOPUBLISH=1`, which takes the journaled path; only a hand-run `clips.py rebuild`, `build`
-or `cut` hits it. The obvious fix (pass `review_updates` there too) is not one line:
-`promote_clip` accepts only the canonical index paths, and the test fixtures patch `RECIPES` and
-`DRAFTS` elsewhere. It is left open and reported, not fixed here.
+`Autopublish = FALSE` in a scratch copy of the config models that path (no queue step) and breaks
+`ReadersSeeOldOrNew` in 14 states: journal, pair, resolve, then death before the recipe. Replayed
+on a real filesystem in a temporary media root: `rebuild('clip')` without the flag, killed when it
+writes the recipe, leaves `next-video` with the old recipe and the draft still pending, seen inside
+a fresh `review_lock`.
+
+It is real but small. Nothing on that path publishes: without the flag there is no review queue,
+and only the review server publishes. A rerun of the rebuild repairs it, since the draft is still
+pending. The obvious fix (pass `review_updates` there too) is not one line: `promote_clip` accepts
+only the canonical index paths, and `CutRebuildTest` patches `RECIPES`, `DRAFTS` and `CHECKS`
+elsewhere, so the fix fails `test_slow_cli_rebuild_cannot_overwrite_newer_edit` until the fixtures
+change. It is left open and reported, not fixed here.
 
 ## Counterexamples
 
@@ -104,14 +116,14 @@ the journal covered the pair, and the recipe, draft, check and queue were writte
 resolved.
 1. Draft 1 is saved, read, rendered and re-checked.
 2. Commit: journal, MP4, poster, resolve.
-3. Job 1 dies before the index and queue are written.
+3. Job 1 dies before the recipe is written.
 4. A reader takes the lock: the new pair, the old recipe, draft 1 still pending, the old queue.
 
 The fix passes the index files and the queue as `review_updates`, so the journal backs them up
 and recovery restores them (`clips.py:153–154`, `review_io.py:96–97,106–107`). Replayed in
 `test_clips.ClipRenderTest.test_active_rebuild_rolls_back_pair_index_and_queue_together`.
 
-**`staleRenderWins` breaks `NoStaleWin` (25 states).** This is `rebuild()` before `744ab48`: after
+**`staleRenderWins` breaks `NoStaleWin` (29 states).** This is `rebuild()` before `744ab48`: after
 the render it re-checked only a recipe-based rebuild, never a draft.
 1. The editor saves draft 1; job 1 reads it and starts rendering.
 2. The editor saves draft 2; job 2 reads it, renders, re-checks and commits generation 2.
@@ -140,10 +152,16 @@ filesystem in a temporary media root, and dropped:
 - `noJournal`, without `pending.rename(journal)` and its resolve and rollback in `promote_clip`:
   `test_next_lock_recovers_pair…` fails (`False is not true`: no journal to recover from).
 - `pairOnlyJournal`, with `finish_render` promoting the pair alone and then writing the review
-  files: `test_active_rebuild_rolls_back…` fails (the lock-taker sees `next-video` with the old index).
-- `staleRenderWins`, without the `require_cut` after the render: `test_slow_cli_rebuild…` errors
-  (`KeyError: 'clip'`: the stale job deleted the newer draft) and
-  `test_web_rebuild_preserves_draft…` fails (`StaleCut not raised`).
+  files: `test_active_rebuild_rolls_back…` fails. Its child dies just before replacing the queue,
+  after the recipe, draft and check are written, so a fresh lock-taker sees `next-video` with the
+  new index and the old queue instead of the whole old state. The model's shortest trace dies one
+  step earlier, before the recipe; both are deaths after the journal resolved.
+- `staleRenderWins`, without the `require_cut` after the render: `test_web_rebuild_preserves_draft…`
+  fails (`StaleCut not raised`: the stale web job promoted over the newer recipe), and
+  `test_slow_cli_rebuild…` errors with `KeyError: 'clip'`. The newer job had already cleared the
+  draft, so the stale job, now past the check, fails at `del drafts[name]` before `finish_render`.
+  The scratch change shows the missing check; the historical code (`744ab48^:scripts/clips/clips.py:237–243`)
+  went further, promoting the stale pair and deleting the draft only if it still matched.
 - `unlockedReader`, with `/review` rendered outside `withReviewLock`: `review-intake.test.ts`
   fails at `:96` (the page no longer recovers the journal, so the private cut is missing).
 
