@@ -27,6 +27,7 @@ npm test           # fast: the router and the logic, no browser
 npm run test:browser # builds, then drives the built dist/ in Chromium (app/*.test.e2e.ts; Playwright,
                    # once per machine: npx playwright install chromium)
 npm run typecheck
+formal/review-release/check.sh # TLA+ model of the review publisher (Java 11+); see .agents/skills/verify-review-release
 npm run build      # prerender to dist/ (from git alone; media comes from R2, see below)
 npm run preview    # build, then serve dist/ the way Cloudflare will (media from the real bucket)
 npm run deploy     # build and publish to Cloudflare by hand (pushes to master already do this)

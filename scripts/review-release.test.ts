@@ -247,6 +247,82 @@ it('urgent takedown is separate from deploying and refuses a restored clip', asy
   } finally { rmSync(dir, { recursive: true, force: true }) }
 })
 
+// formal/review-release: the receiptAsLive and tombstoneHidesRestore traces, one step per model action.
+it('replays the model: an unacknowledged push is not live, and a restore over a tombstone is cleaned again', async () => {
+  let dir = mkdtempSync(join(tmpdir(), 'review-model-'))
+  let mediaRoot = join(dir, 'media-root')
+  let progress = join(dir, 'progress.json')
+  try {
+    let { source, remote, original } = fixture(dir, {
+      [POSTER]: createHash('sha256').update(POSTER).digest('hex').slice(0, 10),
+      [VIDEO]: createHash('sha256').update(VIDEO).digest('hex').slice(0, 10),
+      [HERO]: HISTORIC_VERSION,
+    })
+    for (let key of [POSTER, VIDEO]) {
+      let file = join(mediaRoot, 'media', key)
+      mkdirSync(dirname(file), { recursive: true })
+      writeFileSync(file, key)
+    }
+    let present = new Set([HERO, HISTORIC_HERO])
+    let store: ObjectStore = { async put() { throw new Error('Unexpected upload') }, async remove(key) { present.delete(key) } }
+    let build: DeployCheck = { state: 'pending' }
+    let checks: string[] = []
+    let loseAck = false
+    writeJsonAtomic(progress, {})
+    // Each turn is a fresh process: new adapters, and state only from what was saved.
+    async function turn() {
+      let adapter = openReviewGit(source, join(dir, 'scratch'))
+      try {
+        let deps = { mediaRoot, media: openReviewMedia(mediaRoot, store), save: (s: PublishState) => writeJsonAtomic(progress, s),
+          git: { ...adapter, pushCandidate(base: string, candidate: string) {
+            let result = adapter.pushCandidate(base, candidate)
+            if (loseAck && result === 'pushed') throw new Error('test lost the answer after Git accepted the push')
+            return result
+          } },
+          async deploy(sha: string) { checks.push(sha); return build } }
+        await reconcileReviewRelease(deps, JSON.parse(readFileSync(progress, 'utf8')))
+        return deps
+      } finally { adapter.close() }
+    }
+    let state = () => JSON.parse(readFileSync(progress, 'utf8')) as PublishState
+
+    // ReviewSaves (a pending rejection), then Urgent removes the clip's objects.
+    await withReviewLock(mediaRoot, () => queueReviewRevision(mediaRoot, original, original.map((item) => ({ ...item, rejected: item.id === 'h-fixture' }))))
+    let adapter = openReviewGit(source, join(dir, 'scratch'))
+    try {
+      await urgentlyRemoveClip({ mediaRoot, git: adapter, media: openReviewMedia(mediaRoot, store), save() {},
+        async deploy(): Promise<DeployCheck> { throw new Error('Unexpected deployment check') } }, 'h-fixture')
+    } finally { adapter.close() }
+    assert.equal(present.has(HISTORIC_HERO), false)
+
+    // PeerRestores: another uploader puts the identical immutable object back; master still names it.
+    present.add(HISTORIC_HERO)
+
+    // Prepare, Upload, Push, Pushing, then PushAck loses Git's answer.
+    loseAck = true
+    await turn()
+    loseAck = false
+    let sent = git(remote, 'rev-parse', 'master')
+    assert.equal(state().candidate?.sha, sent)
+    assert.equal(state().failed?.phase, 'push')
+
+    // RecoverPush after the restart: the receipt is a push, not a deployment.
+    await turn()
+    assert.equal(state().pushed?.sha, sent)
+    assert.equal(state().live, undefined)
+    assert.deepEqual(checks, [sent])
+    assert.ok(present.has(HISTORIC_HERO))
+
+    // WorkersBuild goes live; Confirm, then Clean removes the restored object despite its tombstone.
+    build = { state: 'live' }
+    await turn()
+    if (state().cleanup) await turn()
+    assert.equal(state().live?.sha, sent)
+    assert.equal(state().cleanup, undefined)
+    assert.equal(present.has(HISTORIC_HERO), false)
+  } finally { rmSync(dir, { recursive: true, force: true }) }
+})
+
 it('does not clean an old exclusion after a remote restore or an unconfirmed new rejection', async () => {
   let dir = mkdtempSync(join(tmpdir(), 'review-cleanup-tip-'))
   let mediaRoot = join(dir, 'media-root')

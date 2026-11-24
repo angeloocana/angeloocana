@@ -1,0 +1,25 @@
+name: Formal model
+on:
+  pull_request:
+    paths: [formal/**, scripts/review-release.ts, scripts/review-publish-media.ts, .github/workflows/formal.yml]
+  push:
+    branches: [master]
+    paths: [formal/**, scripts/review-release.ts, scripts/review-publish-media.ts, .github/workflows/formal.yml]
+
+permissions:
+  contents: read
+
+jobs:
+  review-release:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          persist-credentials: false
+      - uses: actions/setup-java@d1374f8ac74474200d16ef8ecee22c7ae7a51880 # v6.3.0
+        with:
+          distribution: temurin
+          java-version: '21'
+      - name: Model-check the review publisher (pinned TLC 1.7.4)
+        run: formal/review-release/check.sh

@@ -1,6 +1,7 @@
 node_modules/
 tmp/
 dist/
+formal/**/states/
 .DS_Store
 
 # Secrets and local config. This repo is PUBLIC.
