@@ -9,7 +9,7 @@ description: Model-check the review publisher's release boundary (scripts/review
 machine and a process death. Its promise: an old receipt is never current proof. A push receipt is
 not a deployment, and a deletion receipt is not proof that an object is still gone. Read
 `formal/review-release/README.md` first. It has the rules in plain words, the action-to-line map,
-the bounds and the four historical counterexamples.
+the bounds, the five historical counterexamples and one known open gap (a peer upload before its push).
 
 ## Does my change touch it?
 
@@ -25,7 +25,7 @@ JAVA=/opt/homebrew/opt/openjdk@21/bin/java formal/review-release/check.sh   # ab
 npm test -- scripts/review-release.test.ts                                  # the replays on real code
 ```
 
-`check.sh` must print five `PASS` lines. `current` means every rule holds on today's transition.
+`check.sh` must print six `PASS` lines. `current` means every rule holds on today's transition.
 Each bug name means its old transition still breaks its rule. Read a trace with
 `check.sh current` or `check.sh <bug>`, and read TLA+ results with the `/statechart` skill, which
 tells each violation as its shortest path in plain words.
@@ -46,10 +46,10 @@ guard on purpose, its `Bugs` run must still break its rule, or you lost a check.
 
 ## Coverage and sync
 
-Covered: `scripts/review-release.ts` (`reconcileReviewRelease`, `urgentlyRemoveClip`) and
+Covered: `scripts/review-release.ts` (`reconcileReviewRelease` with `fetchTip`, `urgentlyRemoveClip`) and
 `scripts/review-publish-media.ts` (`rememberManifest`, `removeRejected`; `upload` only as
 "puts nothing for a rejected clip"). Not covered: snapshot bytes, legacy migration, manual
 `media:push`, several clips, and Cloudflare caches.
 
-Last confirmed against the code at `7b1b8e1`. Move this commit forward only after you have
+Last confirmed against the code at the commit that added `fetchTip` (#34719, on top of `7b1b8e1`). Move this commit forward only after you have
 checked that every action still matches the lines it names.

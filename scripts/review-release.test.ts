@@ -295,7 +295,8 @@ it('replays the model: an unacknowledged push is not live, and a restore over a 
     } finally { adapter.close() }
     assert.equal(present.has(HISTORIC_HERO), false)
 
-    // PeerRestores: another uploader puts the identical immutable object back; master still names it.
+    // An upload-only restore: another uploader puts the identical immutable object back, and master
+    // still names it (the model's PeerRestores also pushes, which changes nothing here).
     present.add(HISTORIC_HERO)
 
     // Prepare, Upload, Push, Pushing, then PushAck loses Git's answer.
@@ -320,6 +321,58 @@ it('replays the model: an unacknowledged push is not live, and a restore over a 
     assert.equal(state().live?.sha, sent)
     assert.equal(state().cleanup, undefined)
     assert.equal(present.has(HISTORIC_HERO), false)
+  } finally { rmSync(dir, { recursive: true, force: true }) }
+})
+
+// formal/review-release: the rearmOnlyOnPrepare trace (review round 1 of #34719).
+it('removes an object restored and rejected again after cleanup saw its restore', async () => {
+  let dir = mkdtempSync(join(tmpdir(), 'review-rearm-'))
+  let mediaRoot = join(dir, 'media-root')
+  try {
+    let { source, remote, peer, original } = fixture(dir, { [HERO]: HISTORIC_VERSION })
+    let rejected = original.map((item) => ({ ...item, rejected: item.id === 'h-fixture' }))
+    function publishPeer(clips: Clip[], manifest: Record<string, string>, message: string) {
+      git(peer, 'pull', '--ff-only', 'origin', 'master')
+      writeJsonAtomic(join(peer, CLIPS), clips)
+      writeJsonAtomic(join(peer, MEDIA), manifest, 2)
+      git(peer, 'add', CLIPS, MEDIA)
+      git(peer, 'commit', '-m', message)
+      git(peer, 'push', 'origin', 'master')
+      return git(remote, 'rev-parse', 'master')
+    }
+    let tip = publishPeer(rejected, {}, 'Reject the clip')
+    let queue = await withReviewLock(mediaRoot, () => queueReviewRevision(mediaRoot, rejected))
+    let present = new Set<string>()
+    let removed: string[] = []
+    let adapter = openReviewGit(source, join(dir, 'scratch'))
+    try {
+      let media = openReviewMedia(mediaRoot, {
+        async put() { throw new Error('Unexpected upload') }, async remove(key) { removed.push(key); present.delete(key) },
+      })
+      for (let char of 'abcd') media.rememberManifest({ [HERO]: char.repeat(16) })
+      let deps = { mediaRoot, git: adapter, media, save() {}, async deploy(): Promise<DeployCheck> { return { state: 'live' } } }
+      let live = (sha: string) => ({ revision: queue.revision, sha, confirmedAt: new Date().toISOString() })
+      let state: PublishState = { live: live(tip), cleanup: { revision: queue.revision, ids: ['h-fixture'], manifest: { [HERO]: HISTORIC_VERSION } } }
+
+      // Batch 1 removes the historical hero object among the first six.
+      await reconcileReviewRelease(deps, state)
+      assert.ok(removed.includes(HISTORIC_HERO))
+      assert.ok(state.cleanup?.nextCheckAt)
+
+      // A peer restores those exact bytes and approves the clip; the next cleanup turn reads that tip.
+      present.add(HISTORIC_HERO)
+      publishPeer(original, { [HERO]: HISTORIC_VERSION }, 'Restore the clip')
+      await reconcileReviewRelease(deps, state)
+      assert.equal(state.cleanup, undefined)
+      assert.ok(present.has(HISTORIC_HERO))
+
+      // The clip is rejected again, and that rejection goes live: cleanup must remove the restored object.
+      tip = publishPeer(rejected, {}, 'Reject the clip again')
+      state.live = live(tip)
+      state.cleanup = { revision: queue.revision, ids: ['h-fixture'], manifest: {} }
+      while (state.cleanup) await reconcileReviewRelease(deps, state)
+      assert.equal(present.has(HISTORIC_HERO), false)
+    } finally { adapter.close() }
   } finally { rmSync(dir, { recursive: true, force: true }) }
 })
 

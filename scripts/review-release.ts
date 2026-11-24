@@ -47,7 +47,14 @@ export async function reconcileReviewRelease(deps: Dependencies, state: PublishS
   let phase: NonNullable<PublishState['failed']>['phase'] = 'prepare'
   let revision: string | undefined
   let master: ReturnType<ReviewGit['fetchMaster']> | undefined
-  let fetchMaster = () => master ??= git.fetchMaster()
+  // A deletion receipt isn't proof the object is still gone: a tip that references it may follow
+  // another uploader's restore. Re-arm on every read, or a later rejection skips the restored objects.
+  let fetchTip = () => {
+    let tip = git.fetchMaster()
+    media.rememberManifest(parseManifest(tip.mediaJson))
+    return tip
+  }
+  let fetchMaster = () => master ??= fetchTip()
   let startedAt = stamp()
   let step = (text: string) => {
     state.running = { pid: process.pid, startedAt, step: text }
@@ -108,7 +115,7 @@ export async function reconcileReviewRelease(deps: Dependencies, state: PublishS
     revision = cleanup.revision
     phase = 'cleanup'
     step('Checking that rejected media is no longer live')
-    let latest = git.fetchMaster() // Never reuse a tip read before an asynchronous deploy check.
+    let latest = fetchTip() // Never reuse a tip read before an asynchronous deploy check.
     let upstream = parsePublicClips(latest.clipsJson)
     let manifest = parseManifest(latest.mediaJson)
     let inUse = new Set(upstream.filter((clip) => !clip.rejected).map((clip) => clip.id))
@@ -120,7 +127,7 @@ export async function reconcileReviewRelease(deps: Dependencies, state: PublishS
     if (ids.length && latest.sha !== state.live?.sha) {
       // An older successful build could predate a live restoration. Only trust the current
       // exclusion if that exact tip deployed and remained current during verification.
-      if ((await deps.deploy(latest.sha)).state !== 'live' || git.fetchMaster().sha !== latest.sha) {
+      if ((await deps.deploy(latest.sha)).state !== 'live' || fetchTip().sha !== latest.sha) {
         cleanup.nextCheckAt = now().getTime() + CHECK_INTERVAL
         delete state.failed
         save(state)
@@ -180,8 +187,7 @@ export async function reconcileReviewRelease(deps: Dependencies, state: PublishS
     step('Capturing approved clips')
     let base = fetchMaster()
     let upstream = parsePublicClips(base.clipsJson)
-    let prior = parseManifest(base.mediaJson)
-    media.rememberManifest(prior) // Includes versions uploaded elsewhere that a rejection will omit.
+    let prior = parseManifest(base.mediaJson) // fetchTip remembered versions uploaded elsewhere.
     let previous = media.availableManifest(prior)
     let desired: Clip[] = []
     let snapshot = await capturePublishSnapshot(mediaRoot, () => {
@@ -206,7 +212,7 @@ export async function reconcileReviewRelease(deps: Dependencies, state: PublishS
         if (sha === current.sha) {
           // A no-op does not have a push lease. Verify the tip; an ancestor's deploy does not
           // prove the current public blobs are equal to the snapshot.
-          current = master = git.fetchMaster()
+          current = master = fetchTip()
           if (current.sha === sha) {
             pushed(release)
             return
@@ -218,7 +224,7 @@ export async function reconcileReviewRelease(deps: Dependencies, state: PublishS
             pushed(release)
             return
           }
-          current = master = git.fetchMaster()
+          current = master = fetchTip()
           if (git.contains(current.sha, sha)) {
             pushed(release)
             return

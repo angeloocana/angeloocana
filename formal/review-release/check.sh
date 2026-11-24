@@ -13,7 +13,7 @@ here=$(cd "$(dirname "$0")" && pwd)
 cache=${TLA2TOOLS_CACHE:-${XDG_CACHE_HOME:-$HOME/.cache}/tla2tools}
 jar=$cache/tla2tools-$TLC_VERSION.jar
 java=${JAVA:-java}
-bugs=(receiptAsLive retryFailedDeploy oneAuthAllBatches tombstoneHidesRestore)
+bugs=(receiptAsLive retryFailedDeploy oneAuthAllBatches tombstoneHidesRestore rearmOnlyOnPrepare)
 
 sha256() { if command -v sha256sum > /dev/null; then sha256sum "$1"; else shasum -a 256 "$1"; fi; }
 if [[ ! -f $jar ]] || ! sha256 "$jar" | grep -q "^$TLC_SHA256 "; then
@@ -30,6 +30,7 @@ expected() {
     retryFailedDeploy) echo NewerFailureStands ;;
     oneAuthAllBatches) echo RestoreLosesAtMostOneBatch ;;
     tombstoneHidesRestore) echo CleanupDoneMeansGone ;;
+    rearmOnlyOnPrepare) echo CleanupDoneMeansGone ;;
     *) return 1 ;;
   esac
 }
@@ -46,7 +47,9 @@ run() {
     cp "$here/ReviewRelease.cfg" "$dir/"
   else
     rule=$(expected "$name") || { echo "Unknown run: $name (current, ${bugs[*]})" >&2; exit 2; }
-    sed "s/Bugs = {}/Bugs = {\"$name\"}/" "$here/ReviewRelease.cfg" > "$dir/ReviewRelease.cfg"
+    # A bug run stops at its first (shortest) violation, so it can afford a wider bound.
+    sed -e "s/Bugs = {}/Bugs = {\"$name\"}/" -e 's/MaxPeerPushes = 1/MaxPeerPushes = 2/' \
+      "$here/ReviewRelease.cfg" > "$dir/ReviewRelease.cfg"
   fi
   set +e
   (cd "$dir" && "$java" -XX:+UseParallelGC -cp "$jar" tlc2.TLC -workers "${TLC_WORKERS:-1}" -deadlock \
@@ -63,7 +66,7 @@ run() {
       return 1
     fi
     echo "PASS current: every rule holds ($(grep -oE '[0-9]+ distinct states found, 0 states left' "$dir/tlc.out" | cut -d' ' -f1) distinct states)."
-  elif grep -q "Invariant $rule is violated" "$dir/tlc.out"; then
+  elif [[ $status -eq 12 ]] && grep -q "Invariant $rule is violated" "$dir/tlc.out"; then
     echo "PASS $name: breaks $rule, as it did in the code."
   else
     echo "FAIL $name: no longer breaks $rule; the model lost sight of this bug. Trace: $0 $name" >&2
