@@ -250,6 +250,8 @@ export async function reconcileReviewRelease(deps: Dependencies, state: PublishS
 export async function urgentlyRemoveClip(deps: Dependencies, id: string) {
   let { mediaRoot, git, media } = deps
   let latest = git.fetchMaster()
+  // Re-arm a restore seen here even if this refuses, as reconcileReviewRelease's fetchTip does.
+  media.rememberManifest(parseManifest(latest.mediaJson))
   let rejected = await withReviewLock(mediaRoot, () => {
     let queue = readReviewQueue(mediaRoot)
     let saved = queue?.clips.find((clip) => clip.id === id)

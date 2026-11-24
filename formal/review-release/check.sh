@@ -13,7 +13,7 @@ here=$(cd "$(dirname "$0")" && pwd)
 cache=${TLA2TOOLS_CACHE:-${XDG_CACHE_HOME:-$HOME/.cache}/tla2tools}
 jar=$cache/tla2tools-$TLC_VERSION.jar
 java=${JAVA:-java}
-bugs=(receiptAsLive retryFailedDeploy oneAuthAllBatches tombstoneHidesRestore rearmOnlyOnPrepare)
+bugs=(receiptAsLive retryFailedDeploy oneAuthAllBatches tombstoneHidesRestore rearmOnlyOnPrepare urgentForgets)
 
 sha256() { if command -v sha256sum > /dev/null; then sha256sum "$1"; else shasum -a 256 "$1"; fi; }
 if [[ ! -f $jar ]] || ! sha256 "$jar" | grep -q "^$TLC_SHA256 "; then
@@ -31,6 +31,7 @@ expected() {
     oneAuthAllBatches) echo RestoreLosesAtMostOneBatch ;;
     tombstoneHidesRestore) echo CleanupDoneMeansGone ;;
     rearmOnlyOnPrepare) echo CleanupDoneMeansGone ;;
+    urgentForgets) echo CleanupDoneMeansGone ;;
     *) return 1 ;;
   esac
 }

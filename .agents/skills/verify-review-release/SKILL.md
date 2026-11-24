@@ -9,7 +9,7 @@ description: Model-check the review publisher's release boundary (scripts/review
 machine and a process death. Its promise: an old receipt is never current proof. A push receipt is
 not a deployment, and a deletion receipt is not proof that an object is still gone. Read
 `formal/review-release/README.md` first. It has the rules in plain words, the action-to-line map,
-the bounds, the five historical counterexamples and one known open gap (a peer upload before its push).
+the bounds, the six historical counterexamples and one known open gap (a peer upload before its push).
 
 ## Does my change touch it?
 
@@ -25,7 +25,7 @@ JAVA=/opt/homebrew/opt/openjdk@21/bin/java formal/review-release/check.sh   # ab
 npm test -- scripts/review-release.test.ts                                  # the replays on real code
 ```
 
-`check.sh` must print six `PASS` lines. `current` means every rule holds on today's transition.
+`check.sh` must print seven `PASS` lines. `current` means every rule holds on today's transition.
 Each bug name means its old transition still breaks its rule. Read a trace with
 `check.sh current` or `check.sh <bug>`, and read TLA+ results with the `/statechart` skill, which
 tells each violation as its shortest path in plain words.

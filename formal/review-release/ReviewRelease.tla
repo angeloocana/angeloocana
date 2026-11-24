@@ -320,12 +320,14 @@ Moved ==
 \* Authority: a pending rejection (the saved review rejects x and its base does not; every
 \* published release rejects x, so the base rejects x once one is acknowledged), or a
 \* rejection at the freshly fetched tip.
+\* It reads and re-arms the tip even when it refuses.
 UrgentCheck ==
   /\ pc = "idle" /\ upc = "none" /\ urgent < MaxUrgent
-  /\ acked = 0 \/ ~Approves(Tip)
-  /\ upc' = "authorized" /\ urgent' = urgent + 1 /\ Saw(Tip)
-  /\ UNCHANGED <<world, durable, locals, nextId, peerPushes, crashes, denied,
-                 restores, armed, lost, claimedGone, overwritten>>
+  /\ upc' = IF acked = 0 \/ ~Approves(Tip) THEN "authorized" ELSE "none"
+  /\ urgent' = urgent + 1
+  /\ IF "urgentForgets" \in Bugs THEN Saw(Tip) /\ UNCHANGED ledger ELSE Look(Tip)
+  /\ UNCHANGED <<remote, build, present, queue, same2, acked, peerUp, durable, locals, nextId, peerPushes, crashes,
+                 denied, restores, armed, lost, claimedGone, overwritten>>
 
 UrgentRemove ==
   /\ upc = "authorized"

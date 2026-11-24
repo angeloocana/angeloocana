@@ -12,7 +12,7 @@ deletion receipt is not proof that an object is still gone.
 a rejected clip's footage stays publicly downloadable from R2 after cleanup says it is gone.
 
 ```sh
-formal/review-release/check.sh          # all six runs, about two minutes; CI runs the same
+formal/review-release/check.sh          # all seven runs, a few minutes; CI runs the same
 formal/review-release/check.sh current  # one run with its full output or trace
 formal/review-release/check.sh rearmOnlyOnPrepare
 ```
@@ -58,7 +58,7 @@ granularity holds because `scripts/publish-review.ts` runs one turn at a time un
 | `Prepare` | `review-release.ts:186–202` `fetchMaster()`, `capturePublishSnapshot` |
 | `Upload` | `review-release.ts:204` `uploadPublishSnapshot` |
 | `Push`, `Pushing`, `PushAck`, `Refetch`, `Moved` | `review-release.ts:207–238`: the no-op lease, `state.candidate` saved before `pushCandidate`, re-fetch, "Master moved" |
-| `UrgentCheck`, `UrgentRemove` | `review-release.ts:250–267` `urgentlyRemoveClip`: authority, then `removeRejected` with `forceKnown` |
+| `UrgentCheck`, `UrgentRemove` | `review-release.ts:250–269` `urgentlyRemoveClip`: read and re-arm the tip, authority, then `removeRejected` with `forceKnown` |
 | `WorkersBuild` | `publish-review.ts` `checkDeployment` (live, failed, superseded) |
 
 `UrgentCheck` reduces the authority check to its result under this model's assumptions. Every
@@ -72,10 +72,11 @@ manual `media:push`, several clips, the merge of a peer's concurrent clip edits,
 caches. Takedown cannot recall a cached copy.
 
 **Bounds:** one peer push, one process death, one denied push and one urgent takedown. That run
-covers about 2.15 million distinct states, depth 58, in about a minute with one worker. Each bug
+covers about 2.23 million distinct states in about a minute with one worker. Each bug
 run allows two peer pushes, and TLC stops at its first, shortest violation. A pass covers these
-bounds, not the whole system. I also ran two peer pushes with no process death once, with no
-error found: 27.2 million distinct states, about 8.5 minutes with two workers.
+bounds, not the whole system. Two peer pushes with no process death, run once before the
+urgent-takedown re-arm was modeled, found no error in 27.2 million distinct states (about 8.5
+minutes with two workers).
 
 ## Known gap: a peer upload before its push
 
@@ -106,7 +107,8 @@ ahead of origin, it reported "already live" without asking Workers Builds.
 4. The old transition marks it live, though that commit's build failed.
 
 The current code calls `pushed(release)` after re-checking the tip (`review-release.ts:215–218`),
-which waits for `confirm()`. Replayed in "rechecks master even for a no-op…".
+which waits for `confirm()`. Replayed in "a no-op revision on an unchanged tip is pushed, not live…".
+The lost-acknowledgement path is a separate recovery regression, in "replays the model…".
 
 **`retryFailedDeploy` breaks `NewerFailureStands` (22 states).** This is `4f5bf1a`, fixed in
 `488fc41` (#22097/27483 finding 8).
@@ -155,8 +157,20 @@ any other read was forgotten.
 6. Clean skips every `deleted` object and reports done. The restored footage is still in R2.
 
 The fix is `fetchTip()` (`review-release.ts:52–57`): every read of master re-arms. Replayed in
-"removes an object restored and rejected again…", with the read in a cleanup turn. It failed on
+"removes an object restored and rejected again after a cleanup saw its restore". It failed on
 `7b1b8e1` (`true !== false`: the object stayed) and passes now.
+
+**`urgentForgets` breaks `CleanupDoneMeansGone` (23 states).** This is the first fix for
+`rearmOnlyOnPrepare`, found in review round 2 of #34719. `urgentlyRemoveClip` reads master
+outside `fetchTip()`.
+1. Revision 1 goes live, and cleanup deletes batch 1.
+2. A peer restores `x` and pushes it approved.
+3. An urgent takedown reads that tip and correctly refuses, but doesn't re-arm the deleted object.
+4. A peer rejects `x` again, and that tip deploys.
+5. Cleanup deletes batch 2, skips batch 1's `deleted` object and reports done. The restored object is still in R2.
+
+The fix is `rememberManifest` before the authority check (`review-release.ts:254`). Replayed in
+"removes an object restored and rejected again after a refused takedown saw its restore".
 
 ## Proof that the replay sees the bugs
 
@@ -165,7 +179,9 @@ Each historical transition was put back in the real code as a scratch change, ru
 - Without `review-publish-media.ts:161`, "replays the model…" and "urgent takedown…" fail.
 - With `RecoverPush` marking the candidate live, "replays the model…", "recovers a partial upload…"
   and "does not clean an old exclusion…" fail.
-- Without `fetchTip()`, "removes an object restored and rejected again…" fails.
+- Without `fetchTip()`, "…after a cleanup saw its restore" fails.
+- Without the re-arm in `urgentlyRemoveClip`, only "…after a refused takedown saw its restore" fails.
+- With the no-op branch marking its tip live, only "a no-op revision on an unchanged tip…" fails.
 
 ## When the model and the code disagree
 

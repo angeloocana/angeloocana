@@ -324,8 +324,9 @@ it('replays the model: an unacknowledged push is not live, and a restore over a 
   } finally { rmSync(dir, { recursive: true, force: true }) }
 })
 
-// formal/review-release: the rearmOnlyOnPrepare trace (review round 1 of #34719).
-it('removes an object restored and rejected again after cleanup saw its restore', async () => {
+// formal/review-release: the rearmOnlyOnPrepare and urgentForgets traces (#34719). The publisher sees
+// a restore in a cleanup turn, or in a refused urgent takedown; then the clip is rejected again.
+for (let seenBy of ['cleanup', 'refused takedown'] as const) it(`removes an object restored and rejected again after a ${seenBy} saw its restore`, async () => {
   let dir = mkdtempSync(join(tmpdir(), 'review-rearm-'))
   let mediaRoot = join(dir, 'media-root')
   try {
@@ -359,11 +360,15 @@ it('removes an object restored and rejected again after cleanup saw its restore'
       assert.ok(removed.includes(HISTORIC_HERO))
       assert.ok(state.cleanup?.nextCheckAt)
 
-      // A peer restores those exact bytes and approves the clip; the next cleanup turn reads that tip.
+      // A peer restores those exact bytes and approves the clip, and the publisher reads that tip.
       present.add(HISTORIC_HERO)
       publishPeer(original, { [HERO]: HISTORIC_VERSION }, 'Restore the clip')
-      await reconcileReviewRelease(deps, state)
-      assert.equal(state.cleanup, undefined)
+      if (seenBy === 'cleanup') {
+        await reconcileReviewRelease(deps, state)
+        assert.equal(state.cleanup, undefined)
+      } else {
+        await assert.rejects(urgentlyRemoveClip(deps, 'h-fixture'), /Reject the clip/)
+      }
       assert.ok(present.has(HISTORIC_HERO))
 
       // The clip is rejected again, and that rejection goes live: cleanup must remove the restored object.
@@ -432,6 +437,46 @@ it('does not clean an old exclusion after a remote restore or an unconfirmed new
       await reconcileReviewRelease(deps, state)
       assert.equal(removed.length, 6)
       assert.equal(state.cleanup, undefined)
+    } finally { adapter.close() }
+  } finally { rmSync(dir, { recursive: true, force: true }) }
+})
+
+// formal/review-release: the receiptAsLive trace at the legacy zero-ahead decision.
+it('a no-op revision on an unchanged tip is pushed, not live, after that commit failed to deploy', async () => {
+  let dir = mkdtempSync(join(tmpdir(), 'review-zero-ahead-'))
+  let mediaRoot = join(dir, 'media-root')
+  try {
+    let keys = [POSTER, VIDEO, 'clips/h-fixture.jpg', 'clips/h-fixture.mp4']
+    let manifest = Object.fromEntries(keys.map((key) => [key, createHash('sha256').update(key).digest('hex').slice(0, 10)]))
+    let { source, remote, original } = fixture(dir, manifest)
+    for (let key of keys) {
+      let file = join(mediaRoot, 'media', key)
+      mkdirSync(dirname(file), { recursive: true })
+      writeFileSync(file, key)
+    }
+    let tip = git(remote, 'rev-parse', 'master')
+    // Revision 1 was this commit, and its deploy failed. Revision 2 has the same public data.
+    let first = await withReviewLock(mediaRoot, () => queueReviewRevision(mediaRoot, original))
+    let state: PublishState = {
+      pushed: { revision: first.revision, sha: tip, desired: original, published: original, manifest, pushedAt: new Date().toISOString(), nextCheckAt: 0, acknowledged: true },
+      failed: { phase: 'deploy', revision: first.revision, at: new Date().toISOString(), message: 'test Workers Builds failed' },
+    }
+    await withReviewLock(mediaRoot, () => queueReviewRevision(mediaRoot, original, original))
+    let checks: string[] = []
+    let adapter = openReviewGit(source, join(dir, 'scratch'))
+    try {
+      let deps = { mediaRoot, git: adapter, save() {}, media: openReviewMedia(mediaRoot, {
+        async put() { throw new Error('Unexpected upload') }, async remove() { throw new Error('Unexpected removal') },
+      }), async deploy(sha: string): Promise<DeployCheck> { checks.push(sha); return { state: 'failed', message: 'test Workers Builds failed' } } }
+      await reconcileReviewRelease(deps, state)
+      assert.equal(git(remote, 'rev-parse', 'master'), tip)
+      assert.equal(state.pushed?.sha, tip)
+      assert.equal(state.live, undefined)
+      assert.deepEqual(checks, [])
+      await reconcileReviewRelease(deps, state)
+      assert.deepEqual(checks, [tip])
+      assert.equal(state.live, undefined)
+      assert.equal(state.failed?.phase, 'deploy')
     } finally { adapter.close() }
   } finally { rmSync(dir, { recursive: true, force: true }) }
 })
