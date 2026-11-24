@@ -10,6 +10,7 @@ import { MEDIA_VERSIONS, loadClips } from '../app/content/clips.ts'
 import { legacyBlogAssets } from '../app/content/legacy-blog-assets.ts'
 import { allPosts } from '../app/content/posts.ts'
 import { router } from '../app/router.ts'
+import { HOME_HTML_BUDGET, HOME_ROUTES, assertHomeHtmlBudget, type HomeHtmlArtifact } from './home-html-budget.ts'
 
 const ORIGIN = 'http://localhost'
 const OUT = 'dist'
@@ -121,15 +122,20 @@ function inlineScriptHashes(path: string, html: string, home: boolean) {
 // each kind of page's one stylesheet (/css/home.Ab12Cd34.css, app/styles.ts), saved as the pages name them
 let stylesheets = new Set<string>()
 let homeHashes = new Map<string, string[]>()
+let homeRoutes = new Set<string>(HOME_ROUTES)
+let emittedHomes: HomeHtmlArtifact[] = []
 for (let [path, file] of Object.entries(PAGES)) {
   let html = await (await get(path)).text()
   let emitted = await saveText(file, html)
   collect(html, path)
   for (let [url] of html.matchAll(/\/css\/[\w-]+\.[\w-]+\.css/g)) stylesheets.add(url)
   if (!file.endsWith('.html')) continue
-  let home = path === '/' || path === '/pt/'
+  let home = homeRoutes.has(path)
   let hashes = inlineScriptHashes(path, emitted, home)
-  if (home) homeHashes.set(path, hashes)
+  if (home) {
+    emittedHomes.push({ route: path, file: join(OUT, file), html: emitted })
+    homeHashes.set(path, hashes)
+  }
   // The old offline service worker answers page loads with this address. It needs the exact home
   // page (and policy), not a redirect, until those old workers are gone (see public/sw.js).
   if (path === '/') {
@@ -137,6 +143,7 @@ for (let [path, file] of Object.entries(PAGES)) {
     homeHashes.set(OFFLINE, hashes)
   }
 }
+let homeBudgets = assertHomeHtmlBudget(emittedHomes)
 for (let url of stylesheets) await saveText(url, await (await get(url)).text())
 
 // Every script URL carries a hash of the file (rails.@a1b2c3.tsx, see app/assets.ts), which is what
@@ -234,4 +241,8 @@ for (let line of headers) {
 }
 await save('_headers', headers.join('\n'))
 
+let budgetSummary = homeBudgets
+  .map((item) => `${item.route} ${item.emittedBytes.toLocaleString('en-US')} B (${item.projectedBytes.toLocaleString('en-US')} B versioned)`)
+  .join(', ')
 console.log(`Built ${Object.keys(PAGES).length} pages, ${live.size} clips and ${seen.size} script files into ${OUT}/`)
+console.log(`Home HTML budget: ${budgetSummary} / ${HOME_HTML_BUDGET.toLocaleString('en-US')} B`)
