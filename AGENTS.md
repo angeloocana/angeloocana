@@ -28,6 +28,7 @@ npm run test:browser # builds, then drives the built dist/ in Chromium (app/*.te
                    # once per machine: npx playwright install chromium)
 npm run typecheck
 formal/review-release/check.sh # TLA+ model of the review publisher (Java 11+); see .agents/skills/verify-review-release
+formal/recut-transaction/check.sh # TLA+ model of the recut lock and journal (scripts/clips/review_io.py); see its README
 npm run build      # prerender to dist/ (from git alone; media comes from R2, see below)
 npm run preview    # build, then serve dist/ the way Cloudflare will (media from the real bucket)
 npm run deploy     # build and publish to Cloudflare by hand (pushes to master already do this)

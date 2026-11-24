@@ -1,10 +1,10 @@
 name: Formal model
 on:
   pull_request:
-    paths: [formal/**, scripts/review-release.ts, scripts/review-publish-media.ts, .github/workflows/formal.yml]
+    paths: [formal/**, scripts/review-release.ts, scripts/review-publish-media.ts, scripts/clips/review_io.py, scripts/clips/clips.py, .github/workflows/formal.yml]
   push:
     branches: [master]
-    paths: [formal/**, scripts/review-release.ts, scripts/review-publish-media.ts, .github/workflows/formal.yml]
+    paths: [formal/**, scripts/review-release.ts, scripts/review-publish-media.ts, scripts/clips/review_io.py, scripts/clips/clips.py, .github/workflows/formal.yml]
 
 permissions:
   contents: read
@@ -23,3 +23,5 @@ jobs:
           java-version: '21'
       - name: Model-check the review publisher (pinned TLC 1.7.4)
         run: formal/review-release/check.sh
+      - name: Model-check the recut transaction (pinned TLC 1.7.4)
+        run: formal/recut-transaction/check.sh
