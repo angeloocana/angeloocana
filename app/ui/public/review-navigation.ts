@@ -1,5 +1,16 @@
+/** What a write queue can tell navigation after waiting: every write it waited on was confirmed by
+ * the server, or at least one was not. Navigation never infers success from `busy`, an empty queue
+ * or a card's styling: only a queue that saw every reply can say `acknowledged`. */
+export type WriteOutcome = 'acknowledged' | 'unconfirmed'
+
+export const allAcknowledged = (outcomes: WriteOutcome[]): WriteOutcome =>
+  outcomes.every((outcome) => outcome === 'acknowledged') ? 'acknowledged' : 'unconfirmed'
+
+/** Leave without asking only when the waited-on writes were acknowledged and nothing new is pending. */
+export const leaveWithoutAsking = (outcome: WriteOutcome, pending: boolean) => outcome === 'acknowledged' && !pending
+
 /** Wait for review writes on ordinary links; do not lose drafts silently on reload or back. */
-export function guardReviewNavigation(pending: () => boolean, settle: () => Promise<boolean>, signal: AbortSignal) {
+export function guardReviewNavigation(pending: () => boolean, settle: () => Promise<WriteOutcome>, signal: AbortSignal) {
   let attempt = 0
   let leaving = false
   window.addEventListener('pageshow', () => { leaving = false }, { signal })
@@ -18,10 +29,10 @@ export function guardReviewNavigation(pending: () => boolean, settle: () => Prom
     if (!pending()) return
     event.preventDefault()
     let current = ++attempt
-    let waited = false
-    try { waited = await settle() } catch {}
+    let outcome: WriteOutcome = 'unconfirmed'
+    try { outcome = await settle() } catch {}
     if (signal.aborted || current !== attempt) return
-    if ((!waited || pending()) && !window.confirm('Some changes could not be confirmed. Leave this page anyway?')) return
+    if (!leaveWithoutAsking(outcome, pending()) && !window.confirm('Some changes could not be confirmed. Leave this page anyway?')) return
     leaving = true
     location.assign(url.href)
   }, { signal })

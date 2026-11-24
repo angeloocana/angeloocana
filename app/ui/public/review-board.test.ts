@@ -55,7 +55,7 @@ it('does not navigate on a failed urgent removal merely because the queued note 
   let leaving = board.settle()
   assert.deepEqual(sent, [])
   removal.resolve(false)
-  assert.equal(await leaving, false)
+  assert.equal(await leaving, 'unconfirmed')
   assert.deepEqual(sent, [{ note: 'Keep this separate from the removal.' }])
   assert.equal(board.busy, false)
 })
