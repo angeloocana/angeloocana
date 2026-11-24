@@ -1,4 +1,5 @@
 import { clipPoster } from '../clip-card.ts'
+import { withLatestIntersections } from '../visibility.ts'
 import type { Motion } from './motion.ts'
 import type { setUpClips } from './clips.ts'
 
@@ -41,7 +42,9 @@ export function setUpRail(rail: HTMLElement, { signal, motion, clips }: { signal
       loaded = await clips.loadMore(track)
       if (loaded) { near.disconnect(); track.removeEventListener('scrollend', load) }
     }
-    let near = new IntersectionObserver((entries) => { if (entries.at(-1)?.isIntersecting) load() }, { rootMargin: '150% 0px' })
+    let near = new IntersectionObserver(withLatestIntersections(({ isIntersecting }) => {
+      if (isIntersecting) load()
+    }), { rootMargin: '150% 0px' })
     near.observe(rail)
     track.addEventListener('scrollend', load, { signal, passive: true })
     signal.addEventListener('abort', () => near.disconnect())

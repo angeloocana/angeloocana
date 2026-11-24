@@ -1,4 +1,5 @@
 import { clipPoster } from '../clip-card.ts'
+import { withLatestIntersections } from '../visibility.ts'
 import type { Motion } from './motion.ts'
 
 // Videos play only while on screen, and never for reduced motion or data saver. Clips are stills until they
@@ -20,15 +21,13 @@ export function setUpMedia(signal: AbortSignal, motion: Motion): Media {
   let still = () => motion.paused || !motion.motion
   let onScreen = new Set<HTMLVideoElement>()
   let watched = new Set<HTMLVideoElement>()
-  let watcher = new IntersectionObserver((entries) => {
-    for (let { target, isIntersecting } of entries) {
-      let video = target as HTMLVideoElement
-      if (isIntersecting) onScreen.add(video)
-      else onScreen.delete(video)
-      if (isIntersecting && !still()) play(video)
-      else video.pause()
-    }
-  }, { threshold: 0.35 })
+  let watcher = new IntersectionObserver(withLatestIntersections(({ target, isIntersecting }) => {
+    let video = target as HTMLVideoElement
+    if (isIntersecting) onScreen.add(video)
+    else onScreen.delete(video)
+    if (isIntersecting && !still()) play(video)
+    else video.pause()
+  }), { threshold: 0.35 })
   signal.addEventListener('abort', () => watcher.disconnect())
   // a video kept out of the page's first loads ([data-src], the Wear OS one) gets its file the first time it plays
   let play = (video: HTMLVideoElement) => {
@@ -78,46 +77,43 @@ export function setUpMedia(signal: AbortSignal, motion: Motion): Media {
   // closing the page.
   for (let track of document.querySelectorAll<HTMLElement>('[data-rail-track]')) {
     if (!track.querySelector('[data-video]')) continue
-    let players = new IntersectionObserver((entries) => {
-      for (let { target, isIntersecting } of entries) {
-        let slide = target as HTMLElement
-        let video = slide.querySelector<HTMLVideoElement>('video.clip-video')
-        // only clips near the screen run the slide-in animation: 114 of them scrolling with the page cost frames
-        slide.toggleAttribute('data-near', isIntersecting)
-        if (isIntersecting && !video && !still()) {
-          video = document.createElement('video')
-          video.className = 'clip-video'
-          video.muted = true
-          video.loop = true
-          video.playsInline = true
-          video.setAttribute('playsinline', '')
-          video.setAttribute('aria-hidden', 'true')
-          video.preload = 'metadata'
-          video.poster = clipPoster(slide)
-          video.src = slide.dataset.video!
-          slide.querySelector('img.clip-video')?.after(video)
-          watch(video)
-        } else if (!isIntersecting && video) {
-          unwatch(video)
-          video.pause()
-          video.removeAttribute('src')
-          video.load()
-          video.remove()
-        }
+    let players = new IntersectionObserver(withLatestIntersections(({ target, isIntersecting }) => {
+      let slide = target as HTMLElement
+      let video = slide.querySelector<HTMLVideoElement>('video.clip-video')
+      // only clips near the screen run the slide-in animation: 114 of them scrolling with the page cost frames
+      slide.toggleAttribute('data-near', isIntersecting)
+      if (isIntersecting && !video && !still()) {
+        video = document.createElement('video')
+        video.className = 'clip-video'
+        video.muted = true
+        video.loop = true
+        video.playsInline = true
+        video.setAttribute('playsinline', '')
+        video.setAttribute('aria-hidden', 'true')
+        video.preload = 'metadata'
+        video.poster = clipPoster(slide)
+        video.src = slide.dataset.video!
+        slide.querySelector('img.clip-video')?.after(video)
+        watch(video)
+      } else if (!isIntersecting && video) {
+        unwatch(video)
+        video.pause()
+        video.removeAttribute('src')
+        video.load()
+        video.remove()
       }
-    }, { root: track, rootMargin: '0px 60%' })
+    }), { root: track, rootMargin: '0px 60%' })
     playerObservers.push(players)
     signal.addEventListener('abort', () => players.disconnect())
     let add = (slide: HTMLElement) => { playerSlides.add(slide); players.observe(slide) }
     // nothing loads until the row itself comes within a screen of view: measured against the row
     // alone, its first clips would get players (posters, metadata) on the first screen
-    let rowNear = new IntersectionObserver((entries) => {
-      // The initial off-screen entry and the row coming into view can arrive in the same batch.
-      if (!entries.at(-1)?.isIntersecting) return
+    let rowNear = new IntersectionObserver(withLatestIntersections(({ isIntersecting }) => {
+      if (!isIntersecting) return
       rowNear.disconnect()
       track.querySelectorAll<HTMLElement>('[data-video]').forEach(add)
       media.addSlides = (slides) => slides.forEach(add)
-    }, { rootMargin: '100% 0px' })
+    }), { rootMargin: '100% 0px' })
     rowNear.observe(track)
     signal.addEventListener('abort', () => rowNear.disconnect())
   }

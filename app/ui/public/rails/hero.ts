@@ -1,3 +1,4 @@
+import { withLatestIntersections } from '../visibility.ts'
 import type { Motion } from './motion.ts'
 import { advance } from './media.ts'
 
@@ -82,10 +83,10 @@ function setUpFlight(signal: AbortSignal, motion: Motion) {
   takeOffIn(2500 - performance.now())
   signal.addEventListener('abort', () => clearTimeout(timer))
 
-  let seen = new IntersectionObserver((entries) => {
-    inView = entries.at(-1)!.intersectionRatio > 0.9
+  let seen = new IntersectionObserver(withLatestIntersections(({ intersectionRatio }) => {
+    inView = intersectionRatio > 0.9
     flyIfReady()
-  }, { threshold: [0, 0.5, 0.95, 1], rootMargin: '-64px 0px 0px 0px' }) // below the fixed menu
+  }), { threshold: [0, 0.5, 0.95, 1], rootMargin: '-64px 0px 0px 0px' }) // below the fixed menu
   seen.observe(el)
   signal.addEventListener('abort', () => seen.disconnect())
   document.addEventListener('visibilitychange', () => setTimeout(flyIfReady, 500), { signal })

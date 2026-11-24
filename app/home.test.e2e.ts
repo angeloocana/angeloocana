@@ -399,6 +399,15 @@ describe('home page in a browser', () => {
     }, id, { timeout: 8000 })
   })
 
+  it('replays a Jump Over Jump move when the board comes into view', async (t) => {
+    let page = await t.serve(await serveDist())
+    await page.setViewportSize({ width: 1440, height: 900 })
+    await open(page, '/')
+    let board = page.locator('#jumpoverjump [data-joj-demo]').first()
+    await board.evaluate((el) => el.scrollIntoView({ block: 'center', inline: 'nearest', behavior: 'instant' }))
+    await board.locator('.jd-squares [data-route="end"]').waitFor({ state: 'attached', timeout: 8000 })
+  })
+
   it('moves along a rail with the keyboard, one Tab stop for the clips', async (t) => {
     let page = await t.serve(await serveDist())
     await page.setViewportSize({ width: 1440, height: 900 })

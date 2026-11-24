@@ -1,3 +1,5 @@
+import { withLatestIntersections } from './visibility.ts'
+
 // Replays real exhibition games (public/data/joj-games.json) the way jumpoverjump.com's home page
 // does: before each move the side to play weighs up to two other pieces and then the one it moves,
 // lifting each and dotting every square it could land on; then the piece flies its route in arcs
@@ -87,10 +89,10 @@ export async function playJojDemo(signal: AbortSignal) {
     let paused = () => document.documentElement.classList.contains('is-paused')
     let visible = false
     let wake: (() => void) | null = null
-    let watcher = new IntersectionObserver((entries) => {
-      visible = !!entries.at(-1)?.isIntersecting
+    let watcher = new IntersectionObserver(withLatestIntersections(({ isIntersecting }) => {
+      visible = isIntersecting
       if (visible && wake) wake()
-    })
+    }))
     watcher.observe(board)
     signal.addEventListener('abort', () => watcher.disconnect())
     let sleep = (ms: number) =>
