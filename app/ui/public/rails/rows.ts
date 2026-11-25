@@ -1,5 +1,6 @@
 import { clipPoster } from '../clip-card.ts'
 import { withLatestIntersections } from '../visibility.ts'
+import { createLinkedCard, type Linked, type PickEpoch, type TripAttempt } from './linked.ts'
 import type { Motion } from './motion.ts'
 import type { setUpClips } from './clips.ts'
 
@@ -21,7 +22,7 @@ export interface Rail {
   cardInView(): HTMLElement | undefined
 }
 
-export function setUpRail(rail: HTMLElement, { signal, motion, clips }: { signal: AbortSignal; motion: Motion; clips: Clips }): Rail {
+export function setUpRail(rail: HTMLElement, { signal, motion, clips, picks }: { signal: AbortSignal; motion: Motion; clips: Clips; picks?: PickEpoch }): Rail {
   let track = rail.querySelector<HTMLElement>('[data-rail-track]')!
   let bg = rail.querySelector<HTMLElement>('[data-rail-bg]')
   // the cards shown (on phones a row's opening card is display: none: its words sit above the row)
@@ -88,25 +89,29 @@ export function setUpRail(rail: HTMLElement, { signal, motion, clips }: { signal
   let shown = (el: Element) => { if (stale) measure(); return shownBox(byEl.get(el), view()) }
   let totalOf = (n: number) => Math.max(n, Number(track.dataset.total) || 0)
 
-  // The linked card: the one a #job-… / #clip-… in the address, a hobby chip or a jump link asked for. The
-  // flag carries it (cardInView) instead of whatever the row shows first, which matters when the row ended
-  // before the card could line up at its left edge, and while the row is still on its way there.
-  type Linked =
-    // nothing asked for: the flag carries the first card mostly in view
-    | { state: 'idle' }
-    // a #hash is waiting to be shown, maybe for the rest of the clips to load
-    | { state: 'arriving'; id: string }
-    // the row is sliding to a picked card (a chip, a jump link): that card is the one in view already
-    | { state: 'travelling'; card: HTMLElement }
-    // the row came to rest on the card: it stays the one to carry while it is at least half in view (moved
-    // some other way than by hand, the row lets it go once it has mostly gone)
-    | { state: 'settled'; card: HTMLElement; hash: boolean }
-  let linked: Linked = { state: 'idle' }
-  // rails/nav.ts follows the row's scroll; a change here may come without one
-  let setLinked = (next: Linked) => { linked = next; track.dispatchEvent(new Event('linkchange')) }
+  // The linked card (rails/linked.ts): one owner for the four states, request identity across async loads
+  // and smooth scrolls, and whether the row or the browser owns vertical scroll.
+  let restoring = ['back_forward', 'reload'].includes((performance.getEntriesByType('navigation')[0] as PerformanceNavigationTiming | undefined)?.type ?? '')
+  let linked = createLinkedCard<HTMLElement>({
+    restoring,
+    picks,
+    // rails/nav.ts follows the row's scroll; a linked-card change may come without one
+    onChange: () => track.dispatchEvent(new Event('linkchange')),
+  })
+  let cancelJump: (() => void) | null = null
+  let clearJump = () => {
+    if (!cancelJump) return
+    cancelJump()
+    cancelJump = null
+    track.classList.remove('is-jumping')
+  }
+  signal.addEventListener('abort', clearJump)
   // Any sideways move of the visitor's own (a trackpad or a wheel, a drag, a swipe, the arrow keys or the
   // row's buttons) ends all of that, read from the input itself, never from where the row's scroll went.
-  let userMoved = () => { if (linked.state !== 'idle') setLinked({ state: 'idle' }) }
+  let userMoved = () => {
+    linked.userMoved()
+    clearJump()
+  }
   track.addEventListener('wheel', (event) => {
     if (Math.abs(event.deltaX) > Math.abs(event.deltaY) || (event.shiftKey && event.deltaY)) userMoved()
   }, { signal, passive: true })
@@ -121,8 +126,7 @@ export function setUpRail(rail: HTMLElement, { signal, motion, clips }: { signal
   }, { signal })
   // The page scrolled by hand since the #hash came (a wheel, a swipe, the keys): its card still lines up
   // along the row, but the page stays where the visitor took it.
-  let pageTouched = false
-  let touchPage = () => { pageTouched = true }
+  let touchPage = () => linked.touchPage()
   addEventListener('wheel', (event) => { if (Math.abs(event.deltaY) > Math.abs(event.deltaX)) touchPage() }, { signal, passive: true })
   addEventListener('touchmove', touchPage, { signal, passive: true })
   addEventListener('keydown', (event) => { if ([' ', 'PageUp', 'PageDown', 'ArrowUp', 'ArrowDown', 'Home', 'End'].includes(event.key)) touchPage() }, { signal })
@@ -278,6 +282,7 @@ export function setUpRail(rail: HTMLElement, { signal, motion, clips }: { signal
       clearTimeout(unpickTimer)
       unpickTimer = window.setTimeout(checkPicked, 200)
     }, { signal, passive: true })
+    signal.addEventListener('abort', () => clearTimeout(unpickTimer))
   }
   // more chips than fit: home.css fades the side where some are out of sight
   let chipRow = rail.querySelector<HTMLElement>('.clip-chips')
@@ -294,13 +299,17 @@ export function setUpRail(rail: HTMLElement, { signal, motion, clips }: { signal
   }
   for (let chip of chips) {
     chip.addEventListener('click', async () => {
+      let pending = linked.beginPick()
+      clearJump()
       chip.setAttribute('aria-busy', 'true')
       await clips.loadMore(track)
       chip.removeAttribute('aria-busy')
+      if (signal.aborted) return
       let first = track.querySelector<HTMLElement>(`[data-cat="${chip.dataset.railCat}"]`)
-      if (!first) return
+      let trip = pending.complete(first)
+      if (!trip || !first) return
       pick(chip, first)
-      slideTo(first, true)
+      runTrip(first, trip)
     }, { signal })
   }
 
@@ -351,20 +360,29 @@ export function setUpRail(rail: HTMLElement, { signal, motion, clips }: { signal
   // that smaller box, a few pixels short.
   // A picked card (carry: a chip or a jump link) is the one to carry from the start of the trip, and its
   // #id replaces the address's (no new history entry). Any other slide was the visitor's own (Tab).
-  function slideTo(slide: HTMLElement, carry = false) {
-    track.classList.add('is-jumping')
-    let left = slide.offsetLeft - slides()[0].offsetLeft
-    let trip: Linked = carry ? { state: 'travelling', card: slide } : { state: 'idle' }
-    setLinked(trip)
-    let landed = () => {
-      track.classList.remove('is-jumping')
-      if (linked === trip) setLinked({ state: 'settled', card: slide, hash: false })
+  function runTrip(slide: HTMLElement, trip: TripAttempt) {
+    clearJump()
+    if (trip.replaceHash) history.replaceState(history.state, '', `#${slide.id}`)
+    let goal = () => Math.min(Math.max(0, slide.offsetLeft - slides()[0].offsetLeft), Math.max(0, track.scrollWidth - track.clientWidth))
+    let finish = (forced: boolean) => {
+      if (!trip.finish({ atGoal: Math.abs(track.scrollLeft - goal()) < 4, forced })) return
+      clearJump()
     }
-    if (carry) history.replaceState(history.state, '', `#${slide.id}`)
-    if (Math.abs(Math.min(left, track.scrollWidth - track.clientWidth) - track.scrollLeft) < 2) return landed()
-    track.addEventListener('scrollend', landed, { once: true, signal })
-    setTimeout(landed, 1500)
+    let left = slide.offsetLeft - slides()[0].offsetLeft
+    if (Math.abs(goal() - track.scrollLeft) < 2) return finish(true)
+    track.classList.add('is-jumping')
+    let onScrollEnd = () => finish(false)
+    let onTimeout = () => finish(true)
+    let timer = window.setTimeout(onTimeout, 1500)
+    track.addEventListener('scrollend', onScrollEnd, { signal })
+    cancelJump = () => {
+      clearTimeout(timer)
+      track.removeEventListener('scrollend', onScrollEnd)
+    }
     track.scrollTo({ left, behavior: motion.reduced ? 'auto' : 'smooth' })
+  }
+  function slideTo(slide: HTMLElement, carry = false) {
+    runTrip(slide, linked.beginTrip(slide, { carry }))
   }
   // Tab onto a link or a button in a card the row shows only part of (the next job, peeking in at the
   // edge): the browser brings just that link into view, leaving the card a sliver, so the row slides to the
@@ -390,44 +408,48 @@ export function setUpRail(rail: HTMLElement, { signal, motion, clips }: { signal
   // where the row was on the way there (a chip writes it), so it never moves the page then; if the visitor
   // left from this row, it still lines the row up on that card, sideways only. (A page kept whole in the
   // back/forward cache runs none of this: everything is as it was left.)
-  let restoring = ['back_forward', 'reload'].includes((performance.getEntriesByType('navigation')[0] as PerformanceNavigationTiming | undefined)?.type ?? '')
   let toHash = async (opened: boolean) => {
     let id = location.hash.slice(1)
     let find = () => track.querySelector<HTMLElement>(`:scope > [id="${CSS.escape(id)}"]`)
     if (!id.startsWith('clip-') && !id.startsWith('job-')) return
     let missing = !find()
     if (missing && !(more && id.startsWith('clip-'))) return
-    let wait: Linked = { state: 'arriving', id }
-    setLinked(wait)
+    clearJump()
+    let arrival = linked.beginHash(id, { opened, missing })
     if (more && id.startsWith('clip-')) await clips.loadMore(track)
-    let restored = opened && restoring
-    if (restored) {
+    if (opened && restoring) {
       if (document.readyState !== 'complete') await new Promise((done) => addEventListener('load', done, { once: true, signal }))
       await new Promise(requestAnimationFrame)
     }
+    if (signal.aborted) return
     let slide = find()
-    if (linked !== wait || !slide || location.hash.slice(1) !== id) return linked === wait ? setLinked({ state: 'idle' }) : undefined
-    if (restored) {
-      let box = rail.getBoundingClientRect()
-      if (box.bottom < innerHeight * 0.25 || box.top > innerHeight * 0.75) return setLinked({ state: 'idle' })
-    }
+    let outcome = arrival.complete({
+      card: slide,
+      hashMatches: location.hash.slice(1) === id,
+      railInView: () => {
+        let box = rail.getBoundingClientRect()
+        return box.bottom >= innerHeight * 0.25 && box.top <= innerHeight * 0.75
+      },
+    })
+    if (!outcome.alignRow || !slide) return
+    clearJump()
     track.classList.add('is-jumping')
     track.scrollLeft = slide.offsetLeft - slides()[0].offsetLeft
-    requestAnimationFrame(() => track.classList.remove('is-jumping'))
-    if (missing && !restored && !pageTouched) {
+    let frame = requestAnimationFrame(() => clearJump())
+    cancelJump = () => cancelAnimationFrame(frame)
+    if (outcome.scrollPage) {
       // measured from the row, not from the card, which may still be growing into place (slide-in)
       let top = track.getBoundingClientRect().top + slide.offsetTop - (slide.offsetParent === track ? 0 : track.offsetTop)
       let margin = parseFloat(getComputedStyle(slide).scrollMarginTop) || 0
       scrollTo({ top: scrollY + top - margin, behavior: opened || motion.reduced ? 'instant' : 'smooth' })
     }
-    setLinked({ state: 'settled', card: slide, hash: true })
     for (let link of rail.querySelectorAll<HTMLAnchorElement>('a[data-rail-jump]')) link.toggleAttribute('data-picked', link.hash === location.hash)
   }
   toHash(true)
   // the page's late fonts and images move the cards once it has loaded: a #hash card nobody has moved away
   // from lines up again
-  addEventListener('load', () => { if (linked.state === 'settled' && linked.hash && !restoring) toHash(true) }, { signal, once: true })
-  addEventListener('hashchange', () => { pageTouched = false; setLinked({ state: 'idle' }); toHash(false) }, { signal })
+  addEventListener('load', () => { if (linked.shouldRealignOnLoad()) toHash(true) }, { signal, once: true })
+  addEventListener('hashchange', () => { clearJump(); linked.hashChanged(); toHash(false) }, { signal })
 
   // arrows: page by the width of what is visible
   rail.addEventListener('click', (event) => {
@@ -490,17 +512,18 @@ export function setUpRail(rail: HTMLElement, { signal, motion, clips }: { signal
 
   // The menu asks on every frame of a page scroll, when the row hasn't moved: the answer is kept until the
   // row's scroll, its cards' boxes or the linked card change.
-  let asked: { left: number; boxes: Box[]; linked: Linked; card: HTMLElement | undefined } | undefined
+  let asked: { left: number; boxes: Box[]; linked: Linked<HTMLElement>; card: HTMLElement | undefined } | undefined
   return {
     cardInView() {
       if (stale) measure()
       let v = view()
-      if (asked && asked.left === v.l && asked.boxes === boxes && asked.linked === linked) return asked.card
-      let card =
-        linked.state === 'travelling' ? linked.card
-        : linked.state === 'settled' && shownBox(byEl.get(linked.card), v) >= 0.5 ? linked.card
-        : boxes.find((b) => b.r - v.l > (b.r - b.l) * 0.6)?.el
-      asked = { left: v.l, boxes, linked, card }
+      let current = linked.current
+      if (asked && asked.left === v.l && asked.boxes === boxes && asked.linked === current) return asked.card
+      let card = linked.cardInView(
+        (el) => shownBox(byEl.get(el), v),
+        () => boxes.find((b) => b.r - v.l > (b.r - b.l) * 0.6)?.el,
+      )
+      asked = { left: v.l, boxes, linked: current, card }
       return card
     },
   }

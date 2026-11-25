@@ -279,6 +279,26 @@ describe('home page in a browser', () => {
     assert.ok(Math.abs(after - left) < 2, `the row went from ${left} to ${after}px`)
   })
 
+  it('does not let a pending chip overwrite a newer career pick when the clips arrive', async (t) => {
+    let page = await t.serve(await serveDist())
+    await page.setViewportSize({ width: 1440, height: 900 })
+    let release!: () => void
+    let held = new Promise<void>((resolve) => (release = resolve))
+    await page.route('**/data/clips.json', async (route) => { await held; await route.continue() })
+    await open(page, '/')
+    await scrollTo(page, 'outside')
+    await pressChip(page, '#outside [data-rail-cat="travel"]')
+    await page.waitForSelector('#outside [data-rail-cat="travel"][aria-busy="true"]')
+    await scrollTo(page, 'career')
+    await page.click('#career a[href="#job-kinaxis"]')
+    await page.waitForFunction(() => location.hash === '#job-kinaxis')
+    release()
+    await allClips(page)
+    await frames(page)
+    assert.equal(new URL(page.url()).hash, '#job-kinaxis')
+    assert.equal(await page.locator('#outside [data-rail-cat="travel"]').getAttribute('aria-pressed'), 'false')
+  })
+
   it('carries the clip a chip is sliding to, when the flag is pressed on the way', async (t) => {
     let page = await t.serve(await serveDist())
     await page.setViewportSize({ width: 1440, height: 900 })
