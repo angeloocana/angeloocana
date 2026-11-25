@@ -11,7 +11,7 @@ import { legacyBlogAssets } from '../app/content/legacy-blog-assets.ts'
 import { allPosts } from '../app/content/posts.ts'
 import { router } from '../app/router.ts'
 import { HOME_HTML_BUDGET, HOME_ROUTES, assertHomeHtmlBudget, type HomeHtmlArtifact } from './home-html-budget.ts'
-import { assertMediaReferences, type EmittedFile } from './media-references.ts'
+import { assertMediaReferences, readEmittedText } from './media-references.ts'
 
 const ORIGIN = 'http://localhost'
 const OUT = 'dist'
@@ -67,16 +67,12 @@ const asJs = (path: string) => (/\.tsx?$/.test(path) ? `${path}.js` : path)
 // one extra round trip per script, so references use that spelling from the start.
 const ASSET_URL = /\/assets\/[^"'`\s)]+/g
 
-// every page, script and stylesheet as written, for the /media/ reference check at the end
-const emittedText: EmittedFile[] = []
-
 async function saveText(path: string, body: string) {
   let emitted = body
     .replace(TS_URL, '$1.js')
     .replace(RELATIVE_TS_IMPORT, '$1$2$3.js$2')
     .replace(ASSET_URL, (url) => url.replaceAll('@', '%40'))
   await save(path, emitted)
-  emittedText.push({ file: join(OUT, decodeURIComponent(asJs(path))), text: emitted })
   return emitted
 }
 
@@ -246,7 +242,7 @@ for (let line of headers) {
 }
 await save('_headers', headers.join('\n'))
 
-assertMediaReferences(emittedText, MEDIA_VERSIONS)
+assertMediaReferences(await readEmittedText(OUT), MEDIA_VERSIONS)
 
 let budgetSummary = homeBudgets
   .map((item) => `${item.route} ${item.emittedBytes.toLocaleString('en-US')} B (${item.projectedBytes.toLocaleString('en-US')} B versioned)`)

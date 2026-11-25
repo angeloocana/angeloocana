@@ -2,16 +2,30 @@
 // week (worker.ts), so a URL without its file's current ?v= hash keeps returning visitors on the old file:
 // screenshots stayed stale that way until they were versioned (cfa6b21), as scripts did before them (8c54d20).
 
+import { readdir, readFile } from 'node:fs/promises'
+import { join } from 'node:path'
+
 // A /media/ URL as a page, a script or JSON writes it, with or without an origin; not `rails/media.ts`.
-const MEDIA_REFERENCE = /(?<![\w./-])(?:https?:\/\/[^/"'`\s<>]+)?\/media\/[^"'`\s)<>]*/g
+const MEDIA_REFERENCE = /(?<![\w./-])(?:(?:https?:)?\/\/[^/"'`\s<>]+)?\/media\/[^"'`\s)<>]*/g
+const SITE = 'https://angeloocana.com'
+const SITE_HOSTS = ['angeloocana.com', 'www.angeloocana.com']
+const TEXT_FILE = /\.(?:html|js|json|css|xml|svg|txt)$|(?:^|\/)_(?:headers|redirects)$/
 
 export type EmittedFile = { file: string; text: string }
+
+/** Every text file in the built site, copied from public/ or rendered. */
+export async function readEmittedText(dir: string): Promise<EmittedFile[]> {
+  let files = await readdir(dir, { recursive: true, withFileTypes: true })
+  let text = files.filter((entry) => entry.isFile() && TEXT_FILE.test(entry.name)).map((entry) => join(entry.parentPath, entry.name))
+  return Promise.all(text.sort().map(async (file) => ({ file, text: await readFile(file, 'utf8') })))
+}
 
 export function staleMediaReferences(files: EmittedFile[], versions: Record<string, string>) {
   let problems: string[] = []
   for (let { file, text } of files) {
     for (let [reference] of text.matchAll(MEDIA_REFERENCE)) {
-      let url = new URL(reference.replaceAll('&amp;', '&'), 'https://angeloocana.com')
+      let url = new URL(reference.replaceAll('&amp;', '&'), SITE)
+      if (!SITE_HOSTS.includes(url.hostname)) continue
       let key = url.pathname.slice('/media/'.length)
       let expected = versions[key]
       let found = url.searchParams.getAll('v')
