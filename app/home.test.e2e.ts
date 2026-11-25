@@ -4,6 +4,7 @@ import * as assert from 'remix/assert'
 import { describe, it } from 'remix/test'
 import type { Page } from 'playwright'
 
+import { watchCspViolations } from './test-support/csp-violations.ts'
 import { serveDist } from './test-support/serve-dist.ts'
 
 // A playable clip for the tests: media is not in git, and the test browser (Playwright's Chromium) plays
@@ -142,12 +143,7 @@ let frames = (page: Page) => page.evaluate(() => new Promise((done) => requestAn
 describe('home page in a browser', () => {
   it('boots the static home and its offline fallback under the shipped CSP', async (t) => {
     let page = await t.serve(await serveDist())
-    let violations: string[] = []
-    await page.exposeFunction('captureViolation', (directive: string, uri: string) => violations.push(`${directive}: ${uri}`))
-    await page.addInitScript(() => {
-      let capture = (window as Window & { captureViolation?: (directive: string, uri: string) => void }).captureViolation
-      document.addEventListener('securitypolicyviolation', (event) => capture?.(event.effectiveDirective, event.blockedURI))
-    })
+    let violations = await watchCspViolations(page)
     for (let path of ['/', '/pt/', '/offline-plugin-app-shell-fallback/']) {
       let response = await open(page, path)
       assert.ok(response?.headers()['content-security-policy'], path)
