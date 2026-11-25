@@ -518,7 +518,7 @@ export async function mountIce(canvas: HTMLCanvasElement, signal: AbortSignal) {
 
   // Only one at a time, gone as soon as motion goes off, the tab is hidden or the sheet comes down.
   // Its silhouette goes into a tiny texture, made the first time one comes.
-  let rng = Math.random, swims = schedule(rng)
+  let rng = Math.random
   let animal: { kind: Kind; path: [Point, Point, Point]; at: number; time: number; ambient: boolean } | null = null
   let animalTex: WebGLTexture | null = null, drawnKind: Kind | null = null
   let swim = (kind: Kind, path: [Point, Point, Point], ambient: boolean) => {
@@ -718,25 +718,23 @@ export async function mountIce(canvas: HTMLCanvasElement, signal: AbortSignal) {
     g.drawArrays(g.TRIANGLES, 0, 3)
   }
 
-  let raf = 0, then = 0, acc = 0, swimTimer = 0
+  let raf = 0, then = 0, acc = 0
   let remeasure = true, released = false
   let still = root.classList.contains('is-paused')
   function go() {
     if (released || raf || still || document.hidden || signal.aborted) return
     raf = requestAnimationFrame(frame)
   }
-  // No frames run for the gap itself. An early wake waits out the same deadline before asking for a frame.
-  // If go() can't run while hidden or paused, the first frame on return picks up the overdue visit.
-  let waitForSwim = () => {
-    if (swimTimer) return
-    let delay = swims.wait(performance.now())
-    if (delay > 0) swimTimer = window.setTimeout(() => { swimTimer = 0; waitForSwim() }, delay)
-    else go()
-  }
+  let swims = scheduleSwims({
+    rng,
+    // The class can change before its observer runs, just as a tab can hide before visibilitychange.
+    allowed: () => !still && !root.classList.contains('is-paused') && !document.hidden && !signal.aborted,
+    requestFrame: go,
+    start: nextSwim,
+  })
   let finishSwim = () => {
-    if (!animal) return
     animal = null
-    waitForSwim()
+    swims.finish()
   }
   // the page moved: a frame at once, and a few more while it keeps moving
   let kick = () => {
@@ -746,6 +744,7 @@ export async function mountIce(canvas: HTMLCanvasElement, signal: AbortSignal) {
   }
   function frame(now: number) {
     raf = 0
+    if (released || signal.aborted) return
     let dt = then ? Math.min(0.1, (now - then) / 1000) : 1 / 60
     then = now
     t += dt
@@ -757,11 +756,7 @@ export async function mountIce(canvas: HTMLCanvasElement, signal: AbortSignal) {
     moved.clear()
     for (acc += dt; acc >= 1 / 60; acc -= 1 / 60) step(1 / 60)
     if (animal && t - animal.at >= animal.time) finishSwim()
-    if (swims.ready(performance.now(), !still && !document.hidden)) {
-      clearTimeout(swimTimer)
-      swimTimer = 0
-      nextSwim()
-    }
+    swims.frame()
     draw()
     if (still || document.hidden) { then = 0; return }
     // something melting, cracking, scrolling, freezing in or creeping, or the light still on its way back:
@@ -770,7 +765,7 @@ export async function mountIce(canvas: HTMLCanvasElement, signal: AbortSignal) {
     if (busy) raf = requestAnimationFrame(frame)
     else {
       then = 0
-      waitForSwim()
+      swims.settled()
     }
   }
   let halt = () => { cancelAnimationFrame(raf); raf = 0; then = 0; if (idle) cancelIdleCallback(idle); idle = 0 }
@@ -815,14 +810,14 @@ export async function mountIce(canvas: HTMLCanvasElement, signal: AbortSignal) {
     } else {
       sy = scrollY
       remeasure = true
-      go()
+      swims.resume()
     }
   }
   let paused = new MutationObserver(setStill)
   paused.observe(root, { attributes: true, attributeFilter: ['class'] })
   document.addEventListener('visibilitychange', () => {
     if (document.hidden) { halt(); finishSwim(); freshMelt = null }
-    else go()
+    else swims.resume()
   }, { signal })
   // the screen changed size: a new sheet; the page changed size, or a row got new cards: measure again
   let sized = new ResizeObserver(() => {
@@ -844,7 +839,7 @@ export async function mountIce(canvas: HTMLCanvasElement, signal: AbortSignal) {
     if (released) return
     released = true
     halt()
-    clearTimeout(swimTimer)
+    swims.abort()
     animal = null
     sized.disconnect()
     page.disconnect()
@@ -907,6 +902,52 @@ export function schedule(rng: () => number) {
       if (!allowed || due === null || now < due) return false
       due = null
       return true
+    },
+  }
+}
+
+// A timeout only wakes the scheduler; only an eligible frame can consume the deadline.
+export function scheduleSwims({ rng, allowed, requestFrame, start }: {
+  rng: () => number
+  allowed: () => boolean
+  requestFrame: () => void
+  start: () => void
+}, clock = {
+  now: () => performance.now(),
+  after: (wake: () => void, delay: number) => window.setTimeout(wake, delay),
+  cancel: (timer: number) => window.clearTimeout(timer),
+}) {
+  let visits = schedule(rng)
+  let timer: number | undefined
+  let active = false, stopped = false
+  let resume = () => { if (!stopped && allowed()) requestFrame() }
+  let clear = () => {
+    if (timer !== undefined) clock.cancel(timer)
+    timer = undefined
+  }
+  let arm = () => {
+    if (stopped || active || timer !== undefined) return
+    let delay = visits.wait(clock.now())
+    if (delay > 0) timer = clock.after(() => { timer = undefined; arm() }, delay)
+    else resume()
+  }
+  return {
+    settled: arm,
+    resume,
+    frame() {
+      if (stopped || active || !visits.ready(clock.now(), allowed())) return
+      clear()
+      active = true
+      start()
+    },
+    finish() {
+      if (!active) return
+      active = false
+      arm()
+    },
+    abort() {
+      stopped = true
+      clear()
     },
   }
 }
