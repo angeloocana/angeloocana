@@ -16,7 +16,8 @@ describe('the site as Cloudflare serves it', () => {
     let page = await t.serve(await serveDist())
     let violations = await watchCspViolations(page)
     let reports = 0
-    await page.route((url) => url.hostname === '127.0.0.1' && !/\.\w+$/.test(url.pathname), async (route) => {
+    await page.route((url) => url.hostname === '127.0.0.1', async (route) => {
+      if (route.request().resourceType() !== 'document') return route.continue()
       let response = await route.fetch()
       let body = (await response.text()).replace('</body>', `<script defer src="${BEACON}" data-cf-beacon='{"token":"test"}'></script></body>`)
       await route.fulfill({ response, body })
@@ -31,6 +32,7 @@ describe('the site as Cloudflare serves it', () => {
     })
     for (let path of ['/', '/pt/', '/en/blog/git/git-setup/']) {
       let response = await page.goto(path)
+      assert.equal(response?.status(), 200, path)
       assert.ok(response?.headers()['content-security-policy'], path)
       await page.waitForFunction(() => (window as Window & { beaconReported?: boolean }).beaconReported, null, { timeout: 2000 })
         .catch(() => assert.fail(`${path}: the beacon did not report (${violations.join(', ') || 'no CSP violation'})`))
