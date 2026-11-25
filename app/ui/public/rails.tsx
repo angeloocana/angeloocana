@@ -1,6 +1,7 @@
 import { clientEntry } from 'remix/component'
 import type { Handle } from 'remix/component'
 
+import { createPickEpoch } from './rails/linked.ts'
 import { setUpClips } from './rails/clips.ts'
 import { setUpHero } from './rails/hero.ts'
 import { setUpMedia } from './rails/media.ts'
@@ -35,7 +36,8 @@ export const Rails = clientEntry(import.meta.url, function Rails(handle: Handle)
     let motion = setUpMotion(signal)
     let media = setUpMedia(signal, motion)
     let clips = setUpClips(signal, media)
-    let rails = new Map([...document.querySelectorAll<HTMLElement>('[data-rail]')].map((rail) => [rail, setUpRail(rail, { signal, motion, clips })]))
+    let picks = createPickEpoch()
+    let rails = new Map([...document.querySelectorAll<HTMLElement>('[data-rail]')].map((rail) => [rail, setUpRail(rail, { signal, motion, clips, picks })]))
     setUpNav(signal, rails)
     setUpHero(signal, motion)
   })

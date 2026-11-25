@@ -15,23 +15,41 @@ export type Linked<Card> =
 
 export type HashOutcome = { alignRow: boolean; scrollPage: boolean }
 
+/** Shared request identity across rails for picks that write the page URL via replaceState. */
+export interface PickEpoch {
+  current: number
+}
+
+export const createPickEpoch = (): PickEpoch => ({ current: 0 })
+
+export interface HashAttempt<Card> {
+  /** Finish an arriving #hash after any async load or restoration frame. */
+  complete(result: { card: Card | null; hashMatches: boolean; railInView: () => boolean }): HashOutcome
+}
+
+export interface TripAttempt {
+  /** Whether starting this trip should write the card's #id to the URL. */
+  readonly replaceHash: boolean
+  /** Finish a slide (scrollend with atGoal, or immediate/timeout with forced: true). Returns true only if this trip still owns and finishes the jump. */
+  finish(result: { atGoal: boolean; forced: boolean }): boolean
+}
+
+export interface PickAttempt<Card> {
+  /** Complete an async chip load. Returns the started trip only if no user move, hashchange, or newer pick on any rail superseded it. */
+  complete(card: Card | null): TripAttempt | null
+}
+
 export interface LinkedCard<Card> {
   /** Current state snapshot (identity changes on every state transition). */
   readonly current: Linked<Card>
   /** Begin arriving at a #hash card (opened: initial load or load realign; missing: absent before load). */
-  startHash(id: string, options: { opened: boolean; missing: boolean }): number
-  /** Finish an arriving #hash after any async load or restoration frame. */
-  completeHash(token: number, result: { card: Card | null; hashMatches: boolean; railInView: () => boolean }): HashOutcome
+  beginHash(id: string, options: { opened: boolean; missing: boolean }): HashAttempt<Card>
   /** Should window.load realign the row sideways for a settled #hash? */
   shouldRealignOnLoad(): boolean
   /** Claim ownership while a chip awaits clip loading; supersedes any pending arrival or earlier pick. */
-  startPick(): number
-  /** Whether an async pick token is still the active request. */
-  isCurrent(token: number): boolean
+  beginPick(): PickAttempt<Card>
   /** Begin sliding the row to a card (carry: chip or jump link; false: Tab focus). */
-  startTrip(card: Card, options: { carry: boolean }): { token: number; replaceHash: boolean }
-  /** Finish a slide (immediate, scrollend, or timeout). Returns true only if this trip still owns the jump. */
-  completeTrip(token: number): boolean
+  beginTrip(card: Card, options: { carry: boolean }): TripAttempt
   /** Visitor moved the row sideways: cancels any active linked state or in-flight request. */
   userMoved(): void
   /** Visitor scrolled the page vertically: app code will not move the page for a pending missing anchor. */
@@ -42,12 +60,18 @@ export interface LinkedCard<Card> {
   cardInView(shown: (card: Card) => number, fallback: () => Card | undefined): Card | undefined
 }
 
-export function createLinkedCard<Card>({ restoring, onChange }: { restoring: boolean; onChange?: () => void }): LinkedCard<Card> {
+export function createLinkedCard<Card>({
+  restoring,
+  picks = createPickEpoch(),
+  onChange,
+}: {
+  restoring: boolean
+  picks?: PickEpoch
+  onChange?: () => void
+}): LinkedCard<Card> {
   let state: Linked<Card> = { state: 'idle' }
   let token = 0
   let pageTouched = false
-  let pendingHash: { token: number; opened: boolean; missing: boolean } | null = null
-  let activeTrip: { token: number; card: Card; carry: boolean } | null = null
 
   let setState = (next: Linked<Card>) => {
     state = next
@@ -56,9 +80,28 @@ export function createLinkedCard<Card>({ restoring, onChange }: { restoring: boo
 
   let resetToIdle = () => {
     token++
-    pendingHash = null
-    activeTrip = null
     if (state.state !== 'idle') setState({ state: 'idle' })
+  }
+
+  let beginTrip = (card: Card, { carry }: { carry: boolean }): TripAttempt => {
+    let req = ++token
+    if (carry) {
+      picks.current++
+      setState({ state: 'travelling', card })
+    } else if (state.state !== 'idle') {
+      setState({ state: 'idle' })
+    }
+    let done = false
+    return {
+      replaceHash: carry,
+      finish({ atGoal, forced }) {
+        if (done || req !== token) return false
+        if (!atGoal && !forced) return false
+        done = true
+        if (carry && state.state === 'travelling') setState({ state: 'settled', card, hash: false })
+        return true
+      },
+    }
   }
 
   return {
@@ -66,59 +109,45 @@ export function createLinkedCard<Card>({ restoring, onChange }: { restoring: boo
       return state
     },
 
-    startHash(id, { opened, missing }) {
+    beginHash(id, { opened, missing }) {
       let req = ++token
-      activeTrip = null
-      pendingHash = { token: req, opened, missing }
+      let done = false
       setState({ state: 'arriving', id })
-      return req
-    },
-
-    completeHash(req, { card, hashMatches, railInView }) {
-      if (req !== token || !pendingHash || pendingHash.token !== req) return { alignRow: false, scrollPage: false }
-      let { opened, missing } = pendingHash
-      pendingHash = null
-      let restored = opened && restoring
-      if (!card || !hashMatches || (restored && !railInView())) {
-        setState({ state: 'idle' })
-        return { alignRow: false, scrollPage: false }
+      return {
+        complete({ card, hashMatches, railInView }) {
+          if (done || req !== token) return { alignRow: false, scrollPage: false }
+          done = true
+          let restored = opened && restoring
+          if (!card || !hashMatches || (restored && !railInView())) {
+            setState({ state: 'idle' })
+            return { alignRow: false, scrollPage: false }
+          }
+          setState({ state: 'settled', card, hash: true })
+          return { alignRow: true, scrollPage: missing && !restored && !pageTouched }
+        },
       }
-      setState({ state: 'settled', card, hash: true })
-      return { alignRow: true, scrollPage: missing && !restored && !pageTouched }
     },
 
     shouldRealignOnLoad() {
       return state.state === 'settled' && state.hash && !restoring
     },
 
-    startPick() {
+    beginPick() {
       let req = ++token
-      pendingHash = null
-      activeTrip = null
+      let pickId = ++picks.current
+      let done = false
       if (state.state !== 'idle') setState({ state: 'idle' })
-      return req
+      return {
+        complete(card) {
+          if (done || req !== token || pickId !== picks.current) return null
+          done = true
+          if (!card) return null
+          return beginTrip(card, { carry: true })
+        },
+      }
     },
 
-    isCurrent(req) {
-      return req === token
-    },
-
-    startTrip(card, { carry }) {
-      let req = ++token
-      pendingHash = null
-      activeTrip = { token: req, card, carry }
-      if (carry) setState({ state: 'travelling', card })
-      else if (state.state !== 'idle') setState({ state: 'idle' })
-      return { token: req, replaceHash: carry }
-    },
-
-    completeTrip(req) {
-      if (req !== token || !activeTrip || activeTrip.token !== req) return false
-      let trip = activeTrip
-      activeTrip = null
-      if (trip.carry && state.state === 'travelling') setState({ state: 'settled', card: trip.card, hash: false })
-      return true
-    },
+    beginTrip,
 
     userMoved() {
       resetToIdle()

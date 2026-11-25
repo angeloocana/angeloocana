@@ -1,6 +1,6 @@
 import { clipPoster } from '../clip-card.ts'
 import { withLatestIntersections } from '../visibility.ts'
-import { createLinkedCard, type Linked } from './linked.ts'
+import { createLinkedCard, type Linked, type PickEpoch, type TripAttempt } from './linked.ts'
 import type { Motion } from './motion.ts'
 import type { setUpClips } from './clips.ts'
 
@@ -22,7 +22,7 @@ export interface Rail {
   cardInView(): HTMLElement | undefined
 }
 
-export function setUpRail(rail: HTMLElement, { signal, motion, clips }: { signal: AbortSignal; motion: Motion; clips: Clips }): Rail {
+export function setUpRail(rail: HTMLElement, { signal, motion, clips, picks }: { signal: AbortSignal; motion: Motion; clips: Clips; picks?: PickEpoch }): Rail {
   let track = rail.querySelector<HTMLElement>('[data-rail-track]')!
   let bg = rail.querySelector<HTMLElement>('[data-rail-bg]')
   // the cards shown (on phones a row's opening card is display: none: its words sit above the row)
@@ -94,6 +94,7 @@ export function setUpRail(rail: HTMLElement, { signal, motion, clips }: { signal
   let restoring = ['back_forward', 'reload'].includes((performance.getEntriesByType('navigation')[0] as PerformanceNavigationTiming | undefined)?.type ?? '')
   let linked = createLinkedCard<HTMLElement>({
     restoring,
+    picks,
     // rails/nav.ts follows the row's scroll; a linked-card change may come without one
     onChange: () => track.dispatchEvent(new Event('linkchange')),
   })
@@ -298,16 +299,17 @@ export function setUpRail(rail: HTMLElement, { signal, motion, clips }: { signal
   }
   for (let chip of chips) {
     chip.addEventListener('click', async () => {
-      let req = linked.startPick()
+      let pending = linked.beginPick()
       clearJump()
       chip.setAttribute('aria-busy', 'true')
       await clips.loadMore(track)
       chip.removeAttribute('aria-busy')
-      if (signal.aborted || !linked.isCurrent(req)) return
+      if (signal.aborted) return
       let first = track.querySelector<HTMLElement>(`[data-cat="${chip.dataset.railCat}"]`)
-      if (!first) return
+      let trip = pending.complete(first)
+      if (!trip || !first) return
       pick(chip, first)
-      slideTo(first, true)
+      runTrip(first, trip)
     }, { signal })
   }
 
@@ -358,24 +360,29 @@ export function setUpRail(rail: HTMLElement, { signal, motion, clips }: { signal
   // that smaller box, a few pixels short.
   // A picked card (carry: a chip or a jump link) is the one to carry from the start of the trip, and its
   // #id replaces the address's (no new history entry). Any other slide was the visitor's own (Tab).
-  function slideTo(slide: HTMLElement, carry = false) {
+  function runTrip(slide: HTMLElement, trip: TripAttempt) {
     clearJump()
-    let left = slide.offsetLeft - slides()[0].offsetLeft
-    let { token, replaceHash } = linked.startTrip(slide, { carry })
-    if (replaceHash) history.replaceState(history.state, '', `#${slide.id}`)
-    let landed = () => {
-      if (!linked.completeTrip(token)) return
+    if (trip.replaceHash) history.replaceState(history.state, '', `#${slide.id}`)
+    let goal = () => Math.min(Math.max(0, slide.offsetLeft - slides()[0].offsetLeft), Math.max(0, track.scrollWidth - track.clientWidth))
+    let finish = (forced: boolean) => {
+      if (!trip.finish({ atGoal: Math.abs(track.scrollLeft - goal()) < 4, forced })) return
       clearJump()
     }
-    if (Math.abs(Math.min(left, track.scrollWidth - track.clientWidth) - track.scrollLeft) < 2) return landed()
+    let left = slide.offsetLeft - slides()[0].offsetLeft
+    if (Math.abs(goal() - track.scrollLeft) < 2) return finish(true)
     track.classList.add('is-jumping')
-    let timer = window.setTimeout(landed, 1500)
-    track.addEventListener('scrollend', landed, { once: true, signal })
+    let onScrollEnd = () => finish(false)
+    let onTimeout = () => finish(true)
+    let timer = window.setTimeout(onTimeout, 1500)
+    track.addEventListener('scrollend', onScrollEnd, { signal })
     cancelJump = () => {
       clearTimeout(timer)
-      track.removeEventListener('scrollend', landed)
+      track.removeEventListener('scrollend', onScrollEnd)
     }
     track.scrollTo({ left, behavior: motion.reduced ? 'auto' : 'smooth' })
+  }
+  function slideTo(slide: HTMLElement, carry = false) {
+    runTrip(slide, linked.beginTrip(slide, { carry }))
   }
   // Tab onto a link or a button in a card the row shows only part of (the next job, peeking in at the
   // edge): the browser brings just that link into view, leaving the card a sliver, so the row slides to the
@@ -408,7 +415,7 @@ export function setUpRail(rail: HTMLElement, { signal, motion, clips }: { signal
     let missing = !find()
     if (missing && !(more && id.startsWith('clip-'))) return
     clearJump()
-    let req = linked.startHash(id, { opened, missing })
+    let arrival = linked.beginHash(id, { opened, missing })
     if (more && id.startsWith('clip-')) await clips.loadMore(track)
     if (opened && restoring) {
       if (document.readyState !== 'complete') await new Promise((done) => addEventListener('load', done, { once: true, signal }))
@@ -416,7 +423,7 @@ export function setUpRail(rail: HTMLElement, { signal, motion, clips }: { signal
     }
     if (signal.aborted) return
     let slide = find()
-    let outcome = linked.completeHash(req, {
+    let outcome = arrival.complete({
       card: slide,
       hashMatches: location.hash.slice(1) === id,
       railInView: () => {
