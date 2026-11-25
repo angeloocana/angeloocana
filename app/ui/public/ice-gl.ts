@@ -891,7 +891,7 @@ export function pick(rng: () => number): Kind {
   return 'pike'
 }
 
-export function schedule(rng: () => number) {
+function schedule(rng: () => number) {
   let due: number | null = null
   return {
     wait(now: number) {

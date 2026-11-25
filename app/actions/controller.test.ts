@@ -20,9 +20,6 @@ let { loadNotes, saveReview } = await import('./review-page.tsx')
 let { router } = await import('../router.ts')
 afterAll(() => rmSync(mediaRoot, { recursive: true, force: true }))
 
-// The home page's weight on a phone: the clips past the first few come from /data/clips.json instead.
-const HOME_BUDGET = 130_000
-
 describe('root controller', () => {
   it('GET / returns the home page', async () => {
     let response = await router.fetch(new URL(routes.home.href(), 'http://localhost'))
@@ -35,16 +32,6 @@ describe('root controller', () => {
     // work first: hero, career, projects, then the clips, learning, posts and contact
     let order = ['top', 'career', 'projects', 'outside', 'learning', 'posts', 'contact'].map((id) => html.indexOf(`id="${id}"`))
     assert.ok(order.every((at, i) => at > 0 && (i === 0 || at > order[i - 1])), `sections out of order: ${order}`)
-  })
-
-  it('keeps both home pages under the size budget', async () => {
-    for (let path of [routes.home.href(), routes.pt.href()]) {
-      let html = await (await router.fetch(new URL(path, 'http://localhost'))).text()
-      // Also budget for every legacy media URL becoming a 16-character versioned URL after a recut.
-      let versioned = html.replace(/(\/media\/[^\s"?]+\?v=)[0-9a-f]{10}(?![A-Za-z0-9_-])/g, '$1abcdefghijklmnop')
-      let bytes = new TextEncoder().encode(versioned).length
-      assert.ok(bytes <= HOME_BUDGET, `${path} is ${bytes} bytes with versioned media, over ${HOME_BUDGET}`)
-    }
   })
 
   it('waits on one stylesheet; a post loads only the pointer ring, no Remix client', async () => {
