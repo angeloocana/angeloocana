@@ -5,7 +5,7 @@ import { unsafeHTML } from 'remix/component'
 
 import { cursorEntry, scriptEntry } from '../assets.ts'
 import { HREF, LANGS, type Lang } from '../copy.ts'
-import { MEDIA_VERSIONS } from '../content/clips.ts'
+import { mediaUrl } from '../content/clips.ts'
 import { bundleHref, type Bundle } from '../styles.ts'
 
 export interface DocumentProps {
@@ -39,7 +39,7 @@ export interface DocumentProps {
 }
 
 // The link preview: track2.fit on the web, from the media bucket (media never goes in git).
-const OG_IMAGE = `/media/t2f/desktop.webp?v=${MEDIA_VERSIONS['t2f/desktop.webp'] ?? '0'}`
+const OG_IMAGE = mediaUrl('t2f/desktop.webp')
 
 // Runs before the first paint: the title card shows once per browser. Later visits (and blocked
 // storage, which throws) mark the page seen, so the card never covers it. A key, a focus or a press

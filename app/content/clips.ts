@@ -70,22 +70,22 @@ export type Clip = {
 export const MEDIA_VERSIONS: Record<string, string> = JSON.parse(readFileSync(new URL('./media.json', import.meta.url), 'utf8'))
 
 /**
- * Any other media file's URL (the projects' screenshots and videos, like `t2f/desktop.webp`), with its
- * media.json hash as ?v=, like the clips: media is cached for a week, so a new screenshot gets a new URL.
+ * The one way to write a /media/ URL (clips, the projects' screenshots and videos, the link preview).
+ * Its ?v= is the file's media.json hash: media is cached for a week (worker.ts), so a re-cut or a new
+ * screenshot gets a new URL. The dev server plays the local file, which the cut editor may have re-cut
+ * since it was pushed, so only there it's the file's time, or 0 for a file it doesn't have. Anywhere
+ * else a file missing from media.json is an error, never an unversioned URL (scripts/media-references.ts
+ * checks the built pages too).
  */
 export function mediaUrl(key: string) {
-  return `/media/${key}?v=${MEDIA_VERSIONS[key] ?? '0'}`
+  let version = mediaVersion(key) ?? (process.env.NODE_ENV === 'development' ? '0' : undefined)
+  if (!version) throw new Error(`${key} isn't in app/content/media.json. Run \`npm run media:push\` on your branch.`)
+  return `/media/${key}?v=${version}`
 }
 
-/**
- * A clip's video or poster URL. The ?v= tag changes whenever the file is re-cut, so browsers that
- * cached the old cut (media is cached for a week, see worker.ts) fetch the new one. It's the hash from
- * media.json. The dev server plays the local file, which the cut editor may have re-cut since it was
- * pushed, so only there it's the file's time instead.
- */
+/** A clip's video or poster URL (see mediaUrl). */
 export function clipUrl(id: string, ext: 'mp4' | 'jpg') {
-  let key = `clips/${id}.${ext}`
-  return `/media/${key}?v=${clipMediaVersion(key) ?? '0'}`
+  return mediaUrl(`clips/${id}.${ext}`)
 }
 
 /**
@@ -96,11 +96,10 @@ export function clipUrl(id: string, ext: 'mp4' | 'jpg') {
  */
 export function heroClipUrl(id: string, cut: 'phone' | 'tile') {
   let key = `hero/${id}-${cut}.mp4`
-  let version = clipMediaVersion(key)
-  return version ? `/media/${key}?v=${version}` : undefined
+  return mediaVersion(key) ? mediaUrl(key) : undefined
 }
 
-function clipMediaVersion(key: string) {
+function mediaVersion(key: string) {
   if (process.env.NODE_ENV === 'development') {
     let file = join(MEDIA_DIR, 'media', key)
     if (existsSync(file)) return Math.round(statSync(file).mtimeMs).toString(36)
