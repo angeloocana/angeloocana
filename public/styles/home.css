@@ -467,7 +467,12 @@ html:not(.js-rails) .clip-pause, .clip-pause[hidden] { display: none; }
 .soon-screen b { font: italic 800 1.3rem/1 var(--t2f); letter-spacing: 0.02em; }
 .soon-screen sup { font-size: 0.6em; }
 .soon-screen span { font: 600 0.75rem/1 var(--sans); letter-spacing: 0.2em; text-transform: uppercase; color: #b6f46b; }
-.soon-screen small { font: 400 0.75rem/1 var(--sans); color: #9a9a9a; }
+/* Google's badge, cropped to the artwork's edge: the gaps around it keep its clear space (a quarter of its height) */
+.play-badge { display: block; line-height: 0; }
+.play-badge img { display: block; width: auto; height: 3rem; }
+.soon-screen .play-badge { margin-top: 0.5rem; }
+.dev-screen:has(.soon-screen) { container-type: size; }
+.soon-screen .play-badge img { width: min(8.5rem, 78cqw); height: auto; }
 
 
 /* ---------- Jump Over Jump screens: the real home page, rebuilt so a demo game can play ---------- */

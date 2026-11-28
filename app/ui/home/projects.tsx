@@ -7,6 +7,20 @@ import { JojDesktop, JojPhone } from '../joj-screens.tsx'
 import { COLORS, DEFAULT_SIZE } from '../public/pool-tiles-domain.ts'
 import { Card, kicker, media, Row, studyCard, TitleLink } from './shared.tsx'
 
+const PLAY_URL = 'https://play.google.com/store/apps/details?id=fit.track2'
+
+// Google's "Get it on Google Play" badge, its official artwork untouched, localized for the page
+function PlayBadge(handle: Handle<{ t: Copy }>) {
+  return () => {
+    let { alt, height, src, width } = handle.props.t.t2f.playBadge
+    return (
+      <a class="play-badge" href={PLAY_URL} rel="noopener" target="_blank">
+        <img src={src} alt={alt} width={width} height={height} />
+      </a>
+    )
+  }
+}
+
 // Personal projects: track2.fit, Jump Over Jump and Tic Tac Toe AI, a row each, then More projects.
 export function Projects(handle: Handle<{ lang: Lang; t: Copy; nav: (href: string) => string }>) {
   return () => {
@@ -24,6 +38,7 @@ export function Projects(handle: Handle<{ lang: Lang; t: Copy; nav: (href: strin
               <p>{t.t2f.intro.body}</p>
               <p class="cap-ctas">
                 <a class="cin-btn" href="https://track2.fit">{t.t2f.open} <span aria-hidden="true">→</span></a>
+                <PlayBadge t={t} />
                 <span class="cin-soon">{t.t2f.soon}</span>
               </p>
             </div>
@@ -80,7 +95,7 @@ export function Projects(handle: Handle<{ lang: Lang; t: Copy; nav: (href: strin
           <Card class="card-soon" title={t.t2f.cards.soon.title} body={t.t2f.cards.soon.body}>
             <div class="pair">
               <Pixel class="c-dev" label={t.t2f.android}>
-                <div class="soon-screen"><b>TRACK<sup>2</sup>.FIT</b><span>Android</span><small>{t.t2f.androidSoon}</small></div>
+                <div class="soon-screen"><b>TRACK<sup>2</sup>.FIT</b><span>Android</span><PlayBadge t={t} /></div>
               </Pixel>
               <WearWatch class="c-dev" label={t.t2f.wear}>
                 {/* the file waits in data-src until the video first comes on screen (rails.tsx): with a
