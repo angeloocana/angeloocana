@@ -2,10 +2,31 @@ import type { Handle } from 'remix/component'
 
 import { GITHUB, projectsFor } from '../../content/projects.ts'
 import type { Copy, Lang } from '../../copy.ts'
-import { AppleWatch, IPad, IPhone, Laptop, Pixel, Screens, WearWatch } from '../devices.tsx'
+import { AppleWatch, IPad, IPhone, Laptop, Screens, WearWatch } from '../devices.tsx'
 import { JojDesktop, JojPhone } from '../joj-screens.tsx'
 import { COLORS, DEFAULT_SIZE } from '../public/pool-tiles-domain.ts'
 import { Card, kicker, media, Row, studyCard, TitleLink } from './shared.tsx'
+
+const STORES = [
+  ['appStore', 'https://apps.apple.com/app/id6823996648'],
+  ['googlePlay', 'https://play.google.com/store/apps/details?id=fit.track2'],
+] as const
+
+// Apple's and Google's badges, their official artwork untouched and localized for the page, at one height
+function StoreBadges(handle: Handle<{ t: Copy }>) {
+  return () => (
+    <span class="store-badges">
+      {STORES.map(([store, href]) => {
+        let { alt, src } = handle.props.t.t2f[store]
+        return (
+          <a key={store} href={href} rel="noopener" target="_blank">
+            <img src={src} alt={alt} />
+          </a>
+        )
+      })}
+    </span>
+  )
+}
 
 // Personal projects: track2.fit, Jump Over Jump and Tic Tac Toe AI, a row each, then More projects.
 export function Projects(handle: Handle<{ lang: Lang; t: Copy; nav: (href: string) => string }>) {
@@ -25,6 +46,7 @@ export function Projects(handle: Handle<{ lang: Lang; t: Copy; nav: (href: strin
               <p class="cap-ctas">
                 <a class="cin-btn" href="https://track2.fit">{t.t2f.open} <span aria-hidden="true">→</span></a>
                 <span class="cin-soon">{t.t2f.soon}</span>
+                <StoreBadges t={t} />
               </p>
             </div>
             <div class="intro-visual hv-t2f">
@@ -78,16 +100,11 @@ export function Projects(handle: Handle<{ lang: Lang; t: Copy; nav: (href: strin
             </svg>
           </Card>
           <Card class="card-soon" title={t.t2f.cards.soon.title} body={t.t2f.cards.soon.body}>
-            <div class="pair">
-              <Pixel class="c-dev" label={t.t2f.android}>
-                <div class="soon-screen"><b>TRACK<sup>2</sup>.FIT</b><span>Android</span><small>{t.t2f.androidSoon}</small></div>
-              </Pixel>
-              <WearWatch class="c-dev" label={t.t2f.wear}>
-                {/* the file waits in data-src until the video first comes on screen (rails.tsx): with a
-                    <source>, phones fetched it on load, rows before it was near */}
-                <video data-autoplay muted loop playsInline preload="none" aria-hidden="true" data-src={media('t2f/wear.mp4')} />
-              </WearWatch>
-            </div>
+            <WearWatch class="c-dev" label={t.t2f.wear}>
+              {/* the file waits in data-src until the video first comes on screen (rails.tsx): with a
+                  <source>, phones fetched it on load, rows before it was near */}
+              <video data-autoplay muted loop playsInline preload="none" aria-hidden="true" data-src={media('t2f/wear.mp4')} />
+            </WearWatch>
           </Card>
         </Row>
 
