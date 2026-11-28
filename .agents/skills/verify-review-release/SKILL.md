@@ -51,5 +51,5 @@ Covered: `scripts/review-release.ts` (`reconcileReviewRelease` with `fetchTip`, 
 "puts nothing for a rejected clip"). Not covered: snapshot bytes, legacy migration, manual
 `media:push`, several clips, and Cloudflare caches.
 
-Last confirmed against the code at the commit that added `fetchTip` (#34719, on top of `7b1b8e1`). Move this commit forward only after you have
+Last confirmed against the code at `f635ba1`. Move this commit forward only after you have
 checked that every action still matches the lines it names.

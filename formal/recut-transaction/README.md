@@ -41,23 +41,25 @@ edit): `mp4`, `jpg`, `recipe` (`index/montages.json`), `drafts` (`index/cut-draf
 generation of the pending draft, 0 for none), `checks` (`index/cut-checks.json`) and `queue`
 (`work/review-queue.json`). Each is its own rename, in `finish_render()`'s order. A ghost
 variable, `want`, records every file as the last completed edit or commit left it, and the
-reader compares against it, so a recovery that dropped only the pending draft also breaks the rule. The cut editor saves draft 1, then
-draft 2; each save starts its own rebuild job with the inputs it saved. A job reads the cut under
-the lock, renders without it, takes the lock again, re-checks the cut and commits. A reader (the
-review page, the cut page or the publisher's snapshot) takes the lock and reads all four files.
-Any process can die after any step, up to two deaths; the kernel then drops its flock, and the
-files and the journal stay. Each step is one rename or one lock action.
+reader compares against it, so a recovery that drops only the pending draft also breaks the
+rule. In the model, two editor actions save distinct drafts and start rebuild jobs. The web
+server serializes its own cut actions (`cut-page.tsx:91–93`), but jobs in independent processes
+can overlap. Each job reads the cut under the lock, renders without it, takes the lock again,
+re-checks the cut and commits. The model reader checks all six files under the lock; the review
+page, cut page and publisher's snapshot read the files they need. Any process can die after any
+step, up to two deaths; the kernel then drops its flock, and the files and journal stay. Each
+step is one rename or one lock action.
 
-| Action | Code at the sync commit (`f9df907`) |
+| Action | Code at the sync commit (`f635ba1`) |
 |---|---|
 | `Acquire` | `review_io.py:121–137` `review_lock()`: flock, then `_recover_promotion()` before the caller runs |
 | `Recover` | `review_io.py:47–74` `_recover_journal()`: restore each backup, then clear the journal by one rename (`:74`) |
-| `EditorStart`, `Edit` | `cut-page.tsx:118–145` `saveCut()`: `saveDraft` and `loadCutInputs` under `withReviewLock`, then `rebuildClip(id, expected)` → `clips.py rebuild-expected` |
-| `JobStart`, `Read` | `clips.py:453–457` `rebuild()`: `cut_inputs` and `require_cut(name, expected, cut)` under the lock |
+| `EditorStart`, `Edit` | `cut-page.tsx:118–145` `saveCut()`: `saveDraft` and `loadCutInputs` under `withReviewLock`, then `rebuildClip(id, expected)` (`cuts.ts:246–249`) calls `clips.py rebuild-expected` (`clips.py:299–307`) |
+| `JobStart`, `Read` | `clips.py:452–457` `rebuild()`: `cut_inputs` and `require_cut(name, expected, cut)` under the lock |
 | `Rendered` | `clips.py:464` `with render_clip(pieces) as staged, review_lock(MEDIA)` |
 | `Check` | `clips.py:466` `require_cut(name, cut, cut_inputs(name, drafts))` |
-| `Commit` | `clips.py:151–154,469–475` `finish_render()` → `review_io.py:77–118` `promote_clip()`: `pending.rename(journal)` (`:100`), the pair (`:104–105`), recipe, drafts (`del drafts[name]`), checks and queue (`:106–107`, in `review_updates` order), `journal.rename(... 'resolved')` (`:113`) |
-| `ReaderStart`, `ReaderRead` | `controller.tsx:59,66` the review and cut pages, `publish-snapshot.ts:54`, each in `withReviewLock()` (`app/content/review-io.ts`, which runs `review_io.py`'s `review_lock`) |
+| `Commit` | `clips.py:151–154,469–475` `finish_render()` calls `review_io.py:77–118` `promote_clip()`: `pending.rename(journal)` (`:100`), the pair (`:104–105`), recipe, drafts (`del drafts[name]`), checks and queue (`:106–107`, in `review_updates` order), `journal.rename(... 'resolved')` (`:113`) |
+| `ReaderStart`, `ReaderRead` | `controller.tsx:59,66` and `publish-snapshot.ts:54`: the review page, cut page and publisher snapshot each use `withReviewLock()` (`app/content/review-io.ts:9–33`), which runs `review_io.py`'s `review_lock` (`:239–241`) |
 | `Die` | `os._exit`, SIGKILL or a crash after any step; `promote_clip`'s `except BaseException` rollback (`:114–116`) is not credited: the model assumes the worst, that the process just stops |
 
 **Left out:** the bytes of a render, ffmpeg failures (they throw before `promote_clip`), fsync and

@@ -46,20 +46,20 @@ with a gap between its authorization and its delete. The process can die after a
 Each action is one call to Git, Workers Builds or R2, or one save of `work/publish.json`. That
 granularity holds because `scripts/publish-review.ts` runs one turn at a time under the publish lock.
 
-| Action | Code at the sync commit |
+| Action | Code at the [sync commit](../../.agents/skills/verify-review-release/SKILL.md#coverage-and-sync) |
 |---|---|
-| `Start` | `publish-review.ts` `main()` → `reconcileReviewRelease`, which reads the queue |
+| `Start` | `publish-review.ts:95` calls `reconcileReviewRelease`, which reads the queue at `review-release.ts:154` |
 | `Look` | `review-release.ts:52–57` `fetchTip()`: every read of master re-arms tombstones it references (`rememberManifest`, `review-publish-media.ts:154–167`) |
 | `RecoverPush` | `review-release.ts:156–166` `if (state.candidate)` → `pushed(state.candidate)` |
 | `Route` | `review-release.ts:167–184` `newerThanFailedDeployment`, `newerThanCleanup`, `live.revision` |
 | `Confirm`, `MarkLive` | `review-release.ts:72–111` `confirm()`, including the `superseded` branch at `:84` |
 | `Clean`, `CleanDeploy` | `review-release.ts:113–136` `clean()`: a fresh tip, then a deploy check of a newer tip |
-| `Authorize`, `Remove` | `review-release.ts:137–151` `removeRejected(…, { oneBatch: true })`; `review-publish-media.ts:190–223` |
-| `Prepare` | `review-release.ts:186–202` `fetchMaster()`, `capturePublishSnapshot` |
-| `Upload` | `review-release.ts:204` `uploadPublishSnapshot` |
-| `Push`, `Pushing`, `PushAck`, `Refetch`, `Moved` | `review-release.ts:207–238`: the no-op lease, `state.candidate` saved before `pushCandidate`, re-fetch, "Master moved" |
-| `UrgentCheck`, `UrgentRemove` | `review-release.ts:250–269` `urgentlyRemoveClip`: read and re-arm the tip, authority, then `removeRejected` with `forceKnown` |
-| `WorkersBuild` | `publish-review.ts` `checkDeployment` (live, failed, superseded) |
+| `Authorize`, `Remove` | `review-release.ts:137–151` `removeRejected(…, { oneBatch: true })`; `review-publish-media.ts:190–227` |
+| `Prepare` | `review-release.ts:186–200` `fetchMaster()`, `capturePublishSnapshot` |
+| `Upload` | `review-release.ts:203` `uploadPublishSnapshot` |
+| `Push`, `Pushing`, `PushAck`, `Refetch`, `Moved` | `review-release.ts:209–237`: the no-op tip check, `state.candidate` saved before `pushCandidate`, re-fetch, "Master moved" |
+| `UrgentCheck`, `UrgentRemove` | `review-release.ts:250–269` `urgentlyRemoveClip`: read and re-arm the tip, check authority, then call `removeRejected` with `forceKnown` |
+| `WorkersBuild` | `publish-review.ts:21–37` `checkDeployment` (pending, live, superseded, failed) |
 
 `UrgentCheck` reduces the authority check to its result under this model's assumptions. Every
 published release rejects `x`, so once one is acknowledged, the queue's base rejects `x`. A
