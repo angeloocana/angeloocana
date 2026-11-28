@@ -19,12 +19,6 @@
 .dev-iphone::before { left: -1.2%; top: 18%; height: 7%; box-shadow: 0 1.4em 0 0 #8d9097; }
 .dev-iphone::after { right: -1.2%; top: 26%; height: 11%; }
 
-/* Pixel: flatter rails, centred punch-hole camera */
-.dev-pixel .dev-body { aspect-ratio: 0.468; border-radius: 10% / 4.8%; background: linear-gradient(150deg, #3b3d42, #121314 40%, #26272b); box-shadow: 0 0 0 2px #55575d, 0 40px 80px -30px rgb(0 0 0 / 0.9); }
-.dev-pixel .dev-screen { inset: 2.4% 3%; border-radius: 8% / 3.8%; }
-.dev-pixel .dev-sensor { left: 50%; top: 3.4%; width: 4.5%; aspect-ratio: 1; transform: translateX(-50%); border-radius: 50%; box-shadow: 0 0 0 2px #15161a; }
-.dev-pixel::after { content: ''; position: absolute; z-index: -1; right: -1.4%; top: 22%; width: 1.8%; height: 16%; border-radius: 2px; background: #6a6c72; }
-
 /* iPad: even bezels, rounded */
 .dev-ipad .dev-body { aspect-ratio: 0.76; border-radius: 5.6% / 4.2%; background: linear-gradient(145deg, #2a2b2f, #0d0d0f 50%, #202125); box-shadow: 0 0 0 1.5px #8f939b, 0 50px 90px -34px rgb(0 0 0 / 0.9); }
 .dev-ipad .dev-screen { inset: 3.3% 4.3%; border-radius: 2.6% / 2%; }

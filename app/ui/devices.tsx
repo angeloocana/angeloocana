@@ -24,10 +24,6 @@ export function IPhone(handle: Handle<DeviceProps>) {
   return () => <Frame {...handle.props} kind="iphone" />
 }
 
-export function Pixel(handle: Handle<DeviceProps>) {
-  return () => <Frame {...handle.props} kind="pixel" />
-}
-
 export function IPad(handle: Handle<DeviceProps>) {
   return () => <Frame {...handle.props} kind="ipad" />
 }
